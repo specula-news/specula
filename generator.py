@@ -7,9 +7,8 @@ import random
 from deep_translator import GoogleTranslator
 
 # --- CONFIGURATION ---
-# Updated with your username. 
-# If your repository is named something other than "specula", change the end of this link.
-BASE_URL = "https://specula-news.github.io/specula/"
+# UPDATED: Now pointing to your Netlify domain
+BASE_URL = "https://specula-news.netlify.app/"
 
 ARTICLES_PER_PAGE = 45   
 MAX_ARTICLES_PER_SOURCE = 20
