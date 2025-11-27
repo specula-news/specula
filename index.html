@@ -15,6 +15,7 @@
             --text-primary: #ffffff; --text-secondary: #a1a1aa;
             --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15);
             --border: #27272a;
+            --sidebar-width: 250px;
         }
         body.light-mode {
             --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff;
@@ -31,104 +32,103 @@
             background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        
-        .logo-wrapper { display: flex; flex-direction: column; gap: 5px; }
-        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { 
-            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
-            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+        /* LAYOUT */
+        .main-layout { display: flex; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 40px; }
+        .content-area { flex-grow: 1; }
+
+        /* SIDEBAR MENU */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
+        .filter-btn {
+            background: transparent; border: 1px solid transparent;
+            color: var(--text-secondary); padding: 10px 15px;
+            text-align: left; cursor: pointer; border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.85rem;
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
+        .logo-icon { height: 40px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
         .logo-link:hover .logo-icon { transform: rotate(10deg); }
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
-        .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+        .version-btn { font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; font-family: 'Space Grotesk'; opacity: 0.6; margin-left: 10px; }
         
-        /* VERSION BUTTON */
-        .version-btn {
-            font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; align-self: flex-start; margin-left: 60px;
-            font-family: 'Space Grotesk', monospace; opacity: 0.6; transition: 0.2s; border-bottom: 1px dotted transparent;
-        }
-        .version-btn:hover { color: var(--accent); opacity: 1; border-color: var(--accent); }
-
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .theme-switch:hover { border-color: var(--accent); }
 
         /* GRID & CARD */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card-image-wrapper { width: 100%; height: 180px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
-        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .source-badge { display: flex; align-items: center; gap: 6px; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
+        
+        /* CATEGORY TAG */
+        .cat-tag {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.65rem; font-weight: 700;
+            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10;
+        }
+
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3; margin-bottom: 10px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
-        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
-        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .read-more:hover { text-decoration: underline; }
+        .ai-summary { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 10px; }
+        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
+        .read-more { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
-        .nav-prev { left: 30px; } .nav-next { right: 30px; }
-        @media (max-width: 1350px) { .floating-nav { display: none; } }
+        .nav-prev { left: 20px; } .nav-next { right: 20px; }
 
-        /* MODAL (CHANGELOG) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            width: 90%; max-width: 500px; padding: 30px; border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px);
-            transition: transform 0.3s ease; position: relative;
-        }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 500px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .modal-title { font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; }
-        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
-        .close-modal:hover { color: var(--accent); }
-        .changelog-list { list-style: none; padding: 0; }
-        .changelog-list li { margin-bottom: 15px; padding-left: 20px; position: relative; color: var(--text-secondary); font-size: 0.9rem; }
-        .changelog-list li::before { content: "•"; color: var(--accent); position: absolute; left: 0; font-weight: bold; }
-        .changelog-date { display: block; font-size: 0.75rem; opacity: 0.5; margin-bottom: 4px; }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 1.5rem; background: none; border: none; }
 
         /* FOOTER */
-        .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
-        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
-        .btn-suggest { background: var(--bg-card); color: var(--text-primary); }
-        .btn-suggest:hover { border-color: var(--accent); }
+        .site-footer { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
+        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .btn-action { padding: 8px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-donate:hover { opacity: 0.9; box-shadow: 0 0 15px var(--accent-glow); }
-        .disclaimer-box { max-width: 700px; margin: 0 auto; font-size: 0.75rem; opacity: 0.7; line-height: 1.6; }
-        .disclaimer-title { font-weight: 700; color: var(--text-primary); display: block; margin-bottom: 5px; }
 
-        @media (max-width: 768px) {
-            .news-grid { grid-template-columns: 1fr; }
-            header { flex-direction: column; gap: 20px; align-items: flex-start; }
-            .theme-switch { width: 100%; justify-content: center; }
-            .version-btn { margin-left: 60px; margin-top: -10px; }
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 1000px) {
+            .main-layout { flex-direction: column; gap: 20px; }
+            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; border-radius: 8px; }
+            .filter-btn { white-space: nowrap; padding: 8px 16px; }
+            .floating-nav { display: none; }
         }
     </style>
 </head>
@@ -139,520 +139,280 @@
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2 class="modal-title">System Changelog</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
-            </div>
-            <ul class="changelog-list">
-                <li>
-                    <span class="changelog-date">Current</span>
-                    <strong>Version 6.2.2</strong><br>
-                    Improved image filtering for Nikkei & Asian sources. Enhanced fallback image logic.
-                </li>
-                <li>
-                    <span class="changelog-date">Previous</span>
-                    <strong>Version 6.2.1</strong><br>
-                    Added floating navigation arrows and auto-translation for Swedish sources.
-                </li>
-                <li>
-                    <span class="changelog-date">Initial</span>
-                    <strong>Version 6.0</strong><br>
-                    Core system initialization. Python generator active.
-                </li>
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 style="font-family:'Space Grotesk'; margin-bottom:15px;">Changelog</h2>
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem;">
+                <li style="margin-bottom:10px;"><strong>V7.0 (Current)</strong><br>Added new sources (SCMP, Al Jazeera, YouTube Channels). Added Categories & Sidebar Filtering. Removed Nikkei Asia.</li>
             </ul>
         </div>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo-wrapper">
-                <a href="index.html" class="logo-link">
-                    <img src="icon.png" class="logo-icon" alt="Specula">
-                    SPECULA <span>.</span>
-                    <div class="logo-tag">LIVE FEED</div>
-                </a>
-                <div class="version-btn" id="versionBtn">Version 6.2.2</div>
-            </div>
-            <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
-        </header>
+    <div class="main-layout">
+        <!-- SIDEBAR MENU -->
+        <aside class="sidebar">
+            <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+            <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics / Asia</button>
+            <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+            <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+            <button class="filter-btn" onclick="filterNews('science')">Science & Eng</button>
+            <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+        </aside>
 
-        <div class="news-grid">
-            
-            <article class="news-card">
+        <div class="content-area">
+            <header>
+                <div class="logo-wrapper">
+                    <a href="index.html" class="logo-link">
+                        <img src="icon.png" class="logo-icon" alt="Specula">
+                        <div style="display:flex; flex-direction:column;">
+                            <div class="logo">SPECULA <span>.</span></div>
+                            <div class="version-btn" id="versionBtn">Version 7.0</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
+            </header>
+
+            <div class="news-grid" id="newsGrid">
+                
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/3b1501b8-9827-48e3-813e-93ad62d55750_78f75a7f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
+                        <div class="source-badge">News - South China Mornin</div>
                         <time>Just Now</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/politics/international-relations/trump-and-takaichi-discussed-taiwan-remarks-how-to-calm-china-sources" target="_blank">Trump and Takaichi discussed Taiwan remarks, how to calm China: sources</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/politics/article/3334398/taiwans-william-lai-accused-stoking-fear-2027-countdown-confusion-and-defence-push?utm_source=rss_feed" target="_blank">Taiwan’s William Lai accused of stoking fear with 2027 countdown confusion</a></h2>
+                    <p class="ai-summary">Opposition critics have accused Taiwanese leader William Lai Ching-te of stoking fear on the island with his suggestion that Beijing could be preparing to take Taiwan by force by 2027.
+They also said ...</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/politics/international-relations/trump-and-takaichi-discussed-taiwan-remarks-how-to-calm-china-sources" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/china/politics/article/3334398/taiwans-william-lai-accused-stoking-fear-2027-countdown-confusion-and-defence-push?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/5328f77d-4a8b-4f05-9610-4618a1a16058_1d254254.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
+                        <div class="source-badge">News - South China Mornin</div>
                         <time>Just Now</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/opinion/from-fishing-to-naval-activity-china-rewrites-maritime-norms" target="_blank">From fishing to naval activity, China rewrites maritime norms</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3334268/national-games-underscored-ties-bind-hongkongers-rest-china?utm_source=rss_feed" target="_blank">National Games underscored ties that bind Hongkongers with rest of China</a></h2>
+                    <p class="ai-summary">China’s National Games marked a historic milestone this year: for the first time since the event’s inception in 1959, competitions were held throughout the Guangdong-Hong Kong-Macau Greater Bay Area –...</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/opinion/from-fishing-to-naval-activity-china-rewrites-maritime-norms" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3334268/national-games-underscored-ties-bind-hongkongers-rest-china?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/cebfa6a1-90a9-4f58-8ccd-78ca4a37d975_2c850c89.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
+                        <div class="source-badge">News - South China Mornin</div>
                         <time>Just Now</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/automobiles/hanoi-set-to-restrict-gasoline-motorbike-use-but-no-full-ban" target="_blank">Hanoi set to restrict gasoline motorbike use, but no full ban</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/middle-east/article/3334432/israeli-soldiers-appear-kill-palestinians-west-bank-after-they-surrender?utm_source=rss_feed" target="_blank">Israeli soldiers appear to kill Palestinians in West Bank after they surrender</a></h2>
+                    <p class="ai-summary">Israeli soldiers on Thursday appeared to kill a pair of Palestinian men in the occupied West Bank after they had surrendered to troops, drawing Palestinian accusations that the men were executed “in c...</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/automobiles/hanoi-set-to-restrict-gasoline-motorbike-use-but-no-full-ban" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/world/middle-east/article/3334432/israeli-soldiers-appear-kill-palestinians-west-bank-after-they-surrender?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/00409c2a-9e2c-43b6-b0e7-554c9925b544_b1b3bd93.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
+                        <div class="source-badge">News - South China Mornin</div>
                         <time>Just Now</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/record-24-of-chinese-companies-post-losses-in-january-september" target="_blank">Record 24% of Chinese companies post losses in January-September</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334431/italys-leonardo-unveils-michelangelo-dome-defence-system-europe-eyes-russia-threat?utm_source=rss_feed" target="_blank">Italy’s Leonardo unveils ‘Michelangelo Dome’ air defence system</a></h2>
+                    <p class="ai-summary">Italy’s defence and aerospace group Leonardo on Thursday presented plans for a new multilayered air defence system, as European countries step up military capabilities to bolster defences against Russ...</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/economy/record-24-of-chinese-companies-post-losses-in-january-september" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/world/europe/article/3334431/italys-leonardo-unveils-michelangelo-dome-defence-system-europe-eyes-russia-threat?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25845508/236834_Ray_Ban_Meta_Smart_Glasses_AKrales_0818.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">The Verge</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/fires/hong-kong-apartment-fire-death-toll-rises-to-83-police-allege-negligence" target="_blank">Hong Kong apartment fire death toll rises to 83, police allege negligence</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank">The Ray-Ban Meta smart glasses are at their best-ever price for Black Friday</a></h2>
+                    <p class="ai-summary">Meta may have just released the Ray-Ban Meta (Gen 2) at the end of October, but they’re not significantly different from the last-gen model introduced in 2021. The overall experience is very similar, ...</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/economy/fires/hong-kong-apartment-fire-death-toll-rises-to-83-police-allege-negligence" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/electronics/japan-s-daikin-aims-to-triple-north-american-sales-of-data-center-cooling-gear" target="_blank">Japan's Daikin aims to triple North American sales of data center cooling gear</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/former-peru-president-pedro-castillo-sentenced-to-11-5-years-in-prison?traffic_source=rss" target="_blank">Former Peru President Pedro Castillo sentenced to 11.5 years in prison</a></h2>
+                    <p class="ai-summary">The decision follows Castillo's failed 2022 bid to dissolve Congress and avoid a third impeachment attempt.</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/electronics/japan-s-daikin-aims-to-triple-north-american-sales-of-data-center-cooling-gear" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/27/former-peru-president-pedro-castillo-sentenced-to-11-5-years-in-prison?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/retail/muji-accelerates-localization-push-with-thailand-vietnam-flagship-stores" target="_blank">Muji accelerates 'localization' push with Thailand, Vietnam flagship stores</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/economy/2025/11/27/canada-rolls-back-climate-rules-to-boost-investments?traffic_source=rss" target="_blank">Canada rolls back climate rules to boost investments</a></h2>
+                    <p class="ai-summary">In its deal with Alberta, Canada will scrap emissions cap on the oil and gas sector, among other moves.</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/retail/muji-accelerates-localization-push-with-thailand-vietnam-flagship-stores" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/economy/2025/11/27/canada-rolls-back-climate-rules-to-boost-investments?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/technology/intel-stands-by-ex-tsmc-executive-suspected-of-leaking-trade-secrets" target="_blank">Intel stands by ex-TSMC executive suspected of leaking trade secrets</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/video-shows-israeli-soldiers-shooting-surrendering-palestinians-in-jenin?traffic_source=rss" target="_blank">Video shows Israeli soldiers shooting surrendering Palestinians in Jenin</a></h2>
+                    <p class="ai-summary">Israeli soldiers have been filmed shooting two Palestinians who were seen on their knees with their hands in the air.</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/technology/intel-stands-by-ex-tsmc-executive-suspected-of-leaking-trade-secrets" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/video-shows-israeli-soldiers-shooting-surrendering-palestinians-in-jenin?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>2h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/techasia/the-man-who-changed-foxconn-and-graphite-ambitions-in-the-us" target="_blank">The man who changed Foxconn and graphite ambitions in the US</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/more-than-40-killed-as-heavy-rains-trigger-floods-in-sri-lanka?traffic_source=rss" target="_blank">More than 40 people killed as heavy rains trigger floods in Sri Lanka</a></h2>
+                    <p class="ai-summary">Traffic and trains disrupted as Sri Lanka battles severe weather and rising floodwaters across multiple regions.</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/techasia/the-man-who-changed-foxconn-and-graphite-ambitions-in-the-us" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/27/more-than-40-killed-as-heavy-rains-trigger-floods-in-sri-lanka?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>2h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/retail/brewer-asahi-says-cyberattack-has-hit-profits-and-delayed-results" target="_blank">Brewer Asahi says cyberattack has hit profits and delayed results</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/tens-of-thousands-displaced-as-floods-sweep-across-south-asia?traffic_source=rss" target="_blank">Tens of thousands displaced as floods sweep across South Asia</a></h2>
+                    <p class="ai-summary">Heavy rains have unleashed devastating floods and landslides across South Asia.</p>
                     <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/retail/brewer-asahi-says-cyberattack-has-hit-profits-and-delayed-results" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/tens-of-thousands-displaced-as-floods-sweep-across-south-asia?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/electric-cars-in-china/china-s-li-auto-nio-flag-slower-sales-as-government-cuts-ev-incentives" target="_blank">China's Li Auto, Nio flag slower sales as government cuts EV incentives</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/spotlight/electric-cars-in-china/china-s-li-auto-nio-flag-slower-sales-as-government-cuts-ev-incentives" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/immigration/indian-woman-s-detention-at-china-airport-sparks-delhi-beijing-row" target="_blank">Indian woman's detention at China airport sparks Delhi-Beijing row</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/spotlight/immigration/indian-woman-s-detention-at-china-airport-sparks-delhi-beijing-row" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/materials/mitsubishi-materials-bets-on-recycling-copper-in-europe-to-curb-china-risk" target="_blank">Mitsubishi Materials bets on recycling copper in Europe to curb China risk</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/materials/mitsubishi-materials-bets-on-recycling-copper-in-europe-to-curb-china-risk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/companies/japanese-spring-maker-to-invest-64m-to-make-ev-motor-cores-in-india" target="_blank">Japanese spring maker to invest $64m to make EV motor cores in India</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/companies/japanese-spring-maker-to-invest-64m-to-make-ev-motor-cores-in-india" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/environment/indonesia-opens-criminal-probe-into-radioactive-contamination" target="_blank">Indonesia opens criminal probe into radioactive contamination</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/spotlight/environment/indonesia-opens-criminal-probe-into-radioactive-contamination" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/south-korea-central-bank-maintains-rates-as-won-weakens" target="_blank">South Korea central bank maintains rates as won weakens</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/economy/south-korea-central-bank-maintains-rates-as-won-weakens" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/transportation/un-aviation-agency-taps-japanese-official-as-1st-leader-from-asia2" target="_blank">UN aviation agency taps Japanese official as 1st leader from Asia</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/transportation/un-aviation-agency-taps-japanese-official-as-1st-leader-from-asia2" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/companies/toyota-extends-warranty-program-across-asia-latin-america" target="_blank">Toyota extends warranty program across Asia, Latin America</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/companies/toyota-extends-warranty-program-across-asia-latin-america" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/media-entertainment/one-piece-flagship-tokyo-store-rides-wave-of-fan-enthusiasm" target="_blank">'One Piece' flagship Tokyo store rides wave of fan enthusiasm</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/business/media-entertainment/one-piece-flagship-tokyo-store-rides-wave-of-fan-enthusiasm" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nikkei Asia</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/japan-weighs-taxing-low-value-imports-through-temu-shein" target="_blank">Japan weighs taxing low-value imports through Temu, Shein</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://asia.nikkei.com/economy/japan-weighs-taxing-low-value-imports-through-temu-shein" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank">This Thanksgiving’s real drama may be Michael Burry versus Nvidia</a></h2>
-                    <p class="ai-summary">Is Burry the canary in the coal mine, warning of a collapse that's inevitable? Or could his fame, his track record, his now unrestricted voice, and a fast-growing audience trigger the very implosion he's predicting?</p>
+                    <p class="ai-summary">Is Burry the canary in the coal mine, warning of a collapse that's inevitable? Or could his fame, his track record, his now unrestricted voice, and a fast-growing audience trigger the very implosion h...</p>
                     <div class="card-footer">
                         <a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/8A0A1420.jpeg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
+                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are create...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>1h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank">Do you want an age limit for social media?</a></h2>
                     <p class="ai-summary">Today's social media question
@@ -661,70 +421,118 @@
 		
 		
 		
-		There has been a lot of talk about the age limit for social media recently, and yesterday the EU Parliament stated that it advocates an age limit of 13 for the use of social...<span class="lang-note">(Translated from Swedish)</span></p>
+		There has been a lot of talk about the age limit for social media recently and yesterday the EU Parliament stated that it advocates an age limit of 13 for...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>1h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>3h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
-                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are created equal, and some sa...</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/thanksgiving-a-story-of-celebration-and-pain-in-maps?traffic_source=rss" target="_blank">Thanksgiving: A story of celebration and pain, in maps</a></h2>
+                    <p class="ai-summary">It's a day to give thanks. But for millions of Indigenous Americans, it also serves as a reminder of loss.</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/27/thanksgiving-a-story-of-celebration-and-pain-in-maps?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-43797300" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>1h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>3h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/my-sons-will-each-inherit-500k-laundromats-from-their-grandparents-how-do-we-keep-their-spouses-out-of-it-6dd520d2?mod=mw_rss_topstories" target="_blank">My sons will each inherit $500K laundromats from their grandparents. How do we keep their spouses out of it?</a></h2>
-                    <p class="ai-summary">“The businesses each have two employees who manage the day-to-day operations.”</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/venezuela-suspends-flight-rights-for-six-foreign-airlines-amid-us-tensions?traffic_source=rss" target="_blank">Venezuela suspends flight rights for six foreign airlines amid US tensions</a></h2>
+                    <p class="ai-summary">Airlines including Iberia and TAP had paused flights to Venezuela after warnings about 'heightened military activity'.</p>
                     <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/my-sons-will-each-inherit-500k-laundromats-from-their-grandparents-how-do-we-keep-their-spouses-out-of-it-6dd520d2?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/27/venezuela-suspends-flight-rights-for-six-foreign-airlines-amid-us-tensions?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/sports/2025/11/27/portugal-beat-austria-to-live-fifa-u-17-world-cup-in-qatar?traffic_source=rss" target="_blank">Portugal beat Austria to lift FIFA U-17 World Cup in Qatar</a></h2>
+                    <p class="ai-summary">Reigning European U-17 champions Portugal beat Austria 1-0 to lift the FIFA U-17 World Cup for the first time.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/sports/2025/11/27/portugal-beat-austria-to-live-fifa-u-17-world-cup-in-qatar?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/israeli-troops-kill-two-palestinians-in-jenin-as-they-try-to-surrender?traffic_source=rss" target="_blank">Israeli troops kill two Palestinians in Jenin as they try to surrender</a></h2>
+                    <p class="ai-summary">Observers condemn Israeli army's killing of two Palestinian men in northern West Bank as 'shocking crime'.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/israeli-troops-kill-two-palestinians-in-jenin-as-they-try-to-surrender?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/8e002bbc-1544-45bc-aaca-8d8999b5a4b6_8baad676.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3334429/hk-finance-chief-seeks-attract-italian-company-listings-hong-kong-stock-exchange?utm_source=rss_feed" target="_blank">HK finance chief seeks to attract Italian company listings on stock exchange</a></h2>
+                    <p class="ai-summary">Hong Kong’s finance chief courted Italian companies on Thursday to go public on the city’s stock exchange, which would allow them to tap into mainland Chinese liquidity and solidify their presence in ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3334429/hk-finance-chief-seeks-attract-italian-company-listings-hong-kong-stock-exchange?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank">Apple's Christmas commercial A Critter Carol is here</a></h2>
                     <p class="ai-summary">Filmed with iPhone 17 Pro
@@ -734,26 +542,23 @@
 		
 		
 		
-		Apple has released its annual Christmas commercial and this year's entry is called A Critter Carol and takes place in a snowy forest where a bunch of animals find a lost iPhone 17 Pro. The animals ...<span class="lang-note">(Translated from Swedish)</span></p>
+		Apple has released its annual Christmas commercial and this year's entry is called A Critter Carol and takes place in a snowy forest where a group of animals find a lost iP...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank">A trip through Andermatt with a Ferrari F40</a></h2>
                     <p class="ai-summary">Not a bad day
@@ -763,48 +568,100 @@
 		
 		
 		
-		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at what it might look like. Extra great if you have money, a Ferrari F40 and access to parking...<span class="lang-note">(Translated from Swedish)</span></p>
+		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at what it might look like. Extra lovely if you have money, a Ferrari F40 and ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-93115913" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/798d2f78-3334-4fd8-b1a2-d0c2cbff01d3_f11e18d4.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>2h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/my-college-age-kids-inherited-300k-from-a-401-k-what-should-they-do-with-this-money-46302656?mod=mw_rss_topstories" target="_blank">My college-age kids inherited $300K from a 401(k). What should they do with this money?</a></h2>
-                    <p class="ai-summary">“This money is likely to be saved for the purchase of homes in 10 years or so.”</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334428/death-toll-hong-kong-fire-rises-83-grief-stricken-city-rallies-help-victims?utm_source=rss_feed" target="_blank">Death toll in Hong Kong fire rises to 83 as city rallies to help victims</a></h2>
+                    <p class="ai-summary">The death toll in Hong Kong’s worst fire in seven decades climbed to 83 on Thursday as many remained missing and a grief-stricken city rallied as one with authorities, private companies, charities and...</p>
                     <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/my-college-age-kids-inherited-300k-from-a-401-k-what-should-they-do-with-this-money-46302656?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334428/death-toll-hong-kong-fire-rises-83-grief-stricken-city-rallies-help-victims?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/5cbc4ec2-3e92-4e6b-8187-03d29715e080_93cd5e7c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/diplomacy/article/3334427/eus-von-der-leyen-will-not-go-china-french-president-macron?utm_source=rss_feed" target="_blank">EU’s von der Leyen will not go to China with French President Macron</a></h2>
+                    <p class="ai-summary">European Commission President Ursula von der Leyen will not join French President Emmanuel Macron on his state visit to China next week, the Post has learned, in a break from recent tradition.
+Macron ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/china/diplomacy/article/3334427/eus-von-der-leyen-will-not-go-china-french-president-macron?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/inside-story/2025/11/27/what-was-behind-the-coup-in-guinea-bissau-days-after-the-election?traffic_source=rss" target="_blank">What was behind the coup in Guinea-Bissau days after the election?</a></h2>
+                    <p class="ai-summary">Military takeover follows others in the region in recent years.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/video/inside-story/2025/11/27/what-was-behind-the-coup-in-guinea-bissau-days-after-the-election?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/gallery/2025/11/27/in-the-us-the-macys-thanksgiving-day-parade-marches-on-despite-high-winds?traffic_source=rss" target="_blank">In the US, the Macy’s Thanksgiving Day Parade marches on despite wind gusts</a></h2>
+                    <p class="ai-summary">The 99th edition of the holiday tradition included new balloons representing characters like Buzz Lightyear and Pac-Man.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/gallery/2025/11/27/in-the-us-the-macys-thanksgiving-day-parade-marches-on-despite-high-winds?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank">The next Meta headset may get external puck</a></h2>
                     <p class="ai-summary">Also stated to scrap the Quest name
@@ -813,26 +670,23 @@
 		
 		
 		
-		According to VR expert Nima Zeighami, Meta is planning a new strategy for its upcoming headset. Instead of releasing a direct sequel to Quest 3, the company is rumored to abandon Q…<span class="lang-note">(Translated from Swedish)</span></p>
+		According to VR expert Nima Zeighami, Meta is planning a new strategy for its upcoming headset. Instead of releasing a direct sequel to Quest 3, rumored…<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>3h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank">Best iPad apps for unleashing and exploring your creativity</a></h2>
                     <p class="ai-summary">We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.</p>
@@ -842,19 +696,16 @@
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank">Humanoid robot walked over 10 miles</a></h2>
                     <p class="ai-summary">AgiBot A2 Ultra has set a new world record in robot walking
@@ -865,48 +716,23 @@
 		
 		
 		
-		Chinese robotics company AgiBot's humanoid robot model A2 Ultra went on a really long walk earlier this month where the robot ...<span class="lang-note">(Translated from Swedish)</span></p>
+		Chinese robotics company AgiBot's humanoid robot model A2 Ultra went on a really long walk earlier this…<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/Gaia_BH2_decaps_dr2_20251127_171515.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/the-star-that-shouldnt-exist" target="_blank">The Star That Shouldn't Exist</a></h2>
-                    <p class="ai-summary">A red giant orbiting a dormant black hole is spinning impossibly fast and contains chemistry that makes it look ancient when it's actually relatively young. By listening to faint vibrations rippling through the star, ast...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/the-star-that-shouldnt-exist" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>3h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistis simpler, safer, and smarter</a></h2>
                     <p class="ai-summary">We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!</p>
@@ -916,19 +742,73 @@
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/counting-the-cost/2025/11/27/was-south-africas-g20-success-real-change-or-a-symbolic-win?traffic_source=rss" target="_blank">Was South Africa’s G20 success real change or a symbolic win?</a></h2>
+                    <p class="ai-summary">G20 summit in Johannesburg was seen as a diplomatic success for South Africa and a renewed commitment to multilaterism.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/video/counting-the-cost/2025/11/27/was-south-africas-g20-success-real-change-or-a-symbolic-win?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
+                    <p class="ai-summary">If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK095_MICROSOFT_2_CVirginia_B.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
+                    <p class="ai-summary">Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these s...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <time>5h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teases updated Astra</a></h2>
                     <p class="ai-summary">Presented next year
@@ -937,180 +817,99 @@
 		
 		
 		
-		In the next year, Opel will release an updated version of the model Astra. It gets, among other things, a new face and we get a first glimpse of this in these teaser images together...<span class="lang-note">(Translated from Swedish)</span></p>
+		In the next year, Opel will release an updated version of the model Astra. Among other things, it gets a new face and we get a first glimpse of this in these ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/32a77e57-e240-43cf-b0fc-b9a9858a6ca9_9b69654f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42063-plex-pa-krigsstigen-mot-gratisstrommare" target="_blank">Plex on the warpath against free streamers</a></h2>
-                    <p class="ai-summary">Before remote access subscription requirement - rolling out on Roku first<span class="lang-note">(Translated from Swedish)</span></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/united-states-canada/article/3334426/national-guard-shooting-afghan-suspect-drove-across-us-carry-out-attack-officials-say?utm_source=rss_feed" target="_blank">Afghan suspect drove across US to attack National Guard members, officials say</a></h2>
+                    <p class="ai-summary">An Afghan national who worked for the CIA in his native country and arrived in the US in 2021 drove across the country from Washington state to shoot two West Virginia National Guard members just bloc...</p>
                     <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42063-plex-pa-krigsstigen-mot-gratisstrommare" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/world/united-states-canada/article/3334426/national-guard-shooting-afghan-suspect-drove-across-us-carry-out-attack-officials-say?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/a88c3da3-9f6c-4569-a5d6-e9ccc8faf44e_7db02c1e.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
-                    <p class="ai-summary">If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale at Amazon, you can ...</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334424/want-donate-cash-or-kind-how-help-hong-kongs-embattled-fire-victims?utm_source=rss_feed" target="_blank">Want to donate in cash or kind? How to help Hong Kong’s embattled fire victims</a></h2>
+                    <p class="ai-summary">In the wake of the fire at Wang Fuk Court that devastated seven blocks of the estate in Tai Po on Wednesday, the Hong Kong community has swiftly rallied to support displaced families, with organisatio...</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334424/want-donate-cash-or-kind-how-help-hong-kongs-embattled-fire-victims?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
-                    <p class="ai-summary">Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these systems work and conv...</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/pope-leo-warns-future-of-humanity-is-at-stake-during-turkiye-visit?traffic_source=rss" target="_blank">Pope Leo warns ‘future of humanity is at stake’ during Turkiye visit</a></h2>
+                    <p class="ai-summary">Pope Leo XIV hailed Turkiye as a bridge between cultures and religions, during his first visit since becoming pontiff.</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/pope-leo-warns-future-of-humanity-is-at-stake-during-turkiye-visit?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/1256px-Fermi_Gamma-ray_Space_Telescope_spacecraft_model_20251127_162510.png" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/after-a-century-of-searching-we-may-have-finally-seen-dark-matter" target="_blank">After a Century of Searching, We May Have Finally Seen Dark Matter</a></h2>
-                    <p class="ai-summary">Ninety five years after Swiss astronomer Fritz Zwicky inferred its existence from galaxies moving impossibly fast, researchers may have detected the first direct evidence of dark matter, the invisible scaffolding that ho...</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/tunisia-frees-sonia-dahmani-prominent-lawyer-critic-of-president-saied?traffic_source=rss" target="_blank">Tunisia frees prominent lawyer and critic of President Saied</a></h2>
+                    <p class="ai-summary">Sonia Dahmani, 60, was arrested in 2024 after questioning government policy on African refugees and migrants.</p>
                     <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/after-a-century-of-searching-we-may-have-finally-seen-dark-matter" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/27/tunisia-frees-sonia-dahmani-prominent-lawyer-critic-of-president-saied?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-88436405" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/is-it-a-black-friday-scam-ebay-said-id-set-up-an-account-there-was-only-one-problem-i-hadnt-b4b8c169?mod=mw_rss_topstories" target="_blank">Beware of this Black Friday scam</a></h2>
-                    <p class="ai-summary">“I received an email from eBay, or at least it looked like it was from an official eBay address.”</p>
-                    <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/is-it-a-black-friday-scam-ebay-said-id-set-up-an-account-there-was-only-one-problem-i-hadnt-b4b8c169?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-75835136" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/i-have-no-paperwork-my-father-gave-my-mothers-jewelry-before-he-died-will-i-owe-taxes-if-i-sell-768ee7dc?mod=mw_rss_topstories" target="_blank">‘I have no paperwork’: My father gave me my mother’s jewelry before he died. Will I owe taxes if I sell?</a></h2>
-                    <p class="ai-summary">“I am selling the jewelry and trying to understand how I determine the cost basis.”</p>
-                    <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/i-have-no-paperwork-my-father-gave-my-mothers-jewelry-before-he-died-will-i-owe-taxes-if-i-sell-768ee7dc?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-67345628" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/im-burned-out-by-the-drama-is-it-wrong-to-skip-my-thanksgiving-family-dinner-last-year-was-fraught-0731f498?mod=mw_rss_topstories" target="_blank">‘I’m burned out by the drama’: Is it wrong to skip Thanksgiving dinner? Last year was fraught.</a></h2>
-                    <p class="ai-summary">“I’m invited because, at 55, I am the only single one in the family.”</p>
-                    <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/im-burned-out-by-the-drama-is-it-wrong-to-skip-my-thanksgiving-family-dinner-last-year-was-fraught-0731f498?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <time>5h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank">Plex starts charging for remote streaming</a></h2>
                     <p class="ai-summary">Roku app first
@@ -1119,26 +918,23 @@
 		
 		
 		
-		Plex has now started rolling out the change that makes the feature that allows users to stream content from its server outside the home network a paid feature. In the past this has been...<span class="lang-note">(Translated from Swedish)</span></p>
+		Plex has now started rolling out the change that makes the feature that allows users to stream content from its server outside the home network a paid feature. Early...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>4h Ago</time>
+                        <time>5h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank">Expedition Vildmark is a new reality show with celebrities</a></h2>
                     <p class="ai-summary">Coming on Kanal 5 and HBO Max next year
@@ -1147,50 +943,81 @@
 		
 		
 		
-		Above, you can see the gang that will participate in the new reality venture Expedition Vildmark, which will premiere in the spring of 2026 on HBO Max and Kanal 5. 
-
-In Ex...<span class="lang-note">(Translated from Swedish)</span></p>
+		Above you can see the gang that will take part in the new reality venture Expedition Vildmark, which will premiere in the spring of 2026 on HBO Max...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">The Verge</div>
-                        <time>4h Ago</time>
+                        <time>5h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
-                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter Carol featuring a f...</p>
+                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter...</p>
                     <div class="card-footer">
                         <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/us-teen-mohammed-ibrahim-released-from-israeli-prison-after-nine-months?traffic_source=rss" target="_blank">US teen Mohammed Ibrahim released from Israeli prison after nine months</a></h2>
+                    <p class="ai-summary">Advocates say the 16-year-old's health had been in decline since his arrest in February for allegedly throwing rocks.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/us-teen-mohammed-ibrahim-released-from-israeli-prison-after-nine-months?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/bc41609e-dbeb-4d2a-86fb-6f0cb6d13b28_1f23beaf.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>6h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334420/2-break-out-french-jail-old-fashioned-bed-sheets-escape?utm_source=rss_feed" target="_blank">2 break out of French jail in ‘old-fashioned’ bedsheets escape</a></h2>
+                    <p class="ai-summary">Two prisoners escaped from a French jail using bedsheets after sawing through the bars of their cell, a prosecutor said on Thursday.
+France has some of the worst prison overcrowding in Europe, and sta...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/europe/article/3334420/2-break-out-french-jail-old-fashioned-bed-sheets-escape?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>4h Ago</time>
+                        <time>6h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank">The analogue supercar Nilu visits Jay Leno</a></h2>
                     <p class="ai-summary">Sasha Selipanov's baby
@@ -1200,74 +1027,130 @@ In Ex...<span class="lang-note">(Translated from Swedish)</span></p>
 		
 		
 		
-		Last fall, former Koenigsegg, Bugatti and Lamborghini designer Sasha Selipanovs presented his very own Nilu27 supercar. A futuristic beast in appearance but...<span class="lang-note">(Translated from Swedish)</span></p>
+		Last fall, former Koenigsegg, Bugatti and Lamborghini designer Sasha Selipanovs presented his very own Nilu27 supercar. A futuristic beast out…<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">The Verge</div>
-                        <time>4h Ago</time>
+                        <time>6h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
-                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst.  Speaking at a press...</p>
+                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst. ...</p>
                     <div class="card-footer">
                         <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-        </div>
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>6h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank">Gemini seems to be perfect for fooling children</a></h2>
+                    <p class="ai-summary">Google makes commercial with Nano Banana
 
-        <div class="pagination">
-            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page6.html" class="page-btn ">6</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
-        </div>
+			
+			
+		
+		
+		
+		Google's Nano Banana, an AI model for generating images and videos, has been widely praised since its release, and in a new commercial f...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/vzF3Gv7TFUY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>6h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank">The 2025 Asian General Aviation Exhibition opens today.</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            </div>
 
-        <footer class="site-footer">
-            <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">+ Suggest Source</a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate via PayPal</a>
+            <div class="pagination">
+                <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
             </div>
-            <div class="disclaimer-box">
-                <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>SPECULA is a non-profit project. Aggregates news via RSS under Fair Use. No ads. No revenue.</p>
-                <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
-            </div>
-        </footer>
+
+            <footer class="site-footer">
+                <div class="footer-buttons">
+                    <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                    <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
+                </div>
+                <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                    SPECULA is a non-profit news aggregator.
+                </div>
+            </footer>
+        </div>
     </div>
 
     <script>
-        // THEME LOGIC
+        // FILTER LOGIC
+        function filterNews(category) {
+            const cards = document.querySelectorAll('.news-card');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            // Update buttons
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // THEME & MODAL LOGIC
         const toggleBtn = document.getElementById('themeBtn');
-        const themeText = document.getElementById('themeText');
-        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'light') { enableLightMode(); }
-        toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
-        function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
-        function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
+        if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+        
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+            toggleBtn.innerText = body.classList.contains('light-mode') ? '☀ LIGHT MODE' : '☾ DARK MODE';
+        });
 
-        // MODAL LOGIC
         const modal = document.getElementById('changelogModal');
-        const btn = document.getElementById('versionBtn');
-        const close = document.getElementById('closeModal');
-
-        btn.addEventListener('click', () => { modal.classList.add('open'); });
-        close.addEventListener('click', () => { modal.classList.remove('open'); });
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
+        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>
 </html>
