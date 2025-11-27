@@ -29,10 +29,10 @@ RSS_FEEDS = [
     "https://singularityhub.com/feed/"
 ]
 
-# Källor som behöver översättas (Lägg till delar av URL:en här)
+# Källor som behöver översättas
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com"]
 
-# Fallback-bilder
+# Fallback-bilder (Cyberpunk/Tech/Space)
 FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
     "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
@@ -42,20 +42,43 @@ FALLBACK_IMAGES = [
 ]
 
 def get_image_from_entry(entry):
+    """Smartare bildsökning som undviker 1x1 pixlar och trackers"""
     try:
+        # 1. Kolla RSS standard-fält
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
             for link in entry.links:
                 if link.type.startswith('image/'): return link.href
+        
+        # 2. Skanna HTML-innehållet
         content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
         if content:
             soup = BeautifulSoup(content, 'html.parser')
-            img = soup.find('img')
-            if img and img.get('src'): return img['src']
+            images = soup.find_all('img')
+            
+            for img in images:
+                src = img.get('src')
+                if not src: continue
+                
+                # Filter: Hoppa över uppenbara trackers
+                if 'pixel' in src or 'tracker' in src or 'feedburner' in src or 'ad' in src:
+                    continue
+
+                # Filter: Hoppa över bilder som är definierade som små (ofta ikoner)
+                width = img.get('width', 100)
+                height = img.get('height', 100)
+                # Om width/height är strängar "1", hoppa över
+                try:
+                    if int(width) < 50 or int(height) < 50:
+                        continue
+                except:
+                    pass # Om det inte går att läsa storleken, chansa på att den är ok
+
+                return src # Returnera första bra bild vi hittar
+
     except: pass
-    # Returnera tom sträng om ingen hittas, så hanterar HTML onerror detta
-    return "" 
+    return "" # Returnera tomt så fallback tar över
 
 def clean_summary(summary):
     if not summary: return ""
@@ -68,10 +91,11 @@ def translate_text(text, source_lang='sv'):
     try:
         return GoogleTranslator(source=source_lang, target='en').translate(text)
     except:
-        return text # Om det misslyckas, behåll originalet
+        return text 
 
 def generate_pagination_html(current_page, total_pages):
     html = ""
+    # Smartare paginering som visar ... om det är många sidor
     if current_page > 1:
         prev_link = "index.html" if current_page == 2 else f"page{current_page - 1}.html"
         html += f'<a href="{prev_link}" class="page-btn">&larr; PREV</a>'
@@ -98,7 +122,6 @@ def generate_pages():
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             print(f"Loaded {len(feed.entries)} from {source_name}")
             
-            # Kolla om källan är svensk
             is_swedish = any(s in feed_url for s in SWEDISH_SOURCES)
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
@@ -108,7 +131,6 @@ def generate_pages():
                 summary = clean_summary(entry.summary if 'summary' in entry else "")
                 note_html = ""
 
-                # ÖVERSÄTTNING
                 if is_swedish:
                     try:
                         title = translate_text(title)
@@ -157,10 +179,13 @@ def generate_pages():
                 else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
             except: time_str = "Recent"
             
-            # Välj en slumpmässig fallback-bild för Error-hantering
+            # SLUMPA EN FALLBACK-BILD
             fallback = random.choice(FALLBACK_IMAGES)
-            # Om bilden är tom från början, använd fallback direkt
-            img_src = art['image'] if art['image'] else fallback
+            
+            # Om vi inte hittade någon bild alls, använd fallback direkt
+            img_src = art['image']
+            if not img_src:
+                img_src = fallback
 
             cards_html += f"""
             <article class="news-card">
