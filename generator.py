@@ -235,5 +235,11 @@ def generate_pages():
             
         print(f"Generated {filename}")
 
+    # --- GOOGLE VERIFICATION FILE ---
+    # Detta skapar automatiskt google-filen varje gång scriptet körs
+    with open("google2e6f5e9a179ec462.html", "w", encoding="utf-8") as f:
+        f.write("google-site-verification: google2e6f5e9a179ec462.html")
+    print("Generated google2e6f5e9a179ec462.html")
+
 if __name__ == "__main__":
     generate_pages()
