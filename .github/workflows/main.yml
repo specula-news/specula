@@ -1,21 +1,20 @@
-name: Update News
+name: Update News Feed
 
 on:
   schedule:
-    - cron: '0 */4 * * *' # Var 4:e timme
-  workflow_dispatch: # Knapp för att köra manuellt
+    - cron: '0 */2 * * *'  # Runs every 2 hours
+  workflow_dispatch:       # Allows you to click the "Run workflow" button manually
 
 permissions:
-  contents: write
+  contents: write          # REQUIRED: Allows the robot to save files to your repo
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout content
+    - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        ref: main # Tvingar den att använda main-branchen
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -24,20 +23,26 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install feedparser beautifulsoup4 deep-translator
 
-    - name: Generate News HTML
+    - name: Run generator script
       run: python generator.py
 
-    - name: Check if file exists
+    - name: Commit and push changes
       run: |
-        ls -l index.html
-
-    - name: Commit and Push changes
-      run: |
-        git config --global user.name 'SpeculaBot'
-        git config --global user.email 'bot@specula.ai'
-        # HÄR ÄR ÄNDRINGEN - Vi lägger till alla html-filer (index, page2, page3...)
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # 1. Add all the news pages
         git add *.html
-        # Spara endast om det finns ändringar
-        git diff --staged --quiet || (git commit -m "Auto-update news" && git push origin main)
+        
+        # 2. Add the Sitemap (This fixes your issue!)
+        git add sitemap.xml
+        
+        # 3. Add the Google Verification file
+        git add google*.html
+        
+        # 4. Commit and Push
+        git commit -m "Update news, sitemap, and verification" || echo "No changes to commit"
+        git push
