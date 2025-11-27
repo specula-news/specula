@@ -36,7 +36,7 @@
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
-        /* CLICKABLE LOGO */
+        .logo-wrapper { display: flex; flex-direction: column; gap: 5px; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { 
             font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
@@ -48,6 +48,13 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
         
+        /* VERSION BUTTON */
+        .version-btn {
+            font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; align-self: flex-start; margin-left: 60px;
+            font-family: 'Space Grotesk', monospace; opacity: 0.6; transition: 0.2s; border-bottom: 1px dotted transparent;
+        }
+        .version-btn:hover { color: var(--accent); opacity: 1; border-color: var(--accent); }
+
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
@@ -71,17 +78,40 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION */
+        /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        /* FLOATING NAV */
+        
         .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
         @media (max-width: 1350px) { .floating-nav { display: none; } }
+
+        /* MODAL (CHANGELOG) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+        .modal-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            width: 90%; max-width: 500px; padding: 30px; border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px);
+            transition: transform 0.3s ease; position: relative;
+        }
+        .modal-overlay.open .modal-card { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .modal-title { font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; }
+        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
+        .close-modal:hover { color: var(--accent); }
+        .changelog-list { list-style: none; padding: 0; }
+        .changelog-list li { margin-bottom: 15px; padding-left: 20px; position: relative; color: var(--text-secondary); font-size: 0.9rem; }
+        .changelog-list li::before { content: "•"; color: var(--accent); position: absolute; left: 0; font-weight: bold; }
+        .changelog-date { display: block; font-size: 0.75rem; opacity: 0.5; margin-bottom: 4px; }
 
         /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
@@ -98,6 +128,7 @@
             .news-grid { grid-template-columns: 1fr; }
             header { flex-direction: column; gap: 20px; align-items: flex-start; }
             .theme-switch { width: 100%; justify-content: center; }
+            .version-btn { margin-left: 60px; margin-top: -10px; }
         }
     </style>
 </head>
@@ -105,14 +136,42 @@
     <a href="page4.html" class="floating-nav nav-prev">&larr;</a>
     <a href="page6.html" class="floating-nav nav-next">&rarr;</a>
 
+    <!-- CHANGELOG MODAL -->
+    <div class="modal-overlay" id="changelogModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">System Changelog</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <ul class="changelog-list">
+                <li>
+                    <span class="changelog-date">Current</span>
+                    <strong>Version 6.2.2</strong><br>
+                    Improved image filtering for Nikkei & Asian sources. Enhanced fallback image logic.
+                </li>
+                <li>
+                    <span class="changelog-date">Previous</span>
+                    <strong>Version 6.2.1</strong><br>
+                    Added floating navigation arrows and auto-translation for Swedish sources.
+                </li>
+                <li>
+                    <span class="changelog-date">Initial</span>
+                    <strong>Version 6.0</strong><br>
+                    Core system initialization. Python generator active.
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="container">
         <header>
-            <div class="logo">
+            <div class="logo-wrapper">
                 <a href="index.html" class="logo-link">
                     <img src="icon.png" class="logo-icon" alt="Specula">
                     SPECULA <span>.</span>
+                    <div class="logo-tag">LIVE FEED</div>
                 </a>
-                <div class="logo-tag">LIVE FEED</div>
+                <div class="version-btn" id="versionBtn">Version 6.2.2</div>
             </div>
             <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
         </header>
@@ -121,11 +180,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -143,7 +202,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -165,11 +224,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -187,7 +246,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -209,11 +268,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -231,11 +290,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -253,11 +312,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/brown-mosquito-detail.jpeg?auto=webp" 
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -280,7 +339,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -302,7 +361,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -320,11 +379,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -368,7 +427,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -390,7 +449,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -408,11 +467,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -434,7 +493,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -496,11 +555,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -518,7 +577,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -544,7 +603,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -562,11 +621,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -588,7 +647,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -610,7 +669,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -632,7 +691,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -650,7 +709,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -676,7 +735,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -694,11 +753,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -716,11 +775,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -738,11 +797,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -760,11 +819,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -786,7 +845,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -826,11 +885,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -848,7 +907,7 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -870,11 +929,11 @@ The post Super Precise 3D Printer Uses a Mosquito’s Needle-Like Mouth as a Noz
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/star-trails-desert.jpeg?auto=webp" 
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -893,11 +952,11 @@ The post This Week’s Awesome Tech ...</p>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -919,7 +978,7 @@ The post This Week’s Awesome Tech ...</p>
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -941,7 +1000,7 @@ The post This Week’s Awesome Tech ...</p>
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -985,7 +1044,7 @@ The post This Week’s Awesome Tech ...</p>
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1003,7 +1062,7 @@ The post This Week’s Awesome Tech ...</p>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
@@ -1025,11 +1084,11 @@ The post This Week’s Awesome Tech ...</p>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1051,7 +1110,7 @@ The post This Week’s Awesome Tech ...</p>
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1069,11 +1128,11 @@ The post This Week’s Awesome Tech ...</p>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/bubble-floats-in-air.jpeg?auto=webp" 
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1096,7 +1155,7 @@ The post Is the AI Bubble About to Burst? What to Watch for as the Markets Wobbl
                          class="card-image" 
                          loading="lazy" 
                          alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1125,13 +1184,14 @@ The post Is the AI Bubble About to Burst? What to Watch for as the Markets Wobbl
             </div>
             <div class="disclaimer-box">
                 <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only...</p>
+                <p>SPECULA is a non-profit project. Aggregates news via RSS under Fair Use. No ads. No revenue.</p>
                 <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
             </div>
         </footer>
     </div>
 
     <script>
+        // THEME LOGIC
         const toggleBtn = document.getElementById('themeBtn');
         const themeText = document.getElementById('themeText');
         const themeIcon = document.getElementById('themeIcon');
@@ -1141,6 +1201,15 @@ The post Is the AI Bubble About to Burst? What to Watch for as the Markets Wobbl
         toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
         function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
         function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
+
+        // MODAL LOGIC
+        const modal = document.getElementById('changelogModal');
+        const btn = document.getElementById('versionBtn');
+        const close = document.getElementById('closeModal');
+
+        btn.addEventListener('click', () => { modal.classList.add('open'); });
+        close.addEventListener('click', () => { modal.classList.remove('open'); });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
     </script>
 </body>
 </html>
