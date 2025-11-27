@@ -2,8 +2,8 @@ name: Update News
 
 on:
   schedule:
-    - cron: '0 */4 * * *' # Körs var 4:e timme
-  workflow_dispatch: # Tillåter att du klickar på "Run" manuellt
+    - cron: '0 */4 * * *' # Var 4:e timme
+  workflow_dispatch: # Knapp för att köra manuellt
 
 permissions:
   contents: write
@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout content
       uses: actions/checkout@v3
+      with:
+        ref: main # Tvingar den att använda main-branchen
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -27,9 +29,14 @@ jobs:
     - name: Generate News HTML
       run: python generator.py
 
+    - name: Check if file exists
+      run: |
+        ls -l index.html
+
     - name: Commit and Push changes
       run: |
         git config --global user.name 'SpeculaBot'
         git config --global user.email 'bot@specula.ai'
         git add index.html
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update news" && git push)
+        # Spara endast om det finns ändringar
+        git diff --staged --quiet || (git commit -m "Auto-update news [skip ci]" && git push origin main)
