@@ -58,6 +58,12 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
+        /* PAGINATION */
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
+        .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+        .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
+        .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
         /* FOOTER & DISCLAIMER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -88,15 +94,19 @@
             <!-- NEWS_PLACEHOLDER -->
         </div>
 
+        <!-- PAGINATION SECTION -->
+        <div class="pagination">
+            <!-- PAGINATION_PLACEHOLDER -->
+        </div>
+
         <!-- FOOTER SECTION -->
         <footer class="site-footer">
             <div class="footer-buttons">
-                <!-- Mailto link for suggestions -->
                 <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
                     + Suggest Source
                 </a>
-                <!-- PayPal Donation -->
-                <a href="https://www.paypal.com/paypalme/lolish3k@gmail.com" target="_blank" class="btn-action btn-donate">
+                <!-- Updated PayPal Link -->
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
                     ♥ Donate via PayPal
                 </a>
             </div>
