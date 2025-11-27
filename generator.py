@@ -4,88 +4,78 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import math
 import random
+from deep_translator import GoogleTranslator
 
 # --- KONFIGURATION ---
 ARTICLES_PER_PAGE = 45   
 MAX_ARTICLES_PER_SOURCE = 20
 
+# Källor
 RSS_FEEDS = [
-    # --- SWEDISH TECH ---
     "https://feber.se/rss/",
     "https://www.sweclockers.com/feeds/nyheter",
-    
-    # --- GLOBAL ECONOMY & MARKETS ---
     "https://www.cnbc.com/id/19854910/device/rss/rss.html",
     "http://feeds.marketwatch.com/marketwatch/topstories/",
-    
-    # --- CHINA & ASIA TECH ---
     "https://asia.nikkei.com/rss/feed/nar",
     "https://technode.com/feed/",
-    
-    # --- HARD TECH & INVENTIONS ---
     "https://spectrum.ieee.org/feeds/feed.rss",
     "https://www.sciencedaily.com/rss/top/technology.xml",
     "https://phys.org/rss-feed/nanotech-news/",
-    
-    # --- MAJOR TECH NEWS ---
     "https://www.theverge.com/rss/index.xml",
     "https://techcrunch.com/feed/",
     "https://www.wired.com/feed/category/tech/latest/rss",
     "https://arstechnica.com/feed/",
-    
-    # --- FUTURE & SPACE ---
     "https://www.universetoday.com/feed/",
     "https://singularityhub.com/feed/"
 ]
 
+# Källor som behöver översättas (Lägg till delar av URL:en här)
+SWEDISH_SOURCES = ["feber.se", "sweclockers.com"]
+
 # Fallback-bilder
 FALLBACK_IMAGES = [
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", # Earth Space
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", # Chip/AI
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop", # Matrix Code
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", # Cyberpunk City
-    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop"  # Abstract Tech
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop", 
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", 
+    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop"
 ]
 
 def get_image_from_entry(entry):
     try:
-        if 'media_content' in entry:
-            return entry.media_content[0]['url']
-        if 'media_thumbnail' in entry:
-            return entry.media_thumbnail[0]['url']
+        if 'media_content' in entry: return entry.media_content[0]['url']
+        if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
             for link in entry.links:
-                if link.type.startswith('image/'):
-                    return link.href
-        content_to_parse = ""
-        if 'content' in entry:
-            content_to_parse = entry.content[0].value
-        elif 'summary' in entry:
-            content_to_parse = entry.summary
-        if content_to_parse:
-            soup = BeautifulSoup(content_to_parse, 'html.parser')
+                if link.type.startswith('image/'): return link.href
+        content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
+        if content:
+            soup = BeautifulSoup(content, 'html.parser')
             img = soup.find('img')
-            if img and img.get('src'):
-                return img['src']
-    except Exception:
-        pass
-    return random.choice(FALLBACK_IMAGES)
+            if img and img.get('src'): return img['src']
+    except: pass
+    # Returnera tom sträng om ingen hittas, så hanterar HTML onerror detta
+    return "" 
 
 def clean_summary(summary):
     if not summary: return ""
     soup = BeautifulSoup(summary, 'html.parser')
     text = soup.get_text()
-    text = text.replace("Continue reading", "").replace("Read more", "")
+    text = text.replace("Continue reading", "").replace("Read more", "").replace("Läs mer", "")
     return text[:220] + "..." if len(text) > 220 else text
+
+def translate_text(text, source_lang='sv'):
+    try:
+        return GoogleTranslator(source=source_lang, target='en').translate(text)
+    except:
+        return text # Om det misslyckas, behåll originalet
 
 def generate_pagination_html(current_page, total_pages):
     html = ""
-    # BOTTOM PREV
     if current_page > 1:
         prev_link = "index.html" if current_page == 2 else f"page{current_page - 1}.html"
         html += f'<a href="{prev_link}" class="page-btn">&larr; PREV</a>'
     
-    # NUMBERS
     for i in range(1, total_pages + 1):
         if i == 1 or i == total_pages or (current_page - 2 <= i <= current_page + 2):
             link = "index.html" if i == 1 else f"page{i}.html"
@@ -94,13 +84,12 @@ def generate_pagination_html(current_page, total_pages):
         elif i == current_page - 3 or i == current_page + 3:
             html += '<span style="color:var(--text-secondary); align-self:center;">...</span>'
 
-    # BOTTOM NEXT
     if current_page < total_pages:
         html += f'<a href="page{current_page + 1}.html" class="page-btn">NEXT &rarr;</a>'
     return html
 
 def generate_pages():
-    print("Fetching news from global sources...")
+    print("Fetching and translating news...")
     all_articles = []
 
     for feed_url in RSS_FEEDS:
@@ -109,12 +98,29 @@ def generate_pages():
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             print(f"Loaded {len(feed.entries)} from {source_name}")
             
+            # Kolla om källan är svensk
+            is_swedish = any(s in feed_url for s in SWEDISH_SOURCES)
+            
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
+                
+                title = entry.title
+                summary = clean_summary(entry.summary if 'summary' in entry else "")
+                note_html = ""
+
+                # ÖVERSÄTTNING
+                if is_swedish:
+                    try:
+                        title = translate_text(title)
+                        summary = translate_text(summary)
+                        note_html = '<span class="lang-note">(Translated from Swedish)</span>'
+                    except Exception as e:
+                        print(f"Translation failed: {e}")
+
                 article = {
-                    'title': entry.title,
+                    'title': title,
                     'link': entry.link,
-                    'summary': clean_summary(entry.summary if 'summary' in entry else ""),
+                    'summary': summary + note_html,
                     'image': get_image_from_entry(entry),
                     'source': source_name,
                     'published': pub_date
@@ -126,9 +132,7 @@ def generate_pages():
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
     total_articles = len(all_articles)
-    if total_articles == 0:
-        print("No articles found!")
-        return
+    if total_articles == 0: return
 
     total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
     print(f"Total Articles: {total_articles} | Total Pages: {total_pages}")
@@ -142,7 +146,6 @@ def generate_pages():
         end_idx = start_idx + ARTICLES_PER_PAGE
         page_articles = all_articles[start_idx:end_idx]
         
-        # 1. GENERATE CARDS
         cards_html = ""
         for art in page_articles:
             now = time.time()
@@ -154,10 +157,19 @@ def generate_pages():
                 else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
             except: time_str = "Recent"
             
+            # Välj en slumpmässig fallback-bild för Error-hantering
+            fallback = random.choice(FALLBACK_IMAGES)
+            # Om bilden är tom från början, använd fallback direkt
+            img_src = art['image'] if art['image'] else fallback
+
             cards_html += f"""
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="{art['image']}" class="card-image" loading="lazy" alt="News">
+                    <img src="{img_src}" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='{fallback}';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -174,24 +186,16 @@ def generate_pages():
             </article>
             """
 
-        # 2. GENERATE FLOATING SIDE BUTTONS
         float_prev = ""
         float_next = ""
-
-        # Logic for Previous Button
         if page_num > 1:
             prev_link = "index.html" if page_num == 2 else f"page{page_num - 1}.html"
             float_prev = f'<a href="{prev_link}" class="floating-nav nav-prev">&larr;</a>'
-        
-        # Logic for Next Button
         if page_num < total_pages:
             next_link = f"page{page_num + 1}.html"
             float_next = f'<a href="{next_link}" class="floating-nav nav-next">&rarr;</a>'
 
-        # 3. GENERATE BOTTOM PAGINATION
         pagination_html = generate_pagination_html(page_num, total_pages)
-        
-        # 4. REPLACE ALL PLACEHOLDERS
         final_html = template_content.replace("<!-- NEWS_PLACEHOLDER -->", cards_html)
         final_html = final_html.replace("<!-- PAGINATION_PLACEHOLDER -->", pagination_html)
         final_html = final_html.replace("<!-- FLOATING_PREV -->", float_prev)
