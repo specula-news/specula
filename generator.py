@@ -3,10 +3,11 @@ import time
 from datetime import datetime
 from bs4 import BeautifulSoup
 import math
+import random
 
 # --- KONFIGURATION ---
 ARTICLES_PER_PAGE = 12 
-MAX_ARTICLES_PER_SOURCE = 20  # Hämtar 20 artiklar från varje källa
+MAX_ARTICLES_PER_SOURCE = 20
 
 RSS_FEEDS = [
     # --- SWEDISH TECH ---
@@ -14,17 +15,17 @@ RSS_FEEDS = [
     "https://www.sweclockers.com/feeds/nyheter",
     
     # --- GLOBAL ECONOMY & MARKETS ---
-    "https://www.cnbc.com/id/19854910/device/rss/rss.html",   # CNBC Tech & Money
-    "http://feeds.marketwatch.com/marketwatch/topstories/",   # MarketWatch
+    "https://www.cnbc.com/id/19854910/device/rss/rss.html",
+    "http://feeds.marketwatch.com/marketwatch/topstories/",
     
     # --- CHINA & ASIA TECH ---
-    "https://asia.nikkei.com/rss/feed/nar",                   # Nikkei Asia
-    "https://technode.com/feed/",                             # TechNode
+    "https://asia.nikkei.com/rss/feed/nar",
+    "https://technode.com/feed/",
     
     # --- HARD TECH & INVENTIONS ---
-    "https://spectrum.ieee.org/feeds/feed.rss",               # IEEE Spectrum
-    "https://www.sciencedaily.com/rss/top/technology.xml",    # Science Daily
-    "https://phys.org/rss-feed/nanotech-news/",               # Nanotechnology
+    "https://spectrum.ieee.org/feeds/feed.rss",
+    "https://www.sciencedaily.com/rss/top/technology.xml",
+    "https://phys.org/rss-feed/nanotech-news/",
     
     # --- MAJOR TECH NEWS ---
     "https://www.theverge.com/rss/index.xml",
@@ -33,34 +34,61 @@ RSS_FEEDS = [
     "https://arstechnica.com/feed/",
     
     # --- FUTURE & SPACE ---
-    "https://www.universetoday.com/feed/",                    # Space & Astronomy
-    "https://singularityhub.com/feed/"                        # AI & Singularity
+    "https://www.universetoday.com/feed/",
+    "https://singularityhub.com/feed/"
 ]
 
-DEFAULT_IMAGE = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+# En lista med snygga fallback-bilder (Cyberpunk/Tech/Space)
+FALLBACK_IMAGES = [
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", # Earth Space
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", # Chip/AI
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop", # Matrix Code
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", # Cyberpunk City
+    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop"  # Abstract Tech
+]
 
 def get_image_from_entry(entry):
-    if 'media_content' in entry:
-        return entry.media_content[0]['url']
-    if 'media_thumbnail' in entry:
-        return entry.media_thumbnail[0]['url']
-    if 'links' in entry:
-        for link in entry.links:
-            if link.type.startswith('image/'):
-                return link.href
-    if 'content' in entry:
-        soup = BeautifulSoup(entry.content[0].value, 'html.parser')
-        img = soup.find('img')
-        if img: return img['src']
-    if 'summary' in entry:
-        soup = BeautifulSoup(entry.summary, 'html.parser')
-        img = soup.find('img')
-        if img: return img['src']
-    return DEFAULT_IMAGE
+    """Förbättrad bildsökning"""
+    try:
+        # 1. Media Content (Standard RSS media)
+        if 'media_content' in entry:
+            return entry.media_content[0]['url']
+        
+        # 2. Media Thumbnail
+        if 'media_thumbnail' in entry:
+            return entry.media_thumbnail[0]['url']
+            
+        # 3. Enclosures (Ofta använt av nyhetssajter för bilder)
+        if 'links' in entry:
+            for link in entry.links:
+                if link.type.startswith('image/'):
+                    return link.href
+                    
+        # 4. Parse HTML Content (Leta efter <img src="...">)
+        content_to_parse = ""
+        if 'content' in entry:
+            content_to_parse = entry.content[0].value
+        elif 'summary' in entry:
+            content_to_parse = entry.summary
+            
+        if content_to_parse:
+            soup = BeautifulSoup(content_to_parse, 'html.parser')
+            img = soup.find('img')
+            if img and img.get('src'):
+                return img['src']
+                
+    except Exception:
+        pass
+        
+    # Om ingen bild hittas, ta en slumpmässig snygg bild
+    return random.choice(FALLBACK_IMAGES)
 
 def clean_summary(summary):
+    if not summary: return ""
     soup = BeautifulSoup(summary, 'html.parser')
     text = soup.get_text()
+    # Ta bort "Continue reading" eller liknande skräp om det finns
+    text = text.replace("Continue reading", "").replace("Read more", "")
     return text[:220] + "..." if len(text) > 220 else text
 
 def generate_pagination_html(current_page, total_pages):
@@ -93,6 +121,7 @@ def generate_pages():
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
+                
                 article = {
                     'title': entry.title,
                     'link': entry.link,
@@ -105,9 +134,15 @@ def generate_pages():
         except Exception as e:
             print(f"Error loading {feed_url}: {e}")
 
+    # Sortera
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
+    # Paginering
     total_articles = len(all_articles)
+    if total_articles == 0:
+        print("No articles found! Check internet connection or feeds.")
+        return
+
     total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
     print(f"Total Articles: {total_articles} | Total Pages: {total_pages}")
 
