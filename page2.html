@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="icon.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,11 +36,14 @@
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
+        /* CLICKABLE LOGO */
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { 
             font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
             text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); }
+        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
+        .logo-link:hover .logo-icon { transform: rotate(10deg); }
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
@@ -54,7 +55,7 @@
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; }
+        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
         .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
@@ -65,53 +66,24 @@
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
         .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
+        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION (BOTTOM) */
+        /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
-        /* --- FLOATING NAVIGATION (SIDE ARROWS) --- */
-        .floating-nav {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 60px;
-            height: 60px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 1.5rem;
-            z-index: 100;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .floating-nav:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-50%) scale(1.1);
-            background: var(--bg-card-hover);
-        }
+        /* FLOATING NAV */
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
+        .nav-prev { left: 30px; } .nav-next { right: 30px; }
+        @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        .nav-prev { left: 30px; }
-        .nav-next { right: 30px; }
-
-        /* Hide floating nav on smaller screens (Mobile/Tablet) to avoid covering text */
-        @media (max-width: 1350px) {
-            .floating-nav { display: none; }
-        }
-
-        /* FOOTER & DISCLAIMER */
+        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
@@ -130,25 +102,52 @@
     </style>
 </head>
 <body>
-    <!-- FLOATING NAVIGATION PLACEHOLDERS -->
     <a href="index.html" class="floating-nav nav-prev">&larr;</a>
     <a href="page3.html" class="floating-nav nav-next">&rarr;</a>
 
     <div class="container">
         <header>
             <div class="logo">
-                <img src="icon.png" class="logo-icon" alt="Specula">
-                SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div>
+                <a href="index.html" class="logo-link">
+                    <img src="icon.png" class="logo-icon" alt="Specula">
+                    SPECULA <span>.</span>
+                </a>
+                <div class="logo-tag">LIVE FEED</div>
             </div>
             <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
         </header>
 
-        <!-- DYNAMIC NEWS GRID -->
         <div class="news-grid">
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/red-shapes-like-blood-platelets.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/03/The_Studio_Photo_010101.jpg?quality=90&strip=all&crop=0,0,100,100" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank">Disney Plus, Hulu, and HBO Max are all over 60 percent off for Black Friday</a></h2>
+                    <p class="ai-summary">The holidays are a great time to see family, exchange gifts, and enjoy a good meal. It’s also the perfect time to gather around a TV and catch up on must-see shows and movies. Vince Gilligan’s Pluribus is a fantastic new...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/red-shapes-like-blood-platelets.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -167,7 +166,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -175,15 +178,15 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>3h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank">Hack låter dig använda CD-skivor på PS5</a></h2>
-                    <p class="ai-summary">Så fungerar det
+                    <h2 class="card-title"><a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank">Hack allows you to use CDs on PS5</a></h2>
+                    <p class="ai-summary">That's how it works
 
 			
 			
 		
 		
 		
-		I en ny YouTube-video demonstrerar kanalen Will it work? hur man kan kringgå PlayStation 5:s avsaknad av CD-stöd med hjälp av en specifik extern läsare från Lite-On, som lurar konsolen...</p>
+		In a new YouTube video, the channel demonstrates the Will it work? how to bypass the PlayStation 5's lack of CD support using a specific external reader from Lite-On, which tricks the console…<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -192,13 +195,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/Vrg_illo_Kristen_Radtke_why_cant_chatgpt_tell_time.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/Vrg_illo_Kristen_Radtke_why_cant_chatgpt_tell_time.jpg?quality=90&strip=all&crop=0,0,100,100" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <time>4h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.theverge.com/report/829137/openai-chatgpt-time-date" target="_blank">Why can’t ChatGPT tell time?</a></h2>
                     <p class="ai-summary">ChatGPT, like many chatbots, is pitched as a hyper-competent personal assistant. But among the many things that confuse it, one is particularly confounding: It cannot tell time. When I ask ChatGPT what time it is, I'm ne...</p>
@@ -210,7 +217,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/61/637361_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/61/637361_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -218,14 +229,14 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank">Fem unika Beatles-bilder ska auktioneras iväg</a></h2>
-                    <p class="ai-summary">Togs på konsert i Karlstad 1963
+                    <h2 class="card-title"><a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank">Five unique Beatles photos are to be auctioned off</a></h2>
+                    <p class="ai-summary">Taken at a concert in Karlstad in 1963
 
 		
 		
 		
 		
-		Beatles första konsert utanför Storbritannien efter genombrottet plåtades, och nu ska fem tidigare okända färgdiabilder från detta tillfälle auktioneras iväg här i Sverige. ...</p>
+		The Beatles' first concert outside Great Britain after the breakthrough was filmed, and now five previously unknown color slides from this occasion are to be auctioned off here in Sweden. ...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -234,7 +245,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/08/STK109_WINDOWS_A.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/08/STK109_WINDOWS_A.jpg?quality=90&strip=all&crop=0,0,100,100" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -252,7 +267,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -270,7 +289,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -278,15 +301,15 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/kinesisk-elbil-sladdar-loss-likt-ken-block/485903/?utm_source=rss&utm_medium=feed" target="_blank">Kinesisk elbil sladdar loss likt Ken Block</a></h2>
-                    <p class="ai-summary">Bra på att bränna gummi
+                    <h2 class="card-title"><a href="https://feber.se/bil/kinesisk-elbil-sladdar-loss-likt-ken-block/485903/?utm_source=rss&utm_medium=feed" target="_blank">Chinese electric car rips loose like Ken Block</a></h2>
+                    <p class="ai-summary">Good at burning rubber
 
 			
 			
 		
 		
 		
-		Här får vi se när det sladdas hej vilt med den kinesiska biltillverkaren GAC:s sportiga elbil Hyptec SSR. Den ska ha 1224 hästar vilket som vi kan se är fullt tillräckligt för ...</p>
+		Here we get to see when the Chinese car manufacturer GAC's sporty electric car Hyptec SSR goes wild. It should have 1224 horses, which as we can see is quite enough for ...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/kinesisk-elbil-sladdar-loss-likt-ken-block/485903/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -295,7 +318,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/SentimentalValue_19_Renate-Reinsve_Photo_Kasper-Tuxen-Andersen.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/SentimentalValue_19_Renate-Reinsve_Photo_Kasper-Tuxen-Andersen.jpg?quality=90&strip=all&crop=0,0,100,100" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -313,7 +340,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-81991812" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-81991812" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -331,7 +362,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -339,15 +374,15 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/vetenskap/kolla-in-grottfisken-clarias-cavernicola/485927/?utm_source=rss&utm_medium=feed" target="_blank">Kolla in grottfisken Clarias cavernicola</a></h2>
-                    <p class="ai-summary">En av världens mest sällsynta sötvattensfiskar
+                    <h2 class="card-title"><a href="https://feber.se/vetenskap/kolla-in-grottfisken-clarias-cavernicola/485927/?utm_source=rss&utm_medium=feed" target="_blank">Check out the cave fish Clarias cavernicola</a></h2>
+                    <p class="ai-summary">One of the world's rarest freshwater fish
 
 			
 			
 		
 		
 		
-		BBC Earth har släppt ett klipp där man kollat in den namibiska grottmalfisken som på latin har fått namnet "Clarias cavernicola", men som på engelska ibl...</p>
+		BBC Earth has released a clip where they checked out the Namibian cave catfish, which in Latin has been named "Clarias cavernicola", but which in English is...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/vetenskap/kolla-in-grottfisken-clarias-cavernicola/485927/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -356,7 +391,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/69/637369_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/69/637369_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -364,15 +403,15 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/vetenskap/blixtar-pa-mars-registrerade-for-forsta-gangen/485930/?utm_source=rss&utm_medium=feed" target="_blank">Blixtar på Mars registrerade för första gången</a></h2>
-                    <p class="ai-summary">Skapas av dammstormar på den röda planeten
+                    <h2 class="card-title"><a href="https://feber.se/vetenskap/blixtar-pa-mars-registrerade-for-forsta-gangen/485930/?utm_source=rss&utm_medium=feed" target="_blank">Lightning on Mars recorded for the first time</a></h2>
+                    <p class="ai-summary">Created by dust storms on the Red Planet
 
 		
 		
 		
 		
-		Ett forskarlag med forskare från bland annat franska University of Toulouse skriver i en ny studie att man för första gången registrerat data om blixtar på Mars.
-...</p>
+		A research team with researchers from, among others, the French University of Toulouse writes in a new study that data on lightning on Mars has been recorded for the first time.
+...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/vetenskap/blixtar-pa-mars-registrerade-for-forsta-gangen/485930/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -381,7 +420,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-person-stands-on-a-boat-in-front-of-a-large-mechanical-apparatus-bearing-noaa-logo.png?id=62218869&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/a-person-stands-on-a-boat-in-front-of-a-large-mechanical-apparatus-bearing-noaa-logo.png?id=62218869&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -399,7 +442,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/24/637324_980.jpeg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/24/637324_980.jpeg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -407,14 +454,14 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/snart-kan-du-bara-fa-audi-q6-e-tron-med-fyrhjulsdrift/485909/?utm_source=rss&utm_medium=feed" target="_blank">Snart kan du bara få Audi Q6 e-tron med fyrhjulsdrift</a></h2>
-                    <p class="ai-summary">Frågan är om det hjälper försäljningen?
+                    <h2 class="card-title"><a href="https://feber.se/bil/snart-kan-du-bara-fa-audi-q6-e-tron-med-fyrhjulsdrift/485909/?utm_source=rss&utm_medium=feed" target="_blank">Soon you can only get the Audi Q6 e-tron with four-wheel drive</a></h2>
+                    <p class="ai-summary">The question is, does it help sales?
 
 		
 		
 		
 		
-		Snart kommer det bara vara möjligt att köpa Audi Q6 e-tron med fyrhjulsdrift här i Sverige. Man slimmar utbudet och uppgraderar hårdvaran och förbättrar mjukvaran. I...</p>
+		Soon it will only be possible to buy the Audi Q6 e-tron with four-wheel drive here in Sweden. The range is slimmed down and the hardware is upgraded and the software is improved. IN...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/snart-kan-du-bara-fa-audi-q6-e-tron-med-fyrhjulsdrift/485909/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -423,7 +470,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -431,8 +482,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">SweClockers</div>
                         <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42061-quiz-vad-kan-du-om-teknikvarldens-katastrofer" target="_blank">Quiz: Vad kan du om teknikvärldens katastrofer?</a></h2>
-                    <p class="ai-summary">Ibland blir det tokigt! Så även i teknikens värld. Testa dina kunskaper i veckans quiz!</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42061-quiz-vad-kan-du-om-teknikvarldens-katastrofer" target="_blank">Quiz: What do you know about the disasters of the tech world?</a></h2>
+                    <p class="ai-summary">Sometimes it gets crazy! So also in the world of technology. Test your knowledge in this week's quiz!<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://www.sweclockers.com/artikel/42061-quiz-vad-kan-du-om-teknikvarldens-katastrofer" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -441,7 +492,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-50992184" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-50992184" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -459,7 +514,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/OS_MDwarf_CME_16x9_3200_HQ-scaled_20251126_004046.webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://www.universetoday.com/article_images/OS_MDwarf_CME_16x9_3200_HQ-scaled_20251126_004046.webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -477,7 +536,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/67/637367_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/67/637367_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -485,14 +548,14 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank">Cigg-skatt kan höjas ytterligare 2027</a></h2>
-                    <p class="ai-summary">Snuset slipper extra påslag
+                    <h2 class="card-title"><a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank">Cigg tax may be increased further in 2027</a></h2>
+                    <p class="ai-summary">The snus does not require extra surcharges
 
 		
 		
 		
 		
-		Regeringen har lagt fram ett förslag om att höja skatten på flertalet tobaksprodukter från och med den 1 januari 2027, rapporterar Aftonbladet. Enligt en ny promemoria föreslås ...</p>
+		The government has put forward a proposal to raise the tax on the majority of tobacco products from January 1, 2027, reports Aftonbladet. According to a new memorandum, it is proposed ...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -501,13 +564,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Tech</div>
-                        <time>5h Ago</time>
+                        <time>6h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/27/apple-challenges-indias-anti-trust-body-over-potential-38-billion-fine.html" target="_blank">Apple is challenging India's antitrust body over a potential $38 billion fine</a></h2>
                     <p class="ai-summary">Apple filed a lawsuit against the Competition Commission of India over how the body uses global turnover when calculating fines.</p>
@@ -519,7 +586,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -527,15 +598,15 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/mobil/jerryrigeverything-plockar-isar-iphone-17/485922/?utm_source=rss&utm_medium=feed" target="_blank">Jerryrigeverything plockar isär iPhone 17</a></h2>
-                    <p class="ai-summary">Berättar kostnaden för varje reservdel Apple säljer
+                    <h2 class="card-title"><a href="https://feber.se/mobil/jerryrigeverything-plockar-isar-iphone-17/485922/?utm_source=rss&utm_medium=feed" target="_blank">Jerryrigeverything takes apart the iPhone 17</a></h2>
+                    <p class="ai-summary">Tells the cost of each replacement part Apple sells
 
 			
 			
 		
 		
 		
-		iPhone 17 är Apples billigaste modell i år, men försöker du laga den själv kan det snabbt dra iväg i pris. Nu har JerryRigEverything varit i farten ...</p>
+		The iPhone 17 is Apple's cheapest model this year, but if you try to repair it yourself, the price can quickly go up. Now JerryRigEverything has been on the move…<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/mobil/jerryrigeverything-plockar-isar-iphone-17/485922/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -544,7 +615,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/STScI-01HZ5DBAXMQPDYQ78A4TPKBNW2_20251127_121803.png" class="card-image" loading="lazy" alt="News">
+                    <img src="https://www.universetoday.com/article_images/STScI-01HZ5DBAXMQPDYQ78A4TPKBNW2_20251127_121803.png" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -562,7 +637,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/ladyhawke3-1152x648-1763925669.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/ladyhawke3-1152x648-1763925669.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -580,7 +659,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-68465091" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-68465091" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -598,7 +681,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2009/04/surprised-eye.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2009/04/surprised-eye.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -616,7 +703,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -634,7 +725,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/39/637339_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/39/637339_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -642,8 +737,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/priset-klart-for-subarus-eldrivna-modell-uncharted/485917/?utm_source=rss&utm_medium=feed" target="_blank">Priset klart för Subarus eldrivna modell Uncharted</a></h2>
-                    <p class="ai-summary">En Toyota C-HR+ i andra kläder
+                    <h2 class="card-title"><a href="https://feber.se/bil/priset-klart-for-subarus-eldrivna-modell-uncharted/485917/?utm_source=rss&utm_medium=feed" target="_blank">The price is clear for Subaru's electric model Uncharted</a></h2>
+                    <p class="ai-summary">A Toyota C-HR+ in other clothes
 
 
 			
@@ -651,7 +746,7 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
 		
 		
 		
-		För fyra år sedan presenterade Subaru sin allra första elbil i form av modellen Solterra. Dock är det bara en Toyota bZ4X med annan logga på sig. I april i år fick denn...</p>
+		Four years ago, Subaru presented its very first electric car in the form of the Solterra model. However, it's just a Toyota bZ4X with a different logo on it. In April this year, the...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/priset-klart-for-subarus-eldrivna-modell-uncharted/485917/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -660,7 +755,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-42246582" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-42246582" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -678,7 +777,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/44/637344_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/44/637344_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -686,8 +789,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/fordon/nytt-navigationssystem-for-hypersoniska-farkoster-framtaget/485920/?utm_source=rss&utm_medium=feed" target="_blank">Nytt navigationssystem för hypersoniska farkoster framtaget</a></h2>
-                    <p class="ai-summary">Är inte beroende av GPS
+                    <h2 class="card-title"><a href="https://feber.se/fordon/nytt-navigationssystem-for-hypersoniska-farkoster-framtaget/485920/?utm_source=rss&utm_medium=feed" target="_blank">New navigation system for hypersonic craft developed</a></h2>
+                    <p class="ai-summary">Is not dependent on GPS
 
 
 			
@@ -695,7 +798,7 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
 		
 		
 		
-		Det amerikanska försvarsföretaget Northrop Grumman har utvecklat en navigationsmodul som är avsedd för hypersoniska farkoster, som flyger i hastigheter på över Mach 5, och kan...</p>
+		The American defense company Northrop Grumman has developed a navigation module intended for hypersonic vehicles, which fly at speeds above Mach 5, and can...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/fordon/nytt-navigationssystem-for-hypersoniska-farkoster-framtaget/485920/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -704,13 +807,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-30557515" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-30557515" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>6h Ago</time>
+                        <time>7h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.marketwatch.com/story/scoring-great-black-friday-deals-is-getting-harder-these-6-tips-can-help-you-shop-smarter-this-weekend-ae2a5d2a?mod=mw_rss_topstories" target="_blank">Scoring great Black Friday deals is getting harder. These 6 tips can help you shop smarter this weekend.</a></h2>
                     <p class="ai-summary">Deals aren’t as enticing this Black Friday compared with years past — but it’s still possible to find bargains if you know where to look.</p>
@@ -722,13 +829,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-25171722" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.mktw.net/im-25171722" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>6h Ago</time>
+                        <time>7h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.marketwatch.com/story/trumps-one-big-beautiful-bill-act-will-really-kick-into-gear-next-year-these-are-the-stocks-to-watch-says-socgen-a31725a5?mod=mw_rss_topstories" target="_blank">Trump’s One Big Beautiful Bill Act will really kick into gear next year. These are the stocks to watch, says SocGen.</a></h2>
                     <p class="ai-summary">The OBBBA may provide an additional tailwind for equities in 2026</p>
@@ -740,7 +851,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/45/637345_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/45/637345_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -748,14 +863,14 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/mobil/apple-kan-ga-om-samsung/485918/?utm_source=rss&utm_medium=feed" target="_blank">Apple kan gå om Samsung</a></h2>
-                    <p class="ai-summary">Och bli världens största mobiltillverkare 2025
+                    <h2 class="card-title"><a href="https://feber.se/mobil/apple-kan-ga-om-samsung/485918/?utm_source=rss&utm_medium=feed" target="_blank">Apple can overtake Samsung</a></h2>
+                    <p class="ai-summary">And become the world's largest mobile manufacturer by 2025
 
 		
 		
 		
 		
-		Analysföretaget Counterpoint Research förutspår att Apple i år kommer att peta ner Samsung från tronen och bli världens största mobiltillverkare. Enligt rappo...</p>
+		The analysis company Counterpoint Research predicts that this year Apple will knock Samsung off the throne and become the world's largest mobile manufacturer. According to report...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/mobil/apple-kan-ga-om-samsung/485918/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -764,7 +879,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/42/637342_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://static.feber.se/article_images/63/73/42/637342_980.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -772,14 +891,14 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">Feber</div>
                         <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/film/apple-stoppar-serien-the-hunt/485916/?utm_source=rss&utm_medium=feed" target="_blank">Apple stoppar serien The Hunt</a></h2>
-                    <p class="ai-summary">Efter anklagelser om plagiat
+                    <h2 class="card-title"><a href="https://feber.se/film/apple-stoppar-serien-the-hunt/485916/?utm_source=rss&utm_medium=feed" target="_blank">Apple stops The Hunt series</a></h2>
+                    <p class="ai-summary">After accusations of plagiarism
 
 		
 		
 		
 		
-		Apple TV har plockat bort den franska thrillerserien The Hunt från sin tablå, bara en vecka innan den planerade premiären den 3 december. Beslutet kommer efter att anklagelser ...</p>
+		Apple TV has pulled the French thriller series The Hunt from its lineup, just a week before its scheduled premiere on December 3. The decision comes after allegations…<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/film/apple-stoppar-serien-the-hunt/485916/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -788,7 +907,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -796,8 +919,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">SweClockers</div>
                         <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42060-medlemsomrostning-folkets-vinnare-i-laptopkampen-2025" target="_blank">Medlemsomröstning: Folkets vinnare i Laptopkampen 2025</a></h2>
-                    <p class="ai-summary">Nu har forumet chansen att säga sitt. 12 poäng går till... ?</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42060-medlemsomrostning-folkets-vinnare-i-laptopkampen-2025" target="_blank">Member vote: The people's winner in the Laptop Battle 2025</a></h2>
+                    <p class="ai-summary">Now the forum has the chance to have its say. 12 points go to... ?<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://www.sweclockers.com/artikel/42060-medlemsomrostning-folkets-vinnare-i-laptopkampen-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -806,33 +929,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/35/637335_980.jpg" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>7h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/vetenskap/smart-varg-vittjar-krabbtina/485915/?utm_source=rss&utm_medium=feed" target="_blank">Smart varg vittjar krabbtina</a></h2>
-                    <p class="ai-summary">Har vargar lärt sig använda verktyg?
-
-
-			
-			
-		
-		
-		
-		Forskare på amerikanska State University of New York College of Environmental Science and Forestry har publicerat ett videoklipp på en varg som ser ut att ha räkn...</p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/vetenskap/smart-varg-vittjar-krabbtina/485915/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -850,7 +951,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -858,8 +963,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">SweClockers</div>
                         <time>9h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42059-aoc-lanserar-prisvard-mini-led-skarm" target="_blank">AOC lanserar prisvärd Mini LED‑skärm</a></h2>
-                    <p class="ai-summary">4K med 160 Hz och HDR1000-stöd med 1 152 dimningszoner för omkring 5 000 kronor.</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42059-aoc-lanserar-prisvard-mini-led-skarm" target="_blank">AOC launches affordable Mini LED display</a></h2>
+                    <p class="ai-summary">4K with 160 Hz and HDR1000 support with 1,152 dimming zones for around SEK 5,000.<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://www.sweclockers.com/artikel/42059-aoc-lanserar-prisvard-mini-led-skarm" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -868,7 +973,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -886,13 +995,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Tech</div>
-                        <time>10h Ago</time>
+                        <time>11h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/27/cnbc-daily-open-thanksgiving-cheer-comes-a-day-early-for-us-markets.html" target="_blank">CNBC Daily Open: Thanksgiving cheer comes a day early for U.S. markets</a></h2>
                     <p class="ai-summary">Thanksgiving in the U.S. takes place on Thursday stateside, but the feasting might have begun a day early for investors.</p>
@@ -904,7 +1017,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2024/08/1.1-%E5%AE%81%E5%BE%B7%E6%97%B6%E4%BB%A3%E5%A4%A7%E6%A5%BC-1.jpg?fit=1024%2C682&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2024/08/1.1-%E5%AE%81%E5%BE%B7%E6%97%B6%E4%BB%A3%E5%A4%A7%E6%A5%BC-1.jpg?fit=1024%2C682&ssl=1" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -922,7 +1039,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -940,7 +1061,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -948,8 +1073,8 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                         <div class="source-badge">SweClockers</div>
                         <time>13h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42058-ny-allvarlig-sakerhetsbrist-i-asus-aicloud" target="_blank">Ny allvarlig säkerhetsbrist i Asus Aicloud</a></h2>
-                    <p class="ai-summary">Inget bra år för säkerheten i företagets populära routrar.</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42058-ny-allvarlig-sakerhetsbrist-i-asus-aicloud" target="_blank">New serious security flaw in Asus Aicloud</a></h2>
+                    <p class="ai-summary">Not a good year for the security of the company's popular routers.<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://www.sweclockers.com/artikel/42058-ny-allvarlig-sakerhetsbrist-i-asus-aicloud" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -958,7 +1083,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -976,7 +1105,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2024/06/3nm.png?fit=1024%2C559&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2024/06/3nm.png?fit=1024%2C559&ssl=1" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -994,13 +1127,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/10/bytedance-0-cb0d883e8d2c1c45bafb93eb7cd64468.png?fit=1024%2C683&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/10/bytedance-0-cb0d883e8d2c1c45bafb93eb7cd64468.png?fit=1024%2C683&ssl=1" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechNode</div>
-                        <time>15h Ago</time>
+                        <time>16h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://technode.com/2025/11/27/bytedance-restarts-plan-to-sell-moonton-in-talks-with-saudi-funds-savvy-games/" target="_blank">ByteDance restarts plan to sell Moonton, in talks with Saudi fund’s Savvy Games</a></h2>
                     <p class="ai-summary">ByteDance is in advanced talks to sell its Shanghai-based gaming studio Moonton Technology to Saudi Arabia’s Savvy Games Group, Bloomberg reported, citing people familiar with the matter. The Chinese tech giant acquired ...</p>
@@ -1012,13 +1149,17 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/ExoMars_Trace_Gas_Orbiter_observes_comet_3I_ATLAS_GIF_20251127_014607.gif" class="card-image" loading="lazy" alt="News">
+                    <img src="https://www.universetoday.com/article_images/ExoMars_Trace_Gas_Orbiter_observes_comet_3I_ATLAS_GIF_20251127_014607.gif" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Universe Today</div>
-                        <time>15h Ago</time>
+                        <time>16h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.universetoday.com/articles/astronomers-pinpoint-3iatlass-path-based-on-data-from-mars" target="_blank">Astronomers Pinpoint 3I/ATLAS's Path Based on Data from Mars</a></h2>
                     <p class="ai-summary">Since comet 3I/ATLAS, the third known interstellar object, was discovered on 1 July 2025, astronomers worldwide have worked to predict its trajectory. ESA has now improved the comet’s predicted location by a factor of 10...</p>
@@ -1030,7 +1171,11 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -1048,33 +1193,19 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
             
         </div>
 
-        <!-- PAGINATION SECTION -->
         <div class="pagination">
             <a href="index.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn active">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn ">4</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page6.html" class="page-btn ">6</a><a href="page3.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
-        <!-- FOOTER SECTION -->
         <footer class="site-footer">
             <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
-                    + Suggest Source
-                </a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
-                    ♥ Donate via PayPal
-                </a>
+                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">+ Suggest Source</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate via PayPal</a>
             </div>
-
             <div class="disclaimer-box">
                 <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>
-                    SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only. 
-                    This website does not generate revenue, contains no advertisements, and is not affiliated with any of the news sources linked.
-                    Headlines, summaries, and images are dynamically aggregated via public RSS feeds under Fair Use principles. 
-                    All rights and credit belong to the original publishers. If you enjoy a story, please click through to support the original creators.
-                </p>
-                <p style="margin-top: 10px;">
-                    Contact: lolish3k@gmail.com
-                </p>
+                <p>SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only...</p>
+                <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
             </div>
         </footer>
     </div>
@@ -1086,16 +1217,9 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
         const body = document.body;
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'light') { enableLightMode(); }
-        toggleBtn.addEventListener('click', () => {
-            if (body.classList.contains('light-mode')) { enableDarkMode(); } 
-            else { enableLightMode(); }
-        });
-        function enableLightMode() {
-            body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light');
-        }
-        function enableDarkMode() {
-            body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark');
-        }
+        toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
+        function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
+        function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
     </script>
 </body>
 </html>

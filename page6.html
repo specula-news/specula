@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="icon.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,11 +36,14 @@
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
+        /* CLICKABLE LOGO */
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { 
             font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
             text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); }
+        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
+        .logo-link:hover .logo-icon { transform: rotate(10deg); }
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
@@ -54,7 +55,7 @@
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; }
+        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
         .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
@@ -65,53 +66,24 @@
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
         .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
+        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION (BOTTOM) */
+        /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
-        /* --- FLOATING NAVIGATION (SIDE ARROWS) --- */
-        .floating-nav {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 60px;
-            height: 60px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 1.5rem;
-            z-index: 100;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .floating-nav:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-50%) scale(1.1);
-            background: var(--bg-card-hover);
-        }
+        /* FLOATING NAV */
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
+        .nav-prev { left: 30px; } .nav-next { right: 30px; }
+        @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        .nav-prev { left: 30px; }
-        .nav-next { right: 30px; }
-
-        /* Hide floating nav on smaller screens (Mobile/Tablet) to avoid covering text */
-        @media (max-width: 1350px) {
-            .floating-nav { display: none; }
-        }
-
-        /* FOOTER & DISCLAIMER */
+        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
@@ -130,25 +102,30 @@
     </style>
 </head>
 <body>
-    <!-- FLOATING NAVIGATION PLACEHOLDERS -->
     <a href="page5.html" class="floating-nav nav-prev">&larr;</a>
     
 
     <div class="container">
         <header>
             <div class="logo">
-                <img src="icon.png" class="logo-icon" alt="Specula">
-                SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div>
+                <a href="index.html" class="logo-link">
+                    <img src="icon.png" class="logo-icon" alt="Specula">
+                    SPECULA <span>.</span>
+                </a>
+                <div class="logo-tag">LIVE FEED</div>
             </div>
             <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
         </header>
 
-        <!-- DYNAMIC NEWS GRID -->
         <div class="news-grid">
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -156,8 +133,8 @@
                         <div class="source-badge">SweClockers</div>
                         <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42018-slaget-ar-avgjort-sa-gick-det-for-team-sweclockers" target="_blank">Slaget är avgjort – så gick det för Team SweClockers</a></h2>
-                    <p class="ai-summary">Sveriges bästa community i Battlefield 6 är ...</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42018-slaget-ar-avgjort-sa-gick-det-for-team-sweclockers" target="_blank">The battle is decided - that's how it went for Team SweClockers</a></h2>
+                    <p class="ai-summary">Sweden's best community in Battlefield 6 is ...<span class="lang-note">(Translated from Swedish)</span></p>
                     <div class="card-footer">
                         <a href="https://www.sweclockers.com/artikel/42018-slaget-ar-avgjort-sa-gick-det-for-team-sweclockers" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -166,7 +143,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/robotic-arm-with-glove-attached-surrounded-by-complex-machinery-and-cables-catching-a-baseball.png?id=62221544&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/robotic-arm-with-glove-attached-surrounded-by-complex-machinery-and-cables-catching-a-baseball.png?id=62221544&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -184,7 +165,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -202,7 +187,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -220,7 +209,11 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/zap-energy-fusion-reactor.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/zap-energy-fusion-reactor.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -239,7 +232,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/over-a-decade-in-the-m.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/over-a-decade-in-the-m.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -257,7 +254,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-graphic-inlayed-over-a-street-scene-at-a-crosswalk-shows-pedestrians-cyclists-objects-and-road-conditions-being-identified.jpg?id=62215318&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/a-graphic-inlayed-over-a-street-scene-at-a-crosswalk-shows-pedestrians-cyclists-objects-and-road-conditions-being-identified.jpg?id=62215318&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -275,7 +276,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -293,7 +298,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/cool-comfort-beating-t.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/cool-comfort-beating-t.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -311,7 +320,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -329,7 +342,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -347,7 +364,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/blocking-space-radiati-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/blocking-space-radiati-1.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -365,7 +386,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/an-illustration-of-stylized-people-wearing-business-casual-clothing.webp?id=61876810&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/an-illustration-of-stylized-people-wearing-business-casual-clothing.webp?id=61876810&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -383,7 +408,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/study-shows-new-method.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/study-shows-new-method.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -401,7 +430,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-tiny-lens-into-the-v-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-tiny-lens-into-the-v-1.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -419,7 +452,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-toxin-with-a-useful-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-toxin-with-a-useful-1.jpg" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -437,7 +474,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/genya-crossman-standing-in-front-of-ibms-utility-scale-quantum-computer-system.jpg?id=62212657&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/genya-crossman-standing-in-front-of-ibms-utility-scale-quantum-computer-system.jpg?id=62212657&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -455,7 +496,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-black-pancake-shaped-motor-is-shown-as-an-inset-to-a-photograph-of-a-sleek-orange-racing-sedan.jpg?id=62210215&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/a-black-pancake-shaped-motor-is-shown-as-an-inset-to-a-photograph-of-a-sleek-orange-racing-sedan.jpg?id=62210215&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -473,7 +518,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://assets.rbl.ms/62213230/origin.png" class="card-image" loading="lazy" alt="News">
+                    <img src="https://assets.rbl.ms/62213230/origin.png" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -491,7 +540,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-silver-and-black-bipedal-humanoid-uses-its-five-fingered-hands-to-gray-towels-a-towel-to-be-folded-sits-on-one-side-and-on-t.gif?id=62207438&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/a-silver-and-black-bipedal-humanoid-uses-its-five-fingered-hands-to-gray-towels-a-towel-to-be-folded-sits-on-one-side-and-on-t.gif?id=62207438&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -509,7 +562,11 @@ The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest React
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/strands-of-dna-gene-editing.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/strands-of-dna-gene-editing.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -528,7 +585,11 @@ The post Scientists Race to Deliver Custom Gene Therapies for Incurable Diseases
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/two-versions-of-a-four-wheeled-delivery-vehicle-with-handlebars-and-a-bike-seat-are-seen-side-by-side-the-one-on-the-left-has-a.jpg?id=62164042&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/two-versions-of-a-four-wheeled-delivery-vehicle-with-handlebars-and-a-bike-seat-are-seen-side-by-side-the-one-on-the-left-has-a.jpg?id=62164042&width=980" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -546,7 +607,11 @@ The post Scientists Race to Deliver Custom Gene Therapies for Incurable Diseases
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/brain-implant-smaller-than-salt.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/brain-implant-smaller-than-salt.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -565,7 +630,11 @@ The post This Wireless Brain Implant Is Smaller Than a Grain of Salt appeared fi
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/architectural-squares-patch-of-sky.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/architectural-squares-patch-of-sky.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -584,7 +653,11 @@ The post This Week’s Awesome Tech Stories From Around the Web (Through Novembe
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/Sentante_robotic_surgery.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/Sentante_robotic_surgery.jpeg?auto=webp" 
+                         class="card-image" 
+                         loading="lazy" 
+                         alt="News"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -603,33 +676,19 @@ The post In Wild Experiment, Surgeon Uses Robot to Remove  Blood Clot in Brain 4
             
         </div>
 
-        <!-- PAGINATION SECTION -->
         <div class="pagination">
             <a href="page5.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page4.html" class="page-btn ">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn active">6</a>
         </div>
 
-        <!-- FOOTER SECTION -->
         <footer class="site-footer">
             <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
-                    + Suggest Source
-                </a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
-                    ♥ Donate via PayPal
-                </a>
+                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">+ Suggest Source</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate via PayPal</a>
             </div>
-
             <div class="disclaimer-box">
                 <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>
-                    SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only. 
-                    This website does not generate revenue, contains no advertisements, and is not affiliated with any of the news sources linked.
-                    Headlines, summaries, and images are dynamically aggregated via public RSS feeds under Fair Use principles. 
-                    All rights and credit belong to the original publishers. If you enjoy a story, please click through to support the original creators.
-                </p>
-                <p style="margin-top: 10px;">
-                    Contact: lolish3k@gmail.com
-                </p>
+                <p>SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only...</p>
+                <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
             </div>
         </footer>
     </div>
@@ -641,16 +700,9 @@ The post In Wild Experiment, Surgeon Uses Robot to Remove  Blood Clot in Brain 4
         const body = document.body;
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'light') { enableLightMode(); }
-        toggleBtn.addEventListener('click', () => {
-            if (body.classList.contains('light-mode')) { enableDarkMode(); } 
-            else { enableLightMode(); }
-        });
-        function enableLightMode() {
-            body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light');
-        }
-        function enableDarkMode() {
-            body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark');
-        }
+        toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
+        function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
+        function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
     </script>
 </body>
 </html>
