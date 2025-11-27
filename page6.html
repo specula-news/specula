@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON (Browser Tab Icon) -->
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="icon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,32 +33,17 @@
             background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
         .logo { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 2.2rem; 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
+            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-
-        .logo-icon {
-            height: 45px;
-            width: auto;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-            filter: invert(1); /* Gör ikonen vit i dark mode */
-        }
-        body.light-mode .logo-icon {
-            filter: invert(0); /* Gör ikonen svart i light mode */
-        }
-
+        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); }
+        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
         
@@ -84,11 +69,47 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION */
+        /* PAGINATION (BOTTOM) */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* --- FLOATING NAVIGATION (SIDE ARROWS) --- */
+        .floating-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1.5rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .floating-nav:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-50%) scale(1.1);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-prev { left: 30px; }
+        .nav-next { right: 30px; }
+
+        /* Hide floating nav on smaller screens (Mobile/Tablet) to avoid covering text */
+        @media (max-width: 1350px) {
+            .floating-nav { display: none; }
+        }
 
         /* FOOTER & DISCLAIMER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
@@ -109,6 +130,10 @@
     </style>
 </head>
 <body>
+    <!-- FLOATING NAVIGATION PLACEHOLDERS -->
+    <a href="page5.html" class="floating-nav nav-prev">&larr;</a>
+    
+
     <div class="container">
         <header>
             <div class="logo">
@@ -123,139 +148,36 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/67/637367_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>5h Ago</time>
+                        <div class="source-badge">SweClockers</div>
+                        <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank">Cigg-skatt kan höjas ytterligare 2027</a></h2>
-                    <p class="ai-summary">Snuset slipper extra påslag
-
-		
-		
-		
-		
-		Regeringen har lagt fram ett förslag om att höja skatten på flertalet tobaksprodukter från och med den 1 januari 2027, rapporterar Aftonbladet. Enligt en ny promemoria föreslås ...</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42018-slaget-ar-avgjort-sa-gick-det-for-team-sweclockers" target="_blank">Slaget är avgjort – så gick det för Team SweClockers</a></h2>
+                    <p class="ai-summary">Sveriges bästa community i Battlefield 6 är ...</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sweclockers.com/artikel/42018-slaget-ar-avgjort-sa-gick-det-for-team-sweclockers" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/robotic-arm-with-glove-attached-surrounded-by-complex-machinery-and-cables-catching-a-baseball.png?id=62221544&width=980" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>5h Ago</time>
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/27/apple-challenges-indias-anti-trust-body-over-potential-38-billion-fine.html" target="_blank">Apple is challenging India's antitrust body over a potential $38 billion fine</a></h2>
-                    <p class="ai-summary">Apple filed a lawsuit against the Competition Commission of India over how the body uses global turnover when calculating fines.</p>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/video-friday-baseball-robot" target="_blank">Video Friday: Watch Robots Throw, Catch, and Hit a Baseball</a></h2>
+                    <p class="ai-summary">Video Friday is your weekly selection of awesome robotics videos, collected by your friends at IEEE Spectrum robotics. We also post a weekly calendar of upcoming robotics events for the next few months. Please send us yo...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/27/apple-challenges-indias-anti-trust-body-over-potential-38-billion-fine.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/mobil/jerryrigeverything-plockar-isar-iphone-17/485922/?utm_source=rss&utm_medium=feed" target="_blank">Jerryrigeverything plockar isär iPhone 17</a></h2>
-                    <p class="ai-summary">Berättar kostnaden för varje reservdel Apple säljer
-
-			
-			
-		
-		
-		
-		iPhone 17 är Apples billigaste modell i år, men försöker du laga den själv kan det snabbt dra iväg i pris. Nu har JerryRigEverything varit i farten ...</p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/mobil/jerryrigeverything-plockar-isar-iphone-17/485922/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/STScI-01HZ5DBAXMQPDYQ78A4TPKBNW2_20251127_121803.png" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/why-being-in-the-right-place-isnt-enough-for-life" target="_blank">Why Being in the "Right Place" Isn't Enough for Life</a></h2>
-                    <p class="ai-summary">A planet’s habitability is determined by a confluence of many factors. So far, our explorations of potentially habitable worlds beyond our solar system have focused exclusively on their position in the “Goldilocks Zone” ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/why-being-in-the-right-place-isnt-enough-for-life" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/ladyhawke3-1152x648-1763925669.jpg" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/culture/2025/11/blast-from-the-past-15-movie-gems-of-1985/" target="_blank">Blast from the past: 15 movie gems of 1985</a></h2>
-                    <p class="ai-summary">Beyond the blockbusters: This watch list has something for everyone over the long holiday weekend.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/culture/2025/11/blast-from-the-past-15-movie-gems-of-1985/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-68465091" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/stop-and-do-this-before-you-buy-anything-on-black-friday-50dc1ccb?mod=mw_rss_topstories" target="_blank">Stop and do this before you buy anything on Black Friday</a></h2>
-                    <p class="ai-summary">“Be sure to ‘pay yourself first’ before you spend a dollar on deals,” says financial planner.</p>
-                    <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/stop-and-do-this-before-you-buy-anything-on-black-friday-50dc1ccb?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2009/04/surprised-eye.jpg" class="card-image" loading="lazy" alt="News">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/doctors-pull-4-inch-worm-out-of-womans-eyelid-after-monthlong-incubation/" target="_blank">Four-inch worm hatches in woman’s forehead, wriggles to her eyelid</a></h2>
-                    <p class="ai-summary">The parasite, typically found in dogs, was visibly moving under her skin.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/health/2025/11/doctors-pull-4-inch-worm-out-of-womans-eyelid-after-monthlong-incubation/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://spectrum.ieee.org/video-friday-baseball-robot" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -267,101 +189,414 @@
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>6h Ago</time>
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/27/how-google-put-together-the-pieces-for-its-ai-comeback.html" target="_blank">How Google put together the pieces for its AI comeback</a></h2>
-                    <p class="ai-summary">The company's Gemini 3 and Ironwood AI chip are driving Wall Street's excitement behind Alphabet's AI comeback, but challenges remain.</p>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251120002619.htm" target="_blank">Japanese spacecraft faces a massive challenge from a house-size asteroid</a></h2>
+                    <p class="ai-summary">New observations show that asteroid 1998 KY26 is a mere 11 meters across and spinning twice as fast as previously thought. The discovery adds complexity to Hayabusa2’s 2031 mission but also heightens scientific interest....</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/27/how-google-put-together-the-pieces-for-its-ai-comeback.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251120002619.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/39/637339_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>6h Ago</time>
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/priset-klart-for-subarus-eldrivna-modell-uncharted/485917/?utm_source=rss&utm_medium=feed" target="_blank">Priset klart för Subarus eldrivna modell Uncharted</a></h2>
-                    <p class="ai-summary">En Toyota C-HR+ i andra kläder
-
-
-			
-			
-		
-		
-		
-		För fyra år sedan presenterade Subaru sin allra första elbil i form av modellen Solterra. Dock är det bara en Toyota bZ4X med annan logga på sig. I april i år fick denn...</p>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251120002617.htm" target="_blank">Century-old catalysis puzzle cracked by measuring a fraction of an electron</a></h2>
+                    <p class="ai-summary">Scientists have directly measured the minuscule electron sharing that makes precious-metal catalysts so effective. Their new technique, IET, reveals how molecules bind and react on metal surfaces with unprecedented clari...</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/bil/priset-klart-for-subarus-eldrivna-modell-uncharted/485917/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251120002617.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-42246582" class="card-image" loading="lazy" alt="News">
+                    <img src="https://singularityhub.com/uploads/2025/11/zap-energy-fusion-reactor.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>6h Ago</time>
+                        <div class="source-badge">SingularityHub</div>
+                        <time>6d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/doing-your-holiday-shopping-with-a-credit-card-use-these-6-tips-to-preserve-your-credit-score-and-your-sanity-cb8907b8?mod=mw_rss_topstories" target="_blank">Doing your holiday shopping with a credit card? Use these 6 tips to preserve your credit score — and your sanity.</a></h2>
-                    <p class="ai-summary">Americans will be leaning hard on their credit cards this holiday season. A few key rules can keep you from slipping into a debt spiral.</p>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/20/startup-zap-energy-just-set-a-fusion-power-record-with-its-latest-reactor/" target="_blank">Startup Zap Energy Just Set a Fusion Power Record With Its Latest Reactor</a></h2>
+                    <p class="ai-summary">Commercial-scale fusion edges closer with record plasma pressure.
+The post Startup Zap Energy Just Set a Fusion Power Record With Its Latest Reactor appeared first on SingularityHub.</p>
                     <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/doing-your-holiday-shopping-with-a-credit-card-use-these-6-tips-to-preserve-your-credit-score-and-your-sanity-cb8907b8?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://singularityhub.com/2025/11/20/startup-zap-energy-just-set-a-fusion-power-record-with-its-latest-reactor/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/44/637344_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/over-a-decade-in-the-m.jpg" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>6h Ago</time>
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/fordon/nytt-navigationssystem-for-hypersoniska-farkoster-framtaget/485920/?utm_source=rss&utm_medium=feed" target="_blank">Nytt navigationssystem för hypersoniska farkoster framtaget</a></h2>
-                    <p class="ai-summary">Är inte beroende av GPS
-
-
-			
-			
-		
-		
-		
-		Det amerikanska försvarsföretaget Northrop Grumman har utvecklat en navigationsmodul som är avsedd för hypersoniska farkoster, som flyger i hastigheter på över Mach 5, och kan...</p>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-decade-lanthanide-nanocrystals-illuminate-possibilities.html" target="_blank">Over a decade in the making: Lanthanide nanocrystals illuminate new possibilities</a></h2>
+                    <p class="ai-summary">In a discovery shaped by more than a decade of steady, incremental effort rather than a dramatic breakthrough, scientists from the National University of Singapore (NUS) and their collaborators demonstrated that great id...</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/fordon/nytt-navigationssystem-for-hypersoniska-farkoster-framtaget/485920/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://phys.org/news/2025-11-decade-lanthanide-nanocrystals-illuminate-possibilities.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.mktw.net/im-30557515" class="card-image" loading="lazy" alt="News">
+                    <img src="https://spectrum.ieee.org/media-library/a-graphic-inlayed-over-a-street-scene-at-a-crosswalk-shows-pedestrians-cyclists-objects-and-road-conditions-being-identified.jpg?id=62215318&width=980" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">MarketWatch.com - Top Sto</div>
-                        <time>6h Ago</time>
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>7d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/scoring-great-black-friday-deals-is-getting-harder-these-6-tips-can-help-you-shop-smarter-this-weekend-ae2a5d2a?mod=mw_rss_topstories" target="_blank">Scoring great Black Friday deals is getting harder. These 6 tips can help you shop smarter this weekend.</a></h2>
-                    <p class="ai-summary">Deals aren’t as enticing this Black Friday compared with years past — but it’s still possible to find bargains if you know where to look.</p>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/terahertz-radar" target="_blank">Could Terahertz Radar in Cars Save Lives?</a></h2>
+                    <p class="ai-summary">A few years ago, Matthew Carey lost a friend in a freak car accident, after the friend’s car struck some small debris on a highway. The accident happened under conditions that render nearly all of today’s car-mounted sen...</p>
                     <div class="card-footer">
-                        <a href="https://www.marketwatch.com/story/scoring-great-black-friday-deals-is-getting-harder-these-6-tips-can-help-you-shop-smarter-this-weekend-ae2a5d2a?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://spectrum.ieee.org/terahertz-radar" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251120091945.htm" target="_blank">Light has been hiding a magnetic secret for nearly 200 years</a></h2>
+                    <p class="ai-summary">New research shows that light’s magnetic field is far more influential than scientists once believed. The team found that this magnetic component significantly affects how light rotates as it passes through certain mater...</p>
+                    <div class="card-footer">
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251120091945.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/cool-comfort-beating-t.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-cool-comfort-high-tech.html" target="_blank">New fabric reflects 96% of sunlight to keep wearers cooler in extreme heat</a></h2>
+                    <p class="ai-summary">As global temperatures rise and heat waves intensify, a new textile innovation co-developed by University of South Australia scientists promises to keep people cooler, drier, and more comfortable in extreme heat.</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-cool-comfort-high-tech.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251120002834.htm" target="_blank">MIT ultrasonic tech pulls drinking water from air in minutes</a></h2>
+                    <p class="ai-summary">MIT engineers have created an ultrasonic device that rapidly frees water from materials designed to absorb moisture from the air. Instead of waiting hours for heat to evaporate the trapped water, the system uses high-fre...</p>
+                    <div class="card-footer">
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251120002834.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251120002836.htm" target="_blank">A compact fusion machine just hit gigapascal pressures</a></h2>
+                    <p class="ai-summary">Operating a new device named the Fusion Z-pinch Experiment 3, or FuZE-3, Zap Energy has now achieved plasmas with electron pressures as high as 830 megapascals (MPa), or 1.6 gigapascals (GPa) total, comparable to the pre...</p>
+                    <div class="card-footer">
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251120002836.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/blocking-space-radiati-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-space-shield-flexible-boron-nitride.html" target="_blank">A new space radiation shield: Flexible boron nitride nanotube film shows promise</a></h2>
+                    <p class="ai-summary">High-energy cosmic radiation damages cells and DNA, causing cancer, and secondary neutrons—generated especially from the planetary surfaces—can be up to 20 times more harmful than other radiations. Aluminum, the most wid...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-space-shield-flexible-boron-nitride.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/an-illustration-of-stylized-people-wearing-business-casual-clothing.webp?id=61876810&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/produ" target="_blank">Narrowing focus can increase productivity</a></h2>
+                    <p class="ai-summary">This article is crossposted from IEEE Spectrum’s careers newsletter. Sign up now to get insider tips, expert advice, and practical strategies, written in partnership with tech career development company Taro and delivere...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/produ" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/study-shows-new-method.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-coaxing-bilayer-graphene-diamond-layer.html" target="_blank">Coaxing bilayer graphene into a single diamond-like layer for industrial applications</a></h2>
+                    <p class="ai-summary">Graphene's enduring appeal lies in its remarkable combination of lightness, flexibility, and strength. Now, researchers have shown that under pressure, it can briefly take on the traits of one of its more glamorous carbo...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-coaxing-bilayer-graphene-diamond-layer.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-tiny-lens-into-the-v-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-magnetic-nanocultures-tiny-lens-vast.html" target="_blank">Magnetic nanocultures: A tiny lens into the vast world of soil microbes</a></h2>
+                    <p class="ai-summary">An estimated 1 trillion species of microorganisms reside on Earth, yet scientists have been able to study less than two percent of them. Because many microorganisms cannot be cultivated in laboratories, researchers at Ca...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-magnetic-nanocultures-tiny-lens-vast.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/a-toxin-with-a-useful-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-toxin-diphtheria-fragment-merges-lipid.html" target="_blank">A toxin with a useful twist: Diphtheria fragment merges lipid vesicles at neutral pH</a></h2>
+                    <p class="ai-summary">Researchers from the SNI network have discovered a novel way to fuse lipid vesicles at neutral pH. By harnessing a fragment of the diphtheria toxin, the team achieved vesicle membrane fusion without the need for pre-trea...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-toxin-diphtheria-fragment-merges-lipid.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/genya-crossman-standing-in-front-of-ibms-utility-scale-quantum-computer-system.jpg?id=62212657&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/quantum-computing-ieee-genya-crossman" target="_blank">This IBM Engineer Is Pushing Quantum Computing Out of the Lab</a></h2>
+                    <p class="ai-summary">Genya Crossman is a lifelong learner passionate about helping people understand and use quantum computing to solve the world’s most complex problems.So, she is excited that quantum computing is in the spotlight this year...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/quantum-computing-ieee-genya-crossman" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/a-black-pancake-shaped-motor-is-shown-as-an-inset-to-a-photograph-of-a-sleek-orange-racing-sedan.jpg?id=62210215&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/axial-flux-motor-yasa" target="_blank">A New Axial-Flux Motor Becomes a Supercar Staple</a></h2>
+                    <p class="ai-summary">Tesla was first to patent a primitive axial-flux electric motor—Nikola Tesla, that is, way back in 1889. It would be 126 years before the concept found its way to a car, the 1,500-horsepower (1,103 kilowatt), US $1.9 mil...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/axial-flux-motor-yasa" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://assets.rbl.ms/62213230/origin.png" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://content.knowledgehub.wiley.com/the-roadmap-to-becoming-an-ai-university-industry-brief/" target="_blank">Keys to Building an AI University: A Framework from NVIDIA</a></h2>
+                    <p class="ai-summary">As artificial intelligence reshapes every industry, universities face a critical choice: lead the transformation or risk falling behind. The institutions that integrate AI across disciplines, invest in computing infrastr...</p>
+                    <div class="card-footer">
+                        <a href="https://content.knowledgehub.wiley.com/the-roadmap-to-becoming-an-ai-university-industry-brief/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/a-silver-and-black-bipedal-humanoid-uses-its-five-fingered-hands-to-gray-towels-a-towel-to-be-folded-sits-on-one-side-and-on-t.gif?id=62207438&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/robots-folding-clothes" target="_blank">Why Is Everyone’s Robot Folding Clothes?</a></h2>
+                    <p class="ai-summary">It seems like every week there’s a new video of a robot folding clothes. We’ve had some fantastic demonstrations, like this semi-autonomous video from Weave Robotics on X.It’s awesome stuff, but Weave is far from the onl...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/robots-folding-clothes" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/strands-of-dna-gene-editing.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SingularityHub</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/18/scientists-race-to-deliver-custom-gene-therapies-for-incurable-diseases-in-weeks-not-years/" target="_blank">Scientists Race to Deliver Custom Gene Therapies for Incurable Diseases in Weeks—Not Years</a></h2>
+                    <p class="ai-summary">Gene editors usually take years to test and perfect. KJ Muldoon’s treatment took only six months. Now his doctors want to go even faster.
+The post Scientists Race to Deliver Custom Gene Therapies for Incurable Diseases i...</p>
+                    <div class="card-footer">
+                        <a href="https://singularityhub.com/2025/11/18/scientists-race-to-deliver-custom-gene-therapies-for-incurable-diseases-in-weeks-not-years/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/two-versions-of-a-four-wheeled-delivery-vehicle-with-handlebars-and-a-bike-seat-are-seen-side-by-side-the-one-on-the-left-has-a.jpg?id=62164042&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/electric-delivery-vehicles-amazon-also" target="_blank">Amazon Pilots New Pedal-Assist Electric Delivery Vehicle</a></h2>
+                    <p class="ai-summary">Amazon is piloting a new four-wheel, pedal-assist electric delivery vehicle built by Also, a spin-off from electric-truck maker Rivian, in a bid to make city logistics cleaner and more efficient. The vehicle—called the T...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/electric-delivery-vehicles-amazon-also" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/brain-implant-smaller-than-salt.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SingularityHub</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/17/this-wireless-brain-implant-is-smaller-than-a-grain-of-salt/" target="_blank">This Wireless Brain Implant Is Smaller Than a Grain of Salt</a></h2>
+                    <p class="ai-summary">It uses light to record and transmit brain signals and worked for a year with minimal scarring in mice.
+The post This Wireless Brain Implant Is Smaller Than a Grain of Salt appeared first on SingularityHub.</p>
+                    <div class="card-footer">
+                        <a href="https://singularityhub.com/2025/11/17/this-wireless-brain-implant-is-smaller-than-a-grain-of-salt/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/architectural-squares-patch-of-sky.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SingularityHub</div>
+                        <time>12d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/15/this-weeks-awesome-tech-stories-from-around-the-web-through-november-15/" target="_blank">This Week’s Awesome Tech Stories From Around the Web (Through November 15)</a></h2>
+                    <p class="ai-summary">Every week, we scour the web for important, insightful, and fascinating stories in science and technology.
+The post This Week’s Awesome Tech Stories From Around the Web (Through November 15) appeared first on Singularity...</p>
+                    <div class="card-footer">
+                        <a href="https://singularityhub.com/2025/11/15/this-weeks-awesome-tech-stories-from-around-the-web-through-november-15/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/Sentante_robotic_surgery.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SingularityHub</div>
+                        <time>12d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/14/in-wild-experiment-a-surgeon-used-a-robot-to-remove-a-blood-clot-in-a-brain-4000-miles-away/" target="_blank">In Wild Experiment, Surgeon Uses Robot to Remove  Blood Clot in Brain 4,000 Miles Away</a></h2>
+                    <p class="ai-summary">The transatlantic procedure, carried out on a human cadaver in Scotland, suggests future stroke surgeries could be completed remotely.
+The post In Wild Experiment, Surgeon Uses Robot to Remove  Blood Clot in Brain 4,000 ...</p>
+                    <div class="card-footer">
+                        <a href="https://singularityhub.com/2025/11/14/in-wild-experiment-a-surgeon-used-a-robot-to-remove-a-blood-clot-in-a-brain-4000-miles-away/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -370,7 +605,7 @@
 
         <!-- PAGINATION SECTION -->
         <div class="pagination">
-            <a href="page5.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page4.html" class="page-btn ">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn active">6</a><a href="page7.html" class="page-btn ">7</a><a href="page8.html" class="page-btn ">8</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page21.html" class="page-btn ">21</a><a href="page7.html" class="page-btn">NEXT &rarr;</a>
+            <a href="page5.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page4.html" class="page-btn ">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn active">6</a>
         </div>
 
         <!-- FOOTER SECTION -->

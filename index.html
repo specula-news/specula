@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON (Browser Tab Icon) -->
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="icon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,32 +33,17 @@
             background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
         .logo { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 2.2rem; 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
+            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-
-        .logo-icon {
-            height: 45px;
-            width: auto;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-            filter: invert(1); /* Gör ikonen vit i dark mode */
-        }
-        body.light-mode .logo-icon {
-            filter: invert(0); /* Gör ikonen svart i light mode */
-        }
-
+        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); }
+        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
         
@@ -84,11 +69,47 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION */
+        /* PAGINATION (BOTTOM) */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* --- FLOATING NAVIGATION (SIDE ARROWS) --- */
+        .floating-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1.5rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .floating-nav:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-50%) scale(1.1);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-prev { left: 30px; }
+        .nav-next { right: 30px; }
+
+        /* Hide floating nav on smaller screens (Mobile/Tablet) to avoid covering text */
+        @media (max-width: 1350px) {
+            .floating-nav { display: none; }
+        }
 
         /* FOOTER & DISCLAIMER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
@@ -109,6 +130,10 @@
     </style>
 </head>
 <body>
+    <!-- FLOATING NAVIGATION PLACEHOLDERS -->
+    
+    <a href="page2.html" class="floating-nav nav-next">&rarr;</a>
+
     <div class="container">
         <header>
             <div class="logo">
@@ -131,6 +156,24 @@
                         <div class="source-badge">Nikkei Asia</div>
                         <time>Just Now</time>
                     </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/automobiles/hanoi-set-to-restrict-gasoline-motorbike-use-but-no-full-ban" target="_blank">Hanoi set to restrict gasoline motorbike use, but no full ban</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/automobiles/hanoi-set-to-restrict-gasoline-motorbike-use-but-no-full-ban" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
                     <h2 class="card-title"><a href="https://asia.nikkei.com/economy/record-24-of-chinese-companies-post-losses-in-january-september" target="_blank">Record 24% of Chinese companies post losses in January-September</a></h2>
                     <p class="ai-summary"></p>
                     <div class="card-footer">
@@ -141,7 +184,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -159,7 +202,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -177,7 +220,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -195,7 +238,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -231,7 +274,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -249,7 +292,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -267,7 +310,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -285,7 +328,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -321,7 +364,7 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -337,11 +380,633 @@
                 </div>
             </article>
             
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/south-korea-central-bank-maintains-rates-as-won-weakens" target="_blank">South Korea central bank maintains rates as won weakens</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/economy/south-korea-central-bank-maintains-rates-as-won-weakens" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/transportation/un-aviation-agency-taps-japanese-official-as-1st-leader-from-asia2" target="_blank">UN aviation agency taps Japanese official as 1st leader from Asia</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/transportation/un-aviation-agency-taps-japanese-official-as-1st-leader-from-asia2" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/companies/toyota-extends-warranty-program-across-asia-latin-america" target="_blank">Toyota extends warranty program across Asia, Latin America</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/companies/toyota-extends-warranty-program-across-asia-latin-america" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/media-entertainment/one-piece-flagship-tokyo-store-rides-wave-of-fan-enthusiasm" target="_blank">'One Piece' flagship Tokyo store rides wave of fan enthusiasm</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/media-entertainment/one-piece-flagship-tokyo-store-rides-wave-of-fan-enthusiasm" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/japan-weighs-taxing-low-value-imports-through-temu-shein" target="_blank">Japan weighs taxing low-value imports through Temu, Shein</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/economy/japan-weighs-taxing-low-value-imports-through-temu-shein" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/softbank/softbank-issues-cumulative-64bn-in-retail-bonds-to-power-ai-ambitions" target="_blank">SoftBank issues cumulative $64bn in retail bonds to power AI ambitions</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/softbank/softbank-issues-cumulative-64bn-in-retail-bonds-to-power-ai-ambitions" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/opinion/the-ai-revolution-needs-a-reality-check" target="_blank">The AI revolution needs a reality check</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/opinion/the-ai-revolution-needs-a-reality-check" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/video/how-glid-won-startup-battlefield-2025-mentorship-mission-focus-and-meditation/" target="_blank">How Glīd won Startup Battlefield 2025: Mentorship, mission-focus, and meditation</a></h2>
+                    <p class="ai-summary">This week in Build Mode, Startup Battlefield editor Isabelle Johannessen is joined by the winner of this year’s competition, Kevin Damoa, the CEO and founder of Glīd, a logistics infrastructure company that aims to strea...</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/video/how-glid-won-startup-battlefield-2025-mentorship-mission-focus-and-meditation/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.mktw.net/im-93115913" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">MarketWatch.com - Top Sto</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/my-college-age-kids-inherited-300k-from-a-401-k-what-should-they-do-with-this-money-46302656?mod=mw_rss_topstories" target="_blank">My college-age kids inherited $300K from a 401(k). What should they do with this money?</a></h2>
+                    <p class="ai-summary">“This money is likely to be saved for the purchase of homes in 10 years or so.”</p>
+                    <div class="card-footer">
+                        <a href="https://www.marketwatch.com/story/my-college-age-kids-inherited-300k-from-a-401-k-what-should-they-do-with-this-money-46302656?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank">Best iPad apps for unleashing and exploring your creativity</a></h2>
+                    <p class="ai-summary">We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/Gaia_BH2_decaps_dr2_20251127_171515.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/the-star-that-shouldnt-exist" target="_blank">The Star That Shouldn't Exist</a></h2>
+                    <p class="ai-summary">A red giant orbiting a dormant black hole is spinning impossibly fast and contains chemistry that makes it look ancient when it's actually relatively young. By listening to faint vibrations rippling through the star, ast...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/the-star-that-shouldnt-exist" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistis simpler, safer, and smarter</a></h2>
+                    <p class="ai-summary">We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teasar uppdaterad Astra</a></h2>
+                    <p class="ai-summary">Presenteras nästa år
+
+		
+		
+		
+		
+		Under nästa år kommer Opel att släppa en uppdaterad version av modellen Astra. Den får sig bland annat ett nytt ansikte och en första skymt av detta får vi i dessa teaserbilder tillsam...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SweClockers</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42063-plex-pa-krigsstigen-mot-gratisstrommare" target="_blank">Plex på krigsstigen mot gratisströmmare</a></h2>
+                    <p class="ai-summary">Inför krav på abonnemang för fjärråtkomst - rullas ut på Roku först</p>
+                    <div class="card-footer">
+                        <a href="https://www.sweclockers.com/artikel/42063-plex-pa-krigsstigen-mot-gratisstrommare" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
+                    <p class="ai-summary">If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale at Amazon, you can ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK095_MICROSOFT_2_CVirginia_B.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
+                    <p class="ai-summary">Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these systems work and conv...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/1256px-Fermi_Gamma-ray_Space_Telescope_spacecraft_model_20251127_162510.png" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/after-a-century-of-searching-we-may-have-finally-seen-dark-matter" target="_blank">After a Century of Searching, We May Have Finally Seen Dark Matter</a></h2>
+                    <p class="ai-summary">Ninety five years after Swiss astronomer Fritz Zwicky inferred its existence from galaxies moving impossibly fast, researchers may have detected the first direct evidence of dark matter, the invisible scaffolding that ho...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/after-a-century-of-searching-we-may-have-finally-seen-dark-matter" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.mktw.net/im-88436405" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">MarketWatch.com - Top Sto</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/is-it-a-black-friday-scam-ebay-said-id-set-up-an-account-there-was-only-one-problem-i-hadnt-b4b8c169?mod=mw_rss_topstories" target="_blank">Beware of this Black Friday scam</a></h2>
+                    <p class="ai-summary">“I received an email from eBay, or at least it looked like it was from an official eBay address.”</p>
+                    <div class="card-footer">
+                        <a href="https://www.marketwatch.com/story/is-it-a-black-friday-scam-ebay-said-id-set-up-an-account-there-was-only-one-problem-i-hadnt-b4b8c169?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.mktw.net/im-75835136" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">MarketWatch.com - Top Sto</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/i-have-no-paperwork-my-father-gave-my-mothers-jewelry-before-he-died-will-i-owe-taxes-if-i-sell-768ee7dc?mod=mw_rss_topstories" target="_blank">‘I have no paperwork’: My father gave me my mother’s jewelry before he died. Will I owe taxes if I sell?</a></h2>
+                    <p class="ai-summary">“I am selling the jewelry and trying to understand how I determine the cost basis.”</p>
+                    <div class="card-footer">
+                        <a href="https://www.marketwatch.com/story/i-have-no-paperwork-my-father-gave-my-mothers-jewelry-before-he-died-will-i-owe-taxes-if-i-sell-768ee7dc?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.mktw.net/im-67345628" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">MarketWatch.com - Top Sto</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.marketwatch.com/story/im-burned-out-by-the-drama-is-it-wrong-to-skip-my-thanksgiving-family-dinner-last-year-was-fraught-0731f498?mod=mw_rss_topstories" target="_blank">‘I’m burned out by the drama’: Is it wrong to skip Thanksgiving dinner? Last year was fraught.</a></h2>
+                    <p class="ai-summary">“I’m invited because, at 55, I am the only single one in the family.”</p>
+                    <div class="card-footer">
+                        <a href="https://www.marketwatch.com/story/im-burned-out-by-the-drama-is-it-wrong-to-skip-my-thanksgiving-family-dinner-last-year-was-fraught-0731f498?mod=mw_rss_topstories" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank">Plex börjar ta betalt för distansströmning</a></h2>
+                    <p class="ai-summary">Roku-appen först ut
+
+		
+		
+		
+		
+		Plex har nu börjat rulla ut förändringen som gör funktionen som låter användare strömma innehåll från sin server utanför hemmets nätverk till en betalfunktion. Tidigare har detta varit ...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank">Expedition Vildmark är en ny realityshow med kändisar</a></h2>
+                    <p class="ai-summary">Kommer på Kanal 5 och HBO Max nästa år
+
+		
+		
+		
+		
+		Här ovanför syns gänget som kommer att delta i den nya realitysatsningen Expedition Vildmark som kommer att ha premiär under våren 2026 på HBO Max och Kanal 5. 
+
+I Ex...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
+                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter Carol featuring a f...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank">Den analoga superbilen Nilu hälsar på hos Jay Leno</a></h2>
+                    <p class="ai-summary">Sasha Selipanovs bebis
+
+			
+			
+		
+		
+		
+		Förra hösten presenterade den före detta Koenigsegg, Bugatti och Lamborghini-designern Sasha Selipanovs sin helt egna superbil Nilu27. En futuristisk best utseendemässigt men kl...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
+                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst.  Speaking at a press...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank">Gemini verkar vara perfekt för att lura barn</a></h2>
+                    <p class="ai-summary">Google gör reklamfilm med Nano Banana
+
+			
+			
+		
+		
+		
+		Googles Nano Banana, en AI-modell för att generera bilder och videoklipp, har hyllats av de flesta sedan den släpptes och i en ny reklamfilm för modellen, och de ...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://static.feber.se/article_images/63/73/60/637360_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank">Webbläsaren Orion når version 1.0</a></h2>
+                    <p class="ai-summary">WebKit med stöd för Chrome-tillägg
+
+		
+		
+		
+		
+		Efter en fem år lång utvecklingsperiod har Kagi nu släppt version 1.0 av sin webbläsare Orion för Mac. Webbläsaren bygger på Safaris WebKit och ska vara ett snabbt altern...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/kuxiu_s3_1.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank">Kuxiu’s solid-state power bank now has more capacity and faster wireless charging</a></h2>
+                    <p class="ai-summary">Seven months after launching its first semi-solid state battery that used a safer and longer-lasting solid-liquid mixed electrolyte, Kuxiu is introducing a new version with some welcome upgrades. The S3 has twice the cap...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/conceptual-collage-of-memristor-symbols-filled-with-the-textures-of-mushrooms-honey-and-blood.jpg?id=62243597&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/memristor-materials" target="_blank">3 Weird Things You Can Turn Into a Memristor</a></h2>
+                    <p class="ai-summary">From the honey in your tea to the blood in your veins, materials all around you have a hidden talent. Some of these substances, when engineered in specific ways, can act as memristors—electrical components that can “reme...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/memristor-materials" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://static.feber.se/article_images/63/73/43/637343_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank">Världens största Supercharger-station nu helt klar</a></h2>
+                    <p class="ai-summary">Helt solcellsdriven
+
+		
+		
+		
+		
+		I somras smygöppnade Tesla sin solcellsdrivna Supercharger-station. Nu är den helt klar och det här blir tillverkarens största hittills. Hela 164 laddstolpar erbjuds och stationen är be...</p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/GettyImages-1395402951.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank">How to help your parents with their tech over the holidays</a></h2>
+                    <p class="ai-summary">Going home for the holidays isn't all turkey, holiday decorations, and political arguments discussions. It also comes with requests for tech support and questions like "Why does my computer do this?" and "I read about th...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/03/The_Studio_Photo_010101.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank">Disney Plus, Hulu, and HBO Max are all over 60 percent off for Black Friday</a></h2>
+                    <p class="ai-summary">The holidays are a great time to see family, exchange gifts, and enjoy a good meal. It’s also the perfect time to gather around a TV and catch up on must-see shows and movies. Vince Gilligan’s Pluribus is a fantastic new...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
         </div>
 
         <!-- PAGINATION SECTION -->
         <div class="pagination">
-            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page21.html" class="page-btn ">21</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
+            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page6.html" class="page-btn ">6</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <!-- FOOTER SECTION -->

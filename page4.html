@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON (Browser Tab Icon) -->
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="icon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,32 +33,17 @@
             background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
         .logo { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 2.2rem; 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
+            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-
-        .logo-icon {
-            height: 45px;
-            width: auto;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-            filter: invert(1); /* Gör ikonen vit i dark mode */
-        }
-        body.light-mode .logo-icon {
-            filter: invert(0); /* Gör ikonen svart i light mode */
-        }
-
+        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); }
+        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
         
@@ -84,11 +69,47 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
         .read-more:hover { text-decoration: underline; }
 
-        /* PAGINATION */
+        /* PAGINATION (BOTTOM) */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* --- FLOATING NAVIGATION (SIDE ARROWS) --- */
+        .floating-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1.5rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .floating-nav:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-50%) scale(1.1);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-prev { left: 30px; }
+        .nav-next { right: 30px; }
+
+        /* Hide floating nav on smaller screens (Mobile/Tablet) to avoid covering text */
+        @media (max-width: 1350px) {
+            .floating-nav { display: none; }
+        }
 
         /* FOOTER & DISCLAIMER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
@@ -109,6 +130,10 @@
     </style>
 </head>
 <body>
+    <!-- FLOATING NAVIGATION PLACEHOLDERS -->
+    <a href="page3.html" class="floating-nav nav-prev">&larr;</a>
+    <a href="page5.html" class="floating-nav nav-next">&rarr;</a>
+
     <div class="container">
         <header>
             <div class="logo">
@@ -123,182 +148,180 @@
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>2h Ago</time>
+                        <div class="source-badge">Top Technology News -- Sc</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
-                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst.  Speaking at a press...</p>
+                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251125081919.htm" target="_blank">New Mars images reveal hidden traces of a recent ice age</a></h2>
+                    <p class="ai-summary">Mars’s Coloe Fossae reveals a landscape shaped by ancient ice ages, with deep valleys, cratered terrain, and frozen debris flows preserved from a time when the planet’s climate dramatically shifted.</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sciencedaily.com/releases/2025/11/251125081919.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <div class="source-badge">SweClockers</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank">Gemini verkar vara perfekt för att lura barn</a></h2>
-                    <p class="ai-summary">Google gör reklamfilm med Nano Banana
-
-			
-			
-		
-		
-		
-		Googles Nano Banana, en AI-modell för att generera bilder och videoklipp, har hyllats av de flesta sedan den släpptes och i en ny reklamfilm för modellen, och de ...</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42055-veckans-fraga-hur-ofta-koper-du-ny-mus" target="_blank">Veckans fråga: Hur ofta köper du ny mus?</a></h2>
+                    <p class="ai-summary">Hur ofta byter du mus - och vad avgör när det är dags att uppgradera?</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sweclockers.com/artikel/42055-veckans-fraga-hur-ofta-koper-du-ny-mus" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/60/637360_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/lab-bacteria.jpg" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank">Webbläsaren Orion når version 1.0</a></h2>
-                    <p class="ai-summary">WebKit med stöd för Chrome-tillägg
-
-		
-		
-		
-		
-		Efter en fem år lång utvecklingsperiod har Kagi nu släppt version 1.0 av sin webbläsare Orion för Mac. Webbläsaren bygger på Safaris WebKit och ska vara ett snabbt altern...</p>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-mrna-therapy-curbs-antibiotic-resistant.html" target="_blank">Novel mRNA therapy curbs antibiotic-resistant infections in preclinical lung models</a></h2>
+                    <p class="ai-summary">Researchers at the Icahn School of Medicine at Mount Sinai and collaborators have reported early success with a novel mRNA-based therapy designed to combat antibiotic-resistant bacteria.</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://phys.org/news/2025-11-mrna-therapy-curbs-antibiotic-resistant.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/kuxiu_s3_1.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">SweClockers</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank">Kuxiu’s solid-state power bank now has more capacity and faster wireless charging</a></h2>
-                    <p class="ai-summary">Seven months after launching its first semi-solid state battery that used a safer and longer-lasting solid-liquid mixed electrolyte, Kuxiu is introducing a new version with some welcome upgrades. The S3 has twice the cap...</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42053-olasta-nova-lake-processorer-ensamma-om-144-mb-cache" target="_blank">Olåsta Nova Lake-processorer ensamma om 144 MB cache</a></h2>
+                    <p class="ai-summary">Ska utmana AMD:s 3D V‑Cache för högre spelprestanda.</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sweclockers.com/artikel/42053-olasta-nova-lake-processorer-ensamma-om-144-mb-cache" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/conceptual-collage-of-memristor-symbols-filled-with-the-textures-of-mushrooms-honey-and-blood.jpg?id=62243597&width=980" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/11/kamingo.jpg?fit=1024%2C569&ssl=1" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">IEEE Spectrum</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://spectrum.ieee.org/memristor-materials" target="_blank">3 Weird Things You Can Turn Into a Memristor</a></h2>
-                    <p class="ai-summary">From the honey in your tea to the blood in your veins, materials all around you have a hidden talent. Some of these substances, when engineered in specific ways, can act as memristors—electrical components that can “reme...</p>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/this-10-second-add-on-turns-any-bicycle-into-a-90-km-range-e-bike/" target="_blank">This 10-second add-on turns any bicycle into a 90 km-range e-bike</a></h2>
+                    <p class="ai-summary">During a recent offline tech event in China, one of our colleagues had the chance to try a small device that promises something unusually practical: turning a regular bicycle into an electric-assist bike in under ten sec...</p>
                     <div class="card-footer">
-                        <a href="https://spectrum.ieee.org/memristor-materials" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://technode.com/2025/11/26/this-10-second-add-on-turns-any-bicycle-into-a-90-km-range-e-bike/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/43/637343_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/copper-unexpectedly-pr-1.jpg" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank">Världens största Supercharger-station nu helt klar</a></h2>
-                    <p class="ai-summary">Helt solcellsdriven
-
-		
-		
-		
-		
-		I somras smygöppnade Tesla sin solcellsdrivna Supercharger-station. Nu är den helt klar och det här blir tillverkarens största hittills. Hela 164 laddstolpar erbjuds och stationen är be...</p>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-copper-nanoparticles-unexpectedly-suitable-ultraviolet.html" target="_blank">Copper nanoparticles unexpectedly prove suitable for ultraviolet SERS spectroscopy</a></h2>
+                    <p class="ai-summary">Lithuanian researchers at the Center for Physical Sciences and Technology (FTMC), Habil. Dr. Gediminas Niaura and Dr. Martynas Talaikis, together with international colleagues, have for the first time demonstrated that c...</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://phys.org/news/2025-11-copper-nanoparticles-unexpectedly-suitable-ultraviolet.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/GettyImages-1395402951.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/09/alibaba.jpg?fit=1024%2C683&ssl=1" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank">How to help your parents with their tech over the holidays</a></h2>
-                    <p class="ai-summary">Going home for the holidays isn't all turkey, holiday decorations, and political arguments discussions. It also comes with requests for tech support and questions like "Why does my computer do this?" and "I read about th...</p>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/alibaba-ceo-says-ai-bubble-unlikely-in-next-three-years/" target="_blank">Alibaba CEO says AI bubble unlikely in next three years</a></h2>
+                    <p class="ai-summary">Alibaba CEO Eddie Wu said an artificial intelligence bubble is unlikely to emerge in the next three years, as AI resources will remain in short supply. His comments followed Alibaba’s fiscal Q2 2026 results, where the co...</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://technode.com/2025/11/26/alibaba-ceo-says-ai-bubble-unlikely-in-next-three-years/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/03/The_Studio_Photo_010101.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/11/bmw-thai-nguyen-OFYRxx7xiho-unsplash.jpg?fit=1024%2C683&ssl=1" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank">Disney Plus, Hulu, and HBO Max are all over 60 percent off for Black Friday</a></h2>
-                    <p class="ai-summary">The holidays are a great time to see family, exchange gifts, and enjoy a good meal. It’s also the perfect time to gather around a TV and catch up on must-see shows and movies. Vince Gilligan’s Pluribus is a fantastic new...</p>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/bmw-considers-range-extender-versions-as-chinese-rivals-reshape-demand/" target="_blank">BMW considers range-extender versions as Chinese rivals reshape demand</a></h2>
+                    <p class="ai-summary">BMW is evaluating range-extender versions of some models as demand for the technology grows in China, Bloomberg reported. The plan is under internal discussion and focuses on large vehicles such as the X5 and 7-Series. C...</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://technode.com/2025/11/26/bmw-considers-range-extender-versions-as-chinese-rivals-reshape-demand/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://singularityhub.com/uploads/2025/11/red-shapes-like-blood-platelets.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SingularityHub</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/27/crispr-slashes-bad-cholesterol-levels-by-95-percent-in-early-results/" target="_blank">CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Results</a></h2>
-                    <p class="ai-summary">A range of CRISPR gene therapies are taking aim at chronically high cholesterol, reducing the risk of heart disease.
-The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Results appeared first on Singu...</p>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-the-weight-of-nvidias-crown.html" target="_blank">CNBC Daily Open: The weight of Nvidia's crown</a></h2>
+                    <p class="ai-summary">Pressure has been building on Nvidia over the past month. It seemed like Nvidia felt the need to address some of those rumblings.</p>
                     <div class="card-footer">
-                        <a href="https://singularityhub.com/2025/11/27/crispr-slashes-bad-cholesterol-levels-by-95-percent-in-early-results/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-the-weight-of-nvidias-crown.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/25/uber-and-werides-robotaxi-service-in-abu-dhabi-is-officially-driverless/" target="_blank">Uber and WeRide’s robotaxi service in Abu Dhabi is officially driverless</a></h2>
+                    <p class="ai-summary">The commercial robotaxi service launched last year. Now, the human safety operator is gone.</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/25/uber-and-werides-robotaxi-service-in-abu-dhabi-is-officially-driverless/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -310,62 +333,626 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">SweClockers</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank">Hack låter dig använda CD-skivor på PS5</a></h2>
-                    <p class="ai-summary">Så fungerar det
-
-			
-			
-		
-		
-		
-		I en ny YouTube-video demonstrerar kanalen Will it work? hur man kan kringgå PlayStation 5:s avsaknad av CD-stöd med hjälp av en specifik extern läsare från Lite-On, som lurar konsolen...</p>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42054-nya-4g-telefoner-blockeras-hos-tre-telenor-och-tele2" target="_blank">Nya 4G-telefoner blockeras hos Tre, Telenor och Tele2</a></h2>
+                    <p class="ai-summary">Telefoner som inte kan ringa nödsamtal via 4G/5G måste blockeras efter PTS-beslut.</p>
                     <div class="card-footer">
-                        <a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.sweclockers.com/artikel/42054-nya-4g-telefoner-blockeras-hos-tre-telenor-och-tele2" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/Vrg_illo_Kristen_Radtke_why_cant_chatgpt_tell_time.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/06/Screenshot-2025-06-11-at-3.18.50%E2%80%AFPM-scaled.png?fit=1024%2C354&ssl=1" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/report/829137/openai-chatgpt-time-date" target="_blank">Why can’t ChatGPT tell time?</a></h2>
-                    <p class="ai-summary">ChatGPT, like many chatbots, is pitched as a hyper-competent personal assistant. But among the many things that confuse it, one is particularly confounding: It cannot tell time. When I ask ChatGPT what time it is, I'm ne...</p>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/li-auto-to-launch-first-ai-smart-glasses-expanding-multi-device-ecosystem/" target="_blank">Li Auto to launch first AI smart glasses, expanding multi-device ecosystem</a></h2>
+                    <p class="ai-summary">Li Xiang, founder of Li Auto, said on Tuesday the company will soon launch its first pair of AI smart glasses, calling it “Li Auto’s best AI accessory.” He said the device will be deeply integrated with in-car use cases,...</p>
                     <div class="card-footer">
-                        <a href="https://www.theverge.com/report/829137/openai-chatgpt-time-date" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://technode.com/2025/11/26/li-auto-to-launch-first-ai-smart-glasses-expanding-multi-device-ecosystem/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
             <article class="news-card">
                 <div class="card-image-wrapper">
-                    <img src="https://static.feber.se/article_images/63/73/61/637361_980.jpg" class="card-image" loading="lazy" alt="News">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>3h Ago</time>
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank">Fem unika Beatles-bilder ska auktioneras iväg</a></h2>
-                    <p class="ai-summary">Togs på konsert i Karlstad 1963
-
-		
-		
-		
-		
-		Beatles första konsert utanför Storbritannien efter genombrottet plåtades, och nu ska fem tidigare okända färgdiabilder från detta tillfälle auktioneras iväg här i Sverige. ...</p>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/amazon-faa-probe-delivery-drone-incident-texas.html" target="_blank">Amazon faces FAA probe after delivery drone snaps internet cable in Texas</a></h2>
+                    <p class="ai-summary">The probe comes as Amazon faces stiffer competition from Walmart, which has also begun drone deliveries.</p>
                     <div class="card-footer">
-                        <a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.cnbc.com/2025/11/25/amazon-faa-probe-delivery-drone-incident-texas.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/11/hanhan.png?fit=1024%2C554&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/huawei-launches-first-companion-chat-robot-smart-hanhan-priced-at-about-55/" target="_blank">Huawei launches first companion chat robot Smart Hanhan, priced at about $55</a></h2>
+                    <p class="ai-summary">Huawei on Tuesday unveiled its first companion chat robot, Smart Hanhan, at a product launch event. Priced at RMB 399 ($55), the furry toy-like device will go on sale starting Nov. 28. The robot supports human-like inter...</p>
+                    <div class="card-footer">
+                        <a href="https://technode.com/2025/11/26/huawei-launches-first-companion-chat-robot-smart-hanhan-priced-at-about-55/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/11/3.png?fit=556%2C312&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/over-5000-global-attendees-celebrate-the-successful-debut-of-the-xin-summit-showcasing-the-next-generation-of-innovation-from-the-greater-bay-area-to-the-world/" target="_blank">Over 5,000 Global Attendees Celebrate the Successful Debut of the XIN Summit, Showcasing the Next Generation of Innovation From the Greater Bay Area to the World</a></h2>
+                    <p class="ai-summary">The inaugural XIN Summit concluded on 16 November with a powerful debut presented by BEYOND Expo — Asia’s largest technology innovation and ecosystem event. Focused on AI Hardware Ecosystems and Frontier Technologies, th...</p>
+                    <div class="card-footer">
+                        <a href="https://technode.com/2025/11/26/over-5000-global-attendees-celebrate-the-successful-debut-of-the-xin-summit-showcasing-the-next-generation-of-innovation-from-the-greater-bay-area-to-the-world/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/11/6.jpg?fit=832%2C554&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechNode</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/global-top-startup-teams-shine-as-xin-summit-ignites-the-night-with-the-next-star-awards/" target="_blank">Global Top Startup Teams Shine as XIN Summit Ignites the Night with the Next Star Awards</a></h2>
+                    <p class="ai-summary">On the eve of the XIN Summit (powered by BEYOND), two major pre-summit programs — XIN Summit Media Day and the Entrepreneurs Next Star & Million Prize Global Challenge 2025 Awards Ceremony — set the stage for a landmark ...</p>
+                    <div class="card-footer">
+                        <a href="https://technode.com/2025/11/26/global-top-startup-teams-shine-as-xin-summit-ignites-the-night-with-the-next-star-awards/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-nvidias-crown-looks-increasingly-uneasy-on-its-head.html" target="_blank">CNBC Daily Open: Nvidia's crown looks increasingly uneasy on its head</a></h2>
+                    <p class="ai-summary">Pressure has been building on Nvidia over the past month. It seemed like Nvidia felt the need to address some of those rumblings.</p>
+                    <div class="card-footer">
+                        <a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-nvidias-crown-looks-increasingly-uneasy-on-its-head.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/workday-wday-q3-earnings-report-2026.html" target="_blank">Workday stock slips on light quarterly margin guidance</a></h2>
+                    <p class="ai-summary">Workday shares slid more than 5% in extended trading Tuesday after the company issued quarterly margin guidance that came in below Wall Street projections.</p>
+                    <div class="card-footer">
+                        <a href="https://www.cnbc.com/2025/11/25/workday-wday-q3-earnings-report-2026.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/hp-inc-shares-fall-as-company-says-it-will-cut-up-to-6000-employees.html" target="_blank">HP Inc shares fall on layoffs, weak guidance due to U.S. trade regulations</a></h2>
+                    <p class="ai-summary">"HP's outlook reflects the added cost driven by the current U.S. trade-related regulations in place, and associated mitigations," the company said.</p>
+                    <div class="card-footer">
+                        <a href="https://www.cnbc.com/2025/11/25/hp-inc-shares-fall-as-company-says-it-will-cut-up-to-6000-employees.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/25/why-hold-forever-investors-are-snapping-up-venture-capital-zombies/" target="_blank">Why ‘hold forever’ investors are snapping up venture capital ‘zombies’</a></h2>
+                    <p class="ai-summary">An investor explains the "buy, fix, and hold" model employed by Bending Spoons and similar companies that buy distressed startups.</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/25/why-hold-forever-investors-are-snapping-up-venture-capital-zombies/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/dell-earnings-report-q3-2026.html" target="_blank">Dell misses on revenue, offers strong forecast driven by AI sales</a></h2>
+                    <p class="ai-summary">Dell is an important bellwether for the health of the AI infrastructure industry as one of the top vendors for systems based around Nvidia graphics processors.</p>
+                    <div class="card-footer">
+                        <a href="https://www.cnbc.com/2025/11/25/dell-earnings-report-q3-2026.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2024/08/GettyImages-2126120280-1152x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/glp-1-drugs-improve-heart-health-but-only-if-you-keep-taking-them/" target="_blank">There may not be a safe off-ramp for some taking GLP-1 drugs, study suggests</a></h2>
+                    <p class="ai-summary">In trial, 82% saw weight rebound and cardiovascular health reverse after withdrawal.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/health/2025/11/glp-1-drugs-improve-heart-health-but-only-if-you-keep-taking-them/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Tech</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/gm-software-leader-baris-cetinok-leaving.html" target="_blank">A third high-profile tech leader is leaving GM as part of a software-product restructuring</a></h2>
+                    <p class="ai-summary">GM is combining its vehicle software engineering and global product units under one organization, led by new Chief Product Officer Sterling Anderson.</p>
+                    <div class="card-footer">
+                        <a href="https://www.cnbc.com/2025/11/25/gm-software-leader-baris-cetinok-leaving.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2024/02/plex1-1152x648.png" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/gadgets/2025/11/plexs-crackdown-on-free-remote-streaming-access-starts-this-week/" target="_blank">Plex’s crackdown on free remote streaming access starts this week</a></h2>
+                    <p class="ai-summary">Roku users will be hit first.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/gadgets/2025/11/plexs-crackdown-on-free-remote-streaming-access-starts-this-week/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/peat-as-a-sustainable.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-peat-sustainable-precursor-fuel-cell.html" target="_blank">Using peat as sustainable precursor for fuel cell catalyst materials</a></h2>
+                    <p class="ai-summary">Iron-nitrogen-carbon catalysts have the potential to replace the more expensive platinum catalysts currently used in fuel cells. This is shown by a study conducted by researchers from the Helmholtz-Zentrum Berlin (HZB), ...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-peat-sustainable-precursor-fuel-cell.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/product-ddr5-2up-angle_3-2-all-others-1152x648-1764100687.jpeg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/gadgets/2025/11/spiking-memory-prices-mean-that-it-is-once-again-a-horrible-time-to-build-a-pc/" target="_blank">GPU prices are coming to earth just as RAM costs shoot into the stratosphere</a></h2>
+                    <p class="ai-summary">Some RAM kits are over three times as expensive as they were three months ago.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/gadgets/2025/11/spiking-memory-prices-mean-that-it-is-once-again-a-horrible-time-to-build-a-pc/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/GettyImages-2248311596-1152x648-1764089709.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/space/2025/11/china-launches-an-emergency-lifeboat-to-bring-three-astronauts-back-to-earth/" target="_blank">China launches an emergency lifeboat to bring three astronauts back to Earth</a></h2>
+                    <p class="ai-summary">This is a "successful example for efficient emergency response in the international space industry."</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/space/2025/11/china-launches-an-emergency-lifeboat-to-bring-three-astronauts-back-to-earth/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/GettyImages-2154521423-1152x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/tech-policy/2025/11/realpage-agrees-to-change-algorithm-so-landlords-cant-collude-on-price-hikes/" target="_blank">Landlords’ go-to tool to set rent prices to be gutted under RealPage settlement</a></h2>
+                    <p class="ai-summary">RealPage agrees to settle suit over DOJ claims software raised rents across the US.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/tech-policy/2025/11/realpage-agrees-to-change-algorithm-so-landlords-cant-collude-on-price-hikes/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/SM_back_a-1152x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/gaming/2025/11/valves-steam-machine-looks-like-a-console-but-dont-expect-it-to-be-priced-like-one/" target="_blank">Valve’s Steam Machine looks like a console, but don’t expect it to be priced like one</a></h2>
+                    <p class="ai-summary">Upcoming gaming box will be priced in line with a similarly specced PC, Valve says.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/gaming/2025/11/valves-steam-machine-looks-like-a-console-but-dont-expect-it-to-be-priced-like-one/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://singularityhub.com/uploads/2025/11/MIT-Biolelectric-Brain-Implant.jpeg?auto=webp" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SingularityHub</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/25/brain-implants-smaller-than-cells-can-be-injected-into-veins/" target="_blank">These Brain Implants Are Smaller Than Cells and Can Be Injected Into Veins</a></h2>
+                    <p class="ai-summary">The tiny chips hitch a ride on immune cells to target inflammation in the brain. Scientists hope to kick off clinical trials within three years.
+The post These Brain Implants Are Smaller Than Cells and Can Be Injected In...</p>
+                    <div class="card-footer">
+                        <a href="https://singularityhub.com/2025/11/25/brain-implants-smaller-than-cells-can-be-injected-into-veins/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/technology-identifies-1.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-stickslip-nanopore-approach-protein-analysis.html" target="_blank">Stick–slip nanopore approach streamlines protein analysis by using electrical 'fingerprints'</a></h2>
+                    <p class="ai-summary">A technology developed in the laboratory of Prof. Amit Meller from the Technion—Israel Institute of Technology Faculty of Biomedical Engineering marks a significant advancement toward rapid proteome analysis, with far-re...</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-stickslip-nanopore-approach-protein-analysis.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/a-pair-of-coil-wound-cylinders-sits-atop-two-milk-crates-wires-connect-them-to-a-circuit-board-connected-to-three-large-12-volt.png?id=62212907&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/listen-to-protons-diy-magnetometer" target="_blank">Listen to Protons for Less Than $100</a></h2>
+                    <p class="ai-summary">When you get an MRI scan, the machine exploits a phenomenon called nuclear magnetic resonance (NMR). Certain kinds of atomic nuclei—including those of the hydrogen atoms in a water molecule—can be made to oscillate in a ...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/listen-to-protons-diy-magnetometer" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/interpretable-machine-3.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nanotechnology News - Nan</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-machine-nanocatalyst-discovery.html" target="_blank">Interpretable machine learning to accelerate nanocatalyst discovery</a></h2>
+                    <p class="ai-summary">A fast and accurate surrogate model screens over 10,000 possible metal-oxide supports for a platinum nanocatalyst to prevent sintering under high temperatures.</p>
+                    <div class="card-footer">
+                        <a href="https://phys.org/news/2025-11-machine-nanocatalyst-discovery.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://spectrum.ieee.org/media-library/conceptual-illustration-of-a-digitized-rope-being-pulled-until-it-tears-in-half.jpg?id=62224931&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">IEEE Spectrum</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://spectrum.ieee.org/ai-agents-safety" target="_blank">AI Agents Break Rules Under Everyday Pressure</a></h2>
+                    <p class="ai-summary">Several recent studies have shown that artificial-intelligence agents sometimes decide to misbehave, for instance by attempting to blackmail people who plan to replace them. But such behavior often occurs in contrived sc...</p>
+                    <div class="card-footer">
+                        <a href="https://spectrum.ieee.org/ai-agents-safety" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SweClockers</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42049-snabbare-utforskare-och-andra-forbattringar-pa-gang-i-windows" target="_blank">Snabbare Utforskare och andra förbättringar på gång i Windows</a></h2>
+                    <p class="ai-summary">Microsofts utvecklare är inte helt fokuserade på AI trots allt.</p>
+                    <div class="card-footer">
+                        <a href="https://www.sweclockers.com/artikel/42049-snabbare-utforskare-och-andra-forbattringar-pa-gang-i-windows" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/Low-Res_2_20251125_122702.png" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/modeling-the-fight-between-charged-lunar-dust-and-spacecraft-coatings" target="_blank">Modeling the Fight Between Charged Lunar Dust and Spacecraft Coatings</a></h2>
+                    <p class="ai-summary">Understanding how exactly lunar dust sticks to surfaces is going to be important once we start having a long-term sustainable presence on the Moon. Dust on the Moon is notoriously sticky and damaging to equipment, as wel...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/modeling-the-fight-between-charged-lunar-dust-and-spacecraft-coatings" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/image-3-990x648.jpeg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/formation-of-oceans-within-icy-moons-could-cause-the-waters-to-boil/" target="_blank">Formation of oceans within icy moons could cause the waters to boil</a></h2>
+                    <p class="ai-summary">A rigid ice shell over a shrinking interior makes for pressures low enough to boil.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/science/2025/11/formation-of-oceans-within-icy-moons-could-cause-the-waters-to-boil/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/GettyImages-1860048338-1152x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Ars Technica</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/mushroom-foragers-collect-160-species-for-food-medicine-art-and-science/" target="_blank">Mushroom foragers collect 160 species for food, medicine, art, and science</a></h2>
+                    <p class="ai-summary">Researchers seek to understand the various uses of wild mushroom species.</p>
+                    <div class="card-footer">
+                        <a href="https://arstechnica.com/science/2025/11/mushroom-foragers-collect-160-species-for-food-medicine-art-and-science/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2025/10/qwen.png?fit=1024%2C576&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechNode</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/25/singapores-national-ai-program-drops-meta-model-and-switches-to-alibabas-qwen/" target="_blank">Singapore’s national AI program drops Meta model and switches to Alibaba’s Qwen</a></h2>
+                    <p class="ai-summary">Singapore’s national AI program has moved its Sea-Lion large language model off Meta’s model family and adopted Alibaba Cloud’s Qwen architecture, according to information cited by foreign media from AI Singapore (AISG)....</p>
+                    <div class="card-footer">
+                        <a href="https://technode.com/2025/11/25/singapores-national-ai-program-drops-meta-model-and-switches-to-alibabas-qwen/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/The_station_pictured_from_the_SpaceX_Crew_Dragon_1_20251125_102351.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/the-moss-that-survived-nine-months-in-space" target="_blank">The Moss That Survived Nine Months in Space</a></h2>
+                    <p class="ai-summary">Moss spores spent nine months strapped to the outside of the International Space Station, exposed to vacuum, cosmic radiation, temperature swings from minus 196°C to 55°C, and unfiltered solar ultraviolet light. Over 80 ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/the-moss-that-survived-nine-months-in-space" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/1280px-LLO_Control_Room_20251125_100925.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/two-years-of-listening-to-the-universes-most-violent-events" target="_blank">Two Years of Listening to the Universe's Most Violent Events</a></h2>
+                    <p class="ai-summary">The world's gravitational wave detectors just wrapped up their longest and most productive observation campaign, capturing 250 new collisions over two years of continuous listening. These ripples in spacetime, created by...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/two-years-of-listening-to-the-universes-most-violent-events" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://www.universetoday.com/article_images/1080px-Potentially_Hazardous_Asteroids_2013_20251125_095546.png" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Universe Today</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/finding-40000-asteroids-before-they-find-us" target="_blank">Finding 40,000 Asteroids Before They Find Us</a></h2>
+                    <p class="ai-summary">Astronomers have just catalogued the 40,000th near Earth asteroid, a milestone that marks humanity's transformation from passive targets to active defenders of our planet. These space rocks, ranging from house sized boul...</p>
+                    <div class="card-footer">
+                        <a href="https://www.universetoday.com/articles/finding-40000-asteroids-before-they-find-us" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SweClockers</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42050-intels-arrow-lake-refresh-hojer-minnesstodet-rejalt" target="_blank">Intels Arrow Lake Refresh höjer minnesstödet rejält</a></h2>
+                    <p class="ai-summary">Intel bekräftar 7 200 MT/s DDR5-stöd med CUDIMM, höjer ribban för LGA 1851-plattformen</p>
+                    <div class="card-footer">
+                        <a href="https://www.sweclockers.com/artikel/42050-intels-arrow-lake-refresh-hojer-minnesstodet-rejalt" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://i0.wp.com/technode.com/wp-content/uploads/2024/06/3nm.png?fit=1024%2C559&ssl=1" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechNode</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://technode.com/2025/11/25/tsmc-to-expand-2nm-capacity-to-10-fabs-adding-three-in-chinas-taiwan/" target="_blank">TSMC to expand 2nm capacity to 10 fabs, adding three in China’s Taiwan</a></h2>
+                    <p class="ai-summary">TSMC is reportedly planning to increase its number of 2-nanometre advanced process wafer fabs in Taiwan from seven to ten. The three new fabs are expected to be located in Tainan, complementing the existing 2nm productio...</p>
+                    <div class="card-footer">
+                        <a href="https://technode.com/2025/11/25/tsmc-to-expand-2nm-capacity-to-10-fabs-adding-three-in-chinas-taiwan/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">SweClockers</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42048-chieftec-lanserar-billigt-chassi-med-unik-design" target="_blank">Chieftec lanserar billigt chassi med unik design</a></h2>
+                    <p class="ai-summary">Företaget hämtar inspiration från hifi-världen.</p>
+                    <div class="card-footer">
+                        <a href="https://www.sweclockers.com/artikel/42048-chieftec-lanserar-billigt-chassi-med-unik-design" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -374,7 +961,7 @@ The post CRISPR Slashes ‘Bad Cholesterol’ Levels by 95 Percent in Early Resu
 
         <!-- PAGINATION SECTION -->
         <div class="pagination">
-            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn ">6</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page21.html" class="page-btn ">21</a><a href="page5.html" class="page-btn">NEXT &rarr;</a>
+            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn ">6</a><a href="page5.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <!-- FOOTER SECTION -->
