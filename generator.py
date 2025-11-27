@@ -7,8 +7,9 @@ import random
 from deep_translator import GoogleTranslator
 
 # --- CONFIGURATION ---
-# IMPORTANT: This must match your live website URL for the Sitemap to work!
-BASE_URL = "https://lolish3k.github.io/specula/"
+# Updated with your username. 
+# If your repository is named something other than "specula", change the end of this link.
+BASE_URL = "https://specula-news.github.io/specula/"
 
 ARTICLES_PER_PAGE = 45   
 MAX_ARTICLES_PER_SOURCE = 20
