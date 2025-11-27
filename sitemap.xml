@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://specula-news.netlify.app/index.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://specula-news.netlify.app/page2.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://specula-news.netlify.app/page3.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://specula-news.netlify.app/page4.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://specula-news.netlify.app/page5.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://specula-news.netlify.app/page6.html</loc>
+    <changefreq>hourly</changefreq>
+  </url>
+</urlset>
