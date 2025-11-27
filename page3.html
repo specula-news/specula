@@ -15,7 +15,6 @@
             --text-primary: #ffffff; --text-secondary: #a1a1aa;
             --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15);
             --border: #27272a;
-            --sidebar-width: 250px;
         }
         body.light-mode {
             --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff;
@@ -29,155 +28,679 @@
             font-family: 'Inter', sans-serif; line-height: 1.6;
             transition: background 0.4s ease, color 0.4s ease;
             min-height: 100vh;
-            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
+            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), 
+                              radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* LAYOUT */
-        .main-layout { display: flex; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 40px; }
-        .content-area { flex-grow: 1; }
+        /* HEADER AREA */
+        header { 
+            display: flex; flex-direction: column; align-items: center; gap: 20px; 
+            padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; 
+        }
+        
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
 
-        /* SIDEBAR MENU */
-        .sidebar {
-            width: var(--sidebar-width);
-            flex-shrink: 0;
-            position: sticky;
-            top: 40px;
-            height: fit-content;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* LOGO STYLES */
+        .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; }
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; 
+            letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+        }
+        .logo span { color: var(--accent); }
+        .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+
+        /* LOGO ANIMATION (The Woggle) */
+        .logo-icon { 
+            height: 50px; width: auto; 
+            filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+        }
+        .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
+        body.light-mode .logo-icon { filter: invert(0); }
+
+        /* VERSION BUTTON */
+        .version-btn { 
+            font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; 
+            margin-left: 70px; margin-top: -5px; opacity: 0.8; transition: 0.2s; 
+            font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent);
+        }
+        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
+
+        /* CATEGORY NAVIGATION (Under Logo) */
+        .category-nav {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            padding-top: 20px; width: 100%;
         }
         .filter-btn {
-            background: transparent; border: 1px solid transparent;
-            color: var(--text-secondary); padding: 10px 15px;
-            text-align: left; cursor: pointer; border-radius: 8px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 8px 20px;
+            cursor: pointer; border-radius: 50px;
             font-family: 'Space Grotesk', sans-serif; font-weight: 600;
-            transition: all 0.2s; text-transform: uppercase; font-size: 0.85rem;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem;
         }
-        .filter-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
-        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
-        .logo-icon { height: 40px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
-        .logo-link:hover .logo-icon { transform: rotate(10deg); }
-        body.light-mode .logo-icon { filter: invert(0); }
-        .logo span { color: var(--accent); }
-        .version-btn { font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; font-family: 'Space Grotesk'; opacity: 0.6; margin-left: 10px; }
-        
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
-        .theme-switch:hover { border-color: var(--accent); }
+        /* THEME SWITCH */
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
         /* GRID & CARD */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card-image-wrapper { width: 100%; height: 180px; position: relative; overflow: hidden; background: #000; }
+        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
+        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         
-        /* CATEGORY TAG */
         .cat-tag {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            color: var(--accent); font-size: 0.65rem; font-weight: 700;
-            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
-            border: 1px solid var(--accent); z-index: 10;
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.7rem; font-weight: 700;
+            padding: 5px 10px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10; letter-spacing: 0.5px;
         }
 
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3; margin-bottom: 10px; color: var(--text-primary); }
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        .ai-summary { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 10px; }
+        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
+        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
-        .read-more { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
-        .nav-prev { left: 20px; } .nav-next { right: 20px; }
+        .nav-prev { left: 30px; } .nav-next { right: 30px; }
+        @media (max-width: 1350px) { .floating-nav { display: none; } }
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 500px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-overlay.open .modal-card { transform: translateY(0); }
-        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 1.5rem; background: none; border: none; }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
+        .close-modal:hover { color: var(--accent); }
 
         /* FOOTER */
-        .site-footer { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
+        .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .btn-action { padding: 8px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border); transition: 0.2s; }
+        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
 
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 1000px) {
-            .main-layout { flex-direction: column; gap: 20px; }
-            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; border-radius: 8px; }
-            .filter-btn { white-space: nowrap; padding: 8px 16px; }
-            .floating-nav { display: none; }
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .news-grid { grid-template-columns: 1fr; }
+            .header-top { flex-direction: column; gap: 20px; align-items: flex-start; }
+            .theme-switch { position: absolute; top: 40px; right: 0; }
+            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; width: 100%; flex-wrap: nowrap; }
+            .filter-btn { white-space: nowrap; }
+            .version-btn { margin-left: 65px; margin-top: -10px; }
         }
     </style>
 </head>
 <body>
     <a href="page2.html" class="floating-nav nav-prev">&larr;</a>
-    
+    <a href="page4.html" class="floating-nav nav-next">&rarr;</a>
 
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
-            <button class="close-modal" id="closeModal">&times;</button>
-            <h2 style="font-family:'Space Grotesk'; margin-bottom:15px;">Changelog</h2>
-            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem;">
-                <li style="margin-bottom:10px;"><strong>V7.0 (Current)</strong><br>Added new sources (SCMP, Al Jazeera, YouTube Channels). Added Categories & Sidebar Filtering. Removed Nikkei Asia.</li>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System Changelog</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
+                
+                <!-- VERSION 7.1.0 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
+                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
+                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
+                        • <strong>UX:</strong> Version number is now clickable for full history.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.2.5 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
+                    <strong>Version 6.2.5</strong>
+                    <div style="margin-top:5px;">
+                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
+                        • Expanded auto-translation.
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
 
-    <div class="main-layout">
-        <!-- SIDEBAR MENU -->
-        <aside class="sidebar">
-            <button class="filter-btn active" onclick="filterNews('all')">All News</button>
-            <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics / Asia</button>
-            <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
-            <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
-            <button class="filter-btn" onclick="filterNews('science')">Science & Eng</button>
-            <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
-        </aside>
-
-        <div class="content-area">
-            <header>
+    <div class="container">
+        <header>
+            <div class="header-top">
                 <div class="logo-wrapper">
                     <a href="index.html" class="logo-link">
                         <img src="icon.png" class="logo-icon" alt="Specula">
-                        <div style="display:flex; flex-direction:column;">
-                            <div class="logo">SPECULA <span>.</span></div>
-                            <div class="version-btn" id="versionBtn">Version 7.0</div>
-                        </div>
+                        <div class="logo">SPECULA <span>.</span></div>
                     </a>
+                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
-            </header>
+            </div>
 
-            <div class="news-grid" id="newsGrid">
-                
+            <!-- NEW TOP NAVIGATION -->
+            <nav class="category-nav">
+                <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+                <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
+                <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+                <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+                <button class="filter-btn" onclick="filterNews('science')">Science & Space</button>
+                <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+            </nav>
+        </header>
+
+        <div class="news-grid" id="newsGrid">
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/breaking-down-the-boom-in-the-nordics-startup-ecosystem/" target="_blank">Breaking down the boom in the Nordic’s startup ecosystem</a></h2>
+                    <p class="ai-summary">On this week’s Equity, we sat down with Dennis Green-Lieber, the founder of the AI company Propane, to talk about the booming success of the Nordic ecosystem.</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/26/breaking-down-the-boom-in-the-nordics-startup-ecosystem/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/musks-xai-to-build-small-solar-farm-adjacent-to-colossus-data-center/" target="_blank">Musk’s xAI to build small solar farm adjacent to Colossus data center</a></h2>
+                    <p class="ai-summary">The artificial intelligence company said it was working with a developer to build a solar farm on 88 acres next to its Memphis site. Given the proposed size, the solar farm would likely produce around...</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/26/musks-xai-to-build-small-solar-farm-adjacent-to-colossus-data-center/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/f1rNyA1-sg4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=f1rNyA1-sg4" target="_blank">Hair: Why it's important and what it reveals about us | DW Documentary</a></h2>
+                    <p class="ai-summary">Our hair doesn't just provide protection from sun and cold, it also says a great deal about us. In a society that's predominantly focused on outward appearance, hair wields huge social capital. It can...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=f1rNyA1-sg4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/4kXb4IfW21c/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=4kXb4IfW21c" target="_blank">China’s Artillery Breakthrough: The 30-Minute Firepower That’s Turning Heads</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=4kXb4IfW21c" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/oi_lG0MQw6c/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=oi_lG0MQw6c" target="_blank">Why China’s Newest Destroyer Still Avoids GaN Radar Technical Limit or Strategic Choice?</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=oi_lG0MQw6c" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/eUizEP_fJ4g/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=eUizEP_fJ4g" target="_blank">China's Shipbuilding Dominance: A Naval Arms Race in the Making?</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=eUizEP_fJ4g" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/gQMWAs2Srv4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=gQMWAs2Srv4" target="_blank">Why Believing the J-16 Is About to Be Retired Is Naïve — 100 Irrefutable Reasons</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=gQMWAs2Srv4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/XbRJCxmgQ4Y/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=XbRJCxmgQ4Y" target="_blank">Underwater Arms Race Escalates: Fujian’s Anti-Torpedo System Shows Revolutionary Leap</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=XbRJCxmgQ4Y" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/TYpcm01-RtM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=TYpcm01-RtM" target="_blank">China's Carrier-Based Drone Launch: Game-Changer or Overblown Hype?</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=TYpcm01-RtM" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/OaLEy3_e3wY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>1d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=OaLEy3_e3wY" target="_blank">China–Tonga Ties Upgraded: Xi Jinping Meets King Tupou VI at the Great Hall of the People</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=OaLEy3_e3wY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/LMybt9-aXTQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=LMybt9-aXTQ" target="_blank">Poland’s fentanyl crisis | DW Documentary</a></h2>
+                    <p class="ai-summary">Fentanyl is estimated to be fifty times as potent as heroin and is extremely addictive. The number of people in Poland abusing this powerful painkiller is growing. There have been dozens of fatalities...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=LMybt9-aXTQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/l_FpOnObpK4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>2d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/l_FpOnObpK4" target="_blank">Fear on the streets | DW Documentary</a></h2>
+                    <p class="ai-summary">Although sexual violence can affect people of all genders, women and girls are disproportionally impacted.  
+
+Many women feel unsafe in public spaces, whether on streets, at train stations, or in park...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/l_FpOnObpK4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/phq1xA3ZeMM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>4d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank">Yemen and the Houthis: Pirates, terrorists, freedom fighters? | DW Documentary</a></h2>
+                    <p class="ai-summary">The Houthi militia has been fighting for supremacy in Yemen for years. The conflict has become a civil war, with international involvement. The Middle East conflict has further escalated the situation...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/RPViHce3l_w/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>5d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank">How cricket unites and divides Afghanistan | DW Documentary</a></h2>
+                    <p class="ai-summary">Afghanistan has risen from sporting outsider to one of the world's top cricket nations. The unlikely journey has brought hope to a country with rare reason to celebrate while illuminating the complex ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/1T6mnoghasw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>5d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank">How insect brains can do brilliant things | DW Documentary</a></h2>
+                    <p class="ai-summary">Insects are a lot smarter than you think. For a long time, scientists believed insects acted mostly out of instinct and weren’t particularly intelligent, in part, because most of them only live for a ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/pUmpxBLMQKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank">Why the US is almost always at war? | DW Documentary</a></h2>
+                    <p class="ai-summary">Throughout its 250-year existence, the United States has almost always been at war. From its beginnings right through to the present day, the country's armed forces have shaped both American identity ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/9M_QK4stCJU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/gGtuw7Rejtk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank">How Strong Is Super Glue?</a></h2>
+                    <p class="ai-summary">Why does superglue always stick to your hands and never what you want it to?
+
+And how strong is it really?</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/cCEX7jV2cx8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank">The first Nuremberg trial | DW Documentary</a></h2>
+                    <p class="ai-summary">The Nuremberg trials started 80 years ago and marked a milestone in the establishment of international law. The images of high-ranking Nazis in the dock are seared into our collective memory.
+
+The Nur...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/oI7e0EHzbpE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank">This invasive species is destroying Germany's ponds! | DW Documentary</a></h2>
+                    <p class="ai-summary">Calico crayfish originate from North America, where people often use them as fishing bait. Nobody knows for sure just how they made it all the way to Germany, but it’s possible they were brought to Eu...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/3Yz90nUBc7M/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank">Prejudice or opportunity? When the LGBTQ+ community moves to the country | DW Documentary</a></h2>
+                    <p class="ai-summary">Queer people who live in rural areas and come out often face major challenges. While the LGBTQ+ community has battled to secure its place in urban centers, out in the provinces, worlds frequently coll...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/Abw9VdCkw_o/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank">Syria or Germany? Has German politics shifted for Syrians? | DW Documentary</a></h2>
+                    <p class="ai-summary">Sulaiman Tadmory came to Germany in 2015 after fleeing the civil war in Syria. With dictator Bashar al-Assad and his regime now gone, he's one of thousands of Syrians wondering whether it's time to re...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/KGvU4axUax8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank">Is hard work all it takes to get rich? | DW Documentary</a></h2>
+                    <p class="ai-summary">Children born into low-income families are likely to stay poor. According to the World Economic Forum, it can take on average between four and five generations for a child born into a low-income famil...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/QtxVdC7pBQM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>10d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank">What happens if you throw sand into a jet engine?</a></h2>
+                    <p class="ai-summary">How does a jet engine not melt? Sponsored by KiwiCo - Use code VERITASIUM to get 50% off your first monthly KiwiCo Crate! https://www.kiwico.com/VERITASIUM 
+Want to start your own crystal garden? http...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/5zyxsOMw634/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>11d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank">Water scarcity - Innovation to combat drought | DW Documentary</a></h2>
+                    <p class="ai-summary">While heat and drought reduce the groundwater in many places, water consumption continues to rise. Is it possible to reverse this global trend by using water more sparingly in households, industry, an...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/sq6ZOVbKQhY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>12d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank">The Hidden Engineering Behind the Falkirk Wheel</a></h2>
+                    <p class="ai-summary">Some of the hidden details behind this very cool piece of infrastructure.
+🥑 Claim your 10 Free Meals + Free Breakfast for Life by using code PRACTICALFM at https://bit.ly/41PhMMi! One free meal per bo...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/9M_QK4stCJU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -198,7 +721,7 @@ If you’re looking for a molecu...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/HVySQLuxLkI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/HVySQLuxLkI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -238,7 +761,7 @@ If you’re looking for a molecu...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/v0afQ6w3Bjw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/v0afQ6w3Bjw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -261,7 +784,7 @@ Sticker Team!: http://www.patre...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/XX7PdJIGiCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/XX7PdJIGiCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -282,7 +805,7 @@ If you’re loo...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/tWRyiCP17do/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/tWRyiCP17do/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -326,7 +849,7 @@ A general solution to the cubic equation was long considered impossible, until w
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/7mdvEtmo1pM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/7mdvEtmo1pM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -348,7 +871,7 @@ The same thing that makes Ni...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/kh9OmFBg8qI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/kh9OmFBg8qI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -367,7 +890,7 @@ The same thing that makes Ni...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/S7xvqDUPoJo/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/S7xvqDUPoJo/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -386,7 +909,7 @@ The same thing that makes Ni...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3nDdLiXS5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/3nDdLiXS5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -405,7 +928,7 @@ The same thing that makes Ni...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/CYlon2tvywA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/CYlon2tvywA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -426,7 +949,7 @@ If you’re looking for a molecular modell...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/onr80iOoEXs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/onr80iOoEXs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -447,7 +970,7 @@ If you’re looking...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/q6WlXhtVvkg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/q6WlXhtVvkg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -466,7 +989,7 @@ If you’re looking...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3FfMzWa6LKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/3FfMzWa6LKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -487,7 +1010,7 @@ I don't have any good answers to any of this, but I think it's worth discussing 
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/b8XVCsXyIZs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/b8XVCsXyIZs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -506,7 +1029,7 @@ I don't have any good answers to any of this, but I think it's worth discussing 
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/dt_CG_xRnrY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/dt_CG_xRnrY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -550,7 +1073,7 @@ A big thank you to our guide, C...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/QOnQORqkHcM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/QOnQORqkHcM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -572,7 +1095,7 @@ Aubu...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/_R0xPffklXQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/_R0xPffklXQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -590,455 +1113,21 @@ Aubu...</p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/nol0_4qxzb0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>135d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank">The Hidden Engineering of Floating Bridges</a></h2>
-                    <p class="ai-summary">An engineering tour of Washington's floating concrete highways
-📰Compare news coverage. Spot media bias. Try Ground News today and get 40% off your subscription by going to https://ground.news/practica...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/cRaKMTK7ea0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>137d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank">I Went Into a Nuclear Plant and It Changed How I Think About Radiation - Smarter Every Day 309</a></h2>
-                    <p class="ai-summary">KiwiCo has been great for my family. To get 50% off your first monthly crate go to https://kiwico.com/smarter and check it out. I believe you'll really enjoy the kids' reaction to it!
-
-Click here if y...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/fudWbvE8ZKw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>149d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank">How Liquid Dampers in Skyscrapers Work</a></h2>
-                    <p class="ai-summary">How sloshes quash wobbles in skyscrapers.
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch 17 Pages: https://nebula.tv/videos/17pages?re...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/WhCNpX3s-D8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>163d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank">How Water Recycling Works</a></h2>
-                    <p class="ai-summary">An overview of municipal water reclamation.
-🧠 To try everything Brilliant has to offer for free for a full 30 days, visit https://www.brilliant.org/practicalengineering
-
-Nearly all sewage in major cit...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3ZTGwcHQfLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>172d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank">I Tried To Make Something In America (The Smarter Scrubber Experiment) - Smarter Every Day 308</a></h2>
-                    <p class="ai-summary">Get a Smarter Scrubber Here: http://smarterscrubber.com
-Interested in Wholesale, or helping us tell the story? Here's a link:
-https://forms.gle/XFrLTa5b8kxSvPnu8
-
-I would like to thank the Patrons of ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/RnYdt4T76mk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>177d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank">Why are Smokestacks So Tall?</a></h2>
-                    <p class="ai-summary">A peek behind the curtain of the Illium Works of the Federal Apparatus Corporation.
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch 17 ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/jPJCYrxqyT8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>191d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank">The Most Implausible Tunneling Method</a></h2>
-                    <p class="ai-summary">How immersed tube tunnels are built.
-
-Immersed tube construction makes tunneling less like drilling a hole and more like docking a spacecraft.
-
-Watch this video ad-free on Nebula: https://nebula.tv/vi...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/RZg1zOKm5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>205d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank">When Abandoned Mines Collapse</a></h2>
-                    <p class="ai-summary">An overview of mine subsidence
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch The Logistics of Coal Mining: https://nebula.tv/videos/w...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/-D5iBAuXxeQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>226d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank">When Kitty Litter Caused a Nuclear Catastrophe</a></h2>
-                    <p class="ai-summary">The silliest cause for a nuclear disaster
-
-There are enormous benefits to be had using nuclear materials in many areas of science, engineering, and medicine. But there are enormous costs as well, many...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/8nilP--GFLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>241d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank">The Unsolved Mystery of Impact Flashes - Smarter Every Day 307</a></h2>
-                    <p class="ai-summary">A big thanks to Henson for sponsoring this video. Check them out at http://hensonshaving.com/smarter (Make sure the 100 pack is in your cart to get them for free.)
-
-Want to get an email when I upload?...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/JVROsxtjoCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>300d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank">I Explored the World's First Nuclear Power Plant (and How It Works) - Smarter Every Day 306</a></h2>
-                    <p class="ai-summary">You can try AnyDesk for free.  It's good.  https://anydesk.com/smarter 
-Get Email Updates: https://www.smartereveryday.com/email
-
-Second Channel Video: 
-https://www.youtube.com/watch?v=OVzNPO1pZGo
-
-⇊ ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/lylCYkgC63Q/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>347d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank">The Backwards Brain Tractor - Smarter Every Day 305</a></h2>
-                    <p class="ai-summary">I'm excited to send out this year's stickers!! Click here to join the sticker team:
- 👉 https://www.patreon.com/smartereveryday  👈
-
-Sign up for the SED Email List: https://www.smartereveryday.com/email...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/jDusS--bZZA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>368d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank">The Incredibly Unique Triple Barreled Pistol...  - Smarter Every Day 304</a></h2>
-                    <p class="ai-summary">Get a Ridge Wallet!  👉👉  https://ridge.com/smarter  👈👈
-Sign up for the SED Email List: https://www.smartereveryday.com/email-list
-
-Click here if you're interested in subscribing: http://bit.ly/Subscri...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/JJofuF2zcTE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>396d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank">Live Interview from the ISS Cupola - Smarter Every Day 303</a></h2>
-                    <p class="ai-summary">A huge thanks to Don and Matt for their time!  Thanks to Mission Control for making it happen!https://whoisinspace.com/    https://x.com/whoisinspace
-Click here if you're interested in subscribing: ht...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/sEK6wZWMbCY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>423d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank">Climbing Kilimanjaro - Smarter Every Day 302</a></h2>
-                    <p class="ai-summary">No Dumb Questions Episode - NDQ 187 "Songs of Ascent"
-https://www.nodumbquestions.fm/listen/2024/8/22/187-songs-of-ascent
-https://www.youtube.com/watch?v=OTLmyV8MSz4
-Brady's Video: https://www.youtube...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/frbLIoqDIO8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>452d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank">How Disc Golf Discs Are Made (MVP Manufacturing Tour) - Smarter Every Day 301</a></h2>
-                    <p class="ai-summary">The coolest part about this is that Brad and Chad didn't ask me to say anything in particular.... they partner with wholesale dealers so you should be able to find them at your local disc golf store. ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/VPSm9gJkPxU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>487d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank">Nature's Incredible ROTATING MOTOR (It’s Electric!) - Smarter Every Day 300</a></h2>
-                    <p class="ai-summary">Thank you for considering support for Smarter Every Day on Patreon:
-http://www.patreon.com/smartereveryday
-
-Click here if you're interested in subscribing: http://bit.ly/Subscribe2SED
-
-I notify people...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/TWc48iVC8u8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>543d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank">How Do Cicadas Make Noise? (In Slow Motion)  - Smarter Every Day 299</a></h2>
-                    <p class="ai-summary">Here's that link for Ridge! https://www.ridge.com/smarter
-
-Do you think all the frequencies are happening on this one mechanical device, or do you think there are multiple animals making the call at d...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/bQF51mqzrY4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>557d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank">I Accidentally Photographed Something Unknown During the Eclipse - Smarter Every Day 298</a></h2>
-                    <p class="ai-summary">Thanks to everyone who supports on Patreon and makes this possible! 
-http://www.patreon.com/smartereveryday
-Patrons, please check for a special post about this photo!
-
-Many people asked if I would mak...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/Bh7Xf3Ox7K8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>578d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank">Touring the Vulcan Rocket on the Launch Pad - Smarter Every Day 297</a></h2>
-                    <p class="ai-summary">Use code SMARTER50 to get 50% OFF your first Factor box plus 20% off your next month at https://bit.ly/4b9SLO9!
-
-If you found this video to be valuable, thanks for considering supporting Smarter Every...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            </div>
-
-            <div class="pagination">
-                <a href="page2.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn active">3</a>
-            </div>
-
-            <footer class="site-footer">
-                <div class="footer-buttons">
-                    <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
-                    <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
-                </div>
-                <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
-                    SPECULA is a non-profit news aggregator.
-                </div>
-            </footer>
         </div>
+
+        <div class="pagination">
+            <a href="page2.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn active">3</a><a href="page4.html" class="page-btn ">4</a><a href="page4.html" class="page-btn">NEXT &rarr;</a>
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-buttons">
+                <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
+            </div>
+            <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                SPECULA is a non-profit news aggregator.
+            </div>
+        </footer>
     </div>
 
     <script>
@@ -1073,8 +1162,11 @@ If you found this video to be valuable, thanks for considering supporting Smarte
         });
 
         const modal = document.getElementById('changelogModal');
-        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
-        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+        const versionBtn = document.getElementById('versionBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        versionBtn.onclick = () => modal.classList.add('open');
+        closeModal.onclick = () => modal.classList.remove('open');
         modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>

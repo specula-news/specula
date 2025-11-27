@@ -28,136 +28,161 @@
             font-family: 'Inter', sans-serif; line-height: 1.6;
             transition: background 0.4s ease, color 0.4s ease;
             min-height: 100vh;
-            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
+            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), 
+                              radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+        /* HEADER AREA */
+        header { 
+            display: flex; flex-direction: column; align-items: center; gap: 20px; 
+            padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; 
+        }
         
-        .logo-wrapper { display: flex; flex-direction: column; gap: 5px; }
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+
+        /* LOGO STYLES */
+        .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { 
-            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
-            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; 
+            letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
-        .logo-link:hover .logo-icon { transform: rotate(10deg); }
-        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
-        
-        /* VERSION BUTTON */
-        .version-btn {
-            font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; align-self: flex-start; margin-left: 60px;
-            font-family: 'Space Grotesk', monospace; opacity: 0.6; transition: 0.2s; border-bottom: 1px dotted transparent;
-        }
-        .version-btn:hover { color: var(--accent); opacity: 1; border-color: var(--accent); }
 
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        /* LOGO ANIMATION (The Woggle) */
+        .logo-icon { 
+            height: 50px; width: auto; 
+            filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+        }
+        .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
+        body.light-mode .logo-icon { filter: invert(0); }
+
+        /* VERSION BUTTON */
+        .version-btn { 
+            font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; 
+            margin-left: 70px; margin-top: -5px; opacity: 0.8; transition: 0.2s; 
+            font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent);
+        }
+        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
+
+        /* CATEGORY NAVIGATION (Under Logo) */
+        .category-nav {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            padding-top: 20px; width: 100%;
+        }
+        .filter-btn {
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 8px 20px;
+            cursor: pointer; border-radius: 50px;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem;
+        }
+        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* THEME SWITCH */
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
         .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
         /* GRID & CARD */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
         .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .source-badge { display: flex; align-items: center; gap: 6px; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
+        
+        .cat-tag {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.7rem; font-weight: 700;
+            padding: 5px 10px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10; letter-spacing: 0.5px;
+        }
+
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
         .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
         .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
-        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .read-more:hover { text-decoration: underline; }
+        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
+        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        
         .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
         @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        /* MODAL (CHANGELOG) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            width: 90%; max-width: 500px; padding: 30px; border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px);
-            transition: transform 0.3s ease; position: relative;
-        }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-overlay.open .modal-card { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .modal-title { font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; }
-        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
         .close-modal:hover { color: var(--accent); }
-        .changelog-list { list-style: none; padding: 0; }
-        .changelog-list li { margin-bottom: 15px; padding-left: 20px; position: relative; color: var(--text-secondary); font-size: 0.9rem; }
-        .changelog-list li::before { content: "•"; color: var(--accent); position: absolute; left: 0; font-weight: bold; }
-        .changelog-date { display: block; font-size: 0.75rem; opacity: 0.5; margin-bottom: 4px; }
 
         /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
-        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
-        .btn-suggest { background: var(--bg-card); color: var(--text-primary); }
-        .btn-suggest:hover { border-color: var(--accent); }
+        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-donate:hover { opacity: 0.9; box-shadow: 0 0 15px var(--accent-glow); }
-        .disclaimer-box { max-width: 700px; margin: 0 auto; font-size: 0.75rem; opacity: 0.7; line-height: 1.6; }
-        .disclaimer-title { font-weight: 700; color: var(--text-primary); display: block; margin-bottom: 5px; }
 
+        /* MOBILE */
         @media (max-width: 768px) {
             .news-grid { grid-template-columns: 1fr; }
-            header { flex-direction: column; gap: 20px; align-items: flex-start; }
-            .theme-switch { width: 100%; justify-content: center; }
-            .version-btn { margin-left: 60px; margin-top: -10px; }
+            .header-top { flex-direction: column; gap: 20px; align-items: flex-start; }
+            .theme-switch { position: absolute; top: 40px; right: 0; }
+            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; width: 100%; flex-wrap: nowrap; }
+            .filter-btn { white-space: nowrap; }
+            .version-btn { margin-left: 65px; margin-top: -10px; }
         }
     </style>
 </head>
 <body>
     <a href="page3.html" class="floating-nav nav-prev">&larr;</a>
-    <a href="page5.html" class="floating-nav nav-next">&rarr;</a>
+    
 
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2 class="modal-title">System Changelog</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System Changelog</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <ul class="changelog-list">
-                <li>
-                    <span class="changelog-date">Current</span>
-                    <strong>Version 6.2.2</strong><br>
-                    Improved image filtering for Nikkei & Asian sources. Enhanced fallback image logic.
+            
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
+                
+                <!-- VERSION 7.1.0 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
+                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
+                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
+                        • <strong>UX:</strong> Version number is now clickable for full history.
+                    </div>
                 </li>
-                <li>
-                    <span class="changelog-date">Previous</span>
-                    <strong>Version 6.2.1</strong><br>
-                    Added floating navigation arrows and auto-translation for Swedish sources.
-                </li>
-                <li>
-                    <span class="changelog-date">Initial</span>
-                    <strong>Version 6.0</strong><br>
-                    Core system initialization. Python generator active.
+
+                <!-- VERSION 6.2.5 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
+                    <strong>Version 6.2.5</strong>
+                    <div style="margin-top:5px;">
+                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
+                        • Expanded auto-translation.
+                    </div>
                 </li>
             </ul>
         </div>
@@ -165,1006 +190,459 @@
 
     <div class="container">
         <header>
-            <div class="logo-wrapper">
-                <a href="index.html" class="logo-link">
-                    <img src="icon.png" class="logo-icon" alt="Specula">
-                    SPECULA <span>.</span>
-                    <div class="logo-tag">LIVE FEED</div>
-                </a>
-                <div class="version-btn" id="versionBtn">Version 6.2.2</div>
+            <div class="header-top">
+                <div class="logo-wrapper">
+                    <a href="index.html" class="logo-link">
+                        <img src="icon.png" class="logo-icon" alt="Specula">
+                        <div class="logo">SPECULA <span>.</span></div>
+                    </a>
+                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                </div>
+                <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
-            <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
+
+            <!-- NEW TOP NAVIGATION -->
+            <nav class="category-nav">
+                <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+                <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
+                <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+                <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+                <button class="filter-btn" onclick="filterNews('science')">Science & Space</button>
+                <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+            </nav>
         </header>
 
-        <div class="news-grid">
+        <div class="news-grid" id="newsGrid">
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/nol0_4qxzb0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Top Technology News -- Sc</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>135d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sciencedaily.com/releases/2025/11/251125081919.htm" target="_blank">New Mars images reveal hidden traces of a recent ice age</a></h2>
-                    <p class="ai-summary">Mars’s Coloe Fossae reveals a landscape shaped by ancient ice ages, with deep valleys, cratered terrain, and frozen debris flows preserved from a time when the planet’s climate dramatically shifted.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank">The Hidden Engineering of Floating Bridges</a></h2>
+                    <p class="ai-summary">An engineering tour of Washington's floating concrete highways
+📰Compare news coverage. Spot media bias. Try Ground News today and get 40% off your subscription by going to https://ground.news/practica...</p>
                     <div class="card-footer">
-                        <a href="https://www.sciencedaily.com/releases/2025/11/251125081919.htm" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/cRaKMTK7ea0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>137d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42055-veckans-fraga-hur-ofta-koper-du-ny-mus" target="_blank">Question of the week: How often do you buy a new mouse?</a></h2>
-                    <p class="ai-summary">How often do you change your mouse - and what determines when it's time to upgrade?<span class="lang-note">(Translated from Swedish)</span></p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank">I Went Into a Nuclear Plant and It Changed How I Think About Radiation - Smarter Every Day 309</a></h2>
+                    <p class="ai-summary">KiwiCo has been great for my family. To get 50% off your first monthly crate go to https://kiwico.com/smarter and check it out. I believe you'll really enjoy the kids' reaction to it!
+
+Click here if y...</p>
                     <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42055-veckans-fraga-hur-ofta-koper-du-ny-mus" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/lab-bacteria.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/fudWbvE8ZKw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>149d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-mrna-therapy-curbs-antibiotic-resistant.html" target="_blank">Novel mRNA therapy curbs antibiotic-resistant infections in preclinical lung models</a></h2>
-                    <p class="ai-summary">Researchers at the Icahn School of Medicine at Mount Sinai and collaborators have reported early success with a novel mRNA-based therapy designed to combat antibiotic-resistant bacteria.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank">How Liquid Dampers in Skyscrapers Work</a></h2>
+                    <p class="ai-summary">How sloshes quash wobbles in skyscrapers.
+🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
+🏙️Watch 17 Pages: https://nebula.tv/videos/17pages?re...</p>
                     <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-mrna-therapy-curbs-antibiotic-resistant.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/WhCNpX3s-D8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>163d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42053-olasta-nova-lake-processorer-ensamma-om-144-mb-cache" target="_blank">Unlocked Nova Lake processors alone with 144MB cache</a></h2>
-                    <p class="ai-summary">Should challenge AMD's 3D V‑Cache for higher gaming performance.<span class="lang-note">(Translated from Swedish)</span></p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank">How Water Recycling Works</a></h2>
+                    <p class="ai-summary">An overview of municipal water reclamation.
+🧠 To try everything Brilliant has to offer for free for a full 30 days, visit https://www.brilliant.org/practicalengineering
+
+Nearly all sewage in major cit...</p>
                     <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42053-olasta-nova-lake-processorer-ensamma-om-144-mb-cache" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/3ZTGwcHQfLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>172d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/this-10-second-add-on-turns-any-bicycle-into-a-90-km-range-e-bike/" target="_blank">This 10-second add-on turns any bicycle into a 90 km-range e-bike</a></h2>
-                    <p class="ai-summary">During a recent offline tech event in China, one of our colleagues had the chance to try a small device that promises something unusually practical: turning a regular bicycle into an electric-assist bike in under ten sec...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank">I Tried To Make Something In America (The Smarter Scrubber Experiment) - Smarter Every Day 308</a></h2>
+                    <p class="ai-summary">Get a Smarter Scrubber Here: http://smarterscrubber.com
+Interested in Wholesale, or helping us tell the story? Here's a link:
+https://forms.gle/XFrLTa5b8kxSvPnu8
+
+I would like to thank the Patrons of ...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/this-10-second-add-on-turns-any-bicycle-into-a-90-km-range-e-bike/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/copper-unexpectedly-pr-1.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/RnYdt4T76mk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>177d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-copper-nanoparticles-unexpectedly-suitable-ultraviolet.html" target="_blank">Copper nanoparticles unexpectedly prove suitable for ultraviolet SERS spectroscopy</a></h2>
-                    <p class="ai-summary">Lithuanian researchers at the Center for Physical Sciences and Technology (FTMC), Habil. Dr. Gediminas Niaura and Dr. Martynas Talaikis, together with international colleagues, have for the first time demonstrated that c...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank">Why are Smokestacks So Tall?</a></h2>
+                    <p class="ai-summary">A peek behind the curtain of the Illium Works of the Federal Apparatus Corporation.
+🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
+🏙️Watch 17 ...</p>
                     <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-copper-nanoparticles-unexpectedly-suitable-ultraviolet.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/jPJCYrxqyT8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>191d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/alibaba-ceo-says-ai-bubble-unlikely-in-next-three-years/" target="_blank">Alibaba CEO says AI bubble unlikely in next three years</a></h2>
-                    <p class="ai-summary">Alibaba CEO Eddie Wu said an artificial intelligence bubble is unlikely to emerge in the next three years, as AI resources will remain in short supply. His comments followed Alibaba’s fiscal Q2 2026 results, where the co...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank">The Most Implausible Tunneling Method</a></h2>
+                    <p class="ai-summary">How immersed tube tunnels are built.
+
+Immersed tube construction makes tunneling less like drilling a hole and more like docking a spacecraft.
+
+Watch this video ad-free on Nebula: https://nebula.tv/vi...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/alibaba-ceo-says-ai-bubble-unlikely-in-next-three-years/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/RZg1zOKm5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>205d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/bmw-considers-range-extender-versions-as-chinese-rivals-reshape-demand/" target="_blank">BMW considers range-extender versions as Chinese rivals reshape demand</a></h2>
-                    <p class="ai-summary">BMW is evaluating range-extender versions of some models as demand for the technology grows in China, Bloomberg reported. The plan is under internal discussion and focuses on large vehicles such as the X5 and 7-Series. C...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank">When Abandoned Mines Collapse</a></h2>
+                    <p class="ai-summary">An overview of mine subsidence
+🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
+🏙️Watch The Logistics of Coal Mining: https://nebula.tv/videos/w...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/bmw-considers-range-extender-versions-as-chinese-rivals-reshape-demand/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/-D5iBAuXxeQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>226d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-the-weight-of-nvidias-crown.html" target="_blank">CNBC Daily Open: The weight of Nvidia's crown</a></h2>
-                    <p class="ai-summary">Pressure has been building on Nvidia over the past month. It seemed like Nvidia felt the need to address some of those rumblings.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank">When Kitty Litter Caused a Nuclear Catastrophe</a></h2>
+                    <p class="ai-summary">The silliest cause for a nuclear disaster
+
+There are enormous benefits to be had using nuclear materials in many areas of science, engineering, and medicine. But there are enormous costs as well, many...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-the-weight-of-nvidias-crown.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/8nilP--GFLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>241d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/25/uber-and-werides-robotaxi-service-in-abu-dhabi-is-officially-driverless/" target="_blank">Uber and WeRide’s robotaxi service in Abu Dhabi is officially driverless</a></h2>
-                    <p class="ai-summary">The commercial robotaxi service launched last year. Now, the human safety operator is gone.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank">The Unsolved Mystery of Impact Flashes - Smarter Every Day 307</a></h2>
+                    <p class="ai-summary">A big thanks to Henson for sponsoring this video. Check them out at http://hensonshaving.com/smarter (Make sure the 100 pack is in your cart to get them for free.)
+
+Want to get an email when I upload?...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/25/uber-and-werides-robotaxi-service-in-abu-dhabi-is-officially-driverless/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/JVROsxtjoCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>300d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42054-nya-4g-telefoner-blockeras-hos-tre-telenor-och-tele2" target="_blank">New 4G phones are blocked at Tre, Telenor and Tele2</a></h2>
-                    <p class="ai-summary">Phones that cannot make emergency calls via 4G/5G must be blocked by PTS decision.<span class="lang-note">(Translated from Swedish)</span></p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank">I Explored the World's First Nuclear Power Plant (and How It Works) - Smarter Every Day 306</a></h2>
+                    <p class="ai-summary">You can try AnyDesk for free.  It's good.  https://anydesk.com/smarter 
+Get Email Updates: https://www.smartereveryday.com/email
+
+Second Channel Video: 
+https://www.youtube.com/watch?v=OVzNPO1pZGo
+
+⇊ ...</p>
                     <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42054-nya-4g-telefoner-blockeras-hos-tre-telenor-och-tele2" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/lylCYkgC63Q/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>347d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/li-auto-to-launch-first-ai-smart-glasses-expanding-multi-device-ecosystem/" target="_blank">Li Auto to launch first AI smart glasses, expanding multi-device ecosystem</a></h2>
-                    <p class="ai-summary">Li Xiang, founder of Li Auto, said on Tuesday the company will soon launch its first pair of AI smart glasses, calling it “Li Auto’s best AI accessory.” He said the device will be deeply integrated with in-car use cases,...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank">The Backwards Brain Tractor - Smarter Every Day 305</a></h2>
+                    <p class="ai-summary">I'm excited to send out this year's stickers!! Click here to join the sticker team:
+ 👉 https://www.patreon.com/smartereveryday  👈
+
+Sign up for the SED Email List: https://www.smartereveryday.com/email...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/li-auto-to-launch-first-ai-smart-glasses-expanding-multi-device-ecosystem/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/jDusS--bZZA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>368d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/amazon-faa-probe-delivery-drone-incident-texas.html" target="_blank">Amazon faces FAA probe after delivery drone snaps internet cable in Texas</a></h2>
-                    <p class="ai-summary">The probe comes as Amazon faces stiffer competition from Walmart, which has also begun drone deliveries.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank">The Incredibly Unique Triple Barreled Pistol...  - Smarter Every Day 304</a></h2>
+                    <p class="ai-summary">Get a Ridge Wallet!  👉👉  https://ridge.com/smarter  👈👈
+Sign up for the SED Email List: https://www.smartereveryday.com/email-list
+
+Click here if you're interested in subscribing: http://bit.ly/Subscri...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/25/amazon-faa-probe-delivery-drone-incident-texas.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/JJofuF2zcTE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>396d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/huawei-launches-first-companion-chat-robot-smart-hanhan-priced-at-about-55/" target="_blank">Huawei launches first companion chat robot Smart Hanhan, priced at about $55</a></h2>
-                    <p class="ai-summary">Huawei on Tuesday unveiled its first companion chat robot, Smart Hanhan, at a product launch event. Priced at RMB 399 ($55), the furry toy-like device will go on sale starting Nov. 28. The robot supports human-like inter...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank">Live Interview from the ISS Cupola - Smarter Every Day 303</a></h2>
+                    <p class="ai-summary">A huge thanks to Don and Matt for their time!  Thanks to Mission Control for making it happen!https://whoisinspace.com/    https://x.com/whoisinspace
+Click here if you're interested in subscribing: ht...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/huawei-launches-first-companion-chat-robot-smart-hanhan-priced-at-about-55/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/sEK6wZWMbCY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>423d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/over-5000-global-attendees-celebrate-the-successful-debut-of-the-xin-summit-showcasing-the-next-generation-of-innovation-from-the-greater-bay-area-to-the-world/" target="_blank">Over 5,000 Global Attendees Celebrate the Successful Debut of the XIN Summit, Showcasing the Next Generation of Innovation From the Greater Bay Area to the World</a></h2>
-                    <p class="ai-summary">The inaugural XIN Summit concluded on 16 November with a powerful debut presented by BEYOND Expo — Asia’s largest technology innovation and ecosystem event. Focused on AI Hardware Ecosystems and Frontier Technologies, th...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank">Climbing Kilimanjaro - Smarter Every Day 302</a></h2>
+                    <p class="ai-summary">No Dumb Questions Episode - NDQ 187 "Songs of Ascent"
+https://www.nodumbquestions.fm/listen/2024/8/22/187-songs-of-ascent
+https://www.youtube.com/watch?v=OTLmyV8MSz4
+Brady's Video: https://www.youtube...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/over-5000-global-attendees-celebrate-the-successful-debut-of-the-xin-summit-showcasing-the-next-generation-of-innovation-from-the-greater-bay-area-to-the-world/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/frbLIoqDIO8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>452d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/26/global-top-startup-teams-shine-as-xin-summit-ignites-the-night-with-the-next-star-awards/" target="_blank">Global Top Startup Teams Shine as XIN Summit Ignites the Night with the Next Star Awards</a></h2>
-                    <p class="ai-summary">On the eve of the XIN Summit (powered by BEYOND), two major pre-summit programs — XIN Summit Media Day and the Entrepreneurs Next Star & Million Prize Global Challenge 2025 Awards Ceremony — set the stage for a landmark ...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank">How Disc Golf Discs Are Made (MVP Manufacturing Tour) - Smarter Every Day 301</a></h2>
+                    <p class="ai-summary">The coolest part about this is that Brad and Chad didn't ask me to say anything in particular.... they partner with wholesale dealers so you should be able to find them at your local disc golf store. ...</p>
                     <div class="card-footer">
-                        <a href="https://technode.com/2025/11/26/global-top-startup-teams-shine-as-xin-summit-ignites-the-night-with-the-next-star-awards/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/VPSm9gJkPxU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>487d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-nvidias-crown-looks-increasingly-uneasy-on-its-head.html" target="_blank">CNBC Daily Open: Nvidia's crown looks increasingly uneasy on its head</a></h2>
-                    <p class="ai-summary">Pressure has been building on Nvidia over the past month. It seemed like Nvidia felt the need to address some of those rumblings.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank">Nature's Incredible ROTATING MOTOR (It’s Electric!) - Smarter Every Day 300</a></h2>
+                    <p class="ai-summary">Thank you for considering support for Smarter Every Day on Patreon:
+http://www.patreon.com/smartereveryday
+
+Click here if you're interested in subscribing: http://bit.ly/Subscribe2SED
+
+I notify people...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/26/cnbc-daily-open-nvidias-crown-looks-increasingly-uneasy-on-its-head.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/TWc48iVC8u8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>543d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/workday-wday-q3-earnings-report-2026.html" target="_blank">Workday stock slips on light quarterly margin guidance</a></h2>
-                    <p class="ai-summary">Workday shares slid more than 5% in extended trading Tuesday after the company issued quarterly margin guidance that came in below Wall Street projections.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank">How Do Cicadas Make Noise? (In Slow Motion)  - Smarter Every Day 299</a></h2>
+                    <p class="ai-summary">Here's that link for Ridge! https://www.ridge.com/smarter
+
+Do you think all the frequencies are happening on this one mechanical device, or do you think there are multiple animals making the call at d...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/25/workday-wday-q3-earnings-report-2026.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/bQF51mqzrY4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>557d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/hp-inc-shares-fall-as-company-says-it-will-cut-up-to-6000-employees.html" target="_blank">HP Inc shares fall on layoffs, weak guidance due to U.S. trade regulations</a></h2>
-                    <p class="ai-summary">"HP's outlook reflects the added cost driven by the current U.S. trade-related regulations in place, and associated mitigations," the company said.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank">I Accidentally Photographed Something Unknown During the Eclipse - Smarter Every Day 298</a></h2>
+                    <p class="ai-summary">Thanks to everyone who supports on Patreon and makes this possible! 
+http://www.patreon.com/smartereveryday
+Patrons, please check for a special post about this photo!
+
+Many people asked if I would mak...</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/25/hp-inc-shares-fall-as-company-says-it-will-cut-up-to-6000-employees.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/Bh7Xf3Ox7K8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">SmarterEveryDay</div>
+                        <time>578d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/25/why-hold-forever-investors-are-snapping-up-venture-capital-zombies/" target="_blank">Why ‘hold forever’ investors are snapping up venture capital ‘zombies’</a></h2>
-                    <p class="ai-summary">An investor explains the "buy, fix, and hold" model employed by Bending Spoons and similar companies that buy distressed startups.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank">Touring the Vulcan Rocket on the Launch Pad - Smarter Every Day 297</a></h2>
+                    <p class="ai-summary">Use code SMARTER50 to get 50% OFF your first Factor box plus 20% off your next month at https://bit.ly/4b9SLO9!
+
+If you found this video to be valuable, thanks for considering supporting Smarter Every...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/25/why-hold-forever-investors-are-snapping-up-venture-capital-zombies/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/dell-earnings-report-q3-2026.html" target="_blank">Dell misses on revenue, offers strong forecast driven by AI sales</a></h2>
-                    <p class="ai-summary">Dell is an important bellwether for the health of the AI infrastructure industry as one of the top vendors for systems based around Nvidia graphics processors.</p>
-                    <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/25/dell-earnings-report-q3-2026.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/glp-1-drugs-improve-heart-health-but-only-if-you-keep-taking-them/" target="_blank">There may not be a safe off-ramp for some taking GLP-1 drugs, study suggests</a></h2>
-                    <p class="ai-summary">In trial, 82% saw weight rebound and cardiovascular health reverse after withdrawal.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/health/2025/11/glp-1-drugs-improve-heart-health-but-only-if-you-keep-taking-them/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/25/gm-software-leader-baris-cetinok-leaving.html" target="_blank">A third high-profile tech leader is leaving GM as part of a software-product restructuring</a></h2>
-                    <p class="ai-summary">GM is combining its vehicle software engineering and global product units under one organization, led by new Chief Product Officer Sterling Anderson.</p>
-                    <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/25/gm-software-leader-baris-cetinok-leaving.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/gadgets/2025/11/plexs-crackdown-on-free-remote-streaming-access-starts-this-week/" target="_blank">Plex’s crackdown on free remote streaming access starts this week</a></h2>
-                    <p class="ai-summary">Roku users will be hit first.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/gadgets/2025/11/plexs-crackdown-on-free-remote-streaming-access-starts-this-week/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/peat-as-a-sustainable.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-peat-sustainable-precursor-fuel-cell.html" target="_blank">Using peat as sustainable precursor for fuel cell catalyst materials</a></h2>
-                    <p class="ai-summary">Iron-nitrogen-carbon catalysts have the potential to replace the more expensive platinum catalysts currently used in fuel cells. This is shown by a study conducted by researchers from the Helmholtz-Zentrum Berlin (HZB), ...</p>
-                    <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-peat-sustainable-precursor-fuel-cell.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/gadgets/2025/11/spiking-memory-prices-mean-that-it-is-once-again-a-horrible-time-to-build-a-pc/" target="_blank">GPU prices are coming to earth just as RAM costs shoot into the stratosphere</a></h2>
-                    <p class="ai-summary">Some RAM kits are over three times as expensive as they were three months ago.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/gadgets/2025/11/spiking-memory-prices-mean-that-it-is-once-again-a-horrible-time-to-build-a-pc/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/space/2025/11/china-launches-an-emergency-lifeboat-to-bring-three-astronauts-back-to-earth/" target="_blank">China launches an emergency lifeboat to bring three astronauts back to Earth</a></h2>
-                    <p class="ai-summary">This is a "successful example for efficient emergency response in the international space industry."</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/space/2025/11/china-launches-an-emergency-lifeboat-to-bring-three-astronauts-back-to-earth/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/tech-policy/2025/11/realpage-agrees-to-change-algorithm-so-landlords-cant-collude-on-price-hikes/" target="_blank">Landlords’ go-to tool to set rent prices to be gutted under RealPage settlement</a></h2>
-                    <p class="ai-summary">RealPage agrees to settle suit over DOJ claims software raised rents across the US.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/tech-policy/2025/11/realpage-agrees-to-change-algorithm-so-landlords-cant-collude-on-price-hikes/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/gaming/2025/11/valves-steam-machine-looks-like-a-console-but-dont-expect-it-to-be-priced-like-one/" target="_blank">Valve’s Steam Machine looks like a console, but don’t expect it to be priced like one</a></h2>
-                    <p class="ai-summary">Upcoming gaming box will be priced in line with a similarly specced PC, Valve says.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/gaming/2025/11/valves-steam-machine-looks-like-a-console-but-dont-expect-it-to-be-priced-like-one/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SingularityHub</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://singularityhub.com/2025/11/25/brain-implants-smaller-than-cells-can-be-injected-into-veins/" target="_blank">These Brain Implants Are Smaller Than Cells and Can Be Injected Into Veins</a></h2>
-                    <p class="ai-summary">The tiny chips hitch a ride on immune cells to target inflammation in the brain. Scientists hope to kick off clinical trials within three years.
-The post These Brain Implants Are Smaller Than Cells and Can Be Injected In...</p>
-                    <div class="card-footer">
-                        <a href="https://singularityhub.com/2025/11/25/brain-implants-smaller-than-cells-can-be-injected-into-veins/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/technology-identifies-1.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-stickslip-nanopore-approach-protein-analysis.html" target="_blank">Stick–slip nanopore approach streamlines protein analysis by using electrical 'fingerprints'</a></h2>
-                    <p class="ai-summary">A technology developed in the laboratory of Prof. Amit Meller from the Technion—Israel Institute of Technology Faculty of Biomedical Engineering marks a significant advancement toward rapid proteome analysis, with far-re...</p>
-                    <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-stickslip-nanopore-approach-protein-analysis.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-pair-of-coil-wound-cylinders-sits-atop-two-milk-crates-wires-connect-them-to-a-circuit-board-connected-to-three-large-12-volt.png?id=62212907&width=980" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">IEEE Spectrum</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://spectrum.ieee.org/listen-to-protons-diy-magnetometer" target="_blank">Listen to Protons for Less Than $100</a></h2>
-                    <p class="ai-summary">When you get an MRI scan, the machine exploits a phenomenon called nuclear magnetic resonance (NMR). Certain kinds of atomic nuclei—including those of the hydrogen atoms in a water molecule—can be made to oscillate in a ...</p>
-                    <div class="card-footer">
-                        <a href="https://spectrum.ieee.org/listen-to-protons-diy-magnetometer" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/interpretable-machine-3.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-machine-nanocatalyst-discovery.html" target="_blank">Interpretable machine learning to accelerate nanocatalyst discovery</a></h2>
-                    <p class="ai-summary">A fast and accurate surrogate model screens over 10,000 possible metal-oxide supports for a platinum nanocatalyst to prevent sintering under high temperatures.</p>
-                    <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-machine-nanocatalyst-discovery.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/conceptual-illustration-of-a-digitized-rope-being-pulled-until-it-tears-in-half.jpg?id=62224931&width=980" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">IEEE Spectrum</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://spectrum.ieee.org/ai-agents-safety" target="_blank">AI Agents Break Rules Under Everyday Pressure</a></h2>
-                    <p class="ai-summary">Several recent studies have shown that artificial-intelligence agents sometimes decide to misbehave, for instance by attempting to blackmail people who plan to replace them. But such behavior often occurs in contrived sc...</p>
-                    <div class="card-footer">
-                        <a href="https://spectrum.ieee.org/ai-agents-safety" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42049-snabbare-utforskare-och-andra-forbattringar-pa-gang-i-windows" target="_blank">Faster Explorer and other improvements underway in Windows</a></h2>
-                    <p class="ai-summary">Microsoft's developers aren't entirely focused on AI after all.<span class="lang-note">(Translated from Swedish)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42049-snabbare-utforskare-och-andra-forbattringar-pa-gang-i-windows" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/Low-Res_2_20251125_122702.png" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/modeling-the-fight-between-charged-lunar-dust-and-spacecraft-coatings" target="_blank">Modeling the Fight Between Charged Lunar Dust and Spacecraft Coatings</a></h2>
-                    <p class="ai-summary">Understanding how exactly lunar dust sticks to surfaces is going to be important once we start having a long-term sustainable presence on the Moon. Dust on the Moon is notoriously sticky and damaging to equipment, as wel...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/modeling-the-fight-between-charged-lunar-dust-and-spacecraft-coatings" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/formation-of-oceans-within-icy-moons-could-cause-the-waters-to-boil/" target="_blank">Formation of oceans within icy moons could cause the waters to boil</a></h2>
-                    <p class="ai-summary">A rigid ice shell over a shrinking interior makes for pressures low enough to boil.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/science/2025/11/formation-of-oceans-within-icy-moons-could-cause-the-waters-to-boil/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/mushroom-foragers-collect-160-species-for-food-medicine-art-and-science/" target="_blank">Mushroom foragers collect 160 species for food, medicine, art, and science</a></h2>
-                    <p class="ai-summary">Researchers seek to understand the various uses of wild mushroom species.</p>
-                    <div class="card-footer">
-                        <a href="https://arstechnica.com/science/2025/11/mushroom-foragers-collect-160-species-for-food-medicine-art-and-science/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/25/singapores-national-ai-program-drops-meta-model-and-switches-to-alibabas-qwen/" target="_blank">Singapore’s national AI program drops Meta model and switches to Alibaba’s Qwen</a></h2>
-                    <p class="ai-summary">Singapore’s national AI program has moved its Sea-Lion large language model off Meta’s model family and adopted Alibaba Cloud’s Qwen architecture, according to information cited by foreign media from AI Singapore (AISG)....</p>
-                    <div class="card-footer">
-                        <a href="https://technode.com/2025/11/25/singapores-national-ai-program-drops-meta-model-and-switches-to-alibabas-qwen/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/The_station_pictured_from_the_SpaceX_Crew_Dragon_1_20251125_102351.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/the-moss-that-survived-nine-months-in-space" target="_blank">The Moss That Survived Nine Months in Space</a></h2>
-                    <p class="ai-summary">Moss spores spent nine months strapped to the outside of the International Space Station, exposed to vacuum, cosmic radiation, temperature swings from minus 196°C to 55°C, and unfiltered solar ultraviolet light. Over 80 ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/the-moss-that-survived-nine-months-in-space" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/1280px-LLO_Control_Room_20251125_100925.jpg" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/two-years-of-listening-to-the-universes-most-violent-events" target="_blank">Two Years of Listening to the Universe's Most Violent Events</a></h2>
-                    <p class="ai-summary">The world's gravitational wave detectors just wrapped up their longest and most productive observation campaign, capturing 250 new collisions over two years of continuous listening. These ripples in spacetime, created by...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/two-years-of-listening-to-the-universes-most-violent-events" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://www.universetoday.com/article_images/1080px-Potentially_Hazardous_Asteroids_2013_20251125_095546.png" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Universe Today</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.universetoday.com/articles/finding-40000-asteroids-before-they-find-us" target="_blank">Finding 40,000 Asteroids Before They Find Us</a></h2>
-                    <p class="ai-summary">Astronomers have just catalogued the 40,000th near Earth asteroid, a milestone that marks humanity's transformation from passive targets to active defenders of our planet. These space rocks, ranging from house sized boul...</p>
-                    <div class="card-footer">
-                        <a href="https://www.universetoday.com/articles/finding-40000-asteroids-before-they-find-us" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42050-intels-arrow-lake-refresh-hojer-minnesstodet-rejalt" target="_blank">Intel's Arrow Lake Refresh significantly increases memory support</a></h2>
-                    <p class="ai-summary">Intel confirms 7200 MT/s DDR5 support with CUDIMM, raises bar for LGA 1851 platform<span class="lang-note">(Translated from Swedish)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42050-intels-arrow-lake-refresh-hojer-minnesstodet-rejalt" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechNode</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://technode.com/2025/11/25/tsmc-to-expand-2nm-capacity-to-10-fabs-adding-three-in-chinas-taiwan/" target="_blank">TSMC to expand 2nm capacity to 10 fabs, adding three in China’s Taiwan</a></h2>
-                    <p class="ai-summary">TSMC is reportedly planning to increase its number of 2-nanometre advanced process wafer fabs in Taiwan from seven to ten. The three new fabs are expected to be located in Tainan, complementing the existing 2nm productio...</p>
-                    <div class="card-footer">
-                        <a href="https://technode.com/2025/11/25/tsmc-to-expand-2nm-capacity-to-10-fabs-adding-three-in-chinas-taiwan/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card">
-                <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop';"> 
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SweClockers</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.sweclockers.com/artikel/42048-chieftec-lanserar-billigt-chassi-med-unik-design" target="_blank">Chieftec launches cheap chassis with unique design</a></h2>
-                    <p class="ai-summary">The company draws inspiration from the hi-fi world.<span class="lang-note">(Translated from Swedish)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.sweclockers.com/artikel/42048-chieftec-lanserar-billigt-chassi-med-unik-design" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -1172,42 +650,58 @@ The post These Brain Implants Are Smaller Than Cells and Can Be Injected In...</
         </div>
 
         <div class="pagination">
-            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn ">6</a><a href="page5.html" class="page-btn">NEXT &rarr;</a>
+            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a>
         </div>
 
         <footer class="site-footer">
             <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">+ Suggest Source</a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate via PayPal</a>
+                <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
             </div>
-            <div class="disclaimer-box">
-                <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>SPECULA is a non-profit project. Aggregates news via RSS under Fair Use. No ads. No revenue.</p>
-                <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
+            <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                SPECULA is a non-profit news aggregator.
             </div>
         </footer>
     </div>
 
     <script>
-        // THEME LOGIC
+        // FILTER LOGIC
+        function filterNews(category) {
+            const cards = document.querySelectorAll('.news-card');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            // Update buttons
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // THEME & MODAL LOGIC
         const toggleBtn = document.getElementById('themeBtn');
-        const themeText = document.getElementById('themeText');
-        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'light') { enableLightMode(); }
-        toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
-        function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
-        function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
+        if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+        
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+            toggleBtn.innerText = body.classList.contains('light-mode') ? '☀ LIGHT MODE' : '☾ DARK MODE';
+        });
 
-        // MODAL LOGIC
         const modal = document.getElementById('changelogModal');
-        const btn = document.getElementById('versionBtn');
-        const close = document.getElementById('closeModal');
+        const versionBtn = document.getElementById('versionBtn');
+        const closeModal = document.getElementById('closeModal');
 
-        btn.addEventListener('click', () => { modal.classList.add('open'); });
-        close.addEventListener('click', () => { modal.classList.remove('open'); });
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+        versionBtn.onclick = () => modal.classList.add('open');
+        closeModal.onclick = () => modal.classList.remove('open');
+        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>
 </html>

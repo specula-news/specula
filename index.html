@@ -15,7 +15,6 @@
             --text-primary: #ffffff; --text-secondary: #a1a1aa;
             --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15);
             --border: #27272a;
-            --sidebar-width: 250px;
         }
         body.light-mode {
             --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff;
@@ -29,106 +28,124 @@
             font-family: 'Inter', sans-serif; line-height: 1.6;
             transition: background 0.4s ease, color 0.4s ease;
             min-height: 100vh;
-            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
+            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), 
+                              radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* LAYOUT */
-        .main-layout { display: flex; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 40px; }
-        .content-area { flex-grow: 1; }
+        /* HEADER AREA */
+        header { 
+            display: flex; flex-direction: column; align-items: center; gap: 20px; 
+            padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; 
+        }
+        
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
 
-        /* SIDEBAR MENU */
-        .sidebar {
-            width: var(--sidebar-width);
-            flex-shrink: 0;
-            position: sticky;
-            top: 40px;
-            height: fit-content;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* LOGO STYLES */
+        .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; }
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; 
+            letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+        }
+        .logo span { color: var(--accent); }
+        .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+
+        /* LOGO ANIMATION (The Woggle) */
+        .logo-icon { 
+            height: 50px; width: auto; 
+            filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+        }
+        .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
+        body.light-mode .logo-icon { filter: invert(0); }
+
+        /* VERSION BUTTON */
+        .version-btn { 
+            font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; 
+            margin-left: 70px; margin-top: -5px; opacity: 0.8; transition: 0.2s; 
+            font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent);
+        }
+        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
+
+        /* CATEGORY NAVIGATION (Under Logo) */
+        .category-nav {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            padding-top: 20px; width: 100%;
         }
         .filter-btn {
-            background: transparent; border: 1px solid transparent;
-            color: var(--text-secondary); padding: 10px 15px;
-            text-align: left; cursor: pointer; border-radius: 8px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 8px 20px;
+            cursor: pointer; border-radius: 50px;
             font-family: 'Space Grotesk', sans-serif; font-weight: 600;
-            transition: all 0.2s; text-transform: uppercase; font-size: 0.85rem;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem;
         }
-        .filter-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
-        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
-        .logo-icon { height: 40px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
-        .logo-link:hover .logo-icon { transform: rotate(10deg); }
-        body.light-mode .logo-icon { filter: invert(0); }
-        .logo span { color: var(--accent); }
-        .version-btn { font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; font-family: 'Space Grotesk'; opacity: 0.6; margin-left: 10px; }
-        
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
-        .theme-switch:hover { border-color: var(--accent); }
+        /* THEME SWITCH */
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
         /* GRID & CARD */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card-image-wrapper { width: 100%; height: 180px; position: relative; overflow: hidden; background: #000; }
+        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
+        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         
-        /* CATEGORY TAG */
         .cat-tag {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            color: var(--accent); font-size: 0.65rem; font-weight: 700;
-            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
-            border: 1px solid var(--accent); z-index: 10;
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.7rem; font-weight: 700;
+            padding: 5px 10px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10; letter-spacing: 0.5px;
         }
 
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3; margin-bottom: 10px; color: var(--text-primary); }
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        .ai-summary { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 10px; }
+        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
+        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
-        .read-more { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
-        .nav-prev { left: 20px; } .nav-next { right: 20px; }
+        .nav-prev { left: 30px; } .nav-next { right: 30px; }
+        @media (max-width: 1350px) { .floating-nav { display: none; } }
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 500px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-overlay.open .modal-card { transform: translateY(0); }
-        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 1.5rem; background: none; border: none; }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
+        .close-modal:hover { color: var(--accent); }
 
         /* FOOTER */
-        .site-footer { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
+        .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .btn-action { padding: 8px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border); transition: 0.2s; }
+        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
 
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 1000px) {
-            .main-layout { flex-direction: column; gap: 20px; }
-            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; border-radius: 8px; }
-            .filter-btn { white-space: nowrap; padding: 8px 16px; }
-            .floating-nav { display: none; }
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .news-grid { grid-template-columns: 1fr; }
+            .header-top { flex-direction: column; gap: 20px; align-items: flex-start; }
+            .theme-switch { position: absolute; top: 40px; right: 0; }
+            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; width: 100%; flex-wrap: nowrap; }
+            .filter-btn { white-space: nowrap; }
+            .version-btn { margin-left: 65px; margin-top: -10px; }
         }
     </style>
 </head>
@@ -139,41 +156,83 @@
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
-            <button class="close-modal" id="closeModal">&times;</button>
-            <h2 style="font-family:'Space Grotesk'; margin-bottom:15px;">Changelog</h2>
-            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem;">
-                <li style="margin-bottom:10px;"><strong>V7.0 (Current)</strong><br>Added new sources (SCMP, Al Jazeera, YouTube Channels). Added Categories & Sidebar Filtering. Removed Nikkei Asia.</li>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System Changelog</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
+                
+                <!-- VERSION 7.1.0 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
+                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
+                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
+                        • <strong>UX:</strong> Version number is now clickable for full history.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.2.5 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
+                    <strong>Version 6.2.5</strong>
+                    <div style="margin-top:5px;">
+                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
+                        • Expanded auto-translation.
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
 
-    <div class="main-layout">
-        <!-- SIDEBAR MENU -->
-        <aside class="sidebar">
-            <button class="filter-btn active" onclick="filterNews('all')">All News</button>
-            <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics / Asia</button>
-            <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
-            <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
-            <button class="filter-btn" onclick="filterNews('science')">Science & Eng</button>
-            <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
-        </aside>
-
-        <div class="content-area">
-            <header>
+    <div class="container">
+        <header>
+            <div class="header-top">
                 <div class="logo-wrapper">
                     <a href="index.html" class="logo-link">
                         <img src="icon.png" class="logo-icon" alt="Specula">
-                        <div style="display:flex; flex-direction:column;">
-                            <div class="logo">SPECULA <span>.</span></div>
-                            <div class="version-btn" id="versionBtn">Version 7.0</div>
-                        </div>
+                        <div class="logo">SPECULA <span>.</span></div>
                     </a>
+                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
-            </header>
+            </div>
 
-            <div class="news-grid" id="newsGrid">
-                
+            <!-- NEW TOP NAVIGATION -->
+            <nav class="category-nav">
+                <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+                <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
+                <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+                <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+                <button class="filter-btn" onclick="filterNews('science')">Science & Space</button>
+                <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+            </nav>
+        </header>
+
+        <div class="news-grid" id="newsGrid">
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlrWbp0RfZi0s.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/privatekonomi/identifierade-och-slog-ut-12-000-fejkbutiker/" target="_blank">Identified and eliminated 12,000 fake stores</a></h2>
+                    <p class="ai-summary">Recently, Visa was able to identify and shut down as many as 12,000 fake stores. "We have our own investigation team," says Thomas Holt-Nielsen at the card giant. Black Friday is here and the shopping mood rises significantly...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/privatekonomi/identifierade-och-slog-ut-12-000-fejkbutiker/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
@@ -197,7 +256,45 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/5328f77d-4a8b-4f05-9610-4618a1a16058_1d254254.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/real-uncertainty-what-to-know-about-the-honduran-presidential-election?traffic_source=rss" target="_blank">‘Real uncertainty’: What to know about the Honduran presidential election</a></h2>
+                    <p class="ai-summary">Several candidates are vying to replace President Xiomara Castro, but concerns about voting process have caused tension.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/real-uncertainty-what-to-know-about-the-honduran-presidential-election?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Skarmavbild-2025-11-27-kl.-19.29.45.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/motor/kronika-salja-bil-i-stockholm-ett-spel-dar-alla-bluffar/" target="_blank">Chronicle: Selling a car in Stockholm - a game where everyone cheats</a></h2>
+                    <p class="ai-summary">Selling a car in Stockholm is like wading through syrup. Everyone wants to buy, no one is serious and you yourself slowly become more cynical with each ping. A love story that had to be put aside I sold ...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/motor/kronika-salja-bil-i-stockholm-ett-spel-dar-alla-bluffar/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/5328f77d-4a8b-4f05-9610-4618a1a16058_1d254254.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -216,7 +313,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/cebfa6a1-90a9-4f58-8ccd-78ca4a37d975_2c850c89.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/cebfa6a1-90a9-4f58-8ccd-78ca4a37d975_2c850c89.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -235,13 +332,13 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/00409c2a-9e2c-43b6-b0e7-554c9925b544_b1b3bd93.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/00409c2a-9e2c-43b6-b0e7-554c9925b544_b1b3bd93.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334431/italys-leonardo-unveils-michelangelo-dome-defence-system-europe-eyes-russia-threat?utm_source=rss_feed" target="_blank">Italy’s Leonardo unveils ‘Michelangelo Dome’ air defence system</a></h2>
                     <p class="ai-summary">Italy’s defence and aerospace group Leonardo on Thursday presented plans for a new multilayered air defence system, as European countries step up military capabilities to bolster defences against Russ...</p>
@@ -292,7 +389,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -311,13 +408,13 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/video-shows-israeli-soldiers-shooting-surrendering-palestinians-in-jenin?traffic_source=rss" target="_blank">Video shows Israeli soldiers shooting surrendering Palestinians in Jenin</a></h2>
                     <p class="ai-summary">Israeli soldiers have been filmed shooting two Palestinians who were seen on their knees with their hands in the air.</p>
@@ -330,7 +427,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -349,7 +446,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -368,7 +465,7 @@ They also said ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -387,26 +484,7 @@ They also said ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/8A0A1420.jpeg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
-                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are create...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -428,10 +506,29 @@ They also said ...</p>
                 </div>
             </article>
             
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/8A0A1420.jpeg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
+                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are create...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -450,7 +547,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -469,7 +566,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -488,7 +585,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -507,7 +604,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/8e002bbc-1544-45bc-aaca-8d8999b5a4b6_8baad676.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/8e002bbc-1544-45bc-aaca-8d8999b5a4b6_8baad676.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -526,7 +623,7 @@ They also said ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -552,7 +649,7 @@ They also said ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -568,7 +665,7 @@ They also said ...</p>
 		
 		
 		
-		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at what it might look like. Extra lovely if you have money, a Ferrari F40 and ...<span class="lang-note">(Translated)</span></p>
+		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at how it might look. Extra lovely if you have money, a Ferrari F40 and ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
                         <a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
@@ -578,7 +675,7 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/798d2f78-3334-4fd8-b1a2-d0c2cbff01d3_f11e18d4.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/798d2f78-3334-4fd8-b1a2-d0c2cbff01d3_f11e18d4.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -597,7 +694,26 @@ They also said ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/5cbc4ec2-3e92-4e6b-8187-03d29715e080_93cd5e7c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/OpenAI-slapper-Microsoft-–-tecknar-miljardavtal-med-Amazon-Realtid-3.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/motor/varldens-vackraste-coupe-nu-saljs-den-for-bara-39-000-kronor/" target="_blank">The world's most beautiful coupé: Now it is sold for just SEK 39,000</a></h2>
+                    <p class="ai-summary">The award-winning design icon is celebrated to this day, and now you can buy it for a fraction of the original price. The Alfa Romeo GT was the car that combined Italian elegance with driving pleasure. A model that not only wa...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/motor/varldens-vackraste-coupe-nu-saljs-den-for-bara-39-000-kronor/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/5cbc4ec2-3e92-4e6b-8187-03d29715e080_93cd5e7c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -617,7 +733,7 @@ Macron ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -636,7 +752,7 @@ Macron ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -655,7 +771,7 @@ Macron ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -677,10 +793,48 @@ Macron ...</p>
                 </div>
             </article>
             
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlaWinjURndGM.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/varlden/europa-bygger-sin-egen-iron-dome-mot-ryska-missiler/" target="_blank">Europe is building its own Iron Dome against Russian missiles</a></h2>
+                    <p class="ai-summary">European countries must be able to shoot down missiles at lightning speed with the help of a new defense platform. That is the idea behind the company Leonardo's launch. Israel already has its Iron Dome that defends the country with...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/varlden/europa-bygger-sin-egen-iron-dome-mot-ryska-missiler/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlR4Ocjswpmhk-nh.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>4h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/halsa/sanker-gransvarden-farligare-an-vi-trott/" target="_blank">Lowering limit values: "More dangerous than we thought"</a></h2>
+                    <p class="ai-summary">Now the EU is lowering the guidelines for how much dioxin and PCBs are acceptable for humans. The substances can, among other things, cause cancer. The European Food Safety Authority, EFSA, is now raising the risk...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/halsa/sanker-gransvarden-farligare-an-vi-trott/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -699,7 +853,7 @@ Macron ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -726,13 +880,13 @@ Macron ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>4h Ago</time>
+                        <time>5h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistis simpler, safer, and smarter</a></h2>
                     <p class="ai-summary">We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!</p>
@@ -745,7 +899,7 @@ Macron ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -761,10 +915,54 @@ Macron ...</p>
                 </div>
             </article>
             
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/6r3x2t872Pc/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank">Amazon: Who pays the price? | DW Documentary</a></h2>
+                    <p class="ai-summary">Online retailer Amazon has been repeatedly criticized for its business practices. The US company puts pressure on retailers and exerts influence on pricing policies, thus fueling cut-throat competitio...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>5h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teases updated Astra</a></h2>
+                    <p class="ai-summary">Presented next year
+
+		
+		
+		
+		
+		In the next year, Opel will release an updated version of the model Astra. Among other things, it gets a new face and we get a first glimpse of this in these ...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -799,35 +997,10 @@ Macron ...</p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teases updated Astra</a></h2>
-                    <p class="ai-summary">Presented next year
-
-		
-		
-		
-		
-		In the next year, Opel will release an updated version of the model Astra. Among other things, it gets a new face and we get a first glimpse of this in these ...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/32a77e57-e240-43cf-b0fc-b9a9858a6ca9_9b69654f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/32a77e57-e240-43cf-b0fc-b9a9858a6ca9_9b69654f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -865,7 +1038,7 @@ Macron ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -884,7 +1057,7 @@ Macron ...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -903,7 +1076,7 @@ Macron ...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -925,195 +1098,40 @@ Macron ...</p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank">Expedition Vildmark is a new reality show with celebrities</a></h2>
-                    <p class="ai-summary">Coming on Kanal 5 and HBO Max next year
-
-		
-		
-		
-		
-		Above you can see the gang that will take part in the new reality venture Expedition Vildmark, which will premiere in the spring of 2026 on HBO Max...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>5h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
-                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/pexels-tima-miroshnichenko-5439148.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <div class="source-badge">Dagens PS</div>
                         <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/us-teen-mohammed-ibrahim-released-from-israeli-prison-after-nine-months?traffic_source=rss" target="_blank">US teen Mohammed Ibrahim released from Israeli prison after nine months</a></h2>
-                    <p class="ai-summary">Advocates say the 16-year-old's health had been in decline since his arrest in February for allegedly throwing rocks.</p>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/karriar/deltidsjobb-pa-cvt-en-dealbreaker-for-arbetsgivaren/" target="_blank">Part-time job on the CV - a dealbreaker for the employer?</a></h2>
+                    <p class="ai-summary">Many are looking for a full-time job in a specific industry, but have also earned extra income elsewhere. This has led to questions about how one should actually formulate one's CV. Many who have stopped at ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/27/us-teen-mohammed-ibrahim-released-from-israeli-prison-after-nine-months?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.dagensps.se/karriar/deltidsjobb-pa-cvt-en-dealbreaker-for-arbetsgivaren/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/bc41609e-dbeb-4d2a-86fb-6f0cb6d13b28_1f23beaf.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">News - South China Mornin</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334420/2-break-out-french-jail-old-fashioned-bed-sheets-escape?utm_source=rss_feed" target="_blank">2 break out of French jail in ‘old-fashioned’ bedsheets escape</a></h2>
-                    <p class="ai-summary">Two prisoners escaped from a French jail using bedsheets after sawing through the bars of their cell, a prosecutor said on Thursday.
-France has some of the worst prison overcrowding in Europe, and sta...</p>
-                    <div class="card-footer">
-                        <a href="https://www.scmp.com/news/world/europe/article/3334420/2-break-out-french-jail-old-fashioned-bed-sheets-escape?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank">The analogue supercar Nilu visits Jay Leno</a></h2>
-                    <p class="ai-summary">Sasha Selipanov's baby
-
-			
-			
-		
-		
-		
-		Last fall, former Koenigsegg, Bugatti and Lamborghini designer Sasha Selipanovs presented his very own Nilu27 supercar. A futuristic beast out…<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
-                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst. ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank">Gemini seems to be perfect for fooling children</a></h2>
-                    <p class="ai-summary">Google makes commercial with Nano Banana
-
-			
-			
-		
-		
-		
-		Google's Nano Banana, an AI model for generating images and videos, has been widely praised since its release, and in a new commercial f...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/vzF3Gv7TFUY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>6h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank">The 2025 Asian General Aviation Exhibition opens today.</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            </div>
-
-            <div class="pagination">
-                <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
-            </div>
-
-            <footer class="site-footer">
-                <div class="footer-buttons">
-                    <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
-                    <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
-                </div>
-                <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
-                    SPECULA is a non-profit news aggregator.
-                </div>
-            </footer>
         </div>
+
+        <div class="pagination">
+            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn ">4</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-buttons">
+                <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
+            </div>
+            <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                SPECULA is a non-profit news aggregator.
+            </div>
+        </footer>
     </div>
 
     <script>
@@ -1148,8 +1166,11 @@ France has some of the worst prison overcrowding in Europe, and sta...</p>
         });
 
         const modal = document.getElementById('changelogModal');
-        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
-        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+        const versionBtn = document.getElementById('versionBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        versionBtn.onclick = () => modal.classList.add('open');
+        closeModal.onclick = () => modal.classList.remove('open');
         modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>
