@@ -6,7 +6,7 @@ import math
 import random
 
 # --- KONFIGURATION ---
-ARTICLES_PER_PAGE = 12 
+ARTICLES_PER_PAGE = 45   
 MAX_ARTICLES_PER_SOURCE = 20
 
 RSS_FEEDS = [
@@ -38,7 +38,7 @@ RSS_FEEDS = [
     "https://singularityhub.com/feed/"
 ]
 
-# En lista med snygga fallback-bilder (Cyberpunk/Tech/Space)
+# Fallback-bilder
 FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", # Earth Space
     "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", # Chip/AI
@@ -48,55 +48,44 @@ FALLBACK_IMAGES = [
 ]
 
 def get_image_from_entry(entry):
-    """Förbättrad bildsökning"""
     try:
-        # 1. Media Content (Standard RSS media)
         if 'media_content' in entry:
             return entry.media_content[0]['url']
-        
-        # 2. Media Thumbnail
         if 'media_thumbnail' in entry:
             return entry.media_thumbnail[0]['url']
-            
-        # 3. Enclosures (Ofta använt av nyhetssajter för bilder)
         if 'links' in entry:
             for link in entry.links:
                 if link.type.startswith('image/'):
                     return link.href
-                    
-        # 4. Parse HTML Content (Leta efter <img src="...">)
         content_to_parse = ""
         if 'content' in entry:
             content_to_parse = entry.content[0].value
         elif 'summary' in entry:
             content_to_parse = entry.summary
-            
         if content_to_parse:
             soup = BeautifulSoup(content_to_parse, 'html.parser')
             img = soup.find('img')
             if img and img.get('src'):
                 return img['src']
-                
     except Exception:
         pass
-        
-    # Om ingen bild hittas, ta en slumpmässig snygg bild
     return random.choice(FALLBACK_IMAGES)
 
 def clean_summary(summary):
     if not summary: return ""
     soup = BeautifulSoup(summary, 'html.parser')
     text = soup.get_text()
-    # Ta bort "Continue reading" eller liknande skräp om det finns
     text = text.replace("Continue reading", "").replace("Read more", "")
     return text[:220] + "..." if len(text) > 220 else text
 
 def generate_pagination_html(current_page, total_pages):
     html = ""
+    # BOTTOM PREV
     if current_page > 1:
         prev_link = "index.html" if current_page == 2 else f"page{current_page - 1}.html"
         html += f'<a href="{prev_link}" class="page-btn">&larr; PREV</a>'
     
+    # NUMBERS
     for i in range(1, total_pages + 1):
         if i == 1 or i == total_pages or (current_page - 2 <= i <= current_page + 2):
             link = "index.html" if i == 1 else f"page{i}.html"
@@ -105,6 +94,7 @@ def generate_pagination_html(current_page, total_pages):
         elif i == current_page - 3 or i == current_page + 3:
             html += '<span style="color:var(--text-secondary); align-self:center;">...</span>'
 
+    # BOTTOM NEXT
     if current_page < total_pages:
         html += f'<a href="page{current_page + 1}.html" class="page-btn">NEXT &rarr;</a>'
     return html
@@ -121,7 +111,6 @@ def generate_pages():
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
-                
                 article = {
                     'title': entry.title,
                     'link': entry.link,
@@ -134,13 +123,11 @@ def generate_pages():
         except Exception as e:
             print(f"Error loading {feed_url}: {e}")
 
-    # Sortera
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
-    # Paginering
     total_articles = len(all_articles)
     if total_articles == 0:
-        print("No articles found! Check internet connection or feeds.")
+        print("No articles found!")
         return
 
     total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
@@ -155,6 +142,7 @@ def generate_pages():
         end_idx = start_idx + ARTICLES_PER_PAGE
         page_articles = all_articles[start_idx:end_idx]
         
+        # 1. GENERATE CARDS
         cards_html = ""
         for art in page_articles:
             now = time.time()
@@ -186,9 +174,28 @@ def generate_pages():
             </article>
             """
 
+        # 2. GENERATE FLOATING SIDE BUTTONS
+        float_prev = ""
+        float_next = ""
+
+        # Logic for Previous Button
+        if page_num > 1:
+            prev_link = "index.html" if page_num == 2 else f"page{page_num - 1}.html"
+            float_prev = f'<a href="{prev_link}" class="floating-nav nav-prev">&larr;</a>'
+        
+        # Logic for Next Button
+        if page_num < total_pages:
+            next_link = f"page{page_num + 1}.html"
+            float_next = f'<a href="{next_link}" class="floating-nav nav-next">&rarr;</a>'
+
+        # 3. GENERATE BOTTOM PAGINATION
         pagination_html = generate_pagination_html(page_num, total_pages)
+        
+        # 4. REPLACE ALL PLACEHOLDERS
         final_html = template_content.replace("<!-- NEWS_PLACEHOLDER -->", cards_html)
         final_html = final_html.replace("<!-- PAGINATION_PLACEHOLDER -->", pagination_html)
+        final_html = final_html.replace("<!-- FLOATING_PREV -->", float_prev)
+        final_html = final_html.replace("<!-- FLOATING_NEXT -->", float_next)
         
         filename = "index.html" if page_num == 1 else f"page{page_num}.html"
         
