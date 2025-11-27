@@ -6,10 +6,14 @@ import math
 import random
 from deep_translator import GoogleTranslator
 
-# --- KONFIGURATION ---
+# --- CONFIGURATION ---
+# IMPORTANT: This must match your live website URL for the Sitemap to work!
+BASE_URL = "https://lolish3k.github.io/specula/"
+
 ARTICLES_PER_PAGE = 45   
 MAX_ARTICLES_PER_SOURCE = 20
 
+# RSS Sources
 RSS_FEEDS = [
     "https://feber.se/rss/",
     "https://www.sweclockers.com/feeds/nyheter",
@@ -30,7 +34,7 @@ RSS_FEEDS = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com"]
 
-# Fallback-bilder (Cyberpunk/Tech/Space)
+# Fallback Images
 FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
     "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
@@ -40,25 +44,17 @@ FALLBACK_IMAGES = [
 ]
 
 def get_image_from_entry(entry):
-    """
-    Försöker hitta en GILTIG bild. 
-    Om ingen giltig bild hittas, returneras None (så vi kan sätta fallback direkt).
-    """
+    """Finds a valid image or returns None."""
     valid_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
     forbidden_terms = ['pixel', 'tracker', 'feedburner', 'ad', 'doubleclick', '1x1']
-
     potential_urls = []
 
-    # 1. Samla alla kandidater
-    if 'media_content' in entry: 
-        potential_urls.append(entry.media_content[0]['url'])
-    if 'media_thumbnail' in entry: 
-        potential_urls.append(entry.media_thumbnail[0]['url'])
+    if 'media_content' in entry: potential_urls.append(entry.media_content[0]['url'])
+    if 'media_thumbnail' in entry: potential_urls.append(entry.media_thumbnail[0]['url'])
     if 'links' in entry:
         for link in entry.links:
             if link.type.startswith('image/'): potential_urls.append(link.href)
     
-    # 2. Leta i HTML
     content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
     if content:
         soup = BeautifulSoup(content, 'html.parser')
@@ -67,21 +63,15 @@ def get_image_from_entry(entry):
             src = img.get('src')
             if src: potential_urls.append(src)
 
-    # 3. Filtrera kandidaterna
     for url in potential_urls:
         url_lower = url.lower()
-        
-        # Måste se ut som en bild eller komma från en betrodd källa
         has_ext = any(ext in url_lower for ext in valid_extensions)
         is_bad = any(bad in url_lower for bad in forbidden_terms)
         
         if not is_bad:
-            # Nikkei-specifik fix: Ignorera bilder utan filändelse om de ser misstänkta ut
-            if "nikkei" in str(entry.link).lower() and not has_ext:
-                continue
-            return url # Returnera första bra bild
-
-    return None # Ingen bra bild hittades
+            if "nikkei" in str(entry.link).lower() and not has_ext: continue
+            return url
+    return None
 
 def clean_summary(summary):
     if not summary: return ""
@@ -114,6 +104,27 @@ def generate_pagination_html(current_page, total_pages):
         html += f'<a href="page{current_page + 1}.html" class="page-btn">NEXT &rarr;</a>'
     return html
 
+def generate_sitemap(total_pages):
+    """Generates a sitemap.xml for Google."""
+    print("Generating sitemap.xml...")
+    
+    # Start XML structure
+    sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    # Add Index Page
+    sitemap += f'  <url>\n    <loc>{BASE_URL}index.html</loc>\n    <changefreq>hourly</changefreq>\n  </url>\n'
+    
+    # Add Numbered Pages
+    for i in range(2, total_pages + 1):
+        sitemap += f'  <url>\n    <loc>{BASE_URL}page{i}.html</loc>\n    <changefreq>hourly</changefreq>\n  </url>\n'
+        
+    sitemap += '</urlset>'
+    
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(sitemap)
+    print("sitemap.xml created.")
+
 def generate_pages():
     print("Fetching and translating news...")
     all_articles = []
@@ -128,7 +139,6 @@ def generate_pages():
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
-                
                 title = entry.title
                 summary = clean_summary(entry.summary if 'summary' in entry else "")
                 note_html = ""
@@ -141,7 +151,6 @@ def generate_pages():
                     except Exception as e:
                         print(f"Translation failed: {e}")
 
-                # BILD-LOGIK: Hämta bild ELLER tvinga fallback
                 found_image = get_image_from_entry(entry)
                 final_image = found_image if found_image else random.choice(FALLBACK_IMAGES)
 
@@ -160,7 +169,8 @@ def generate_pages():
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
     total_articles = len(all_articles)
-    if total_articles == 0: return
+    if total_articles == 0: 
+        return 0
 
     total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
     print(f"Total Articles: {total_articles} | Total Pages: {total_pages}")
@@ -185,7 +195,6 @@ def generate_pages():
                 else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
             except: time_str = "Recent"
             
-            # Använd bilden som Python valde (som aldrig är tom nu)
             img_src = art['image']
             fallback = random.choice(FALLBACK_IMAGES)
 
@@ -235,11 +244,17 @@ def generate_pages():
             
         print(f"Generated {filename}")
 
-    # --- GOOGLE VERIFICATION FILE ---
-    # Detta skapar automatiskt google-filen varje gång scriptet körs
+    # Generate Google Verification File
     with open("google2e6f5e9a179ec462.html", "w", encoding="utf-8") as f:
         f.write("google-site-verification: google2e6f5e9a179ec462.html")
     print("Generated google2e6f5e9a179ec462.html")
 
+    return total_pages
+
 if __name__ == "__main__":
-    generate_pages()
+    # 1. Generate Content
+    total_pages_count = generate_pages()
+    
+    # 2. Generate Sitemap (if pages were created)
+    if total_pages_count > 0:
+        generate_sitemap(total_pages_count)
