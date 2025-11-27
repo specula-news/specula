@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
+    
+    <!-- FAVICON (Browser Tab Icon) -->
+    <link rel="icon" type="image/png" href="icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -33,9 +37,31 @@
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 2.2rem; 
+            font-weight: 700; 
+            letter-spacing: -1px; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+        }
+
+        .logo-icon {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            filter: invert(1); /* Gör ikonen vit i dark mode */
+        }
+        body.light-mode .logo-icon {
+            filter: invert(0); /* Gör ikonen svart i light mode */
+        }
+
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+        
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
@@ -85,7 +111,10 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div></div>
+            <div class="logo">
+                <img src="icon.png" class="logo-icon" alt="Specula">
+                SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div>
+            </div>
             <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
         </header>
 
@@ -105,7 +134,6 @@
                 <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
                     + Suggest Source
                 </a>
-                <!-- Updated PayPal Link -->
                 <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
                     ♥ Donate via PayPal
                 </a>

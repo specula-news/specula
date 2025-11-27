@@ -5,10 +5,8 @@ from bs4 import BeautifulSoup
 import math
 
 # --- KONFIGURATION ---
-# Vi sänker antal per sida något för att göra laddningstiden snabbare, 
-# men hämtar MÅNGA fler artiklar totalt.
 ARTICLES_PER_PAGE = 12 
-MAX_ARTICLES_PER_SOURCE = 20  # Hämtar 20 artiklar från varje källa (totalt ca 300+ artiklar)
+MAX_ARTICLES_PER_SOURCE = 20  # Hämtar 20 artiklar från varje källa
 
 RSS_FEEDS = [
     # --- SWEDISH TECH ---
@@ -17,15 +15,15 @@ RSS_FEEDS = [
     
     # --- GLOBAL ECONOMY & MARKETS ---
     "https://www.cnbc.com/id/19854910/device/rss/rss.html",   # CNBC Tech & Money
-    "http://feeds.marketwatch.com/marketwatch/topstories/",   # MarketWatch (Global Economy)
+    "http://feeds.marketwatch.com/marketwatch/topstories/",   # MarketWatch
     
-    # --- CHINA & ASIA TECH (Geopolitics) ---
-    "https://asia.nikkei.com/rss/feed/nar",                   # Nikkei Asia (Asian Market Focus)
-    "https://technode.com/feed/",                             # TechNode (Deep dive China Tech)
+    # --- CHINA & ASIA TECH ---
+    "https://asia.nikkei.com/rss/feed/nar",                   # Nikkei Asia
+    "https://technode.com/feed/",                             # TechNode
     
     # --- HARD TECH & INVENTIONS ---
-    "https://spectrum.ieee.org/feeds/feed.rss",               # IEEE Spectrum (Engineering/Inventions)
-    "https://www.sciencedaily.com/rss/top/technology.xml",    # Science Daily (Breakthroughs)
+    "https://spectrum.ieee.org/feeds/feed.rss",               # IEEE Spectrum
+    "https://www.sciencedaily.com/rss/top/technology.xml",    # Science Daily
     "https://phys.org/rss-feed/nanotech-news/",               # Nanotechnology
     
     # --- MAJOR TECH NEWS ---
@@ -39,11 +37,9 @@ RSS_FEEDS = [
     "https://singularityhub.com/feed/"                        # AI & Singularity
 ]
 
-# Fallback image
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
 
 def get_image_from_entry(entry):
-    """Försöker hitta en bild i RSS-flödet på olika sätt"""
     if 'media_content' in entry:
         return entry.media_content[0]['url']
     if 'media_thumbnail' in entry:
@@ -69,15 +65,11 @@ def clean_summary(summary):
 
 def generate_pagination_html(current_page, total_pages):
     html = ""
-    
-    # Previous Button
     if current_page > 1:
         prev_link = "index.html" if current_page == 2 else f"page{current_page - 1}.html"
         html += f'<a href="{prev_link}" class="page-btn">&larr; PREV</a>'
     
-    # Smart Page Numbers (shows 1 ... 4 5 6 ... 99)
     for i in range(1, total_pages + 1):
-        # Visa alltid första, sista, och sidorna runt den vi är på
         if i == 1 or i == total_pages or (current_page - 2 <= i <= current_page + 2):
             link = "index.html" if i == 1 else f"page{i}.html"
             active_class = "active" if i == current_page else ""
@@ -85,10 +77,8 @@ def generate_pagination_html(current_page, total_pages):
         elif i == current_page - 3 or i == current_page + 3:
             html += '<span style="color:var(--text-secondary); align-self:center;">...</span>'
 
-    # Next Button
     if current_page < total_pages:
         html += f'<a href="page{current_page + 1}.html" class="page-btn">NEXT &rarr;</a>'
-        
     return html
 
 def generate_pages():
@@ -101,11 +91,8 @@ def generate_pages():
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             print(f"Loaded {len(feed.entries)} from {source_name}")
             
-            # Hämta fler artiklar per källa
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                # Försök hitta datum, använd nu-tid om det saknas
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
-                
                 article = {
                     'title': entry.title,
                     'link': entry.link,
@@ -118,9 +105,62 @@ def generate_pages():
         except Exception as e:
             print(f"Error loading {feed_url}: {e}")
 
-    # Sortera nyast först
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
-    # Räkna ut sidor
     total_articles = len(all_articles)
-    total_pages = math.ceil(total_articles / ARTICLES_
+    total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
+    print(f"Total Articles: {total_articles} | Total Pages: {total_pages}")
+
+    with open("template.html", "r", encoding="utf-8") as f:
+        template_content = f.read()
+
+    for i in range(total_pages):
+        page_num = i + 1
+        start_idx = i * ARTICLES_PER_PAGE
+        end_idx = start_idx + ARTICLES_PER_PAGE
+        page_articles = all_articles[start_idx:end_idx]
+        
+        cards_html = ""
+        for art in page_articles:
+            now = time.time()
+            try:
+                pub_time = time.mktime(art['published'])
+                hours_ago = int((now - pub_time) / 3600)
+                if hours_ago < 1: time_str = "Just Now"
+                elif hours_ago < 24: time_str = f"{hours_ago}h Ago"
+                else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
+            except: time_str = "Recent"
+            
+            cards_html += f"""
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="{art['image']}" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">{art['source'][:25]}</div>
+                        <time>{time_str}</time>
+                    </div>
+                    <h2 class="card-title"><a href="{art['link']}" target="_blank">{art['title']}</a></h2>
+                    <p class="ai-summary">{art['summary']}</p>
+                    <div class="card-footer">
+                        <a href="{art['link']}" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            """
+
+        pagination_html = generate_pagination_html(page_num, total_pages)
+        final_html = template_content.replace("<!-- NEWS_PLACEHOLDER -->", cards_html)
+        final_html = final_html.replace("<!-- PAGINATION_PLACEHOLDER -->", pagination_html)
+        
+        filename = "index.html" if page_num == 1 else f"page{page_num}.html"
+        
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(final_html)
+            
+        print(f"Generated {filename}")
+
+if __name__ == "__main__":
+    generate_pages()
