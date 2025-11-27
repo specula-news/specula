@@ -11,49 +11,57 @@ ARTICLES_PER_PAGE = 45
 MAX_ARTICLES_PER_SOURCE = 15
 
 # --- KÄLLOR MED KATEGORIER ---
-# Format: ("URL", "KATEGORI")
-# Kategorier: 'geopolitics', 'tech', 'ev', 'science', 'construction'
-
 RSS_SOURCES = [
-    # --- GEOPOLITICS / ASIA / NEWS ---
-    ("https://www.scmp.com/rss/91/feed", "geopolitics"),  # SCMP
-    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"), # Al Jazeera
+    # --- SWEDISH BUSINESS & TECH (Translated) ---
+    ("https://www.dagensps.se/feed/", "geopolitics"), 
+    ("https://www.nyteknik.se/rss", "tech"), 
+    ("https://feber.se/rss/", "tech"),
+
+    # --- DOCUMENTARIES / GEOPOLITICS / SOCIETY ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Documentary (NEW)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), # Inside China Business
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), # Johnny Harris
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), # Diary Of A CEO
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), # ShanghaiEye
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), # CGTN America
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), # CCTV Video News
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), # CGTN Europe
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN (Main)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN Main
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA (Channel News Asia)
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopolitical Economy Report
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopolitical Economy
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China TV
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
 
-    # --- TECH / AI / SEMICONDUCTORS ---
-    ("https://anastasiintech.substack.com/feed", "tech"), # Anastasi In Tech
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), # Eli the Computer Guy
+    # --- TEXT NEWS: GEOPOLITICS ---
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
+
+    # --- TECH / AI ---
+    ("https://anastasiintech.substack.com/feed", "tech"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), 
     ("https://techcrunch.com/feed/", "tech"),
     ("https://www.theverge.com/rss/index.xml", "tech"),
 
-    # --- EV / ENERGY / SUSTAINABILITY ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Undecided with Matt Ferrell
+    # --- EV / ENERGY ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # Electric Viking
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
-    ("https://feber.se/rss/", "tech"), # Feber (Swed)
 
-    # --- SCIENCE / ENGINEERING / FUTURE ---
+    # --- SCIENCE / SPACE / ENG ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), # Science Channel (NEW)
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), # Veritasium
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), # SmarterEveryDay
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), # Practical Engineering
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), # FII Institute
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), # SpaceEyeTech (Generic ID used if unknown)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), # SpaceEyeTech
 
     # --- CONSTRUCTION ---
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), # The B1M
 ]
 
-SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija"]
+SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
 # Fallback-bilder
 FALLBACK_IMAGES = [
@@ -66,7 +74,6 @@ FALLBACK_IMAGES = [
 
 def get_image_from_entry(entry):
     try:
-        # YouTube Specific Thumbnail (High Quality)
         if 'yt_videoid' in entry:
             return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
             
@@ -145,7 +152,6 @@ def generate_pages():
                         note_html = '<span class="lang-note">(Translated)</span>'
                     except: pass
 
-                # Fallback logic
                 found_image = get_image_from_entry(entry)
                 final_image = found_image if found_image else random.choice(FALLBACK_IMAGES)
 
@@ -190,7 +196,6 @@ def generate_pages():
                 else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
             except: time_str = "Recent"
             
-            # Note: Added data-category attribute for filtering
             cards_html += f"""
             <article class="news-card" data-category="{art['category']}">
                 <div class="card-image-wrapper">
