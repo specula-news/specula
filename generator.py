@@ -6,35 +6,56 @@ import math
 import random
 from deep_translator import GoogleTranslator
 
-# --- CONFIGURATION ---
-# UPDATED: Now pointing to your Netlify domain
-BASE_URL = "https://specula-news.netlify.app/"
-
+# --- KONFIGURATION ---
 ARTICLES_PER_PAGE = 45   
-MAX_ARTICLES_PER_SOURCE = 20
+MAX_ARTICLES_PER_SOURCE = 15
 
-# RSS Sources
-RSS_FEEDS = [
-    "https://feber.se/rss/",
-    "https://www.sweclockers.com/feeds/nyheter",
-    "https://www.cnbc.com/id/19854910/device/rss/rss.html",
-    "http://feeds.marketwatch.com/marketwatch/topstories/",
-    "https://asia.nikkei.com/rss/feed/nar",
-    "https://technode.com/feed/",
-    "https://spectrum.ieee.org/feeds/feed.rss",
-    "https://www.sciencedaily.com/rss/top/technology.xml",
-    "https://phys.org/rss-feed/nanotech-news/",
-    "https://www.theverge.com/rss/index.xml",
-    "https://techcrunch.com/feed/",
-    "https://www.wired.com/feed/category/tech/latest/rss",
-    "https://arstechnica.com/feed/",
-    "https://www.universetoday.com/feed/",
-    "https://singularityhub.com/feed/"
+# --- KÄLLOR MED KATEGORIER ---
+# Format: ("URL", "KATEGORI")
+# Kategorier: 'geopolitics', 'tech', 'ev', 'science', 'construction'
+
+RSS_SOURCES = [
+    # --- GEOPOLITICS / ASIA / NEWS ---
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"),  # SCMP
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"), # Al Jazeera
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), # ShanghaiEye
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), # CGTN America
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), # CCTV Video News
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), # CGTN Europe
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN (Main)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA (Channel News Asia)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopolitical Economy Report
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China TV
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
+
+    # --- TECH / AI / SEMICONDUCTORS ---
+    ("https://anastasiintech.substack.com/feed", "tech"), # Anastasi In Tech
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), # Eli the Computer Guy
+    ("https://techcrunch.com/feed/", "tech"),
+    ("https://www.theverge.com/rss/index.xml", "tech"),
+
+    # --- EV / ENERGY / SUSTAINABILITY ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Undecided with Matt Ferrell
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
+    ("https://feber.se/rss/", "tech"), # Feber (Swed)
+
+    # --- SCIENCE / ENGINEERING / FUTURE ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), # Veritasium
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), # SmarterEveryDay
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), # Practical Engineering
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), # FII Institute
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), # SpaceEyeTech (Generic ID used if unknown)
+
+    # --- CONSTRUCTION ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), # The B1M
 ]
 
-SWEDISH_SOURCES = ["feber.se", "sweclockers.com"]
+SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija"]
 
-# Fallback Images
+# Fallback-bilder
 FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
     "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
@@ -44,41 +65,35 @@ FALLBACK_IMAGES = [
 ]
 
 def get_image_from_entry(entry):
-    """Finds a valid image or returns None."""
-    valid_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
-    forbidden_terms = ['pixel', 'tracker', 'feedburner', 'ad', 'doubleclick', '1x1']
-    potential_urls = []
-
-    if 'media_content' in entry: potential_urls.append(entry.media_content[0]['url'])
-    if 'media_thumbnail' in entry: potential_urls.append(entry.media_thumbnail[0]['url'])
-    if 'links' in entry:
-        for link in entry.links:
-            if link.type.startswith('image/'): potential_urls.append(link.href)
-    
-    content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
-    if content:
-        soup = BeautifulSoup(content, 'html.parser')
-        images = soup.find_all('img')
-        for img in images:
-            src = img.get('src')
-            if src: potential_urls.append(src)
-
-    for url in potential_urls:
-        url_lower = url.lower()
-        has_ext = any(ext in url_lower for ext in valid_extensions)
-        is_bad = any(bad in url_lower for bad in forbidden_terms)
+    try:
+        # YouTube Specific Thumbnail (High Quality)
+        if 'yt_videoid' in entry:
+            return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
+            
+        if 'media_content' in entry: return entry.media_content[0]['url']
+        if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
+        if 'links' in entry:
+            for link in entry.links:
+                if link.type.startswith('image/'): return link.href
         
-        if not is_bad:
-            if "nikkei" in str(entry.link).lower() and not has_ext: continue
-            return url
-    return None
+        content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
+        if content:
+            soup = BeautifulSoup(content, 'html.parser')
+            images = soup.find_all('img')
+            for img in images:
+                src = img.get('src')
+                if not src: continue
+                if 'pixel' in src or 'tracker' in src or 'feedburner' in src: continue
+                return src
+    except: pass
+    return ""
 
 def clean_summary(summary):
     if not summary: return ""
     soup = BeautifulSoup(summary, 'html.parser')
     text = soup.get_text()
     text = text.replace("Continue reading", "").replace("Read more", "").replace("Läs mer", "")
-    return text[:220] + "..." if len(text) > 220 else text
+    return text[:200] + "..." if len(text) > 200 else text
 
 def translate_text(text, source_lang='sv'):
     try:
@@ -104,41 +119,21 @@ def generate_pagination_html(current_page, total_pages):
         html += f'<a href="page{current_page + 1}.html" class="page-btn">NEXT &rarr;</a>'
     return html
 
-def generate_sitemap(total_pages):
-    """Generates a sitemap.xml for Google."""
-    print("Generating sitemap.xml...")
-    
-    # Start XML structure
-    sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n'
-    sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    
-    # Add Index Page
-    sitemap += f'  <url>\n    <loc>{BASE_URL}index.html</loc>\n    <changefreq>hourly</changefreq>\n  </url>\n'
-    
-    # Add Numbered Pages
-    for i in range(2, total_pages + 1):
-        sitemap += f'  <url>\n    <loc>{BASE_URL}page{i}.html</loc>\n    <changefreq>hourly</changefreq>\n  </url>\n'
-        
-    sitemap += '</urlset>'
-    
-    with open("sitemap.xml", "w", encoding="utf-8") as f:
-        f.write(sitemap)
-    print("sitemap.xml created.")
-
 def generate_pages():
-    print("Fetching and translating news...")
+    print("Fetching news...")
     all_articles = []
 
-    for feed_url in RSS_FEEDS:
+    for url, category in RSS_SOURCES:
         try:
-            feed = feedparser.parse(feed_url)
+            feed = feedparser.parse(url)
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            print(f"Loaded {len(feed.entries)} from {source_name}")
+            print(f"Loaded {len(feed.entries)} from {source_name} [{category}]")
             
-            is_swedish = any(s in feed_url for s in SWEDISH_SOURCES)
+            is_swedish = any(s in url for s in SWEDISH_SOURCES)
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 pub_date = entry.published_parsed if 'published_parsed' in entry else time.gmtime()
+                
                 title = entry.title
                 summary = clean_summary(entry.summary if 'summary' in entry else "")
                 note_html = ""
@@ -147,10 +142,10 @@ def generate_pages():
                     try:
                         title = translate_text(title)
                         summary = translate_text(summary)
-                        note_html = '<span class="lang-note">(Translated from Swedish)</span>'
-                    except Exception as e:
-                        print(f"Translation failed: {e}")
+                        note_html = '<span class="lang-note">(Translated)</span>'
+                    except: pass
 
+                # Fallback logic
                 found_image = get_image_from_entry(entry)
                 final_image = found_image if found_image else random.choice(FALLBACK_IMAGES)
 
@@ -160,17 +155,17 @@ def generate_pages():
                     'summary': summary + note_html,
                     'image': final_image,
                     'source': source_name,
+                    'category': category,
                     'published': pub_date
                 }
                 all_articles.append(article)
         except Exception as e:
-            print(f"Error loading {feed_url}: {e}")
+            print(f"Error loading {url}: {e}")
 
     all_articles.sort(key=lambda x: x['published'], reverse=True)
     
     total_articles = len(all_articles)
-    if total_articles == 0: 
-        return 0
+    if total_articles == 0: return
 
     total_pages = math.ceil(total_articles / ARTICLES_PER_PAGE)
     print(f"Total Articles: {total_articles} | Total Pages: {total_pages}")
@@ -195,17 +190,12 @@ def generate_pages():
                 else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
             except: time_str = "Recent"
             
-            img_src = art['image']
-            fallback = random.choice(FALLBACK_IMAGES)
-
+            # Note: Added data-category attribute for filtering
             cards_html += f"""
-            <article class="news-card">
+            <article class="news-card" data-category="{art['category']}">
                 <div class="card-image-wrapper">
-                    <img src="{img_src}" 
-                         class="card-image" 
-                         loading="lazy" 
-                         alt="News"
-                         onerror="this.onerror=null;this.src='{fallback}';"> 
+                    <div class="cat-tag">{art['category']}</div>
+                    <img src="{art['image']}" class="card-image" loading="lazy" alt="News" onerror="this.src='{random.choice(FALLBACK_IMAGES)}'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -244,17 +234,5 @@ def generate_pages():
             
         print(f"Generated {filename}")
 
-    # Generate Google Verification File
-    with open("google2e6f5e9a179ec462.html", "w", encoding="utf-8") as f:
-        f.write("google-site-verification: google2e6f5e9a179ec462.html")
-    print("Generated google2e6f5e9a179ec462.html")
-
-    return total_pages
-
 if __name__ == "__main__":
-    # 1. Generate Content
-    total_pages_count = generate_pages()
-    
-    # 2. Generate Sitemap (if pages were created)
-    if total_pages_count > 0:
-        generate_sitemap(total_pages_count)
+    generate_pages()

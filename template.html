@@ -15,6 +15,7 @@
             --text-primary: #ffffff; --text-secondary: #a1a1aa;
             --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15);
             --border: #27272a;
+            --sidebar-width: 250px;
         }
         body.light-mode {
             --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff;
@@ -31,104 +32,103 @@
             background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        
-        .logo-wrapper { display: flex; flex-direction: column; gap: 5px; }
-        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { 
-            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; 
-            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+        /* LAYOUT */
+        .main-layout { display: flex; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 40px; }
+        .content-area { flex-grow: 1; }
+
+        /* SIDEBAR MENU */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .logo-icon { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
+        .filter-btn {
+            background: transparent; border: 1px solid transparent;
+            color: var(--text-secondary); padding: 10px 15px;
+            text-align: left; cursor: pointer; border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.85rem;
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
+        .logo-icon { height: 40px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.3s ease; }
         .logo-link:hover .logo-icon { transform: rotate(10deg); }
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
-        .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+        .version-btn { font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; font-family: 'Space Grotesk'; opacity: 0.6; margin-left: 10px; }
         
-        /* VERSION BUTTON */
-        .version-btn {
-            font-size: 0.7rem; color: var(--text-secondary); cursor: pointer; align-self: flex-start; margin-left: 60px;
-            font-family: 'Space Grotesk', monospace; opacity: 0.6; transition: 0.2s; border-bottom: 1px dotted transparent;
-        }
-        .version-btn:hover { color: var(--accent); opacity: 1; border-color: var(--accent); }
-
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .theme-switch:hover { border-color: var(--accent); }
 
         /* GRID & CARD */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card-image-wrapper { width: 100%; height: 180px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
-        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .source-badge { display: flex; align-items: center; gap: 6px; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
+        
+        /* CATEGORY TAG */
+        .cat-tag {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.65rem; font-weight: 700;
+            padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10;
+        }
+
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3; margin-bottom: 10px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
-        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
-        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .read-more:hover { text-decoration: underline; }
+        .ai-summary { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 10px; }
+        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
+        .read-more { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
-        .nav-prev { left: 30px; } .nav-next { right: 30px; }
-        @media (max-width: 1350px) { .floating-nav { display: none; } }
+        .nav-prev { left: 20px; } .nav-next { right: 20px; }
 
-        /* MODAL (CHANGELOG) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            width: 90%; max-width: 500px; padding: 30px; border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px);
-            transition: transform 0.3s ease; position: relative;
-        }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 500px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .modal-title { font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; }
-        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; }
-        .close-modal:hover { color: var(--accent); }
-        .changelog-list { list-style: none; padding: 0; }
-        .changelog-list li { margin-bottom: 15px; padding-left: 20px; position: relative; color: var(--text-secondary); font-size: 0.9rem; }
-        .changelog-list li::before { content: "•"; color: var(--accent); position: absolute; left: 0; font-weight: bold; }
-        .changelog-date { display: block; font-size: 0.75rem; opacity: 0.5; margin-bottom: 4px; }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 1.5rem; background: none; border: none; }
 
         /* FOOTER */
-        .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
-        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
-        .btn-suggest { background: var(--bg-card); color: var(--text-primary); }
-        .btn-suggest:hover { border-color: var(--accent); }
+        .site-footer { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
+        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .btn-action { padding: 8px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-donate:hover { opacity: 0.9; box-shadow: 0 0 15px var(--accent-glow); }
-        .disclaimer-box { max-width: 700px; margin: 0 auto; font-size: 0.75rem; opacity: 0.7; line-height: 1.6; }
-        .disclaimer-title { font-weight: 700; color: var(--text-primary); display: block; margin-bottom: 5px; }
 
-        @media (max-width: 768px) {
-            .news-grid { grid-template-columns: 1fr; }
-            header { flex-direction: column; gap: 20px; align-items: flex-start; }
-            .theme-switch { width: 100%; justify-content: center; }
-            .version-btn { margin-left: 60px; margin-top: -10px; }
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 1000px) {
+            .main-layout { flex-direction: column; gap: 20px; }
+            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; border-radius: 8px; }
+            .filter-btn { white-space: nowrap; padding: 8px 16px; }
+            .floating-nav { display: none; }
         }
     </style>
 </head>
@@ -139,84 +139,94 @@
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2 class="modal-title">System Changelog</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
-            </div>
-            <ul class="changelog-list">
-                <li>
-                    <span class="changelog-date">Current</span>
-                    <strong>Version 6.2.2</strong><br>
-                    Improved image filtering for Nikkei & Asian sources. Enhanced fallback image logic.
-                </li>
-                <li>
-                    <span class="changelog-date">Previous</span>
-                    <strong>Version 6.2.1</strong><br>
-                    Added floating navigation arrows and auto-translation for Swedish sources.
-                </li>
-                <li>
-                    <span class="changelog-date">Initial</span>
-                    <strong>Version 6.0</strong><br>
-                    Core system initialization. Python generator active.
-                </li>
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 style="font-family:'Space Grotesk'; margin-bottom:15px;">Changelog</h2>
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem;">
+                <li style="margin-bottom:10px;"><strong>V7.0 (Current)</strong><br>Added new sources (SCMP, Al Jazeera, YouTube Channels). Added Categories & Sidebar Filtering. Removed Nikkei Asia.</li>
             </ul>
         </div>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo-wrapper">
-                <a href="index.html" class="logo-link">
-                    <img src="icon.png" class="logo-icon" alt="Specula">
-                    SPECULA <span>.</span>
-                    <div class="logo-tag">LIVE FEED</div>
-                </a>
-                <div class="version-btn" id="versionBtn">Version 6.2.2</div>
-            </div>
-            <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
-        </header>
+    <div class="main-layout">
+        <!-- SIDEBAR MENU -->
+        <aside class="sidebar">
+            <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+            <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics / Asia</button>
+            <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+            <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+            <button class="filter-btn" onclick="filterNews('science')">Science & Eng</button>
+            <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+        </aside>
 
-        <div class="news-grid">
-            <!-- NEWS_PLACEHOLDER -->
+        <div class="content-area">
+            <header>
+                <div class="logo-wrapper">
+                    <a href="index.html" class="logo-link">
+                        <img src="icon.png" class="logo-icon" alt="Specula">
+                        <div style="display:flex; flex-direction:column;">
+                            <div class="logo">SPECULA <span>.</span></div>
+                            <div class="version-btn" id="versionBtn">Version 7.0</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
+            </header>
+
+            <div class="news-grid" id="newsGrid">
+                <!-- NEWS_PLACEHOLDER -->
+            </div>
+
+            <div class="pagination">
+                <!-- PAGINATION_PLACEHOLDER -->
+            </div>
+
+            <footer class="site-footer">
+                <div class="footer-buttons">
+                    <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                    <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
+                </div>
+                <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                    SPECULA is a non-profit news aggregator.
+                </div>
+            </footer>
         </div>
-
-        <div class="pagination">
-            <!-- PAGINATION_PLACEHOLDER -->
-        </div>
-
-        <footer class="site-footer">
-            <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">+ Suggest Source</a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate via PayPal</a>
-            </div>
-            <div class="disclaimer-box">
-                <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>SPECULA is a non-profit project. Aggregates news via RSS under Fair Use. No ads. No revenue.</p>
-                <p style="margin-top: 10px;">Contact: lolish3k@gmail.com</p>
-            </div>
-        </footer>
     </div>
 
     <script>
-        // THEME LOGIC
+        // FILTER LOGIC
+        function filterNews(category) {
+            const cards = document.querySelectorAll('.news-card');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            // Update buttons
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // THEME & MODAL LOGIC
         const toggleBtn = document.getElementById('themeBtn');
-        const themeText = document.getElementById('themeText');
-        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'light') { enableLightMode(); }
-        toggleBtn.addEventListener('click', () => { if (body.classList.contains('light-mode')) { enableDarkMode(); } else { enableLightMode(); } });
-        function enableLightMode() { body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light'); }
-        function enableDarkMode() { body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark'); }
+        if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+        
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+            toggleBtn.innerText = body.classList.contains('light-mode') ? '☀ LIGHT MODE' : '☾ DARK MODE';
+        });
 
-        // MODAL LOGIC
         const modal = document.getElementById('changelogModal');
-        const btn = document.getElementById('versionBtn');
-        const close = document.getElementById('closeModal');
-
-        btn.addEventListener('click', () => { modal.classList.add('open'); });
-        close.addEventListener('click', () => { modal.classList.remove('open'); });
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
+        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>
 </html>
