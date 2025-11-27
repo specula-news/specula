@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
+    
+    <!-- FAVICON (Browser Tab Icon) -->
+    <link rel="icon" type="image/png" href="icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -33,9 +37,31 @@
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 2.2rem; 
+            font-weight: 700; 
+            letter-spacing: -1px; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+        }
+
+        .logo-icon {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            filter: invert(1); /* Gör ikonen vit i dark mode */
+        }
+        body.light-mode .logo-icon {
+            filter: invert(0); /* Gör ikonen svart i light mode */
+        }
+
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
+        
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
@@ -85,348 +111,237 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div></div>
+            <div class="logo">
+                <img src="icon.png" class="logo-icon" alt="Specula">
+                SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div>
+            </div>
             <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
         </header>
 
         <!-- DYNAMIC NEWS GRID -->
         <div class="news-grid">
             
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        TechCrunch
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>Just Now</time>
-                </div>
-                <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank">Best iPad apps for unleashing and exploring your creativity</a></h2>
-                <p class="ai-summary">
-                    We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.
-                </p>
-                <div class="card-footer">
-                    <a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        TechCrunch
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/record-24-of-chinese-companies-post-losses-in-january-september" target="_blank">Record 24% of Chinese companies post losses in January-September</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/economy/record-24-of-chinese-companies-post-losses-in-january-september" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>Just Now</time>
                 </div>
-                <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistis simpler, safer, and smarter</a></h2>
-                <p class="ai-summary">
-                    We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!
-                </p>
-                <div class="card-footer">
-                    <a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        The Verge
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>Just Now</time>
-                </div>
-                <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
-                <p class="ai-summary">
-                    If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale...
-                </p>
-                <div class="card-footer">
-                    <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK095_MICROSOFT_2_CVirginia_B.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        The Verge
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/economy/fires/hong-kong-apartment-fire-death-toll-rises-to-83-police-allege-negligence" target="_blank">Hong Kong apartment fire death toll rises to 83, police allege negligence</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/economy/fires/hong-kong-apartment-fire-death-toll-rises-to-83-police-allege-negligence" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>Just Now</time>
                 </div>
-                <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
-                <p class="ai-summary">
-                    Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these s...
-                </p>
-                <div class="card-footer">
-                    <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        The Verge
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>1h Ago</time>
-                </div>
-                <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
-                <p class="ai-summary">
-                    While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter...
-                </p>
-                <div class="card-footer">
-                    <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        The Verge
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/electronics/japan-s-daikin-aims-to-triple-north-american-sales-of-data-center-cooling-gear" target="_blank">Japan's Daikin aims to triple North American sales of data center cooling gear</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/electronics/japan-s-daikin-aims-to-triple-north-american-sales-of-data-center-cooling-gear" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>1h Ago</time>
                 </div>
-                <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
-                <p class="ai-summary">
-                    A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst. ...
-                </p>
-                <div class="card-footer">
-                    <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/kuxiu_s3_1.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        The Verge
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>2h Ago</time>
-                </div>
-                <h2 class="card-title"><a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank">Kuxiu’s solid-state power bank now has more capacity and faster wireless charging</a></h2>
-                <p class="ai-summary">
-                    Seven months after launching its first semi-solid state battery that used a safer and longer-lasting solid-liquid mixed electrolyte, Kuxiu is introducing a new version with some welcome upgrades. The ...
-                </p>
-                <div class="card-footer">
-                    <a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/ladyhawke3-1152x648-1763925669.jpg" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        Ars Technica
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/retail/muji-accelerates-localization-push-with-thailand-vietnam-flagship-stores" target="_blank">Muji accelerates 'localization' push with Thailand, Vietnam flagship stores</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/retail/muji-accelerates-localization-push-with-thailand-vietnam-flagship-stores" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>5h Ago</time>
                 </div>
-                <h2 class="card-title"><a href="https://arstechnica.com/culture/2025/11/blast-from-the-past-15-movie-gems-of-1985/" target="_blank">Blast from the past: 15 movie gems of 1985</a></h2>
-                <p class="ai-summary">
-                    Beyond the blockbusters: This watch list has something for everyone over the long holiday weekend.
-                </p>
-                <div class="card-footer">
-                    <a href="https://arstechnica.com/culture/2025/11/blast-from-the-past-15-movie-gems-of-1985/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://cdn.arstechnica.net/wp-content/uploads/2009/04/surprised-eye.jpg" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        Ars Technica
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>5h Ago</time>
-                </div>
-                <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/doctors-pull-4-inch-worm-out-of-womans-eyelid-after-monthlong-incubation/" target="_blank">Four-inch worm hatches in woman’s forehead, wriggles to her eyelid</a></h2>
-                <p class="ai-summary">
-                    The parasite, typically found in dogs, was visibly moving under her skin.
-                </p>
-                <div class="card-footer">
-                    <a href="https://arstechnica.com/health/2025/11/doctors-pull-4-inch-worm-out-of-womans-eyelid-after-monthlong-incubation/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        TechCrunch
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/technology/intel-stands-by-ex-tsmc-executive-suspected-of-leaking-trade-secrets" target="_blank">Intel stands by ex-TSMC executive suspected of leaking trade secrets</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/technology/intel-stands-by-ex-tsmc-executive-suspected-of-leaking-trade-secrets" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>11h Ago</time>
                 </div>
-                <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/the-future-will-be-explained-to-you-in-palo-alto/" target="_blank">The future will be explained to you in Palo Alto</a></h2>
-                <p class="ai-summary">
-                    On Wednesday evening at PlayGround Global in Palo Alto, some very smart people who are building things you don’t understand yet will explain what’s coming. This is the final StrictlyVC event of 2025, ...
-                </p>
-                <div class="card-footer">
-                    <a href="https://techcrunch.com/2025/11/26/the-future-will-be-explained-to-you-in-palo-alto/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/54717981613_7c2acddc58_6k-1-1152x648.jpg" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        Ars Technica
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>18h Ago</time>
-                </div>
-                <h2 class="card-title"><a href="https://arstechnica.com/space/2025/11/ula-aimed-to-launch-up-to-10-vulcan-rockets-this-year-it-will-fly-just-once/" target="_blank">ULA aimed to launch up to 10 Vulcan rockets this year—it will fly just once</a></h2>
-                <p class="ai-summary">
-                    The company is closer to increasing its Vulcan launch cadence, but it won't happen this year.
-                </p>
-                <div class="card-footer">
-                    <a href="https://arstechnica.com/space/2025/11/ula-aimed-to-launch-up-to-10-vulcan-rockets-this-year-it-will-fly-just-once/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        TechCrunch
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/techasia/the-man-who-changed-foxconn-and-graphite-ambitions-in-the-us" target="_blank">The man who changed Foxconn and graphite ambitions in the US</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/techasia/the-man-who-changed-foxconn-and-graphite-ambitions-in-the-us" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>20h Ago</time>
                 </div>
-                <h2 class="card-title"><a href="https://techcrunch.com/video/nordic-founders-are-taking-bigger-swings-and-its-paying-off/" target="_blank">Nordic founders are taking bigger swings, and it’s paying off</a></h2>
-                <p class="ai-summary">
-                    Ten years ago, raising €1 million in Copenhagen was enough to make waves in the region’s tech scene. Today, the Nordics are turning out billion-dollar companies like Lovable — which hit $200 million i...
-                </p>
-                <div class="card-footer">
-                    <a href="https://techcrunch.com/video/nordic-founders-are-taking-bigger-swings-and-its-paying-off/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        TechCrunch
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>20h Ago</time>
-                </div>
-                <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/here-are-the-49-us-ai-startups-that-have-raised-100m-or-more-in-2025/" target="_blank">Here are the 49 US AI startups that have raised $100M or more in 2025</a></h2>
-                <p class="ai-summary">
-                    Last year was monumental for the AI industry in the U.S. and beyond. How will 2025 compare?
-                </p>
-                <div class="card-footer">
-                    <a href="https://techcrunch.com/2025/11/26/here-are-the-49-us-ai-startups-that-have-raised-100m-or-more-in-2025/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/GettyImages-2231894756-1024x648.jpg" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        Ars Technica
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/retail/brewer-asahi-says-cyberattack-has-hit-profits-and-delayed-results" target="_blank">Brewer Asahi says cyberattack has hit profits and delayed results</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/retail/brewer-asahi-says-cyberattack-has-hit-profits-and-delayed-results" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
-                    <time>22h Ago</time>
                 </div>
-                <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/solars-growth-in-us-almost-enough-to-offset-rising-energy-use/" target="_blank">Solar’s growth in US almost enough to offset rising energy use</a></h2>
-                <p class="ai-summary">
-                    Over the course of 2025, electricity demand has gradually declined.
-                </p>
-                <div class="card-footer">
-                    <a href="https://arstechnica.com/science/2025/11/solars-growth-in-us-almost-enough-to-offset-rising-energy-use/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
-        <article class="news-card">
-            <div class="card-image-wrapper">
-                <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/02/GettyImages-968446896-1152x648.jpg" class="card-image" loading="lazy" alt="News Image">
-                <div class="card-overlay"></div>
-            </div>
-            <div class="card-content">
-                <div class="card-meta">
-                    <div class="source-badge">
-                        Ars Technica
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
                     </div>
-                    <time>23h Ago</time>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/electric-cars-in-china/china-s-li-auto-nio-flag-slower-sales-as-government-cuts-ev-incentives" target="_blank">China's Li Auto, Nio flag slower sales as government cuts EV incentives</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/spotlight/electric-cars-in-china/china-s-li-auto-nio-flag-slower-sales-as-government-cuts-ev-incentives" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
                 </div>
-                <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/rfk-jr-s-new-cdc-deputy-director-prefers-natural-immunity-over-vaccines/" target="_blank">RFK Jr.’s new CDC deputy director prefers “natural immunity” over vaccines</a></h2>
-                <p class="ai-summary">
-                    Ralph Abraham is "dangerous," but somehow not the worst among those considered.
-                </p>
-                <div class="card-footer">
-                    <a href="https://arstechnica.com/health/2025/11/rfk-jr-s-new-cdc-deputy-director-prefers-natural-immunity-over-vaccines/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
                 </div>
-            </div>
-        </article>
-        
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/immigration/indian-woman-s-detention-at-china-airport-sparks-delhi-beijing-row" target="_blank">Indian woman's detention at China airport sparks Delhi-Beijing row</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/spotlight/immigration/indian-woman-s-detention-at-china-airport-sparks-delhi-beijing-row" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/materials/mitsubishi-materials-bets-on-recycling-copper-in-europe-to-curb-china-risk" target="_blank">Mitsubishi Materials bets on recycling copper in Europe to curb China risk</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/materials/mitsubishi-materials-bets-on-recycling-copper-in-europe-to-curb-china-risk" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/business/companies/japanese-spring-maker-to-invest-64m-to-make-ev-motor-cores-in-india" target="_blank">Japanese spring maker to invest $64m to make EV motor cores in India</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/business/companies/japanese-spring-maker-to-invest-64m-to-make-ev-motor-cores-in-india" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card">
+                <div class="card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Nikkei Asia</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://asia.nikkei.com/spotlight/environment/indonesia-opens-criminal-probe-into-radioactive-contamination" target="_blank">Indonesia opens criminal probe into radioactive contamination</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://asia.nikkei.com/spotlight/environment/indonesia-opens-criminal-probe-into-radioactive-contamination" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
         </div>
 
         <!-- PAGINATION SECTION -->
         <div class="pagination">
-            <!-- PAGINATION_PLACEHOLDER -->
+            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page21.html" class="page-btn ">21</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <!-- FOOTER SECTION -->
@@ -435,7 +350,6 @@
                 <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
                     + Suggest Source
                 </a>
-                <!-- Updated PayPal Link -->
                 <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
                     ♥ Donate via PayPal
                 </a>
