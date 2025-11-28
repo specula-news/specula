@@ -71,6 +71,15 @@
         .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
         .close-modal:hover { color: var(--accent); }
 
+        /* CHANGELOG SCROLLBAR STYLE */
+        .changelog-list { 
+            list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; 
+            max-height: 50vh; overflow-y: auto; padding-right: 10px; 
+        }
+        .changelog-list::-webkit-scrollbar { width: 6px; }
+        .changelog-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+        .changelog-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
         /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -95,24 +104,126 @@
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
-                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System Changelog</h2>
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System History</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
-                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Core Update</span><br>
+            
+            <ul class="changelog-list">
+                
+                <!-- VERSION 7.4.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Current Build</span><br>
                     <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.4.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Engine Rewrite:</strong> Switched to Single Page Application (SPA) architecture.<br>
-                        • <strong>Fix:</strong> Solved "Empty Pages" issue. Pagination now calculates dynamically based on the selected category.<br>
-                        • <strong>UX:</strong> Changing pages no longer reloads the site, keeping your selected category active.<br>
-                        • <strong>Sources:</strong> Bypassed bot-protection on major news feeds to ensure content populates.
+                        • <strong>SPA Engine:</strong> Replaced static pages with Single Page Application architecture. Instant filtering without reload.<br>
+                        • <strong>Pagination Fix:</strong> Dynamic pagination solved "Empty Page" errors.<br>
+                        • <strong>Bot Bypass:</strong> Implemented User-Agent headers to populate blocked feeds (EV, Construction).
                     </div>
                 </li>
-                <li style="padding-left:15px; border-left: 2px solid #333;">
-                    <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 7.3.0</strong><br>Added advanced sources for EV & Construction.
+
+                <!-- VERSION 7.3.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Update</span><br>
+                    <strong>Version 7.3.0</strong>
+                    <div style="margin-top:5px;">
+                        • Massive expansion of sources for EV, Energy, Science & Construction.<br>
+                        • Fixed empty categories.
+                    </div>
                 </li>
+
+                <!-- VERSION 7.2.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Update</span><br>
+                    <strong>Version 7.2.0</strong>
+                    <div style="margin-top:5px;">
+                        • Added Construction & Architecture specific feeds.<br>
+                        • Enhanced categorization algorithm.
+                    </div>
+                </li>
+
+                <!-- VERSION 7.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <span style="font-size:0.7rem; opacity:0.5;">UI Overhaul</span><br>
+                    <strong>Version 7.1.0</strong>
+                    <div style="margin-top:5px;">
+                        • Moved navigation from Sidebar to Header (Top Nav).<br>
+                        • Added "Woggle" animation to logo.<br>
+                        • Added DW Documentary & Science Channel.
+                    </div>
+                </li>
+
+                <!-- VERSION 7.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Major Release</span><br>
+                    <strong>Version 7.0</strong>
+                    <div style="margin-top:5px;">
+                        • Introduced Categories (Geopolitics, Tech, EV, Science).<br>
+                        • Removed paywalled sources (Nikkei).<br>
+                        • Added SCMP & Al Jazeera.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.2.5 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Feature</span><br>
+                    <strong>Version 6.2.5</strong>
+                    <div style="margin-top:5px;">
+                        • Added Swedish Business sources (Dagens PS, Ny Teknik).<br>
+                        • Integrated YouTube Business channels (Inside China Business, Johnny Harris).<br>
+                        • Expanded Auto-Translation.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.2.2 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Bugfix</span><br>
+                    <strong>Version 6.2.2</strong>
+                    <div style="margin-top:5px;">
+                        • Fixed broken image links (Anti-tracker logic).<br>
+                        • Implemented Cyberpunk Fallback images.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.2.1 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Feature</span><br>
+                    <strong>Version 6.2.1</strong>
+                    <div style="margin-top:5px;">
+                        • Added Floating Navigation Arrows.<br>
+                        • Initial Translation API integration.
+                    </div>
+                </li>
+
+                <!-- VERSION 6.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Core</span><br>
+                    <strong>Version 6.0</strong>
+                    <div style="margin-top:5px;">
+                        • Implemented Pagination system.<br>
+                        • Added initial batch of 15+ sources.
+                    </div>
+                </li>
+
+                <!-- VERSION 5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #222;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Automation</span><br>
+                    <strong>Version 5.0</strong>
+                    <div style="margin-top:5px;">
+                        • Deployed Python Generator & GitHub Actions.<br>
+                        • Automated Netlify builds.
+                    </div>
+                </li>
+
+                <!-- VERSION 4.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #222;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Prototype</span><br>
+                    <strong>Version 4.0</strong>
+                    <div style="margin-top:5px;">
+                        • Initial HTML/CSS Design.<br>
+                        • "Visual Intelligence" branding established.
+                    </div>
+                </li>
+
             </ul>
         </div>
     </div>
@@ -180,9 +291,8 @@
 
         function setCategory(cat) {
             state.category = cat;
-            state.page = 1; // Reset to page 1 on filter change
+            state.page = 1;
             
-            // Update buttons
             filterBtns.forEach(btn => {
                 if(btn.textContent.toLowerCase().includes(cat === 'all' ? 'all' : cat.split(' ')[0])) {
                     btn.classList.add('active');
@@ -204,23 +314,18 @@
         }
 
         function renderApp() {
-            // 1. Filter Articles
             const filtered = state.articles.filter(art => 
                 state.category === 'all' || art.category === state.category
             );
 
-            // 2. Calculate Pagination
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            // Ensure current page is valid
             if (state.page > totalPages) state.page = 1;
             if (state.page < 1) state.page = 1;
 
-            // 3. Slice Data
             const start = (state.page - 1) * state.itemsPerPage;
             const end = start + state.itemsPerPage;
             const pageArticles = filtered.slice(start, end);
 
-            // 4. Render Grid
             grid.innerHTML = pageArticles.map(art => `
                 <article class="news-card">
                     <div class="card-image-wrapper">
@@ -246,7 +351,6 @@
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px;">No articles found in this category.</div>`;
             }
 
-            // 5. Render Pagination & Floating Nav
             renderPagination(totalPages);
         }
 
@@ -259,9 +363,6 @@
             }
 
             let html = '';
-            
-            // Bottom Pagination Logic
-            // Always show first, last, and neighbors
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
                     const activeClass = i === state.page ? 'active' : '';
@@ -272,7 +373,6 @@
             }
             pagContainer.innerHTML = html;
 
-            // Floating Nav Logic
             if (state.page > 1) {
                 floatPrev.style.display = 'flex';
                 floatPrev.onclick = () => changePage(state.page - 1);
@@ -288,8 +388,6 @@
             }
         }
 
-        // --- UTILS & INIT ---
-        // Initialize Theme & Modal
         const toggleBtn = document.getElementById('themeBtn');
         const body = document.body;
         if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
@@ -304,7 +402,6 @@
         document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
         modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
 
-        // START
         init();
     </script>
 </body>
