@@ -38,7 +38,11 @@
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
+        
+        /* CLICKABLE IMAGE LINK */
+        .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
+        
+        .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
         
@@ -49,16 +53,17 @@
             border: 2px solid var(--accent); border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             z-index: 5; pointer-events: none; backdrop-filter: blur(2px);
-            box-shadow: 0 0 15px var(--accent-glow);
+            box-shadow: 0 0 15px var(--accent-glow); transition: transform 0.3s ease;
         }
         .play-overlay::after {
             content: ''; display: block; width: 0; height: 0;
             border-top: 8px solid transparent; border-bottom: 8px solid transparent;
             border-left: 14px solid var(--accent); margin-left: 4px;
         }
+        .news-card:hover .play-overlay { transform: translate(-50%, -50%) scale(1.1); background: rgba(0,0,0,0.8); }
 
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
-        .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; }
+        .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
@@ -114,18 +119,22 @@
                 <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System History</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            
             <ul class="changelog-list">
                 
-                <!-- V7.5.0 -->
+                <!-- V7.5.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.5.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.5.1</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Video Support:</strong> Added "Play" indicators for YouTube news sources.<br>
-                        • <strong>Smart Fallback:</strong> Replaced random images with Context-Aware Image Matching (scans title for keywords like EV, AI, Space).<br>
-                        • <strong>Sources:</strong> Further optimization for YouTube feeds.
+                        • <strong>UX Upgrade:</strong> Images and Play Buttons are now fully clickable links to the content source.<br>
+                        • <strong>Refinement:</strong> Optimized touch targets for mobile users.
                     </div>
+                </li>
+
+                <!-- V7.5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.5.0</strong><br>
+                    Added "Play" indicators for YouTube. Smart Context-Aware Image Fallback.
                 </li>
 
                 <!-- V7.4.0 -->
@@ -148,7 +157,7 @@
 
                 <!-- V7.1.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong style="color:var(--text-primary);">Version 7.1.0</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
                         • UI Overhaul: Top Navigation Bar.<br>
                         • Logo "Woggle" animation.<br>
@@ -158,7 +167,7 @@
 
                 <!-- V7.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong style="color:var(--text-primary);">Version 7.0 (Major)</strong>
+                    <strong>Version 7.0 (Major)</strong>
                     <div style="margin-top:5px;">
                         • Introduced Categories (Geopolitics, Tech, EV, Science).<br>
                         • Removed paywalled sources (Nikkei).<br>
@@ -214,7 +223,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.5.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.5.1</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
@@ -270,12 +279,14 @@
 
             grid.innerHTML = pageArticles.map(art => `
                 <article class="news-card">
-                    <div class="card-image-wrapper">
-                        <div class="cat-tag">${art.category}</div>
-                        ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                        <img src="${art.image}" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                        <div class="card-overlay"></div>
-                    </div>
+                    <a href="${art.link}" target="_blank" class="img-link">
+                        <div class="card-image-wrapper">
+                            <div class="cat-tag">${art.category}</div>
+                            ${art.is_video ? '<div class="play-overlay"></div>' : ''}
+                            <img src="${art.image}" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                            <div class="card-overlay"></div>
+                        </div>
+                    </a>
                     <div class="card-content">
                         <div class="card-meta">
                             <div class="source-badge">${art.source}</div>
