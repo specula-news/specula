@@ -36,7 +36,7 @@ MANUAL_ENTRIES = [
 # --- KÄLLOR MED KATEGORIER ---
 RSS_SOURCES = [
     # --- EV / ENERGY (PRIORITY) ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking (Top Priority)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
     ("https://cleantechnica.com/feed/", "ev"), 
     ("https://electrek.co/feed/", "ev"), 
     ("https://insideevs.com/rss/articles/all/", "ev"),
@@ -44,9 +44,9 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
 
     # --- GEOPOLITICS ---
     ("https://www.scmp.com/rss/91/feed", "geopolitics"),
@@ -99,82 +99,34 @@ RSS_SOURCES = [
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7z8sK378O9H5_2-lJg9gDw", "construction"), 
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), 
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL3a7Xr-W8L7TC6K5am41DQ", "construction"), 
-    ("https://www.dagensps.se/feed/", "geopolitics"), # Moved to bottom to prevent duplicate fill
+    ("https://www.dagensps.se/feed/", "geopolitics"), 
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- UTÖKAT BILD-BIBLIOTEK FÖR ATT UNDVIKA DUBBLETTER ---
+# --- SMART FALLBACK (LISTOR) ---
 SMART_IMAGES = {
-    "china": [
-        "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "asia": [
-        "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "ev": [
-        "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "electric": [
-        "https://images.unsplash.com/photo-1498084393753-b411b2d26b34?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "space": [
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "nasa": [
-        "https://images.unsplash.com/photo-1454789548728-85d2696cf667?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "ai": [
-        "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1625314877370-13d8c973550b?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "robot": [
-        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "chip": [
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1591370874773-6702e8f12fd8?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1555664424-778a69f45c85?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "tech": [
-        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "war": [
-        "https://images.unsplash.com/photo-1597841028788-b24d772c72b2?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "construction": [
-        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "building": [
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
-    ],
-    "energy": [
-        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1000&auto=format&fit=crop"
-    ]
+    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
+    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
+    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
+    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
+    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
+    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
+    "finance": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
+    "market": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
+    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop"],
+    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"],
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"]
 }
-GENERIC_FALLBACK = "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop"
+
+# EN LISTA FÖR RANDOM FALLBACK
+GENERIC_FALLBACKS = [
+    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
+]
 
 def get_image_from_entry(entry):
     try:
@@ -201,9 +153,11 @@ def get_smart_fallback(title, category):
     text = title.lower() + " " + category.lower()
     for key, urls in SMART_IMAGES.items():
         if key in text:
-            # RANDOM SELECTION from the list
+            # RETURNERA SLUMPMÄSSIG BILD UR LISTAN FÖR NYCKELORDET
             return random.choice(urls)
-    return GENERIC_FALLBACK
+    
+    # OM INGET NYCKELORD MATCHAR, TA EN SLUMPMÄSSIG "GENERIC" BILD
+    return random.choice(GENERIC_FALLBACKS)
 
 def clean_summary(summary):
     if not summary: return ""
@@ -223,9 +177,8 @@ def translate_text(text, source_lang='sv'):
 def generate_json_data():
     print("Fetching news...")
     all_articles = []
-    seen_titles = set() # SET TO TRACK DUPLICATES
+    seen_titles = set()
 
-    # Manual Entries
     for entry in MANUAL_ENTRIES:
         all_articles.append(entry)
         seen_titles.add(entry['title'])
@@ -237,10 +190,8 @@ def generate_json_data():
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             
-            try:
-                print(f"Loaded {len(feed.entries)} from {source_name}")
-            except:
-                print(f"Loaded {len(feed.entries)} from {url}")
+            try: print(f"Loaded {len(feed.entries)} from {source_name}")
+            except: pass
             
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
             is_youtube = "youtube.com" in url or "youtu.be" in url
@@ -249,9 +200,7 @@ def generate_json_data():
                 try:
                     title = entry.title
                     
-                    # DUPLICATE CHECK
-                    if title in seen_titles:
-                        continue
+                    if title in seen_titles: continue
                     seen_titles.add(title)
 
                     pub_ts = time.time()
@@ -295,16 +244,12 @@ def generate_json_data():
         except Exception as e:
             print(f"Error loading {url}: {e}")
 
-    try:
-        all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
-    except:
-        pass
+    try: all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
+    except: pass
     
     json_data = json.dumps(all_articles)
 
-    if not os.path.exists("template.html"):
-        print("Error: template.html not found!")
-        return
+    if not os.path.exists("template.html"): return
 
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()

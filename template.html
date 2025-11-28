@@ -25,6 +25,7 @@
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; margin-top: -5px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
+        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); }
         
         /* SEARCH */
         .search-container { flex-grow: 1; max-width: 500px; position: relative; }
@@ -73,7 +74,7 @@
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
         @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        /* MODAL & FOOTER */
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
@@ -84,6 +85,8 @@
         .changelog-list::-webkit-scrollbar { width: 6px; }
         .changelog-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
         .changelog-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
@@ -106,37 +109,31 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V7.8.0 -->
+                <!-- V7.8.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.8.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.8.1</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Nav Upgrade:</strong> Added bottom "Previous/Next" buttons and "First Page" jump.<br>
-                        • <strong>De-duplication:</strong> Smart filter prevents duplicate articles from cluttering the feed.<br>
-                        • <strong>Visuals:</strong> Expanded image diversity to prevent repeating fallback images.
+                        • <strong>Visuals:</strong> Randomized Generic Fallback images to prevent duplicate images on feeds without thumbnails (e.g. OilPrice).<br>
+                        • <strong>Logic:</strong> Added specific fallback categories for "Oil", "Gas", "Finance".
                     </div>
                 </li>
 
-                <!-- OLD VERSIONS -->
+                <!-- V7.8.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.8.0</strong><br>
+                    Added "Previous/Next/First" buttons to pagination. De-duplication logic.
+                </li>
+
+                <!-- V7.7.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.7.0</strong><br>
                     Priority feeds (Electric Viking), improved search.
                 </li>
+                <!-- V7.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.6.0</strong><br>
                     Real-time Search Bar, Header Redesign.
-                </li>
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.5.1</strong><br>
-                    Clickable Images/Play Buttons.
-                </li>
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.5.0</strong><br>
-                    Video Support (Play icons), Smart Fallback Images.
-                </li>
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.4.0</strong><br>
-                    SPA Engine, Dynamic Pagination fixes.
                 </li>
             </ul>
         </div>
@@ -150,7 +147,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.8.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.8.1</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -261,10 +258,9 @@
                 html += `<span style="color:var(--text-secondary); margin:0 5px;">...</span>`;
             }
 
-            // NUMBER LINKS
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
-                    if(i === 1 && state.page > 3) continue; // Skip 1 if we added it above
+                    if(i === 1 && state.page > 3) continue;
                     html += `<button class="page-btn ${i === state.page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
                 }
             }
