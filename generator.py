@@ -9,7 +9,7 @@ import sys
 import os
 from deep_translator import GoogleTranslator
 
-# --- FIX: Tvinga UTF-8 för att undvika krasch i GitHub Actions loggar ---
+# --- FIX: UTF-8 Encoding ---
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except AttributeError:
@@ -35,39 +35,8 @@ MANUAL_ENTRIES = [
 
 # --- KÄLLOR MED KATEGORIER ---
 RSS_SOURCES = [
-    # SWEDISH
-    ("https://www.dagensps.se/feed/", "geopolitics"), 
-    ("https://www.nyteknik.se/rss", "tech"), 
-    ("https://feber.se/rss/", "tech"),
-
-    # GEOPOLITICS
-    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
-    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), 
-
-    # TECH
-    ("https://anastasiintech.substack.com/feed", "tech"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), 
-    ("https://techcrunch.com/feed/", "tech"),
-    ("https://www.theverge.com/rss/index.xml", "tech"),
-    ("https://arstechnica.com/feed/", "tech"),
-
-    # EV
+    # --- EV / ENERGY (PRIORITY) ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking (Top Priority)
     ("https://cleantechnica.com/feed/", "ev"), 
     ("https://electrek.co/feed/", "ev"), 
     ("https://insideevs.com/rss/articles/all/", "ev"),
@@ -75,12 +44,40 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged
 
-    # SCIENCE
+    # --- GEOPOLITICS ---
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), # Asianometry
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Docu
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), # Inside China Biz
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), # Johnny Harris
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), # Diary CEO
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), # ShanghaiEye
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), # CGTN US
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), # CCTV
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), # CGTN EU
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN Main
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopol Eco
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
+
+    # --- TECH ---
+    ("https://anastasiintech.substack.com/feed", "tech"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), 
+    ("https://techcrunch.com/feed/", "tech"),
+    ("https://www.theverge.com/rss/index.xml", "tech"),
+    ("https://arstechnica.com/feed/", "tech"),
+    ("https://www.nyteknik.se/rss", "tech"), 
+    ("https://feber.se/rss/", "tech"),
+
+    # --- SCIENCE ---
     ("https://www.space.com/feeds/all", "science"),
     ("https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss", "science"),
     ("http://rss.sciam.com/ScientificAmerican-Global", "science"),
@@ -94,7 +91,7 @@ RSS_SOURCES = [
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q", "science"), 
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g", "science"), 
 
-    # CONSTRUCTION
+    # --- CONSTRUCTION ---
     ("https://www.constructiondive.com/feeds/news/", "construction"),
     ("http://feeds.feedburner.com/ArchDaily", "construction"),
     ("https://www.building.co.uk/rss/news", "construction"),
@@ -106,24 +103,49 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK BIBLIOTEK ---
+# --- SMART FALLBACK BIBLIOTEK (LISTOR FÖR VARIATION) ---
 SMART_IMAGES = {
-    "china": "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", 
-    "asia": "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
-    "ev": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", 
-    "electric": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
-    "battery": "https://images.unsplash.com/photo-1619641472917-832744843764?q=80&w=1000&auto=format&fit=crop", 
-    "tesla": "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=1000&auto=format&fit=crop", 
-    "space": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
-    "nasa": "https://images.unsplash.com/photo-1454789548728-85d2696cf667?q=80&w=1000&auto=format&fit=crop", 
-    "ai": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop", 
-    "robot": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop", 
-    "chip": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
-    "tech": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", 
-    "war": "https://images.unsplash.com/photo-1597841028788-b24d772c72b2?q=80&w=1000&auto=format&fit=crop", 
-    "construction": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", 
-    "building": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop", 
-    "energy": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1000&auto=format&fit=crop", 
+    "china": [
+        "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "asia": [
+        "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "ev": [
+        "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "electric": [
+        "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1498084393753-b411b2d26b34?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "space": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "ai": [
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "chip": [
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1591370874773-6702e8f12fd8?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "tech": [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "construction": [
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop"
+    ]
 }
 GENERIC_FALLBACK = "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop"
 
@@ -150,8 +172,10 @@ def get_image_from_entry(entry):
 
 def get_smart_fallback(title, category):
     text = title.lower() + " " + category.lower()
-    for key, url in SMART_IMAGES.items():
-        if key in text: return url
+    for key, urls in SMART_IMAGES.items():
+        if key in text:
+            # Nu väljer vi en slumpmässig bild från listan för det nyckelordet
+            return random.choice(urls)
     return GENERIC_FALLBACK
 
 def clean_summary(summary):
@@ -185,7 +209,6 @@ def generate_json_data():
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             
-            # SAFE PRINT (Hanterar Unicode errors i loggar)
             try:
                 print(f"Loaded {len(feed.entries)} from {source_name}")
             except:
@@ -196,7 +219,6 @@ def generate_json_data():
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 try:
-                    # SAFE DATE PARSING
                     pub_ts = time.time()
                     if 'published_parsed' in entry and entry.published_parsed:
                         pub_ts = time.mktime(entry.published_parsed)
@@ -234,7 +256,6 @@ def generate_json_data():
                     }
                     all_articles.append(article)
                 except Exception as inner_e:
-                    # Hoppa bara över denna artikel om den är trasig
                     continue
 
         except Exception as e:
@@ -244,11 +265,10 @@ def generate_json_data():
     try:
         all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     except:
-        pass # Om sortering misslyckas, behåll ordningen
+        pass
     
     json_data = json.dumps(all_articles)
 
-    # Check template exists
     if not os.path.exists("template.html"):
         print("Error: template.html not found!")
         return
