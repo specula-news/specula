@@ -63,16 +63,17 @@
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
         /* PAGINATION */
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; align-items: center; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; cursor: pointer; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        
         .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer; }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
         @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        /* MODAL */
+        /* MODAL & FOOTER */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
@@ -83,22 +84,12 @@
         .changelog-list::-webkit-scrollbar { width: 6px; }
         .changelog-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
         .changelog-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-
-        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
         
-        @media (max-width: 1000px) {
-            .header-top { flex-direction: column; gap: 20px; align-items: stretch; }
-            .logo-wrapper { align-items: center; }
-            .version-btn { margin-left: 0; margin-top: 5px; }
-            .search-container { max-width: 100%; margin: 10px 0; }
-            .theme-switch { position: static; margin-top: 10px; }
-            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; }
-            .filter-btn { white-space: nowrap; }
-        }
+        @media (max-width: 1000px) { .header-top { flex-direction: column; gap: 20px; align-items: stretch; } .logo-wrapper { align-items: center; } .version-btn { margin-left: 0; margin-top: 5px; } .search-container { max-width: 100%; margin: 10px 0; } .theme-switch { position: static; margin-top: 10px; } .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; } .filter-btn { white-space: nowrap; } }
     </style>
 </head>
 <body>
@@ -115,41 +106,37 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V7.7.0 -->
+                <!-- V7.8.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.7.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.8.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Content:</strong> Force-injected <em>The Electric Viking</em> videos to top of EV feed.<br>
-                        • <strong>Visuals:</strong> Added diverse image pools for every category to prevent duplicate fallback images.<br>
-                        • <strong>Nav:</strong> Added "First Page" button for easier navigation.
+                        • <strong>Nav Upgrade:</strong> Added bottom "Previous/Next" buttons and "First Page" jump.<br>
+                        • <strong>De-duplication:</strong> Smart filter prevents duplicate articles from cluttering the feed.<br>
+                        • <strong>Visuals:</strong> Expanded image diversity to prevent repeating fallback images.
                     </div>
                 </li>
 
-                <!-- V7.6.0 -->
+                <!-- OLD VERSIONS -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.7.0</strong><br>
+                    Priority feeds (Electric Viking), improved search.
+                </li>
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.6.0</strong><br>
                     Real-time Search Bar, Header Redesign.
                 </li>
-                <!-- V7.5.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.5.1</strong><br>
                     Clickable Images/Play Buttons.
                 </li>
-                <!-- V7.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.5.0</strong><br>
                     Video Support (Play icons), Smart Fallback Images.
                 </li>
-                <!-- V7.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.4.0</strong><br>
-                    SPA Engine (No page reloads), Dynamic Pagination fixes.
-                </li>
-                <!-- V7.3.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.3.0</strong><br>
-                    Massive source expansion.
+                    SPA Engine, Dynamic Pagination fixes.
                 </li>
             </ul>
         </div>
@@ -163,14 +150,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.7.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.8.0</div>
                 </div>
-
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
                     <span class="search-icon">🔍</span>
                 </div>
-
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
             <nav class="category-nav">
@@ -206,15 +191,10 @@
 
         function init() { renderApp(); }
 
-        searchInput.addEventListener('input', (e) => {
-            state.search = e.target.value.toLowerCase();
-            state.page = 1;
-            renderApp();
-        });
+        searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
         function setCategory(cat) {
-            state.category = cat; 
-            state.page = 1;
+            state.category = cat; state.page = 1;
             filterBtns.forEach(btn => {
                 if(btn.textContent.toLowerCase().includes(cat === 'all' ? 'all' : cat.split(' ')[0])) btn.classList.add('active');
                 else btn.classList.remove('active');
@@ -223,12 +203,7 @@
         }
 
         function changePage(newPage) { state.page = newPage; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        
-        function resetHome() { 
-            state.search = ''; 
-            searchInput.value = '';
-            setCategory('all'); 
-        }
+        function resetHome() { state.search = ''; searchInput.value = ''; setCategory('all'); }
 
         function renderApp() {
             const filtered = state.articles.filter(art => {
@@ -275,18 +250,30 @@
             if (totalPages <= 1) { pagContainer.innerHTML = ''; floatPrev.style.display = 'none'; floatNext.style.display = 'none'; return; }
             let html = '';
             
-            // FIRST PAGE BUTTON
-            if (state.page > 2) {
-                html += `<button class="page-btn" onclick="changePage(1)">« FIRST</button>`;
+            // PREV BUTTON
+            if (state.page > 1) {
+                html += `<button class="page-btn" onclick="changePage(${state.page - 1})">« PREV</button>`;
             }
 
+            // FIRST PAGE JUMP
+            if (state.page > 3) {
+                html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+                html += `<span style="color:var(--text-secondary); margin:0 5px;">...</span>`;
+            }
+
+            // NUMBER LINKS
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
+                    if(i === 1 && state.page > 3) continue; // Skip 1 if we added it above
                     html += `<button class="page-btn ${i === state.page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === state.page - 3 || i === state.page + 3) {
-                    html += `<span style="color:var(--text-secondary); align-self:center;">...</span>`;
                 }
             }
+
+            // NEXT BUTTON
+            if (state.page < totalPages) {
+                html += `<button class="page-btn" onclick="changePage(${state.page + 1})">NEXT »</button>`;
+            }
+
             pagContainer.innerHTML = html;
             if (state.page > 1) { floatPrev.style.display = 'flex'; floatPrev.onclick = () => changePage(state.page - 1); } else floatPrev.style.display = 'none';
             if (state.page < totalPages) { floatNext.style.display = 'flex'; floatNext.onclick = () => changePage(state.page + 1); } else floatNext.style.display = 'none';
