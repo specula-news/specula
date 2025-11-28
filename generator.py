@@ -9,7 +9,6 @@ import sys
 import os
 from deep_translator import GoogleTranslator
 
-# --- FIX: UTF-8 Encoding ---
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except AttributeError:
@@ -33,7 +32,7 @@ MANUAL_ENTRIES = [
     }
 ]
 
-# --- KÄLLOR MED KATEGORIER ---
+# --- KÄLLOR ---
 RSS_SOURCES = [
     # --- EV / ENERGY (PRIORITY) ---
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
@@ -104,22 +103,57 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK (LISTOR) ---
+# --- UTÖKAT BILD-BIBLIOTEK FÖR ATT UNDVIKA DUBBLETTER ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
-    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
-    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
-    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
-    "finance": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
-    "market": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop"],
-    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"]
+    "china": [
+        "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "ev": [
+        "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "oil": [
+        "https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "gas": [
+        "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "money": [
+        "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "market": [
+        "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "space": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "tech": [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "construction": [
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?q=80&w=1000&auto=format&fit=crop"
+    ]
 }
-
-# EN LISTA FÖR RANDOM FALLBACK
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
@@ -127,6 +161,9 @@ GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
 ]
+
+# USED IMAGES TRACKER
+used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
@@ -151,12 +188,24 @@ def get_image_from_entry(entry):
 
 def get_smart_fallback(title, category):
     text = title.lower() + " " + category.lower()
+    
+    # Try specific categories first
     for key, urls in SMART_IMAGES.items():
         if key in text:
-            # RETURNERA SLUMPMÄSSIG BILD UR LISTAN FÖR NYCKELORDET
-            return random.choice(urls)
+            # Try to find an unused image
+            for _ in range(5):
+                img = random.choice(urls)
+                if img not in used_image_urls:
+                    used_image_urls.append(img)
+                    return img
+            return random.choice(urls) # Give up and return one anyway
     
-    # OM INGET NYCKELORD MATCHAR, TA EN SLUMPMÄSSIG "GENERIC" BILD
+    # Generic Fallback
+    for _ in range(5):
+        img = random.choice(GENERIC_FALLBACKS)
+        if img not in used_image_urls:
+            used_image_urls.append(img)
+            return img
     return random.choice(GENERIC_FALLBACKS)
 
 def clean_summary(summary):

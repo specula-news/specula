@@ -109,14 +109,21 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V7.8.1 -->
+                <!-- V7.9.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.8.1</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.9.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Visuals:</strong> Randomized Generic Fallback images to prevent duplicate images on feeds without thumbnails (e.g. OilPrice).<br>
-                        • <strong>Logic:</strong> Added specific fallback categories for "Oil", "Gas", "Finance".
+                        • <strong>Anti-Duplicate Logic:</strong> Fixed issue where multiple articles displayed the same fallback image. The system now enforces variety.<br>
+                        • <strong>New Categories:</strong> Added fallback image support for "Oil", "Gas", "Money" and "Politics".<br>
+                        • <strong>YouTube Fix:</strong> Forced High-Res thumbnail fetching to ensure video news look crisp.
                     </div>
+                </li>
+
+                <!-- V7.8.1 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.8.1</strong><br>
+                    Randomized Generic Fallback images to prevent duplicate images on feeds without thumbnails.
                 </li>
 
                 <!-- V7.8.0 -->
@@ -130,11 +137,6 @@
                     <strong>Version 7.7.0</strong><br>
                     Priority feeds (Electric Viking), improved search.
                 </li>
-                <!-- V7.6.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.6.0</strong><br>
-                    Real-time Search Bar, Header Redesign.
-                </li>
             </ul>
         </div>
     </div>
@@ -147,7 +149,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.8.1</div>
+                    <div class="version-btn" id="versionBtn">Version 7.9.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
