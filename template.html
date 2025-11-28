@@ -16,7 +16,9 @@
         
         /* HEADER */
         header { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+        
+        .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; min-width: 200px; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
         .logo-icon { height: 50px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -24,14 +26,24 @@
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; margin-top: -5px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
-        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); }
         
+        /* SEARCH BAR (NEW) */
+        .search-container { flex-grow: 1; max-width: 500px; position: relative; }
+        .search-input {
+            width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-primary); padding: 12px 45px 12px 20px;
+            border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            outline: none; transition: all 0.3s ease;
+        }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
+
         /* NAV & FILTER */
         .category-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding-top: 20px; width: 100%; }
         .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
         /* GRID */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -41,25 +53,13 @@
         
         /* CLICKABLE IMAGE LINK */
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
-        
         .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
         
-        /* PLAY BUTTON OVERLAY */
-        .play-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; background: rgba(0,0,0,0.6);
-            border: 2px solid var(--accent); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 5; pointer-events: none; backdrop-filter: blur(2px);
-            box-shadow: 0 0 15px var(--accent-glow); transition: transform 0.3s ease;
-        }
-        .play-overlay::after {
-            content: ''; display: block; width: 0; height: 0;
-            border-top: 8px solid transparent; border-bottom: 8px solid transparent;
-            border-left: 14px solid var(--accent); margin-left: 4px;
-        }
+        /* PLAY BUTTON */
+        .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; backdrop-filter: blur(2px); box-shadow: 0 0 15px var(--accent-glow); transition: transform 0.3s ease; }
+        .play-overlay::after { content: ''; display: block; width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
         .news-card:hover .play-overlay { transform: translate(-50%, -50%) scale(1.1); background: rgba(0,0,0,0.8); }
 
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
@@ -91,8 +91,6 @@
         .modal-overlay.open .modal-card { transform: translateY(0); }
         .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
         .close-modal:hover { color: var(--accent); }
-        
-        /* SCROLLABLE LIST */
         .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; max-height: 50vh; overflow-y: auto; padding-right: 15px; }
         .changelog-list::-webkit-scrollbar { width: 6px; }
         .changelog-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
@@ -104,7 +102,15 @@
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
         
-        @media (max-width: 768px) { .news-grid { grid-template-columns: 1fr; } .header-top { flex-direction: column; gap: 20px; align-items: flex-start; } .theme-switch { position: absolute; top: 40px; right: 0; } .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; width: 100%; flex-wrap: nowrap; } .version-btn { margin-left: 65px; margin-top: -10px; } }
+        @media (max-width: 1000px) {
+            .header-top { flex-direction: column; gap: 20px; align-items: stretch; }
+            .logo-wrapper { align-items: center; }
+            .version-btn { margin-left: 0; margin-top: 5px; }
+            .search-container { max-width: 100%; margin: 10px 0; }
+            .theme-switch { position: static; margin-top: 10px; }
+            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; }
+            .filter-btn { white-space: nowrap; }
+        }
     </style>
 </head>
 <body>
@@ -120,97 +126,31 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                
-                <!-- V7.5.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.5.1</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.6.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>UX Upgrade:</strong> Images and Play Buttons are now fully clickable links to the content source.<br>
-                        • <strong>Refinement:</strong> Optimized touch targets for mobile users.
+                        • <strong>Real-time Search:</strong> Added central search bar. Filters articles instantly as you type.<br>
+                        • <strong>Header Redesign:</strong> Reorganized header layout to accommodate search functionality.<br>
+                        • <strong>UX:</strong> Improved clickability on news cards.
                     </div>
                 </li>
-
-                <!-- V7.5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.5.1</strong><br>
+                    Clickable Images/Play Buttons.
+                </li>
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.5.0</strong><br>
-                    Added "Play" indicators for YouTube. Smart Context-Aware Image Fallback.
+                    Video Support (Play icons), Smart Fallback Images.
                 </li>
-
-                <!-- V7.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.4.0</strong><br>
-                    SPA Engine (No page reloads), Dynamic Pagination fixes, Bot Bypass headers implemented.
+                    SPA Engine, Dynamic Pagination, Bot Bypass.
                 </li>
-
-                <!-- V7.3.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.3.0</strong><br>
-                    Massive source expansion for EV, Science & Construction. Fixed empty feed issues.
+                    Massive source expansion.
                 </li>
-
-                <!-- V7.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.2.0</strong><br>
-                    Added specific feeds for Construction & Architecture. Enhanced categorization.
-                </li>
-
-                <!-- V7.1.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong>Version 7.1.0</strong>
-                    <div style="margin-top:5px;">
-                        • UI Overhaul: Top Navigation Bar.<br>
-                        • Logo "Woggle" animation.<br>
-                        • Added DW Documentary & Science Channel.
-                    </div>
-                </li>
-
-                <!-- V7.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong>Version 7.0 (Major)</strong>
-                    <div style="margin-top:5px;">
-                        • Introduced Categories (Geopolitics, Tech, EV, Science).<br>
-                        • Removed paywalled sources (Nikkei).<br>
-                        • Added SCMP & Al Jazeera.
-                    </div>
-                </li>
-
-                <!-- V6.2.5 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong>Version 6.2.5</strong><br>
-                    Added Swedish Business sources, YouTube Business channels, Expanded Auto-Translation.
-                </li>
-
-                <!-- V6.2.2 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong>Version 6.2.2</strong><br>
-                    Fixed broken image links (Anti-tracker logic), Implemented Fallback images.
-                </li>
-
-                <!-- V6.2.1 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #333;">
-                    <strong>Version 6.2.1</strong><br>
-                    Added Floating Navigation Arrows, Initial Translation API integration.
-                </li>
-
-                <!-- V6.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #222;">
-                    <strong>Version 6.0</strong><br>
-                    Implemented Pagination system. Added initial batch of 15+ sources.
-                </li>
-
-                <!-- V5.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #222;">
-                    <strong>Version 5.0</strong><br>
-                    Deployed Python Generator & GitHub Actions. Automated Netlify builds.
-                </li>
-
-                <!-- V4.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #222;">
-                    <strong>Version 4.0</strong><br>
-                    Initial HTML/CSS Design. "Visual Intelligence" branding established.
-                </li>
-
             </ul>
         </div>
     </div>
@@ -223,8 +163,15 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.5.1</div>
+                    <div class="version-btn" id="versionBtn">Version 7.6.0</div>
                 </div>
+
+                <!-- SEARCH BAR -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
+                    <span class="search-icon">🔍</span>
+                </div>
+
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
             <nav class="category-nav">
@@ -250,27 +197,56 @@
     </div>
 
     <script>
-        const state = { category: 'all', page: 1, itemsPerPage: 45, articles: typeof newsData !== 'undefined' ? newsData : [] };
+        const state = { 
+            category: 'all', 
+            search: '', 
+            page: 1, 
+            itemsPerPage: 45, 
+            articles: typeof newsData !== 'undefined' ? newsData : [] 
+        };
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
         const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
 
         function init() { renderApp(); }
+
+        // SEARCH LISTENER
+        searchInput.addEventListener('input', (e) => {
+            state.search = e.target.value.toLowerCase();
+            state.page = 1;
+            renderApp();
+        });
+
         function setCategory(cat) {
-            state.category = cat; state.page = 1;
+            state.category = cat; 
+            state.page = 1;
+            // Clear search when changing category to avoid confusion, or keep it? Let's keep it.
             filterBtns.forEach(btn => {
                 if(btn.textContent.toLowerCase().includes(cat === 'all' ? 'all' : cat.split(' ')[0])) btn.classList.add('active');
                 else btn.classList.remove('active');
             });
             renderApp();
         }
+
         function changePage(newPage) { state.page = newPage; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function resetHome() { setCategory('all'); }
+        
+        function resetHome() { 
+            state.search = ''; 
+            searchInput.value = '';
+            setCategory('all'); 
+        }
 
         function renderApp() {
-            const filtered = state.articles.filter(art => state.category === 'all' || art.category === state.category);
+            // FILTER BY CATEGORY AND SEARCH
+            const filtered = state.articles.filter(art => {
+                const matchesCat = state.category === 'all' || art.category === state.category;
+                const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
+                return matchesCat && matchesSearch;
+            });
+
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
             if (state.page > totalPages) state.page = 1; if (state.page < 1) state.page = 1;
             const start = (state.page - 1) * state.itemsPerPage;
@@ -301,7 +277,8 @@
                 </article>
             `).join('');
 
-            if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px;">No articles found.</div>`;
+            if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found matching your search.</div>`;
+            
             renderPagination(totalPages);
         }
 
