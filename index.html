@@ -52,11 +52,11 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
 
-        /* LOGO ANIMATION (The Woggle) */
+        /* LOGO ANIMATION */
         .logo-icon { 
             height: 50px; width: auto; 
             filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
@@ -69,7 +69,7 @@
         }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
 
-        /* CATEGORY NAVIGATION (Under Logo) */
+        /* CATEGORY NAVIGATION */
         .category-nav {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
             padding-top: 20px; width: 100%;
@@ -163,25 +163,25 @@
             
             <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
                 
-                <!-- VERSION 7.1.0 -->
+                <!-- VERSION 7.2.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
-                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
-                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
-                        • <strong>UX:</strong> Version number is now clickable for full history.
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
                     </div>
                 </li>
 
-                <!-- VERSION 6.2.5 -->
+                <!-- VERSION 7.1.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
                     <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 6.2.5</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
-                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
-                        • Expanded auto-translation.
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
                     </div>
                 </li>
             </ul>
@@ -196,12 +196,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
 
-            <!-- NEW TOP NAVIGATION -->
+            <!-- TOP NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="filterNews('all')">All News</button>
                 <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
@@ -214,16 +214,187 @@
 
         <div class="news-grid" id="newsGrid">
             
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://img.youtube.com/vi/Fb0s1uBZu44/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Specula Select</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://youtu.be/Fb0s1uBZu44" target="_blank">New EV Battery Tech Analysis (Specula Pick)</a></h2>
+                    <p class="ai-summary">Featured video analysis regarding the latest breakthroughs in EV battery technology and market dynamics.</p>
+                    <div class="card-footer">
+                        <a href="https://youtu.be/Fb0s1uBZu44" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/bd7ea0db-949d-4025-a438-75e612d72bf3_e49bec70.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Namnlos-design-2025-11-28T102116.345.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/halsa/tranar-du-utomhus-da-kan-halsoeffekten-bli-samre/" target="_blank">Do you exercise outdoors? Then the health effect can be worse</a></h2>
+                    <p class="ai-summary">Millions of people exercise outdoors every day. Now a new global study shows that the conditions are not always as simple as they appear to be. Regular exercise is one of the strongest protective factors...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/halsa/tranar-du-utomhus-da-kan-halsoeffekten-bli-samre/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://api.dagensps.se/www.dagensps.se/_next/image/?url=https%3A%2F%2Fdagensps.fra1.cdn.digitaloceanspaces.com%2Fuploads%2F2025%2F08%2FJDIO7sZI-Namnlos-design.png&w=1200&q=75" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/motor/lista-basta-och-samsta-begagnade-bilarna/" target="_blank">List: Best and worst used cars</a></h2>
+                    <p class="ai-summary">TÜV's recent report gives a clear indication of which used models measure up - and which require more patience. The German organization TÜV has once again reviewed results from...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/motor/lista-basta-och-samsta-begagnade-bilarna/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Namnlos-design-2025-11-28T093930.270.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/varlden/internet-i-kris-nar-infrastrukturen-kollapsar/" target="_blank">Internet in crisis – when the infrastructure collapses</a></h2>
+                    <p class="ai-summary">The Internet ties the entire world economy together, but behind the digital facade hides a system full of weak links. A single error can wipe out millions of users. On a daily basis, we take it for granted. To...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/varlden/internet-i-kris-nar-infrastrukturen-kollapsar/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/dodsdomd.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/bors-finans/arvsskatt-pa-superrika-i-schweiz-dodsdomd/" target="_blank">Inheritance tax on super rich in Switzerland sentenced to death</a></h2>
+                    <p class="ai-summary">A left-wing group is behind the proposal that the wealthiest in Switzerland should pay a fee of 50 percent from a deceased person's estate. It is Young Socialists in the Alpine country of Switzerland who believe that ...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/bors-finans/arvsskatt-pa-superrika-i-schweiz-dodsdomd/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/f724245b-03b8-4e06-a732-61bc2896b582_a7c929f1.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
                         <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334514/children-content-singaporean-sharenting-videos-stir-privacy-mental-health-worries?utm_source=rss_feed" target="_blank">Singapore ‘sharenting’: where does openness end and overexposure begin?</a></h2>
+                    <p class="ai-summary">Alex Lee, a Singaporean parent-blogger who has spent years documenting his children’s lives online, recently posted a video of his 12-year-old son opening the results of his Primary School Leaving Exa...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334514/children-content-singaporean-sharenting-videos-stir-privacy-mental-health-worries?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Namnlos-design-2025-11-28T095117.413.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/privatekonomi/gar-du-pa-dessa-vanliga-myter-ekonomerna-varnar/" target="_blank">Do you buy into these common myths? Economists warn</a></h2>
+                    <p class="ai-summary">Financial myths spread faster than facts. Now three experts sound the alarm about common misconceptions that risk sabotaging your personal finances.  In a time of rising uncertainty, rapid market movements...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/privatekonomi/gar-du-pa-dessa-vanliga-myter-ekonomerna-varnar/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/2oG7KuQO-sdlYus5Jw-l5UY-nh1.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Dagens PS</div>
+                        <time>Just Now</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.dagensps.se/teknik/mobil/fran-2026-infors-ny-avgift-smartphone-anvandare-betalar-kreatorer/" target="_blank">Here, smartphone users must pay a fee to the cultural sector</a></h2>
+                    <p class="ai-summary">The new fee can raise the price of everything from smartphones to laptops - while millions of kroner will go directly to creators. A new fee is rolling into the Polish electronics market, and from...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://www.dagensps.se/teknik/mobil/fran-2026-infors-ny-avgift-smartphone-anvandare-betalar-kreatorer/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/rsf-converts-hospital-in-sudans-west-kordofan-into-military-base?traffic_source=rss" target="_blank">RSF converts hospital in Sudan’s West Kordofan into military base</a></h2>
+                    <p class="ai-summary">Sudan Doctors Network says military use of hospital is 'a blatant violation of sanctity of medical institutions'.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/28/rsf-converts-hospital-in-sudans-west-kordofan-into-military-base?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/bd7ea0db-949d-4025-a438-75e612d72bf3_e49bec70.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/asia/east-asia/article/3334512/south-korea-high-rise-fire-safety-under-scrutiny-after-hong-kong-tragedy?utm_source=rss_feed" target="_blank">South Korea high-rise fire safety under scrutiny after Hong Kong tragedy</a></h2>
                     <p class="ai-summary">The deadly blaze that engulfed a densely populated Hong Kong residential complex has prompted scrutiny in South Korea over whether its high-rise residential and commercial buildings are adequately pre...</p>
@@ -236,13 +407,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/bostadsklipp.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/bostadsklipp.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.dagensps.se/privatekonomi/bostad/maklare-upplagt-for-bostadsklipp-i-jul-och-nyar/" target="_blank">Realtor: Set up for housing cuts in Christmas and New Year</a></h2>
                     <p class="ai-summary">Contrary to what many people think, interest increases in some quarters for housing showings to speculators during the Christmas and New Year holidays, according to the Swedish Real Estate Agency. "We receive more requests than usual for private...<span class="lang-note">(Translated)</span></p>
@@ -252,16 +423,41 @@
                 </div>
             </article>
             
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/83/637483_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>1h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/mobil/telia-storsatsar-pa-glesbygden/485952/?utm_source=rss&utm_medium=feed" target="_blank">Telia invests heavily in sparsely populated areas</a></h2>
+                    <p class="ai-summary">Expanding the network for half a billion
+
+		
+		
+		
+		
+		Telia announces that it is investing in improving and expanding the mobile network in Sweden's sparsely populated areas. The investment is estimated to amount to half a billion kroner...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/mobil/telia-storsatsar-pa-glesbygden/485952/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlTEXfwcVhd30-nh.webp" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlTEXfwcVhd30-nh.webp" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.dagensps.se/varlden/eus-mardrom-overkord-av-stormakterna/" target="_blank">The EU's nightmare: Overrun by the great powers</a></h2>
                     <p class="ai-summary">The US, China and Russia are the global major players in the military, economy and technology. Now the EU fears that the trio will never be caught. In the global hemisphere, the United States, China and Russia are competing in various ...<span class="lang-note">(Translated)</span></p>
@@ -274,13 +470,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlx5AVuf_FGuQ.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdlx5AVuf_FGuQ.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.dagensps.se/privatekonomi/kris-i-sverige-bor-du-i-en-av-de-drabbade-kommunerna/" target="_blank">Crisis in Sweden - do you live in one of the affected municipalities?</a></h2>
                     <p class="ai-summary">Sweden's municipalities are facing a growing challenge – and in many cases an acute one.  New calculations from Ekonomifakta, which SVT has seen, show that a large majority of the country's municipalities have more un...<span class="lang-note">(Translated)</span></p>
@@ -293,13 +489,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/video/quotable/2025/11/28/israeli-occupation-now-far-more-extreme-for-palestinians?traffic_source=rss" target="_blank">Israeli occupation now “far more extreme” for Palestinians</a></h2>
                     <p class="ai-summary">Author Antony Lowenstein says radicalisation of Israeli society allows the military to kill Palestinians with impunity.</p>
@@ -312,13 +508,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/OpenAI-slapper-Microsoft-–-tecknar-miljardavtal-med-Amazon-Realtid-5.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/OpenAI-slapper-Microsoft-–-tecknar-miljardavtal-med-Amazon-Realtid-5.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.dagensps.se/motor/mercedes-for-13-miljoner-raritet-beslagtas-av-myndigheterna/" target="_blank">Mercedes for 13 million - rarity seized by the authorities</a></h2>
                     <p class="ai-summary">The rare supercar is linked to one of North America's most wanted criminals - and could be one of the most expensive government seizures ever. One of the world's most exclusive sports cars has ended up with...<span class="lang-note">(Translated)</span></p>
@@ -331,13 +527,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/b6fe7994-8511-43ed-ab31-02f9f0886c1b_fff346c8.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/b6fe7994-8511-43ed-ab31-02f9f0886c1b_fff346c8.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3334357/3-overlooked-economic-strengths-will-serve-hong-kong-well?utm_source=rss_feed" target="_blank">3 overlooked economic strengths that will serve Hong Kong well</a></h2>
                     <p class="ai-summary">Even in these turbulent times, Hong Kong has reasons to count its blessings. I refer to the fundamentals of our global competitiveness, which will protect us from the fiercest storms of the current cy...</p>
@@ -347,21 +543,27 @@
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Niklas-Laninge-AI-jobb-och-framtidshopp_WP.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/87/637487_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Feber</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/ps-studio/psykologen-sa-hanterar-du-din-ai-stress/" target="_blank">The Psychologist: How to deal with your AI stress</a></h2>
-                    <p class="ai-summary">Many people are worried about AI taking their jobs. But history actually points to technology often creating more opportunities than it takes away.  Niklas Laninge, savings psychologist at the savings service Opt...<span class="lang-note">(Translated)</span></p>
+                    <h2 class="card-title"><a href="https://feber.se/vetenskap/tysk-blir-antagligen-forste-europen-pa-manen/485950/?utm_source=rss&utm_medium=feed" target="_blank">German will probably be the first European on the moon</a></h2>
+                    <p class="ai-summary">Then maybe an Italian and a Frenchman will go there
+
+		
+		
+		
+		
+		During the European Space Agency ESA's Ministerial Meeting held in Bremen, Germany this week, ESA's Director General revealed...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.dagensps.se/ps-studio/psykologen-sa-hanterar-du-din-ai-stress/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/vetenskap/tysk-blir-antagligen-forste-europen-pa-manen/485950/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -369,51 +571,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Flagga2.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/bors-finans/makro/svensk-ekonomi-ovantat-stark-varsta-bakom-oss/" target="_blank">Swedish economy unexpectedly strong: "The worst behind us"</a></h2>
-                    <p class="ai-summary">The Swedish economy is gaining further momentum and growing faster than expected. "This will, with a certain delay, also affect the labor market. The worst is behind us on the labor market," says To...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.dagensps.se/bors-finans/makro/svensk-ekonomi-ovantat-stark-varsta-bakom-oss/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://api.dagensps.se/www.dagensps.se/_next/image/?url=https%3A%2F%2Fdagensps.fra1.cdn.digitaloceanspaces.com%2Fuploads%2F2025%2F11%2FFredrik-Sandberg-TT.png&w=1200&q=75" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/teknik/de-vill-skugga-solen-for-att-fa-klimatet-pa-ratt-kurs/" target="_blank">They want to shade the sun - to get the climate on the right course</a></h2>
-                    <p class="ai-summary">A young technology company wants to shade the sun with dust in the stratosphere. The idea evokes concern, hope – and a sense of history repeating itself. The small company Stardust grew out of an idea that previously most...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.dagensps.se/teknik/de-vill-skugga-solen-for-att-fa-klimatet-pa-ratt-kurs/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/28/venezuelas-maduro-posts-driving-video-amid-us-tensions?traffic_source=rss" target="_blank">Venezuela’s Maduro posts driving video amid US tensions</a></h2>
                     <p class="ai-summary">Venezuela’s President Nicolas Maduro has posted video of himself driving through the streets of the country’s capital.</p>
@@ -426,13 +590,13 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/33b73467-9627-42d9-b29d-cec8c6a94a53_5f5ed85f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/33b73467-9627-42d9-b29d-cec8c6a94a53_5f5ed85f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/asia/south-asia/article/3334507/russias-putin-boost-special-strategic-partnership-during-india-trip?utm_source=rss_feed" target="_blank">Putin to boost ‘special’ strategic partnership during India trip</a></h2>
                     <p class="ai-summary">Russian President Vladimir Putin will make a state visit to India on December 4 and 5 at the invitation of Prime Minister Narendra Modi, the Kremlin said on Friday.
@@ -446,13 +610,13 @@ The two leaders will sign trade dea...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/f7acacaf-0426-4a89-bcf9-392e638309d6_616d21cd.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/f7acacaf-0426-4a89-bcf9-392e638309d6_616d21cd.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/china/diplomacy/article/3334490/macron-wants-ties-based-europe-being-major-partner-china-source-says?utm_source=rss_feed" target="_blank">Macron wants ties based on Europe being ‘a major partner of China’, source says</a></h2>
                     <p class="ai-summary">France hopes to establish a framework for ties between Brussels and Beijing “that serves mutual interests” when President Emmanuel Macron visits China next week, an Elysee Palace source said.
@@ -466,32 +630,13 @@ The two leaders will sign trade dea...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Swedbank.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/bors-finans/experterna-darfor-kan-december-bli-arets-borsraket/" target="_blank">The experts: Therefore, December could be the stock market rocket of the year</a></h2>
-                    <p class="ai-summary">There is optimism among the experts regarding the end of the year for the stock market. You see several flashes of light and think that December will be a good month. When the last trading month of the year begins, targets include...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.dagensps.se/bors-finans/experterna-darfor-kan-december-bli-arets-borsraket/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
                     <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/83e013e1-8cf5-4777-ba41-d0bb5df89b55_ea3989ef.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/week-asia/economics/article/3334451/singapore-malaysia-tech-firms-double-down-ai-despite-bubble-fears?utm_source=rss_feed" target="_blank">From Singapore to Malaysia, tech firms double down on AI despite bubble fears</a></h2>
                     <p class="ai-summary">As fears over the artificial intelligence bubble bursting linger in global markets, one Southeast Asian tech founder thinks it could be a much-needed reset to a crowded space.
@@ -502,21 +647,29 @@ Dylan Tan, founder of re...</p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/Kairo-1.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/82/637482_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>Just Now</time>
+                        <div class="source-badge">Feber</div>
+                        <time>1h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/weekend/resor/staderna-vaxer-och-varldens-storsta-haller-pa-att-sjunka/" target="_blank">The cities are growing - and the world's largest are shrinking</a></h2>
-                    <p class="ai-summary">The cities of the world are growing. Today, Jakarta is the world's largest city. Forty-two million people, more than in the entire Nordic region, are crammed into a metropolis that is literally disappearing beneath the surface. YK's new...<span class="lang-note">(Translated)</span></p>
+                    <h2 class="card-title"><a href="https://feber.se/bil/top-gear-utser-nya-bmw-ix3-till-arets-bil/485948/?utm_source=rss&utm_medium=feed" target="_blank">Top Gear names the new BMW iX3 as the car of the year</a></h2>
+                    <p class="ai-summary">Congratulations!
+
+
+			
+			
+		
+		
+		
+		At the beginning of September, BMW rolled out the new iX3, which is the first electric car on the Neue Klasse platform. The model promises a lot and it seems to deliver, and now it has been named ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.dagensps.se/weekend/resor/staderna-vaxer-och-varldens-storsta-haller-pa-att-sjunka/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/bil/top-gear-utser-nya-bmw-ix3-till-arets-bil/485948/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -530,7 +683,7 @@ Dylan Tan, founder of re...</p>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>Just Now</time>
+                        <time>1h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334504/hongkongers-snap-fire-safety-equipment-tai-po-blaze-death-toll-climbs?utm_source=rss_feed" target="_blank">Hongkongers snap up fire safety equipment as Tai Po blaze death toll climbs</a></h2>
                     <p class="ai-summary">Hong Kong residents and businesses are rushing to snap up safety equipment following the city’s worst fire in decades, which killed 128 and injured 79.
@@ -541,29 +694,10 @@ The fire broke out on Wednesday in seven of eigh...</p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://dagensps.fra1.cdn.digitaloceanspaces.com/uploads/2025/11/sdl2MCtsp36qE0.png" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Dagens PS</div>
-                        <time>1h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.dagensps.se/teknik/openai-erkanner-chatgpt-anvandare-har-fatt-uppgifter-stulna/" target="_blank">OpenAI admits: ChatGPT users have had data stolen</a></h2>
-                    <p class="ai-summary">A partner of OpenAI has been subjected to a cyber attack from hackers who managed to steal data. It puts further pressure on the ChatGPT developer who has already been questioned for the data management. OpenAI ha...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://www.dagensps.se/teknik/openai-erkanner-chatgpt-anvandare-har-fatt-uppgifter-stulna/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
@@ -595,7 +729,7 @@ The fire broke out on Wednesday in seven of eigh...</p>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/business/article/3334500/hong-kong-developers-emperor-and-lai-sun-find-relief-amid-debt-pressures?utm_source=rss_feed" target="_blank">Hong Kong developers Emperor and Lai Sun find relief amid debt pressures</a></h2>
                     <p class="ai-summary">Emperor International Holdings has secured bank approval to resume borrowing under existing terms by nearly two years, providing the embattled Hong Kong developer with much-needed breathing room after...</p>
@@ -608,13 +742,13 @@ The fire broke out on Wednesday in seven of eigh...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/74/637474_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/74/637474_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/vetenskap/esa-far-rekordmycket-pengar-de-kommande-aren/485947/?utm_source=rss&utm_medium=feed" target="_blank">ESA will receive a record amount of money in the coming years</a></h2>
                     <p class="ai-summary">Almost SEK 250 billion
@@ -633,13 +767,13 @@ The fire broke out on Wednesday in seven of eigh...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/features/2025/11/28/in-geneva-and-pokrovsk-ukraine-fights-trump-peace-plan-and-putins-troops?traffic_source=rss" target="_blank">In Geneva and Pokrovsk, Ukraine fights Trump peace plan and Putin’s troops</a></h2>
                     <p class="ai-summary">Zelenskyy described the simultaneous military and diplomatic pressure as 'one of the hardest moments in our history'.</p>
@@ -649,16 +783,35 @@ The fire broke out on Wednesday in seven of eigh...</p>
                 </div>
             </article>
             
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://cdn.motor1.com/images/mgl/xqAMQG/s3/2025-hyundai-ioniq-9-review.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">InsideEVs - Articles</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://insideevs.com/news/780246/kia-ev6-hyundai-ioniq-9-v2h-us/" target="_blank">The Kia EV6 And Hyundai Ioniq 9 Will Be Able To Power Your Home Soon</a></h2>
+                    <p class="ai-summary">The two electric crossovers will join the Kia EV9, which is already compatible with V2H in the United States.</p>
+                    <div class="card-footer">
+                        <a href="https://insideevs.com/news/780246/kia-ev6-hyundai-ioniq-9-v2h-us/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/88/637488_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/88/637488_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/arets-chans-att-kopa-playstation-5/485951/?utm_source=rss&utm_medium=feed" target="_blank">This year's chance to buy Playstation 5</a></h2>
                     <p class="ai-summary">Now costs under SEK 5,000
@@ -674,16 +827,35 @@ The fire broke out on Wednesday in seven of eigh...</p>
                 </div>
             </article>
             
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>2h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/28/albania-57-bev-share-in-october/" target="_blank">Albania — 57% BEV Share in October!</a></h2>
+                    <p class="ai-summary">57 BEV Share! In Albania!!! Here’s a super quick special report on the Albanian EV market for you all. Despite being a small market (only 933 new passenger vehicles were registered in October) and the...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/28/albania-57-bev-share-in-october/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/icc-to-rule-on-provisional-release-of-ex-philippine-leader-rodrigo-duterte?traffic_source=rss" target="_blank">ICC to rule on provisional release of ex-Philippine leader Rodrigo Duterte</a></h2>
                     <p class="ai-summary">Human rights lawyer insists there's 'strong evidence' why detained Filipino leader should stay in jail.</p>
@@ -696,13 +868,13 @@ The fire broke out on Wednesday in seven of eigh...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/006215ab-8484-4fe0-86ab-a70913b12fcd_82ecff0f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/006215ab-8484-4fe0-86ab-a70913b12fcd_82ecff0f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/asia/southeast-asia/article/3334492/singapore-names-gavin-lee-permanent-head-football-coach-after-hong-kong-win?utm_source=rss_feed" target="_blank">Singapore names Gavin Lee permanent head football coach after Hong Kong win</a></h2>
                     <p class="ai-summary">Gavin Lee was on Friday named as permanent head coach of the Singapore men’s national football team.
@@ -723,7 +895,7 @@ He is the Lio...</p>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/news/liveblog/2025/11/28/live-israel-4?traffic_source=rss" target="_blank">LIVE: Israel bombs Syria, Gaza after extrajudicial killings in West Bank</a></h2>
                     <p class="ai-summary">At least 13 Syrians killed in Israeli attacks after two unarmed Palestinians murdered in occupied West Bank's Jenin.</p>
@@ -736,13 +908,13 @@ He is the Lio...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/66614b54-8b79-4077-bf4c-a046688a7aec_d5302e9b.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/66614b54-8b79-4077-bf4c-a046688a7aec_d5302e9b.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/business/china-evs/article/3334488/china-ev-makers-profit-woes-fuel-market-anxiety-over-challenging-2026?utm_source=rss_feed" target="_blank">China EV profit woes fuel market anxiety over challenging 2026</a></h2>
                     <p class="ai-summary">Investors in Chinese electric vehicle (EV) stocks, who had been hoping for a strong earnings season to provide fresh tailwinds, instead face disappointing results that have stoked anxiety about what l...</p>
@@ -755,13 +927,13 @@ He is the Lio...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/russian-space-agency-says-cosmodrome-damaged-after-joint-launch-with-us?traffic_source=rss" target="_blank">Russian space agency says cosmodrome damaged after joint launch with US</a></h2>
                     <p class="ai-summary">Authorities say the Baikonur Cosmodrome, Russia's only launch site for crewed missions, will be restored 'very soon'.</p>
@@ -774,13 +946,13 @@ He is the Lio...</p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/62/637462_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/62/637462_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>1h Ago</time>
+                        <time>2h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/samhalle/utgivarna-polisanmaler-mark-zuckerberg-/485942/?utm_source=rss&utm_medium=feed" target="_blank">The publishers report Mark Zuckerberg to the police</a></h2>
                     <p class="ai-summary">For scam ads
@@ -801,13 +973,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/860c2c1a-77e2-458e-a0c6-ca51e3679efb_65647a04.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/860c2c1a-77e2-458e-a0c6-ca51e3679efb_65647a04.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/week-asia/politics/article/3334480/posters-urging-south-koreans-join-ukraine-war-slammed-russian-hoax?utm_source=rss_feed" target="_blank">‘Kill North Koreans’: posters urging South Koreans to join Ukraine war slammed</a></h2>
                     <p class="ai-summary">An advertisement offering lucrative pay and citizenship to South Koreans willing to join Ukraine’s army has been rejected by Kyiv as a “Russian hoax”, even as Seoul confirmed for the first time the de...</p>
@@ -820,13 +992,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/64/637464_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/64/637464_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/pc/dell-500-miljoner-vagrar-uppgradera-till-windows-11/485943/?utm_source=rss&utm_medium=feed" target="_blank">Dell: 500 million refuse to upgrade to Windows 11</a></h2>
                     <p class="ai-summary">Even though their computer can handle the operating system
@@ -845,13 +1017,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/sri-lanka-landslides-floods-death-toll-rises-to-56-offices-schools-shut?traffic_source=rss" target="_blank">Sri Lanka landslides, floods death toll rises to 56, offices, schools shut</a></h2>
                     <p class="ai-summary">The government announces the closing of all government offices and schools as weather conditions grow worse.</p>
@@ -864,13 +1036,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/trump-suspends-immigration-from-third-world-orders-review-of-green-cards?traffic_source=rss" target="_blank">Trump suspends immigration from ‘Third World’, orders review of green cards</a></h2>
                     <p class="ai-summary">Green card applications from 'countries of concern' will be reviewed after Afghan national named as shooting suspect.</p>
@@ -883,13 +1055,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/63/637463_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/63/637463_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/bil/eldrivna-alfa-romeo-junior-sanks-med-1500-kronor-i-manaden/485941/?utm_source=rss&utm_medium=feed" target="_blank">Electric-powered Alfa Romeo Juniors are reduced by SEK 1,500 a month</a></h2>
                     <p class="ai-summary">Can now be privately leased from SEK 3,495
@@ -910,13 +1082,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/52ed8c02-5bbc-4c72-bbda-60e8c57c2c3b_4dff79a5.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/52ed8c02-5bbc-4c72-bbda-60e8c57c2c3b_4dff79a5.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">News - South China Mornin</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://www.scmp.com/news/world/united-states-canada/article/3334479/trump-says-us-permanently-pausing-migration-third-world-countries?utm_source=rss_feed" target="_blank">Trump vows to freeze migration from ‘Third World Countries’ after Washington attack</a></h2>
                     <p class="ai-summary">US President Donald Trump said on Thursday his administration will “permanently pause” migration from all “Third World Countries”, following an attack near the White House he attributed to Biden-era i...</p>
@@ -929,15 +1101,15 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/israeli-forces-syrians-clash-in-damascus-countryside-casualties-reported?traffic_source=rss" target="_blank">Israeli military incursion into Syria, strikes kill 13: State Media</a></h2>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/israeli-forces-syrians-clash-in-damascus-countryside-casualties-reported?traffic_source=rss" target="_blank">Syria calls Israeli incursion, strikes that killed 13 a ‘war crime’</a></h2>
                     <p class="ai-summary">Two Syrian children are among those killed by Israeli strikes following the incursion into the town of Beit Jinn.</p>
                     <div class="card-footer">
                         <a href="https://www.aljazeera.com/news/2025/11/28/israeli-forces-syrians-clash-in-damascus-countryside-casualties-reported?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
@@ -948,13 +1120,13 @@ It is about...<span class="lang-note">(Translated)</span></p>
             <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/61/637461_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://static.feber.se/article_images/63/74/61/637461_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Feber</div>
-                        <time>2h Ago</time>
+                        <time>3h Ago</time>
                     </div>
                     <h2 class="card-title"><a href="https://feber.se/samhalle/nu-ar-sveriges-basta-julbalkong-igang/485940/?utm_source=rss&utm_medium=feed" target="_blank">Sweden's best Christmas balcony is now open</a></h2>
                     <p class="ai-summary">Anton, the fever reader, is on!
@@ -970,163 +1142,10 @@ It is about...<span class="lang-note">(Translated)</span></p>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/b831d15b-25dc-4bfa-bf56-8f53d34a960c_a3bf1652.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">News - South China Mornin</div>
-                        <time>2h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334473/malaysian-police-chief-urges-more-caning-schools-rues-loss-fear-factor?utm_source=rss_feed" target="_blank">Malaysian police chief urges more caning in schools, rues loss of ‘fear factor’</a></h2>
-                    <p class="ai-summary">A Malaysian police chief has called for the wider imposition of caning in schools, arguing that the “fear factor” among students has eroded at a time when violent incidents, including bullying-related...</p>
-                    <div class="card-footer">
-                        <a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334473/malaysian-police-chief-urges-more-caning-schools-rues-loss-fear-factor?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/2c5d0f49-285c-4881-82f7-0274ae622376_eb17d87c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">News - South China Mornin</div>
-                        <time>2h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/politics/article/3334455/deadly-boat-accident-cover-reveals-corruption-chinas-fishing-industry?utm_source=rss_feed" target="_blank">Deadly boat accident cover-up reveals corruption in China’s fishing industry</a></h2>
-                    <p class="ai-summary">A local government official in northeast China has been accused of covering up a fishing boat accident and preventing the vessel’s owner from calling the police for help, in an incident that led to th...</p>
-                    <div class="card-footer">
-                        <a href="https://www.scmp.com/news/china/politics/article/3334455/deadly-boat-accident-cover-reveals-corruption-chinas-fishing-industry?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/4aa49a2b-296b-4b27-9e0c-b65d71e0e152_cfd0227f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">News - South China Mornin</div>
-                        <time>2h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.scmp.com/news/people-culture/china-personalities/article/3334192/self-made-china-milk-tea-entrepreneur-marries-wealthy-solar-heiress-captures-public-attention?utm_source=rss_feed" target="_blank">Self-made Chinese milk tea founder marries wealthy solar energy heiress</a></h2>
-                    <p class="ai-summary">The upcoming wedding of the founder of a renowned milk tea company from a grass-roots background and the daughter of a wealthy family that owns a leading solar energy firm has captivated the Chinese p...</p>
-                    <div class="card-footer">
-                        <a href="https://www.scmp.com/news/people-culture/china-personalities/article/3334192/self-made-china-milk-tea-entrepreneur-marries-wealthy-solar-heiress-captures-public-attention?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>2h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/firefighting-at-hong-kong-blaze-ends-with-deaths-over-90-dozens-missing?traffic_source=rss" target="_blank">Rescue efforts at Hong Kong blaze end with deaths at 128, dozens missing</a></h2>
-                    <p class="ai-summary">Police arrest three construction company officials on suspicion of manslaughter linked to the building renovation.</p>
-                    <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/28/firefighting-at-hong-kong-blaze-ends-with-deaths-over-90-dozens-missing?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/ba6edf6b-3911-4300-9bc5-758a4c826beb_5a5515bc.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">News - South China Mornin</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/people/article/3334471/thai-flood-victim-bitten-deadly-snake-waits-32-hours-rescue?utm_source=rss_feed" target="_blank">Thai flood victim bitten by deadly snake waits 32 hours for rescue</a></h2>
-                    <p class="ai-summary">A Thai mother bitten by a deadly snake endured a desperate 32-hour wait for rescue after being trapped by floods that have devastated southern Thailand for more than a week.
-The woman, stranded in her...</p>
-                    <div class="card-footer">
-                        <a href="https://www.scmp.com/week-asia/people/article/3334471/thai-flood-victim-bitten-deadly-snake-waits-32-hours-rescue?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/economy/2025/11/28/why-is-senegal-squaring-up-to-the-international-monetary-fund?traffic_source=rss" target="_blank">Why is Senegal squaring up to the International Monetary Fund?</a></h2>
-                    <p class="ai-summary">Senegal is resisting an IMF-recommended debt restructuring, but support from the Fund is critical for its recovery.</p>
-                    <div class="card-footer">
-                        <a href="https://www.aljazeera.com/economy/2025/11/28/why-is-senegal-squaring-up-to-the-international-monetary-fund?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>3h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/andurils-autonomous-weapons-stumble-in-tests-and-combat-wsj-reports/" target="_blank">Anduril’s autonomous weapons stumble in tests and combat, WSJ reports</a></h2>
-                    <p class="ai-summary">Defense tech startup Anduril Industries has faced numerous setbacks during testing of its autonomous weapons systems, according to new reporting by the WSJ. The problems cited include more than a doze...</p>
-                    <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/27/andurils-autonomous-weapons-stumble-in-tests-and-combat-wsj-reports/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>4h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/putin-says-he-is-ready-to-guarantee-in-writing-no-russian-attack-on-europe?traffic_source=rss" target="_blank">Putin says he is ready to guarantee in writing no Russian attack on Europe</a></h2>
-                    <p class="ai-summary">Putin also branded fears that Moscow is planning to invade another European nation 'ridiculous' and 'complete nonsense'.</p>
-                    <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/28/putin-says-he-is-ready-to-guarantee-in-writing-no-russian-attack-on-europe?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
         </div>
 
         <div class="pagination">
-            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn ">4</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
+            <a href="index.html" class="page-btn active">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page11.html" class="page-btn ">11</a><a href="page2.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <footer class="site-footer">

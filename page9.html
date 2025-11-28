@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- FAVICON (Browser Tab Icon) -->
     <link rel="icon" type="image/png" href="icon.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -30,363 +28,1126 @@
             font-family: 'Inter', sans-serif; line-height: 1.6;
             transition: background 0.4s ease, color 0.4s ease;
             min-height: 100vh;
-            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
+            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), 
+                              radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
             background-attachment: fixed; padding-bottom: 50px;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+        /* HEADER AREA */
+        header { 
+            display: flex; flex-direction: column; align-items: center; gap: 20px; 
+            padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; 
+        }
         
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+
+        /* LOGO STYLES */
+        .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; }
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 2.2rem; 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; 
+            letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
         }
-
-        .logo-icon {
-            height: 45px;
-            width: auto;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-            filter: invert(1); /* Gör ikonen vit i dark mode */
-        }
-        body.light-mode .logo-icon {
-            filter: invert(0); /* Gör ikonen svart i light mode */
-        }
-
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
-        
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+
+        /* LOGO ANIMATION */
+        .logo-icon { 
+            height: 50px; width: auto; 
+            filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
+        body.light-mode .logo-icon { filter: invert(0); }
+
+        /* VERSION BUTTON */
+        .version-btn { 
+            font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; 
+            margin-left: 70px; margin-top: -5px; opacity: 0.8; transition: 0.2s; 
+            font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent);
+        }
+        .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
+
+        /* CATEGORY NAVIGATION */
+        .category-nav {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            padding-top: 20px; width: 100%;
+        }
+        .filter-btn {
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 8px 20px;
+            cursor: pointer; border-radius: 50px;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+            transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem;
+        }
+        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* THEME SWITCH */
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
         .theme-switch:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
         /* GRID & CARD */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; position: relative; }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3); }
-        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card-image-wrapper { width: 100%; height: 200px; position: relative; overflow: hidden; background: #000; }
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .card-image { transform: scale(1.05); }
-        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg-card), transparent); pointer-events: none; }
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .source-badge { display: flex; align-items: center; gap: 6px; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
+        
+        .cat-tag {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            color: var(--accent); font-size: 0.7rem; font-weight: 700;
+            padding: 5px 10px; border-radius: 4px; text-transform: uppercase;
+            border: 1px solid var(--accent); z-index: 10; letter-spacing: 0.5px;
+        }
+
+        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 12px; color: var(--text-primary); }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
         .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
-        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .read-more:hover { text-decoration: underline; }
+        .lang-note { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 8px; opacity: 0.8; }
+        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
+        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
-        /* PAGINATION */
+        /* PAGINATION & FLOATING NAV */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
+        .nav-prev { left: 30px; } .nav-next { right: 30px; }
+        @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        /* FOOTER & DISCLAIMER */
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .modal-overlay.open .modal-card { transform: translateY(0); }
+        .close-modal { float: right; cursor: pointer; color: var(--text-secondary); font-size: 2rem; background: none; border: none; line-height: 1; }
+        .close-modal:hover { color: var(--accent); }
+
+        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
-        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; border: 1px solid var(--border); }
-        .btn-suggest { background: var(--bg-card); color: var(--text-primary); }
-        .btn-suggest:hover { border-color: var(--accent); }
+        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-donate:hover { opacity: 0.9; box-shadow: 0 0 15px var(--accent-glow); }
-        .disclaimer-box { max-width: 700px; margin: 0 auto; font-size: 0.75rem; opacity: 0.7; line-height: 1.6; }
-        .disclaimer-title { font-weight: 700; color: var(--text-primary); display: block; margin-bottom: 5px; }
 
+        /* MOBILE */
         @media (max-width: 768px) {
             .news-grid { grid-template-columns: 1fr; }
-            header { flex-direction: column; gap: 20px; align-items: flex-start; }
-            .theme-switch { width: 100%; justify-content: center; }
+            .header-top { flex-direction: column; gap: 20px; align-items: flex-start; }
+            .theme-switch { position: absolute; top: 40px; right: 0; }
+            .category-nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; width: 100%; flex-wrap: nowrap; }
+            .filter-btn { white-space: nowrap; }
+            .version-btn { margin-left: 65px; margin-top: -10px; }
         }
     </style>
 </head>
 <body>
+    <a href="page8.html" class="floating-nav nav-prev">&larr;</a>
+    <a href="page10.html" class="floating-nav nav-next">&rarr;</a>
+
+    <!-- CHANGELOG MODAL -->
+    <div class="modal-overlay" id="changelogModal">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System Changelog</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
+                
+                <!-- VERSION 7.2.0 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
+                    </div>
+                </li>
+
+                <!-- VERSION 7.1.0 -->
+                <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
+                    <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
+                    <strong>Version 7.1.0</strong>
+                    <div style="margin-top:5px;">
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="container">
         <header>
-            <div class="logo">
-                <img src="icon.png" class="logo-icon" alt="Specula">
-                SPECULA <span>.</span><div class="logo-tag">LIVE FEED</div>
+            <div class="header-top">
+                <div class="logo-wrapper">
+                    <a href="index.html" class="logo-link">
+                        <img src="icon.png" class="logo-icon" alt="Specula">
+                        <div class="logo">SPECULA <span>.</span></div>
+                    </a>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
+                </div>
+                <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
-            <button class="theme-switch" id="themeBtn"><span id="themeIcon">☾</span> <span id="themeText">DARK MODE</span></button>
+
+            <!-- TOP NAVIGATION -->
+            <nav class="category-nav">
+                <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+                <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
+                <button class="filter-btn" onclick="filterNews('tech')">Tech & AI</button>
+                <button class="filter-btn" onclick="filterNews('ev')">EV & Energy</button>
+                <button class="filter-btn" onclick="filterNews('science')">Science & Space</button>
+                <button class="filter-btn" onclick="filterNews('construction')">Construction</button>
+            </nav>
         </header>
 
-        <!-- DYNAMIC NEWS GRID -->
-        <div class="news-grid">
+        <div class="news-grid" id="newsGrid">
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/All-solid-state-EV-batteries-China.jpeg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>21h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/justiguide-wants-to-use-ai-to-help-people-navigate-the-u-s-immigration-system/" target="_blank">JustiGuide wants to use AI to help people navigate the US immigration system</a></h2>
-                    <p class="ai-summary">The startup uses AI to help immigrants understand the system, connect with lawyers, and reduce associated costs.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/24/all-solid-state-ev-batteries-hit-milestone-promise-to-double-range/" target="_blank">All-solid-state EV batteries hit a huge milestone in China, promising to double range</a></h2>
+                    <p class="ai-summary">China’s first all-solid-state production line is up and running. With the equipment in place, GAC Group becomes the first automaker ready to mass-produce the “holy grail” of EV batteries, promising to...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/justiguide-wants-to-use-ai-to-help-people-navigate-the-u-s-immigration-system/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/24/all-solid-state-ev-batteries-hit-milestone-promise-to-double-range/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="construction">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://imgproxy.divecdn.com/J5nvZxnCq3gEXoDvWQIHF_JSvQsMY7FbaGg4bsflZX4/g:ce/rs:fill:1600:900:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9TZXB0LTEtMTUzNng4NjQucG5n.webp" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>21h Ago</time>
+                        <div class="source-badge">Construction Dive - Lates</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/openai-claims-teen-circumvented-safety-features-before-suicide-that-chatgpt-helped-plan/" target="_blank">OpenAI claims teen circumvented safety features before suicide that ChatGPT helped plan</a></h2>
-                    <p class="ai-summary">In August, parents Matthew and Maria Raine sued OpenAI and its CEO, Sam Altman, over their 16-year-old son Adam's suicide, accusing the company of wrongful death. On Tuesday, OpenAI responded to the lawsuit with a filing...</p>
+                    <h2 class="card-title"><a href="https://www.constructiondive.com/news/gilbane-ohio-jail-lake-county-painesville/806353/" target="_blank">Gilbane team tops out $205M Ohio jail</a></h2>
+                    <p class="ai-summary">The combined facility and sheriff’s office will span 250,000 square feet and is scheduled to open in 2027.</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/openai-claims-teen-circumvented-safety-features-before-suicide-that-chatgpt-helped-plan/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.constructiondive.com/news/gilbane-ohio-jail-lake-county-painesville/806353/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/09/Tesla-Self-Driving-FSD-Hero.png?w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>21h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/redwood-materials-reportedly-cuts-5-of-staff-after-350m-raise/" target="_blank">Redwood Materials reportedly cuts 5% of staff after $350M raise</a></h2>
-                    <p class="ai-summary">The battery recycling and cathode production company, founded by former Tesla CTO JB Straubel, has started using recycled battery materials to create energy storage solutions for AI data centers.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/24/tesla-announces-fsd-approval-europe-february-2026/" target="_blank">Tesla announces expected FSD approval date in Europe, regulators deny</a></h2>
+                    <p class="ai-summary">For the first time in what feels like forever, Tesla has put a hard date on the arrival of Full Self-Driving (Supervised) in Europe. The automaker confirmed that the Dutch vehicle authority (RDW) has ...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/redwood-materials-reportedly-cuts-5-of-staff-after-350m-raise/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/24/tesla-announces-fsd-approval-europe-february-2026/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/Kia-EV5-WKNDR-front.jpeg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Tech</div>
-                        <time>22h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.cnbc.com/2025/11/26/apple-and-broadcom-shares-keep-hitting-records-why-each-have-more-room-to-run.html" target="_blank">Apple and Broadcom shares keep hitting records. Why each have more room to run</a></h2>
-                    <p class="ai-summary">New research gives investors more reason to be bullish on both Club stocks.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/24/kias-electric-suv-ready-to-go-beyond-pavement-images/" target="_blank">Kia’s new electric SUV is ready to go beyond the pavement [Images]</a></h2>
+                    <p class="ai-summary">The EV5 is about the size of Kia’s best-selling SUV, the Sportage. Kia revealed a new EV5 WKNDR concept, giving us our first look at the electric off-roader.
+more…</p>
                     <div class="card-footer">
-                        <a href="https://www.cnbc.com/2025/11/26/apple-and-broadcom-shares-keep-hitting-records-why-each-have-more-room-to-run.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/24/kias-electric-suv-ready-to-go-beyond-pavement-images/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="construction">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://imgproxy.divecdn.com/R2QsTRoGbymLHGmYhVO9wL_sw-HLOZFwOa-kVxE-0B0/g:ce/rs:fill:1600:900:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9BTFgtR3JvdW5kYnJlYWtpbmctVklQcy13LXNob3ZlbHMtc2NhbGVkLmpwZw==.webp" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>22h Ago</time>
+                        <div class="source-badge">Construction Dive - Lates</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/chatgpt-everything-to-know-about-the-ai-chatbot/" target="_blank">ChatGPT: Everything you need to know about the AI-powered chatbot</a></h2>
-                    <p class="ai-summary">A timeline of ChatGPT product updates and releases, starting with the latest, which we’ve been updating throughout the year.</p>
+                    <h2 class="card-title"><a href="https://www.constructiondive.com/news/virginia-passenger-rail-construction-begins/806264/" target="_blank">Virginia starts construction in Alexandria to improve passenger rail</a></h2>
+                    <p class="ai-summary">A series of projects will increase capacity for Amtrak and commuter rail service in Northern Virginia and the Washington, D.C., area.</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/chatgpt-everything-to-know-about-the-ai-chatbot/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.constructiondive.com/news/virginia-passenger-rail-construction-begins/806264/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2025/hbnu-researchers-propo.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/1_dea0bf.jpg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Nanotechnology News - Nan</div>
-                        <time>22h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>3d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://phys.org/news/2025-11-sensor-food-wrapper-real-destructive.html" target="_blank">Sensor-integrated food wrapper can facilitate real-time, non-destructive detection of nutritional components</a></h2>
-                    <p class="ai-summary">Food quality and safety are crucial. However, conventional food-monitoring methods, including ribotyping and polymerase chain reaction, tend to be destructive and lengthy. These shortcomings limit their potential for bro...</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/24/volvo-electric-excavators-get-to-work-crushing-rocks-in-canadian-quarry/" target="_blank">Volvo electric excavators get to work crushing rocks in Canadian quarry</a></h2>
+                    <p class="ai-summary">A pair of new Volvo ECR25 Electric mini excavators are busy breaking up oversize rocks in crushing operations at this Ontario-based mine – and the transition from diesel has been as smooth as their el...</p>
                     <div class="card-footer">
-                        <a href="https://phys.org/news/2025-11-sensor-food-wrapper-real-destructive.html" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/24/volvo-electric-excavators-get-to-work-crushing-rocks-in-canadian-quarry/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/tesla-solar-roof.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>22h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>4d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/tech-layoffs-2025-list/" target="_blank">A comprehensive list of 2025 tech layoffs</a></h2>
-                    <p class="ai-summary">A complete list of all the known layoffs in tech, from Big Tech to startups, broken down by month throughout 2024.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/23/homeowners-share-surprising-real-world-data-after-installing-solar-panels/" target="_blank">Homeowners share surprising, real-world data after installing solar panels</a></h2>
+                    <p class="ai-summary">Are you wondering what kind of results you’d get if you added a home solar system to your roof? Homeowners are sharing their results online — and the real-world data might surprise you!
+more…</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/tech-layoffs-2025-list/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/23/homeowners-share-surprising-real-world-data-after-installing-solar-panels/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/phq1xA3ZeMM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>22h Ago</time>
+                        <div class="source-badge">DW Documentary</div>
+                        <time>4d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/multiple-london-councils-report-disruption-amid-ongoing-cyberattack/" target="_blank">Multiple London councils report disruption amid ongoing cyberattack</a></h2>
-                    <p class="ai-summary">Three London councils reported disruption, prompting officials to shut down phone lines and networks and activate emergency plans.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank">Yemen and the Houthis: Pirates, terrorists, freedom fighters? | DW Documentary</a></h2>
+                    <p class="ai-summary">The Houthi militia has been fighting for supremacy in Yemen for years. The conflict has become a civil war, with international involvement. The Middle East conflict has further escalated the situation...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/multiple-london-councils-report-disruption-amid-ongoing-cyberattack/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://spectrum.ieee.org/media-library/a-group-of-tween-girls-wearing-girl-scout-vests-and-plastic-firehats.jpg?id=62236903&width=980" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/Volvo-EX90-Lidar_2.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">IEEE Spectrum</div>
-                        <time>23h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>4d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://spectrum.ieee.org/ieee-and-girl-scouts-stem" target="_blank">IEEE and Girl Scouts Are Working on Getting Girls Into STEM</a></h2>
-                    <p class="ai-summary">The percentage of women working in science, technology, engineering, and math fields continues to remain stubbornly low. Women made up 28 percent of the STEM global workforce last year, according to the World Economic Fo...</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/23/volvo-set-to-ditch-lidar-for-2026-and-luminar-is-big-mad/" target="_blank">Volvo set to ditch LiDAR for 2026 – and Luminar is BIG mad</a></h2>
+                    <p class="ai-summary">It seems like the writing was already on the wall last week when Volvo moved to make its Luminar-supplied LiDAR system an option – there are now reports that the Swedish car brand is set to ditch LiDA...</p>
                     <div class="card-footer">
-                        <a href="https://spectrum.ieee.org/ieee-and-girl-scouts-stem" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/23/volvo-set-to-ditch-lidar-for-2026-and-luminar-is-big-mad/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/11/GettyImages-2231894756-1024x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/deere_ego.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>23h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>5d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/science/2025/11/solars-growth-in-us-almost-enough-to-offset-rising-energy-use/" target="_blank">Solar’s growth in US almost enough to offset rising energy use</a></h2>
-                    <p class="ai-summary">Over the course of 2025, electricity demand has gradually declined.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/22/john-deere-electric-riding-mower-gets-removable-batteries-from-ego/" target="_blank">John Deere electric riding mower gets removable batteries from EGO</a></h2>
+                    <p class="ai-summary">The new John Deere Z370RS Electric ZTrak zero turn electric riding mower promises all the power and performance Deere’s customers have come to expect from its quiet, maintenance-free electric offering...</p>
                     <div class="card-footer">
-                        <a href="https://arstechnica.com/science/2025/11/solars-growth-in-us-almost-enough-to-offset-rising-energy-use/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/22/john-deere-electric-riding-mower-gets-removable-batteries-from-ego/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/A251868_web_1440.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>23h Ago</time>
+                        <div class="source-badge">Electrek</div>
+                        <time>5d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/gm-tech-executive-shakeup-continues-on-software-team/" target="_blank">GM tech executive shakeup continues on software team</a></h2>
-                    <p class="ai-summary">Three of GM's top software executives have left the automaker in recent months, as the company moves to combine its disparate technology businesses.</p>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/22/new-electric-audi-e-suv-concept-promises-670-hp-435-mile-range/" target="_blank">New electric AUDI E SUV concept promises 670 hp, 435 mile range</a></h2>
+                    <p class="ai-summary">Audi embraced its future in China with the launch of a new Chinese market electric sub-brand called AUDI that ditched the iconic “four rings” logo in favor of four capital letters – but one thing this...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/gm-tech-executive-shakeup-continues-on-software-team/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://electrek.co/2025/11/22/new-electric-audi-e-suv-concept-promises-670-hp-435-mile-range/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <img src="https://cdn.arstechnica.net/wp-content/uploads/2025/02/GettyImages-968446896-1152x648.jpg" class="card-image" loading="lazy" alt="News">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/RPViHce3l_w/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Ars Technica</div>
-                        <time>23h Ago</time>
+                        <div class="source-badge">DW Documentary</div>
+                        <time>5d Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://arstechnica.com/health/2025/11/rfk-jr-s-new-cdc-deputy-director-prefers-natural-immunity-over-vaccines/" target="_blank">RFK Jr.’s new CDC deputy director prefers “natural immunity” over vaccines</a></h2>
-                    <p class="ai-summary">Ralph Abraham is "dangerous," but somehow not the worst among those considered.</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank">How cricket unites and divides Afghanistan | DW Documentary</a></h2>
+                    <p class="ai-summary">Afghanistan has risen from sporting outsider to one of the world's top cricket nations. The unlikely journey has brought hope to a country with rare reason to celebrate while illuminating the complex ...</p>
                     <div class="card-footer">
-                        <a href="https://arstechnica.com/health/2025/11/rfk-jr-s-new-cdc-deputy-director-prefers-natural-immunity-over-vaccines/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/2027-Renault-Trafic-E-Tech-Electric-Van.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>5d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/22/new-renault-electric-van-should-be-coming-to-america-as-a-nissan/" target="_blank">New Renault electric van SHOULD be coming to America — as a Nissan</a></h2>
+                    <p class="ai-summary">Unless they have vivid memories of guys like Nigel Mansell, Fernando Alonso, and Sebastian Vettel driving the wheels off a screaming, Renault-powered Formula 1 car, it’s tough to get an American to ca...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/22/new-renault-electric-van-should-be-coming-to-america-as-a-nissan/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/09/hydrogen_semi.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>5d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/22/daimler-ceo-just-dropped-some-pretty-wild-pro-hydrogen-claims/" target="_blank">Daimler CEO just dropped some pretty WILD pro-hydrogen claims [update]</a></h2>
+                    <p class="ai-summary">Daimler Truck AG CEO Karin Rådström hopped on LinkedIn today and dropped some absolutely wild pro-hydrogen talking points, using words like “emotional” and “inspiring” while making some pretty heady c...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/22/daimler-ceo-just-dropped-some-pretty-wild-pro-hydrogen-claims/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/1T6mnoghasw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>5d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank">How insect brains can do brilliant things | DW Documentary</a></h2>
+                    <p class="ai-summary">Insects are a lot smarter than you think. For a long time, scientists believed insects acted mostly out of instinct and weren’t particularly intelligent, in part, because most of them only live for a ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/First-Solar-Louisiana-factory.jpg?quality=82&strip=all&w=1200" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/first-solar-opens-a-louisiana-factory-thats-11-superdomes-big/" target="_blank">First Solar opens a Louisiana factory that’s 11 Superdomes big</a></h2>
+                    <p class="ai-summary">First Solar just cut the ribbon on a huge new factory in Iberia Parish, Louisiana, and it dwarfs the New Orleans Superdome. The company’s $1.1 billion, fully vertically integrated facility spans 2.4 m...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/first-solar-opens-a-louisiana-factory-thats-11-superdomes-big/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="construction">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://imgproxy.divecdn.com/Xbp5b05w5nRhHOj6acSMZNVDV09VIEubBFNILL-97vk/g:ce/rs:fill:1600:900:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9HZXR0eUltYWdlcy0yMjQ2MTYzNjU4LmpwZw==.webp" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Construction Dive - Lates</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.constructiondive.com/news/construction-starts-megaprojects-october-dodge/806230/" target="_blank">Construction starts surge 21%, led by multibillion-dollar projects</a></h2>
+                    <p class="ai-summary">Megaproject construction, including data center and manufacturing work, boosted overall groundbreakings in October, according to Dodge Construction Network.</p>
+                    <div class="card-footer">
+                        <a href="https://www.constructiondive.com/news/construction-starts-megaprojects-october-dodge/806230/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/Chevy-sporty-new-EV.jpeg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/chevy-previews-sporty-new-ev/" target="_blank">Chevy previews a sporty new EV, but will it actually come to life?</a></h2>
+                    <p class="ai-summary">No, it’s not the new Bolt. GM’s design team previewed a new high-riding “sporty Chevrolet EV” that should be brought to life.
+more…</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/chevy-previews-sporty-new-ev/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2017/12/business_card-1.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/podcast-electricity-base-currency-tesla-robotaxi-crashes-new-porsche-cayenne-ev/" target="_blank">Podcast: Electricity is the base currency, Tesla Robotaxi crashes, new Porsche Cayenne EV, and more</a></h2>
+                    <p class="ai-summary">In the Electrek Podcast, we discuss the most popular news in the world of sustainable transport and energy. In this week’s episode, we discuss electricity becoming the base currency, Tesla Robotaxi cr...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/podcast-electricity-base-currency-tesla-robotaxi-crashes-new-porsche-cayenne-ev/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/wallbox-supernova-fast-charger.jpg?quality=82&strip=all&w=1500" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/wallbox-codale-ev-chargers-mountain-west/" target="_blank">Wallbox pushes new wave of EV chargers across the Mountain West</a></h2>
+                    <p class="ai-summary">Wallbox is ramping up its partnership with distributor Codale Electric Supply to roll out more EV chargers across the Mountain West, a region that’s seeing a rapid escalation of electrification progra...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/wallbox-codale-ev-chargers-mountain-west/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/EcoFlow-Black-Friday-2025-FI.png?w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/ecoflow-black-friday-sale-samsung-autel-more/" target="_blank">Black Friday savings keep growing with up to 80% off EcoFlow power stations, Samsung smart appliances, Autel EV charger/solar cams, more</a></h2>
+                    <p class="ai-summary">Following suit from yesterday’s edition, today’s Green Deals are packed with better-than-ever full holiday savings, led by EcoFlow’s next phase of its Black Friday Sale event with up to 80% discounts ...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/ecoflow-black-friday-sale-samsung-autel-more/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/Nissan-LEAF-EV-price-UK.jpeg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/new-nissan-leaf-price-cut-uk-ev-grant/" target="_blank">The new Nissan LEAF gets a price cut thanks to the UK EV grant</a></h2>
+                    <p class="ai-summary">Nissan announced the new LEAF will start at just £32,249 in the UK after it became eligible for the maximum discount under the government’s Electric Car Grant.
+more…</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/new-nissan-leaf-price-cut-uk-ev-grant/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/NAVEE-main.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/navee-st3-pro-20-percent-off-black-friday-power-comfort/" target="_blank">NAVEE ST3 Pro, loaded with power and comfort, 20% off for Black Friday</a></h2>
+                    <p class="ai-summary">Looking for a smarter, cooler, and genuinely more comfortable way to commute this winter? The NAVEE ST3 Pro Damping Arm™ Suspension City E-scooter has officially entered the chat — and for Black Frida...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/navee-st3-pro-20-percent-off-black-friday-power-comfort/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/pUmpxBLMQKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank">Why the US is almost always at war? | DW Documentary</a></h2>
+                    <p class="ai-summary">Throughout its 250-year existence, the United States has almost always been at war. From its beginnings right through to the present day, the country's armed forces have shaped both American identity ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/yamaha-jog-e-head.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/yamaha-launches-new-electric-scooter-with-hondas-swappable-batteries/" target="_blank">Yamaha launches new electric scooter with Honda’s swappable batteries</a></h2>
+                    <p class="ai-summary">Yamaha is doubling down on urban electrification in Japan with the launch of its new Jog E electric scooter – and in a twist that we’ve been waiting years to see, it runs on Honda’s Mobile Power Pack ...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/yamaha-launches-new-electric-scooter-with-hondas-swappable-batteries/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/Toyota-new-flagship-EV-China.jpeg?quality=82&strip=all&w=1400" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/toyotas-new-flagship-ev-china-should-be-sold-everywhere/" target="_blank">Toyota’s new flagship EV for China should be sold everywhere</a></h2>
+                    <p class="ai-summary">Toyota launched its new flagship electric sedan in China with pre-orders starting at under $30,000. The bZ7 is Toyota’s most advanced vehicle yet, offering far more tech and features than those sold i...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/toyotas-new-flagship-ev-china-should-be-sold-everywhere/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/gGtuw7Rejtk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank">How Strong Is Super Glue?</a></h2>
+                    <p class="ai-summary">Why does superglue always stick to your hands and never what you want it to?
+
+And how strong is it really?</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2022/05/wheel-e-podcast.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>6d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/21/wheel-e-podcast-rads-sunset-onewheel-minibike-flatbet-e-trike-and-more/" target="_blank">Wheel-E Podcast: Rad’s sunset, Onewheel minibike, flatbet e-trike, and more</a></h2>
+                    <p class="ai-summary">This week on Electrek’s Wheel-E podcast, we discuss the most popular news stories from the world of electric bikes and other nontraditional electric vehicles. This time, that includes the potential en...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/21/wheel-e-podcast-rads-sunset-onewheel-minibike-flatbet-e-trike-and-more/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/cCEX7jV2cx8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank">The first Nuremberg trial | DW Documentary</a></h2>
+                    <p class="ai-summary">The Nuremberg trials started 80 years ago and marked a milestone in the establishment of international law. The images of high-ranking Nazis in the dock are seared into our collective memory.
+
+The Nur...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/fAkMppZZiSI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/fAkMppZZiSI" target="_blank">How Big Is a Human Cube?</a></h2>
+                    <p class="ai-summary">Sometimes, we wake up to do simple chemistry experiments. 
+And sometimes, we wake up and decide to turn everything into cubes.
+
+#kurzgesagt
+#inanutshell #kurzgesagt_inanutshell #learnwithshorts #scien...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/fAkMppZZiSI" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/oI7e0EHzbpE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>7d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank">This invasive species is destroying Germany's ponds! | DW Documentary</a></h2>
+                    <p class="ai-summary">Calico crayfish originate from North America, where people often use them as fishing bait. Nobody knows for sure just how they made it all the way to Germany, but it’s possible they were brought to Eu...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/3Yz90nUBc7M/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>8d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank">Prejudice or opportunity? When the LGBTQ+ community moves to the country | DW Documentary</a></h2>
+                    <p class="ai-summary">Queer people who live in rural areas and come out often face major challenges. While the LGBTQ+ community has battled to secure its place in urban centers, out in the provinces, worlds frequently coll...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/Abw9VdCkw_o/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank">Syria or Germany? Has German politics shifted for Syrians? | DW Documentary</a></h2>
+                    <p class="ai-summary">Sulaiman Tadmory came to Germany in 2015 after fleeing the civil war in Syria. With dictator Bashar al-Assad and his regime now gone, he's one of thousands of Syrians wondering whether it's time to re...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/sOsqXKr4l30/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sOsqXKr4l30" target="_blank">The Fat Problem</a></h2>
+                    <p class="ai-summary">Go to https://brilliant.org/nutshell/ to dive deeper into these topics and more for free + get 20% off the premium subscription! 
+This video was sponsored by Brilliant. Thanks a lot for the support!
+
+...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=sOsqXKr4l30" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/KGvU4axUax8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>9d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank">Is hard work all it takes to get rich? | DW Documentary</a></h2>
+                    <p class="ai-summary">Children born into low-income families are likely to stay poor. According to the World Economic Forum, it can take on average between four and five generations for a child born into a low-income famil...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/QtxVdC7pBQM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>11d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank">What happens if you throw sand into a jet engine?</a></h2>
+                    <p class="ai-summary">How does a jet engine not melt? Sponsored by KiwiCo - Use code VERITASIUM to get 50% off your first monthly KiwiCo Crate! https://www.kiwico.com/VERITASIUM 
+Want to start your own crystal garden? http...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/5zyxsOMw634/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">DW Documentary</div>
+                        <time>11d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank">Water scarcity - Innovation to combat drought | DW Documentary</a></h2>
+                    <p class="ai-summary">While heat and drought reduce the groundwater in many places, water consumption continues to rise. Is it possible to reverse this global trend by using water more sparingly in households, industry, an...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/sq6ZOVbKQhY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Practical Engineering</div>
+                        <time>12d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank">The Hidden Engineering Behind the Falkirk Wheel</a></h2>
+                    <p class="ai-summary">Some of the hidden details behind this very cool piece of infrastructure.
+🥑 Claim your 10 Free Meals + Free Breakfast for Life by using code PRACTICALFM at https://bit.ly/41PhMMi! One free meal per bo...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/e9xOMOTTW6U/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">PBS Space Time</div>
+                        <time>14d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=e9xOMOTTW6U" target="_blank">The Gravity Particle Should Exist. So Where Is It?</a></h2>
+                    <p class="ai-summary">Head to https://brilliant.org/Spacetime/ to start learning for free. Plus, our viewers get 20% off an annual Premium subscription for unlimited daily access to everything Brilliant has to offer
+
+Physi...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=e9xOMOTTW6U" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/OxOx6--oN8I/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>14d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/OxOx6--oN8I" target="_blank">The Most Dangerous Animal</a></h2>
+                    <p class="ai-summary">Lions and sharks might seem dangerous, but there are much more dangerous animals, like hippos, snakes, dogs and even us, humans! Still, none of them can compare to the truly most dangerous animal on E...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/OxOx6--oN8I" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/9M_QK4stCJU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>15d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=9M_QK4stCJU" target="_blank">Why People Are So Confident When They're Wrong</a></h2>
+                    <p class="ai-summary">The problem with overconfidence. To help correct your overconfidence we have a tabletop game launching. Pledge your support now on kickstarter! - https://ve42.co/ocdsc 
+
+If you’re looking for a molecu...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=9M_QK4stCJU" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/Mo1A45ShcMo/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>16d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Mo1A45ShcMo" target="_blank">You're More Stressed Than Ever - Let's Change That</a></h2>
+                    <p class="ai-summary">Our brand-new Health Journal is here to help you take care of your physical and mental health, using real science and no guilt: https://shop.kgs.link/healthclub
+Learn what works for you, and build a r...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=Mo1A45ShcMo" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/HVySQLuxLkI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Veritasium</div>
+                        <time>17d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/HVySQLuxLkI" target="_blank">Seeing Inside A Thermite Reaction</a></h2>
+                    <p class="ai-summary">The world’s first look inside a thermite reaction.</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/HVySQLuxLkI" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/nDKHvoo4f-8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>21d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/nDKHvoo4f-8" target="_blank">You Are Everyone</a></h2>
+                    <p class="ai-summary">We don't know the meaning of life, or how and why exactly it exists, which makes it all that more exciting to think about all the possible answers to those questions! Be kind to others, because you ne...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/shorts/nDKHvoo4f-8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://img.youtube.com/vi/Brm71uCWr-I/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>23d Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Brm71uCWr-I" target="_blank">You Need To Quit Weed.</a></h2>
+                    <p class="ai-summary">Take back your personal data with Incogni! Use code "kurzgesagt" at the link https://incogni.com/kurzgesagt and get 60% off annual plans.
+
+A new year, a new chance to grow! Get your 12,026 Human Era C...</p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=Brm71uCWr-I" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
         </div>
 
-        <!-- PAGINATION SECTION -->
         <div class="pagination">
-            <a href="page8.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page7.html" class="page-btn ">7</a><a href="page8.html" class="page-btn ">8</a><a href="page9.html" class="page-btn active">9</a><a href="page10.html" class="page-btn ">10</a><a href="page11.html" class="page-btn ">11</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page21.html" class="page-btn ">21</a><a href="page10.html" class="page-btn">NEXT &rarr;</a>
+            <a href="page8.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page7.html" class="page-btn ">7</a><a href="page8.html" class="page-btn ">8</a><a href="page9.html" class="page-btn active">9</a><a href="page10.html" class="page-btn ">10</a><a href="page11.html" class="page-btn ">11</a><a href="page10.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
-        <!-- FOOTER SECTION -->
         <footer class="site-footer">
             <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com?subject=SPECULA Source Suggestion" class="btn-action btn-suggest">
-                    + Suggest Source
-                </a>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">
-                    ♥ Donate via PayPal
-                </a>
+                <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
             </div>
-
-            <div class="disclaimer-box">
-                <span class="disclaimer-title">DISCLAIMER & FAIR USE NOTICE</span>
-                <p>
-                    SPECULA is a non-profit, personal project designed for educational and informational aggregation purposes only. 
-                    This website does not generate revenue, contains no advertisements, and is not affiliated with any of the news sources linked.
-                    Headlines, summaries, and images are dynamically aggregated via public RSS feeds under Fair Use principles. 
-                    All rights and credit belong to the original publishers. If you enjoy a story, please click through to support the original creators.
-                </p>
-                <p style="margin-top: 10px;">
-                    Contact: lolish3k@gmail.com
-                </p>
+            <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">
+                SPECULA is a non-profit news aggregator.
             </div>
         </footer>
     </div>
 
     <script>
+        // FILTER LOGIC
+        function filterNews(category) {
+            const cards = document.querySelectorAll('.news-card');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            // Update buttons
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // THEME & MODAL LOGIC
         const toggleBtn = document.getElementById('themeBtn');
-        const themeText = document.getElementById('themeText');
-        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'light') { enableLightMode(); }
+        if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+        
         toggleBtn.addEventListener('click', () => {
-            if (body.classList.contains('light-mode')) { enableDarkMode(); } 
-            else { enableLightMode(); }
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+            toggleBtn.innerText = body.classList.contains('light-mode') ? '☀ LIGHT MODE' : '☾ DARK MODE';
         });
-        function enableLightMode() {
-            body.classList.add('light-mode'); themeText.innerText = 'LIGHT MODE'; themeIcon.innerText = '☀'; localStorage.setItem('theme', 'light');
-        }
-        function enableDarkMode() {
-            body.classList.remove('light-mode'); themeText.innerText = 'DARK MODE'; themeIcon.innerText = '☾'; localStorage.setItem('theme', 'dark');
-        }
+
+        const modal = document.getElementById('changelogModal');
+        const versionBtn = document.getElementById('versionBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        versionBtn.onclick = () => modal.classList.add('open');
+        closeModal.onclick = () => modal.classList.remove('open');
+        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
     </script>
 </body>
 </html>

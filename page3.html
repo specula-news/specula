@@ -52,11 +52,11 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
 
-        /* LOGO ANIMATION (The Woggle) */
+        /* LOGO ANIMATION */
         .logo-icon { 
             height: 50px; width: auto; 
             filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
@@ -69,7 +69,7 @@
         }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
 
-        /* CATEGORY NAVIGATION (Under Logo) */
+        /* CATEGORY NAVIGATION */
         .category-nav {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
             padding-top: 20px; width: 100%;
@@ -163,25 +163,25 @@
             
             <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
                 
-                <!-- VERSION 7.1.0 -->
+                <!-- VERSION 7.2.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
-                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
-                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
-                        • <strong>UX:</strong> Version number is now clickable for full history.
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
                     </div>
                 </li>
 
-                <!-- VERSION 6.2.5 -->
+                <!-- VERSION 7.1.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
                     <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 6.2.5</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
-                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
-                        • Expanded auto-translation.
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
                     </div>
                 </li>
             </ul>
@@ -196,12 +196,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
 
-            <!-- NEW TOP NAVIGATION -->
+            <!-- TOP NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="filterNews('all')">All News</button>
                 <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
@@ -214,21 +214,345 @@
 
         <div class="news-grid" id="newsGrid">
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>10h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/gm-tech-executive-shakeup-continues-on-software-team/" target="_blank">GM tech executive shakeup continues on software team</a></h2>
-                    <p class="ai-summary">Three of GM's top software executives have left the automaker in recent months, as the company moves to combine its disparate technology businesses.</p>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/exposing-the-learning-curve-myth-why-enhanced-geothermal-cannot-follow-solars-cost-trajectory/" target="_blank">Exposing the Learning-Curve Myth: Why Enhanced Geothermal Cannot Follow Solar’s Cost Trajectory</a></h2>
+                    <p class="ai-summary">Enhanced geothermal systems have been positioned by advocates as a scalable source of firm, low carbon electricity that can complement wind and solar. The idea has appeal. The deep heat of the crust i...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/gm-tech-executive-shakeup-continues-on-software-team/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://cleantechnica.com/2025/11/27/exposing-the-learning-curve-myth-why-enhanced-geothermal-cannot-follow-solars-cost-trajectory/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24302789/226463_DualSense_Edge_VPavic_0012.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>10h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/822252/sony-dualsense-edge-controller-black-friday-deal-sale-2025" target="_blank">The DualSense Edge has fallen to one of the lowest we’ve seen for Black Friday</a></h2>
+                    <p class="ai-summary">We’ve seen Sony’s DualSense Edge discounted on a few occasions this year, and now it’s back on sale ahead of Black Friday as part of Sony’s ongoing holiday promo. Right now, you can snag the pro-style...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/822252/sony-dualsense-edge-controller-black-friday-deal-sale-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/a33ab187-dd67-451f-a63c-9bd0b4553b5c_22e6a210.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>10h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/united-states-canada/article/3334433/canada-rolls-back-climate-rules-energy-deal-looks-asia-weather-trump-tariffs?utm_source=rss_feed" target="_blank">Canada drops climate rules in oil deal, looks to Asia to weather Trump tariffs</a></h2>
+                    <p class="ai-summary">Canada’s Prime Minister Mark Carney signed an agreement with Alberta’s premier on Thursday that rolls back certain climate rules to spur investment in energy production, while encouraging construction...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/united-states-canada/article/3334433/canada-rolls-back-climate-rules-energy-deal-looks-asia-weather-trump-tariffs?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>11h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/guinea-bissaus-deposed-president-embalo-arrives-in-senegal-after-coup?traffic_source=rss" target="_blank">Guinea-Bissau’s deposed President Embalo arrives in Senegal after coup</a></h2>
+                    <p class="ai-summary">Senegal's Foreign Ministry says Umaro Sissoco Embalo arrived in the country a day after he was deposed in military coup.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/guinea-bissaus-deposed-president-embalo-arrives-in-senegal-after-coup?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/3b1501b8-9827-48e3-813e-93ad62d55750_78f75a7f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>11h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/politics/article/3334398/taiwans-william-lai-accused-stoking-fear-2027-countdown-confusion-and-defence-push?utm_source=rss_feed" target="_blank">Taiwan’s William Lai accused of stoking fear with 2027 countdown confusion</a></h2>
+                    <p class="ai-summary">Opposition critics have accused Taiwanese leader William Lai Ching-te of stoking fear on the island with his suggestion that Beijing could be preparing to take Taiwan by force by 2027.
+They also said ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/china/politics/article/3334398/taiwans-william-lai-accused-stoking-fear-2027-countdown-confusion-and-defence-push?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/real-uncertainty-what-to-know-about-the-honduran-presidential-election?traffic_source=rss" target="_blank">‘Real uncertainty’: What to know about Honduras’ presidential election</a></h2>
+                    <p class="ai-summary">Several candidates are vying to replace President Xiomara Castro, but concerns about voting process have caused tension.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/real-uncertainty-what-to-know-about-the-honduran-presidential-election?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/5328f77d-4a8b-4f05-9610-4618a1a16058_1d254254.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3334268/national-games-underscored-ties-bind-hongkongers-rest-china?utm_source=rss_feed" target="_blank">National Games underscored ties that bind Hongkongers with rest of China</a></h2>
+                    <p class="ai-summary">China’s National Games marked a historic milestone this year: for the first time since the event’s inception in 1959, competitions were held throughout the Guangdong-Hong Kong-Macau Greater Bay Area –...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3334268/national-games-underscored-ties-bind-hongkongers-rest-china?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/a46672ba-4e66-48be-9714-b9f92667e8f9_44ebd703.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/middle-east/article/3334432/israeli-soldiers-appear-kill-palestinians-west-bank-after-they-surrender?utm_source=rss_feed" target="_blank">Israeli soldiers kill Palestinian men in West Bank after they appear to surrender</a></h2>
+                    <p class="ai-summary">Israeli forces on Thursday killed a pair of Palestinian men in the occupied West Bank after they appeared to surrender to troops, drawing Palestinian accusations that the men were executed “in cold bl...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/middle-east/article/3334432/israeli-soldiers-appear-kill-palestinians-west-bank-after-they-surrender?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/7bswxc7hmwV5qXaoLFUd3h-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-toys-lego/here-are-all-the-black-friday-lego-deals-available-right-now" target="_blank">Here are my top picks of all the early Black Friday Lego deals available to build right now</a></h2>
+                    <p class="ai-summary">I know that as a Lego fan and expert, I wouldn't hesitate to wait for Black Friday when there are so many great deals on Lego already available.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/entertainment/space-toys-lego/here-are-all-the-black-friday-lego-deals-available-right-now" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/00409c2a-9e2c-43b6-b0e7-554c9925b544_b1b3bd93.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334431/italys-leonardo-unveils-michelangelo-dome-defence-system-europe-eyes-russia-threat?utm_source=rss_feed" target="_blank">Italy’s Leonardo unveils ‘Michelangelo Dome’ air defence system</a></h2>
+                    <p class="ai-summary">Italy’s defence and aerospace group Leonardo on Thursday presented plans for a new multilayered air defence system, as European countries stepped up military capabilities to bolster defences against R...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/europe/article/3334431/italys-leonardo-unveils-michelangelo-dome-defence-system-europe-eyes-russia-threat?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25845508/236834_Ray_Ban_Meta_Smart_Glasses_AKrales_0818.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>12h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank">The Ray-Ban Meta smart glasses are at their best-ever price for Black Friday</a></h2>
+                    <p class="ai-summary">Meta may have just released the Ray-Ban Meta (Gen 2) at the end of October, but they’re not significantly different from the last-gen model introduced in 2021. The overall experience is very similar, ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/former-peru-president-pedro-castillo-sentenced-to-11-5-years-in-prison?traffic_source=rss" target="_blank">Former Peru President Pedro Castillo sentenced to 11.5 years in prison</a></h2>
+                    <p class="ai-summary">The decision follows Castillo's failed 2022 bid to dissolve Congress and avoid a third impeachment attempt.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/former-peru-president-pedro-castillo-sentenced-to-11-5-years-in-prison?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/economy/2025/11/27/canada-rolls-back-climate-rules-to-boost-investments?traffic_source=rss" target="_blank">Canada’s Carney rolls back climate rules to boost investments</a></h2>
+                    <p class="ai-summary">In its deal with Alberta, Canada will scrap emissions cap on the oil and gas sector, among other moves.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/economy/2025/11/27/canada-rolls-back-climate-rules-to-boost-investments?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/VDqUF57mPuCTtsCQGvSVTc-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/weve-reviewed-countless-drones-and-this-lightweight-beginner-friendly-drone-is-one-of-the-best-now-with-32-dollars-off-this-black-friday" target="_blank">We've reviewed countless drones, and this lightweight, beginner-friendly drone is one of the best — now with $32 off this Black Friday</a></h2>
+                    <p class="ai-summary">Looking to get started with drone flying? The Atom LT is a great, easy-to-use drone, and it won't break the bank, especially with this early Black Friday deal.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/weve-reviewed-countless-drones-and-this-lightweight-beginner-friendly-drone-is-one-of-the-best-now-with-32-dollars-off-this-black-friday" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/video-shows-israeli-soldiers-shooting-surrendering-palestinians-in-jenin?traffic_source=rss" target="_blank">Video shows Israeli soldiers shooting surrendering Palestinians in Jenin</a></h2>
+                    <p class="ai-summary">Israeli soldiers have been filmed shooting two Palestinians who were seen on their knees with their hands in the air.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/video-shows-israeli-soldiers-shooting-surrendering-palestinians-in-jenin?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/URjHxdnA6tqLuzrQD6QNS8-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-movies-shows/the-war-between-the-land-and-the-sea-release-date-plot-cast-and-everything-we-know-about-the-aquatic-doctor-who-spin-off" target="_blank">'The War Between the Land and the Sea': Release date, plot, cast, and everything we know about the aquatic 'Doctor Who' spin-off</a></h2>
+                    <p class="ai-summary">Classic "Who" foes the Sea Devils make waves in this Doctor-less, grown-up drama series from the mind of Russell T Davies.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/entertainment/space-movies-shows/the-war-between-the-land-and-the-sea-release-date-plot-cast-and-everything-we-know-about-the-aquatic-doctor-who-spin-off" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>13h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/more-than-40-killed-as-heavy-rains-trigger-floods-in-sri-lanka?traffic_source=rss" target="_blank">More than 40 people killed as heavy rains trigger floods in Sri Lanka</a></h2>
+                    <p class="ai-summary">Traffic and trains disrupted as Sri Lanka battles severe weather and rising floodwaters across multiple regions.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/more-than-40-killed-as-heavy-rains-trigger-floods-in-sri-lanka?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/tens-of-thousands-displaced-as-floods-sweep-across-south-asia?traffic_source=rss" target="_blank">Tens of thousands displaced as floods sweep across South Asia</a></h2>
+                    <p class="ai-summary">Heavy rains have unleashed devastating floods and landslides across South Asia.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/video/newsfeed/2025/11/27/tens-of-thousands-displaced-as-floods-sweep-across-south-asia?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -242,12 +566,132 @@
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <time>14h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/breaking-down-the-boom-in-the-nordics-startup-ecosystem/" target="_blank">Breaking down the boom in the Nordic’s startup ecosystem</a></h2>
-                    <p class="ai-summary">On this week’s Equity, we sat down with Dennis Green-Lieber, the founder of the AI company Propane, to talk about the booming success of the Nordic ecosystem.</p>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank">This Thanksgiving’s real drama may be Michael Burry versus Nvidia</a></h2>
+                    <p class="ai-summary">Is Burry the canary in the coal mine, warning of a collapse that's inevitable? Or could his fame, his track record, his now unrestricted voice, and a fast-growing audience trigger the very implosion h...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/breaking-down-the-boom-in-the-nordics-startup-ecosystem/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/73CQtgfjcFsALbREFCvewH-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-toys-lego/one-of-the-best-lego-star-wars-helmets-the-jango-fett-helmet-is-20-percent-off-in-this-early-black-friday-deal" target="_blank">One of the best Lego Star Wars helmets, the Jango Fett Helmet, is 20% off in this early Black Friday deal</a></h2>
+                    <p class="ai-summary">We've bounty-hunted down a great deal for lovers of Lego, Star Wars or both. This Lego Star Wars Jango Fett Helmet is down to just $56 at Walmart, and it's a blast to build, too.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/entertainment/space-toys-lego/one-of-the-best-lego-star-wars-helmets-the-jango-fett-helmet-is-20-percent-off-in-this-early-black-friday-deal" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/fossil-lobby-is-out-of-arguments-in-2025/" target="_blank">Fossil Lobby Is Out of Arguments in 2025</a></h2>
+                    <p class="ai-summary">TL;DR: Fossil narratives are collapsing. Economics, physics, and real-world deployment all now point one way: solar + storage. For several decades now, the fossil lobby has followed the renewable sect...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/fossil-lobby-is-out-of-arguments-in-2025/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank">Do you want an age limit for social media?</a></h2>
+                    <p class="ai-summary">Today's social media question
+
+		
+		
+		
+		
+		There has been a lot of talk about the age limit for social media recently and yesterday the EU Parliament stated that it advocates an age limit of 13 for...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/8A0A1420.jpeg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
+                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are create...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/05/Rad-Power-RadExpand-5-Plus-Folding-e-bike-2.png?w=1200" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/27/rad-power-black-friday-sale-anker-ge-appliance-more/" target="_blank">Rad Power expands e-bike Black Friday Sale with more savings + lows from $999, Anker smart security devices 50% off, GE appliance, more</a></h2>
+                    <p class="ai-summary">Happy Thanksgiving, everyone! To celebrate the day, we’ve got another jam-packed edition of Green Deals, with plenty more that you can browse in our official Black Friday Green Deals hub here, encompa...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/27/rad-power-black-friday-sale-anker-ge-appliance-more/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="construction">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036374/n3-villa-asnow-design-and-construct" target="_blank">No.13 Villa / AsNow Design & Construct</a></h2>
+                    <p class="ai-summary">Villa No. 13 is conceived around the interplay of open, semi-open, and enclosed spaces—a spatial composition structured by three exterior courtyards and an interior patio that together create an inter...</p>
+                    <div class="card-footer">
+                        <a href="https://www.archdaily.com/1036374/n3-villa-asnow-design-and-construct" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -255,267 +699,396 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/f1rNyA1-sg4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>14h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/27/thanksgiving-a-story-of-celebration-and-pain-in-maps?traffic_source=rss" target="_blank">Thanksgiving: A story of celebration and pain, in maps</a></h2>
+                    <p class="ai-summary">It's a day to give thanks. But for millions of Indigenous Americans, it also serves as a reminder of loss.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/27/thanksgiving-a-story-of-celebration-and-pain-in-maps?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/NBxANMKCiKECC7aEzpttrV-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/our-lego-expert-gave-this-star-wars-set-5-out-of-5-stars-and-now-it-could-be-yours-for-just-usd40-this-black-friday" target="_blank">Our Lego expert gave this Star Wars set 5 out of 5 stars, and now it could be yours for just $40 this Black Friday</a></h2>
+                    <p class="ai-summary">Celebrate the prequel trilogy's most overlooked starship with $10 off this awesome mid-sized Lego Star Wars: Attack of the Clones Acclamator-Class Assault Ship model.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/our-lego-expert-gave-this-star-wars-set-5-out-of-5-stars-and-now-it-could-be-yours-for-just-usd40-this-black-friday" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/8e002bbc-1544-45bc-aaca-8d8999b5a4b6_8baad676.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3334429/hk-finance-chief-seeks-attract-italian-company-listings-hong-kong-stock-exchange?utm_source=rss_feed" target="_blank">Hong Kong’s finance chief seeks to attract Italian company listings on HKEX</a></h2>
+                    <p class="ai-summary">Hong Kong’s finance chief courted Italian companies on Thursday to go public on the city’s stock exchange, which would allow them to tap into mainland Chinese liquidity and solidify their presence in ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3334429/hk-finance-chief-seeks-attract-italian-company-listings-hong-kong-stock-exchange?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank">Apple's Christmas commercial A Critter Carol is here</a></h2>
+                    <p class="ai-summary">Filmed with iPhone 17 Pro
+
+			
+			
+		
+		
+		
+		Apple has released its annual Christmas commercial and this year's entry is called A Critter Carol and takes place in a snowy forest where a group of animals find a lost iP...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2024/05/sunrun-solar-battery-storage-tesla-powerwall.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/27/tesla-class-action-over-powerwall-recall-bricked-batteries/" target="_blank">Tesla faces class action over Powerwall recall that leaves people with bricked batteries</a></h2>
+                    <p class="ai-summary">Tesla’s poorly handled Powerwall 2 recall is now turning into a potential  class action lawsuit over for leaving people with bricked batteries until Tesla replaces them.
+more…</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/27/tesla-class-action-over-powerwall-recall-bricked-batteries/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank">A trip through Andermatt with a Ferrari F40</a></h2>
+                    <p class="ai-summary">Not a bad day
+
+			
+			
+		
+		
+		
+		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at how it might look. Extra lovely if you have money, a Ferrari F40 and ...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/798d2f78-3334-4fd8-b1a2-d0c2cbff01d3_f11e18d4.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334428/death-toll-hong-kong-fire-rises-83-grief-stricken-city-rallies-help-victims?utm_source=rss_feed" target="_blank">Death toll in Hong Kong fire rises to 83 as city rallies to help victims</a></h2>
+                    <p class="ai-summary">The death toll in Hong Kong’s worst fire in seven decades climbed to 83 on Thursday as many remained missing and a grief-stricken city rallied as one with authorities, private companies, charities and...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334428/death-toll-hong-kong-fire-rises-83-grief-stricken-city-rallies-help-victims?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/5cbc4ec2-3e92-4e6b-8187-03d29715e080_93cd5e7c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>15h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/diplomacy/article/3334427/eus-von-der-leyen-will-not-go-china-french-president-macron?utm_source=rss_feed" target="_blank">EU’s von der Leyen will not go to China with French President Macron</a></h2>
+                    <p class="ai-summary">European Commission President Ursula von der Leyen will not join French President Emmanuel Macron on his state visit to China next week, the Post has learned, in a break from recent tradition.
+Macron ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/china/diplomacy/article/3334427/eus-von-der-leyen-will-not-go-china-french-president-macron?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank">The next Meta headset may get external puck</a></h2>
+                    <p class="ai-summary">Also stated to scrap the Quest name
+
+		
+		
+		
+		
+		According to VR expert Nima Zeighami, Meta is planning a new strategy for its upcoming headset. Instead of releasing a direct sequel to Quest 3, rumored…<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/Sf2h5b6pd8kydzZHApEjMA-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-toys-lego/we-have-reviewed-over-70-lego-sets-but-this-is-the-early-black-friday-deal-wed-recommend" target="_blank">This LEGO Technic NASA Apollo Lunar Roving Vehicle has $66 off this Black Friday but this is your last chance to grab it before it retires forever!</a></h2>
+                    <p class="ai-summary">We have reviewed over 70 Lego sets, but this is the early Black Friday deal we'd recommend</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/entertainment/space-toys-lego/we-have-reviewed-over-70-lego-sets-but-this-is-the-early-black-friday-deal-wed-recommend" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank">Best iPad apps for unleashing and exploring your creativity</a></h2>
+                    <p class="ai-summary">We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/another-vertebrae-added-to-the-philippine-ev-spine-with-the-opening-of-a-new-charging-station-south-of-manila/" target="_blank">Another Vertebrae Added to the “Philippine EV Spine” with the Opening of a New Charging Station South of Manila</a></h2>
+                    <p class="ai-summary">The rollout of electric vehicle (EV) charging infrastructure in the Philippines continues to accelerate, with new stations opening along major travel routes in Luzon. The expansion, led by Ayala Group...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/another-vertebrae-added-to-the-philippine-ev-spine-with-the-opening-of-a-new-charging-station-south-of-manila/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank">Humanoid robot walked over 10 miles</a></h2>
+                    <p class="ai-summary">AgiBot A2 Ultra has set a new world record in robot walking
+
+
+			
+			
+		
+		
+		
+		Chinese robotics company AgiBot's humanoid robot model A2 Ultra went on a really long walk earlier this…<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/largest-tesla-supercharger-hub-opens-is-powered-by-solar/" target="_blank">Largest Tesla Supercharger Hub Opens — Is Powered By Solar</a></h2>
+                    <p class="ai-summary">Tesla’s largest Supercharger hub has been officially launched and it runs on solar power with battery storage. The Lost Hills, California, charging hub has 164 V4 Supercharger stalls, which deliver ov...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/largest-tesla-supercharger-hub-opens-is-powered-by-solar/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">TechCrunch</div>
+                        <time>16h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistics simpler, safer, and smarter</a></h2>
+                    <p class="ai-summary">We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!</p>
+                    <div class="card-footer">
+                        <a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/6r3x2t872Pc/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">DW Documentary</div>
-                        <time>1d Ago</time>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=f1rNyA1-sg4" target="_blank">Hair: Why it's important and what it reveals about us | DW Documentary</a></h2>
-                    <p class="ai-summary">Our hair doesn't just provide protection from sun and cold, it also says a great deal about us. In a society that's predominantly focused on outward appearance, hair wields huge social capital. It can...</p>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank">Amazon: Who pays the price? | DW Documentary</a></h2>
+                    <p class="ai-summary">Online retailer Amazon has been repeatedly criticized for its business practices. The US company puts pressure on retailers and exerts influence on pricing policies, thus fueling cut-throat competitio...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=f1rNyA1-sg4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/4kXb4IfW21c/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Feber</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=4kXb4IfW21c" target="_blank">China’s Artillery Breakthrough: The 30-Minute Firepower That’s Turning Heads</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=4kXb4IfW21c" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/oi_lG0MQw6c/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=oi_lG0MQw6c" target="_blank">Why China’s Newest Destroyer Still Avoids GaN Radar Technical Limit or Strategic Choice?</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=oi_lG0MQw6c" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/eUizEP_fJ4g/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=eUizEP_fJ4g" target="_blank">China's Shipbuilding Dominance: A Naval Arms Race in the Making?</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=eUizEP_fJ4g" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/gQMWAs2Srv4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=gQMWAs2Srv4" target="_blank">Why Believing the J-16 Is About to Be Retired Is Naïve — 100 Irrefutable Reasons</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=gQMWAs2Srv4" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/XbRJCxmgQ4Y/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=XbRJCxmgQ4Y" target="_blank">Underwater Arms Race Escalates: Fujian’s Anti-Torpedo System Shows Revolutionary Leap</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=XbRJCxmgQ4Y" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/TYpcm01-RtM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=TYpcm01-RtM" target="_blank">China's Carrier-Based Drone Launch: Game-Changer or Overblown Hype?</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=TYpcm01-RtM" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/OaLEy3_e3wY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=OaLEy3_e3wY" target="_blank">China–Tonga Ties Upgraded: Xi Jinping Meets King Tupou VI at the Great Hall of the People</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=OaLEy3_e3wY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/LMybt9-aXTQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=LMybt9-aXTQ" target="_blank">Poland’s fentanyl crisis | DW Documentary</a></h2>
-                    <p class="ai-summary">Fentanyl is estimated to be fifty times as potent as heroin and is extremely addictive. The number of people in Poland abusing this powerful painkiller is growing. There have been dozens of fatalities...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=LMybt9-aXTQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/l_FpOnObpK4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>2d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/l_FpOnObpK4" target="_blank">Fear on the streets | DW Documentary</a></h2>
-                    <p class="ai-summary">Although sexual violence can affect people of all genders, women and girls are disproportionally impacted.  
+                    <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teases updated Astra</a></h2>
+                    <p class="ai-summary">Presented next year
 
-Many women feel unsafe in public spaces, whether on streets, at train stations, or in park...</p>
+		
+		
+		
+		
+		In the next year, Opel will release an updated version of the model Astra. Among other things, it gets a new face and we get a first glimpse of this in these ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/l_FpOnObpK4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/phq1xA3ZeMM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>4d Ago</time>
+                        <div class="source-badge">The Verge</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank">Yemen and the Houthis: Pirates, terrorists, freedom fighters? | DW Documentary</a></h2>
-                    <p class="ai-summary">The Houthi militia has been fighting for supremacy in Yemen for years. The conflict has become a civil war, with international involvement. The Middle East conflict has further escalated the situation...</p>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
+                    <p class="ai-summary">If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=phq1xA3ZeMM" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="geopolitics">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/RPViHce3l_w/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK095_MICROSOFT_2_CVirginia_B.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>5d Ago</time>
+                        <div class="source-badge">The Verge</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank">How cricket unites and divides Afghanistan | DW Documentary</a></h2>
-                    <p class="ai-summary">Afghanistan has risen from sporting outsider to one of the world's top cricket nations. The unlikely journey has brought hope to a country with rare reason to celebrate while illuminating the complex ...</p>
+                    <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
+                    <p class="ai-summary">Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these s...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=RPViHce3l_w" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/1T6mnoghasw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>5d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank">How insect brains can do brilliant things | DW Documentary</a></h2>
-                    <p class="ai-summary">Insects are a lot smarter than you think. For a long time, scientists believed insects acted mostly out of instinct and weren’t particularly intelligent, in part, because most of them only live for a ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/1T6mnoghasw" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/pUmpxBLMQKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>6d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank">Why the US is almost always at war? | DW Documentary</a></h2>
-                    <p class="ai-summary">Throughout its 250-year existence, the United States has almost always been at war. From its beginnings right through to the present day, the country's armed forces have shaped both American identity ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=pUmpxBLMQKg" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -523,592 +1096,18 @@ Many women feel unsafe in public spaces, whether on streets, at train stations, 
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/gGtuw7Rejtk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/XqddauERJmE5BgrvuAv2J8-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>6d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank">How Strong Is Super Glue?</a></h2>
-                    <p class="ai-summary">Why does superglue always stick to your hands and never what you want it to?
-
-And how strong is it really?</p>
+                    <h2 class="card-title"><a href="https://www.space.com/astronomy/venus/key-driver-of-extreme-winds-on-venus-identified" target="_blank">Key Driver of Extreme Winds on Venus Identified</a></h2>
+                    <p class="ai-summary">A new study suggests that a once-daily atmospheric tidal cycle may be a bigger driver of rapid Venusian winds than previously thought.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/gGtuw7Rejtk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/cCEX7jV2cx8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>7d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank">The first Nuremberg trial | DW Documentary</a></h2>
-                    <p class="ai-summary">The Nuremberg trials started 80 years ago and marked a milestone in the establishment of international law. The images of high-ranking Nazis in the dock are seared into our collective memory.
-
-The Nur...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=cCEX7jV2cx8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/oI7e0EHzbpE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>7d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank">This invasive species is destroying Germany's ponds! | DW Documentary</a></h2>
-                    <p class="ai-summary">Calico crayfish originate from North America, where people often use them as fishing bait. Nobody knows for sure just how they made it all the way to Germany, but it’s possible they were brought to Eu...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/oI7e0EHzbpE" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/3Yz90nUBc7M/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>8d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank">Prejudice or opportunity? When the LGBTQ+ community moves to the country | DW Documentary</a></h2>
-                    <p class="ai-summary">Queer people who live in rural areas and come out often face major challenges. While the LGBTQ+ community has battled to secure its place in urban centers, out in the provinces, worlds frequently coll...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=3Yz90nUBc7M" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/Abw9VdCkw_o/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>9d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank">Syria or Germany? Has German politics shifted for Syrians? | DW Documentary</a></h2>
-                    <p class="ai-summary">Sulaiman Tadmory came to Germany in 2015 after fleeing the civil war in Syria. With dictator Bashar al-Assad and his regime now gone, he's one of thousands of Syrians wondering whether it's time to re...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=Abw9VdCkw_o" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/KGvU4axUax8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>9d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank">Is hard work all it takes to get rich? | DW Documentary</a></h2>
-                    <p class="ai-summary">Children born into low-income families are likely to stay poor. According to the World Economic Forum, it can take on average between four and five generations for a child born into a low-income famil...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/KGvU4axUax8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/QtxVdC7pBQM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>11d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank">What happens if you throw sand into a jet engine?</a></h2>
-                    <p class="ai-summary">How does a jet engine not melt? Sponsored by KiwiCo - Use code VERITASIUM to get 50% off your first monthly KiwiCo Crate! https://www.kiwico.com/VERITASIUM 
-Want to start your own crystal garden? http...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=QtxVdC7pBQM" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/5zyxsOMw634/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>11d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank">Water scarcity - Innovation to combat drought | DW Documentary</a></h2>
-                    <p class="ai-summary">While heat and drought reduce the groundwater in many places, water consumption continues to rise. Is it possible to reverse this global trend by using water more sparingly in households, industry, an...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=5zyxsOMw634" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/sq6ZOVbKQhY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>12d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank">The Hidden Engineering Behind the Falkirk Wheel</a></h2>
-                    <p class="ai-summary">Some of the hidden details behind this very cool piece of infrastructure.
-🥑 Claim your 10 Free Meals + Free Breakfast for Life by using code PRACTICALFM at https://bit.ly/41PhMMi! One free meal per bo...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=sq6ZOVbKQhY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/9M_QK4stCJU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>15d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=9M_QK4stCJU" target="_blank">Why People Are So Confident When They're Wrong</a></h2>
-                    <p class="ai-summary">The problem with overconfidence. To help correct your overconfidence we have a tabletop game launching. Pledge your support now on kickstarter! - https://ve42.co/ocdsc 
-
-If you’re looking for a molecu...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=9M_QK4stCJU" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/HVySQLuxLkI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>17d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/HVySQLuxLkI" target="_blank">Seeing Inside A Thermite Reaction</a></h2>
-                    <p class="ai-summary">The world’s first look inside a thermite reaction.</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/HVySQLuxLkI" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/f2uad6LT9fo/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>23d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=f2uad6LT9fo" target="_blank">Concrete's Greatest Weakness is Time</a></h2>
-                    <p class="ai-summary">The challenge of cure time
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch 17 Pages: https://nebula.tv/videos/17pages?ref=practical-eng...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=f2uad6LT9fo" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/v0afQ6w3Bjw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>24d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=v0afQ6w3Bjw" target="_blank">Refueling a NUCLEAR REACTOR - Smarter Every Day 311</a></h2>
-                    <p class="ai-summary">You can try AnyDesk for free.  It's good.  https://anydesk.com/smarter 
-http://www.patreon.com/smartereveryday
-Get Email Updates: https://www.smartereveryday.com/email
-
-Sticker Team!: http://www.patre...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=v0afQ6w3Bjw" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/XX7PdJIGiCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>27d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=XX7PdJIGiCw" target="_blank">The Most Controversial Idea in Biology</a></h2>
-                    <p class="ai-summary">Most people don’t fully understand evolution. Sponsored by Hostinger - visit https://ve42.co/hostingern8n and use the code VERITASIUM to get an extra discount on top of the sale prices.
-
-If you’re loo...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=XX7PdJIGiCw" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/tWRyiCP17do/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>29d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/tWRyiCP17do" target="_blank">Why didn't this skateboard stunt start from the top?</a></h2>
-                    <p class="ai-summary">This is the world's largest skateboard ramp from @redbull 
-
-Sandro Dias broke two world records skating down it but all we could think was...
-
-Why didn't he start from the very top?</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/tWRyiCP17do" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/h830G5mkTF4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>32d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/h830G5mkTF4" target="_blank">How To Solve a Quadratic Equation</a></h2>
-                    <p class="ai-summary">What does it mean to solve a quadratic equation by 'completing the square'? Here it is explained visually.
-
-A general solution to the cubic equation was long considered impossible, until we gave up th...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/h830G5mkTF4" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/7mdvEtmo1pM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>37d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=7mdvEtmo1pM" target="_blank">The Hidden Engineering of Niagara Falls</a></h2>
-                    <p class="ai-summary">All the things I love about Niagara Falls
-🌏 Get Exclusive NordVPN deal at https://nordvpn.com/practicalengineering It’s risk-free with Nord’s 30-day money-back guarantee!
-
-The same thing that makes Ni...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=7mdvEtmo1pM" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/kh9OmFBg8qI/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>41d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/kh9OmFBg8qI" target="_blank">How To See Atoms</a></h2>
-                    <p class="ai-summary">Here’s what happens when you just keep zooming in.</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/kh9OmFBg8qI" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/S7xvqDUPoJo/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>49d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/S7xvqDUPoJo" target="_blank">Renting A Helicopter To Settle A Physics Debate</a></h2>
-                    <p class="ai-summary">The story of a controversial physics question on the qualifying exam for the 2014 US Physics Olympiad team. How does a uniform cable beneath a helicopter hang?</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/S7xvqDUPoJo" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3nDdLiXS5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>51d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3nDdLiXS5wk" target="_blank">The Bizarre Bases of Antenna Towers</a></h2>
-                    <p class="ai-summary">Want to restore the planet’s ecosystems and see your impact in monthly videos? The first 100 people to join Planet Wild with my code PRACTICAL10 will get the first month for free at: https://planetwil...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=3nDdLiXS5wk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/CYlon2tvywA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>58d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=CYlon2tvywA" target="_blank">Something Strange Happens When You Trace How Connected We Are</a></h2>
-                    <p class="ai-summary">The beautiful math behind six degrees of separation. Sponsored by Incogni - use code veritasium at https://incogni.com/veritasium to get an exclusive 60% off.
-
-If you’re looking for a molecular modell...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=CYlon2tvywA" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/onr80iOoEXs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>67d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=onr80iOoEXs" target="_blank">This liquid is too dangerous to transport</a></h2>
-                    <p class="ai-summary">Discover the explosive story of Alfred Nobel. Sponsored by Opera - Upgrade your browsing experience with Opera today. Download it right here: https://opr.as/Opera-browser-veritasium
-
-If you’re looking...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=onr80iOoEXs" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/q6WlXhtVvkg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>70d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/q6WlXhtVvkg" target="_blank">How to solve any maze</a></h2>
-                    <p class="ai-summary">By following this algorithm you can solve any maze in the world.</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/q6WlXhtVvkg" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3FfMzWa6LKg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>72d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3FfMzWa6LKg" target="_blank">An Engineer's Perspective on the Texas Floods</a></h2>
-                    <p class="ai-summary">A few of my thoughts about the recent tragedy in central Texas.
-
-I don't have any good answers to any of this, but I think it's worth discussing nonetheless. My heart goes out to the victims and their...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=3FfMzWa6LKg" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/b8XVCsXyIZs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>74d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/b8XVCsXyIZs" target="_blank">What Happens When You Spin a Football?</a></h2>
-                    <p class="ai-summary">The real impact of spin on a football—explained with ⁨@tombrady.</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/b8XVCsXyIZs" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/dt_CG_xRnrY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>81d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=dt_CG_xRnrY" target="_blank">Pompeii Changed How I Think About The Roman Empire - Smarter Every Day 310</a></h2>
-                    <p class="ai-summary">You can try AnyDesk for free.  It's good.  https://anydesk.com/smarter 
-http://www.patreon.com/smartereveryday
-Get Email Updates: https://www.smartereveryday.com/email
-
-A big thank you to our guide, C...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=dt_CG_xRnrY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/2nX7Y8ZwShg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>86d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=2nX7Y8ZwShg" target="_blank">The Weirdest Tool in Underwater Construction</a></h2>
-                    <p class="ai-summary">The fascinating engineering of bubble curtains
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch Downie Express: https://nebula.tv/downie...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=2nX7Y8ZwShg" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/QOnQORqkHcM/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>100d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=QOnQORqkHcM" target="_blank">California’s Tallest Bridge Has Nothing Underneath</a></h2>
-                    <p class="ai-summary">The saga of Auburn Dam and Foresthill Bridge
-📰Compare news coverage. Spot media bias. Try Ground News today and get 40% off your subscription by going to https://ground.news/practicalengineering
-
-Aubu...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=QOnQORqkHcM" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/_R0xPffklXQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>114d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=_R0xPffklXQ" target="_blank">Why Are There No Short Arch Dams?</a></h2>
-                    <p class="ai-summary">A structural comparison of gravity and arch dams
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch How the Twin Towers Were Built: https:...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=_R0xPffklXQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/astronomy/venus/key-driver-of-extreme-winds-on-venus-identified" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -1116,7 +1115,7 @@ Aubu...</p>
         </div>
 
         <div class="pagination">
-            <a href="page2.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn active">3</a><a href="page4.html" class="page-btn ">4</a><a href="page4.html" class="page-btn">NEXT &rarr;</a>
+            <a href="page2.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn active">3</a><a href="page4.html" class="page-btn ">4</a><a href="page5.html" class="page-btn ">5</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page11.html" class="page-btn ">11</a><a href="page4.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <footer class="site-footer">

@@ -52,11 +52,11 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
 
-        /* LOGO ANIMATION (The Woggle) */
+        /* LOGO ANIMATION */
         .logo-icon { 
             height: 50px; width: auto; 
             filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
@@ -69,7 +69,7 @@
         }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
 
-        /* CATEGORY NAVIGATION (Under Logo) */
+        /* CATEGORY NAVIGATION */
         .category-nav {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
             padding-top: 20px; width: 100%;
@@ -163,25 +163,25 @@
             
             <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
                 
-                <!-- VERSION 7.1.0 -->
+                <!-- VERSION 7.2.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
-                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
-                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
-                        • <strong>UX:</strong> Version number is now clickable for full history.
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
                     </div>
                 </li>
 
-                <!-- VERSION 6.2.5 -->
+                <!-- VERSION 7.1.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
                     <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 6.2.5</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
-                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
-                        • Expanded auto-translation.
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
                     </div>
                 </li>
             </ul>
@@ -196,12 +196,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
 
-            <!-- NEW TOP NAVIGATION -->
+            <!-- TOP NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="filterNews('all')">All News</button>
                 <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
@@ -217,18 +217,114 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/b831d15b-25dc-4bfa-bf56-8f53d34a960c_a3bf1652.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334473/malaysian-police-chief-urges-more-caning-schools-rues-loss-fear-factor?utm_source=rss_feed" target="_blank">Malaysian police chief urges more caning in schools, rues loss of ‘fear factor’</a></h2>
+                    <p class="ai-summary">A Malaysian police chief has called for the wider imposition of caning in schools, arguing that the “fear factor” among students has eroded at a time when violent incidents, including bullying-related...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/week-asia/lifestyle-culture/article/3334473/malaysian-police-chief-urges-more-caning-schools-rues-loss-fear-factor?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/2c5d0f49-285c-4881-82f7-0274ae622376_eb17d87c.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/politics/article/3334455/deadly-boat-accident-cover-reveals-corruption-chinas-fishing-industry?utm_source=rss_feed" target="_blank">Deadly boat accident cover-up reveals corruption in China’s fishing industry</a></h2>
+                    <p class="ai-summary">A local government official in northeast China has been accused of covering up a fishing boat accident and preventing the vessel’s owner from calling the police for help, in an incident that led to th...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/china/politics/article/3334455/deadly-boat-accident-cover-reveals-corruption-chinas-fishing-industry?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/26/4aa49a2b-296b-4b27-9e0c-b65d71e0e152_cfd0227f.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/people-culture/china-personalities/article/3334192/self-made-china-milk-tea-entrepreneur-marries-wealthy-solar-heiress-captures-public-attention?utm_source=rss_feed" target="_blank">Self-made Chinese milk tea founder marries wealthy solar energy heiress</a></h2>
+                    <p class="ai-summary">The upcoming wedding of the founder of a renowned milk tea company from a grass-roots background and the daughter of a wealthy family that owns a leading solar energy firm has captivated the Chinese p...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/people-culture/china-personalities/article/3334192/self-made-china-milk-tea-entrepreneur-marries-wealthy-solar-heiress-captures-public-attention?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/firefighting-at-hong-kong-blaze-ends-with-deaths-over-90-dozens-missing?traffic_source=rss" target="_blank">Rescue efforts at Hong Kong blaze end with deaths at 128, dozens missing</a></h2>
+                    <p class="ai-summary">Police arrest three construction company officials on suspicion of manslaughter linked to the building renovation.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/28/firefighting-at-hong-kong-blaze-ends-with-deaths-over-90-dozens-missing?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/ba6edf6b-3911-4300-9bc5-758a4c826beb_5a5515bc.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>3h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/people/article/3334471/thai-flood-victim-bitten-deadly-snake-waits-32-hours-rescue?utm_source=rss_feed" target="_blank">Thai flood victim bitten by deadly snake waits 32 hours for rescue</a></h2>
+                    <p class="ai-summary">A Thai mother bitten by a deadly snake endured a desperate 32-hour wait for rescue after being trapped by floods that have devastated southern Thailand for more than a week.
+The woman, stranded in her...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/week-asia/people/article/3334471/thai-flood-victim-bitten-deadly-snake-waits-32-hours-rescue?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
                     <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
                         <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>5h Ago</time>
+                        <time>3h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/jordan-demands-russia-stop-recruiting-citizens-after-two-killed-in-fighting?traffic_source=rss" target="_blank">Jordan demands Russia stop recruiting citizens after two killed in fighting</a></h2>
-                    <p class="ai-summary">Aman says it will take 'all available measures' to stop its citizens from being recruited to fight for Russian forces.</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/economy/2025/11/28/why-is-senegal-squaring-up-to-the-international-monetary-fund?traffic_source=rss" target="_blank">Why is Senegal squaring up to the International Monetary Fund?</a></h2>
+                    <p class="ai-summary">Senegal is resisting an IMF-recommended debt restructuring, but support from the Fund is critical for its recovery.</p>
                     <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/28/jordan-demands-russia-stop-recruiting-citizens-after-two-killed-in-fighting?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/economy/2025/11/28/why-is-senegal-squaring-up-to-the-international-monetary-fund?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -236,18 +332,18 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/624380e0-290a-4453-b779-ed0ef5642002_8da21696.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>5h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/trump-says-us-will-soon-stop-venezuelan-drug-trafficking-by-land?traffic_source=rss" target="_blank">Trump says US will stop Venezuelan drug trafficking ‘by land’ soon</a></h2>
-                    <p class="ai-summary">US president claims attacks on vessels in Latin American region have stopped 85 percent of drugs trafficked by sea.</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/business/banking-finance/article/3334467/surge-hong-kong-dollar-bonds-continue-after-record-us42-billion-year?utm_source=rss_feed" target="_blank">Hong Kong dollar bonds to continue surge after record US$42 billion year</a></h2>
+                    <p class="ai-summary">Hong Kong dollar bond issuance is poised to expand, following a record run of offerings, as easing local interest rates attract more issuers while a global diversification trend persists, according to...</p>
                     <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/28/trump-says-us-will-soon-stop-venezuelan-drug-trafficking-by-land?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/business/banking-finance/article/3334467/surge-hong-kong-dollar-bonds-continue-after-record-us42-billion-year?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -255,145 +351,19 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/d055d2ce-ec05-46db-9a20-59ccc82504dc_164912be.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Al Jazeera – Breaking New</div>
-                        <time>7h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/russia-ukraine-war-list-of-key-events-day-1373?traffic_source=rss" target="_blank">Russia-Ukraine war: List of key events, day 1,373</a></h2>
-                    <p class="ai-summary">Here are the key events from day 1,373 of Russia’s war on Ukraine.</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334436/hong-kongs-tai-po-fire-what-you-need-know-about-citys-deadliest-blaze-decades?utm_source=rss_feed" target="_blank">Hong Kong’s Tai Po fire tragedy: what you need to know</a></h2>
+                    <p class="ai-summary">We have put together seven stories on everything you need to know about Hong Kong’s worst fire in decades. If you would like to see more of our reporting, please consider subscribing.
+1. Hong Kong fam...</p>
                     <div class="card-footer">
-                        <a href="https://www.aljazeera.com/news/2025/11/28/russia-ukraine-war-list-of-key-events-day-1373?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24302789/226463_DualSense_Edge_VPavic_0012.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>9h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/822252/sony-dualsense-edge-controller-black-friday-deal-sale-2025" target="_blank">The DualSense Edge has fallen to one of the lowest we’ve seen for Black Friday</a></h2>
-                    <p class="ai-summary">We’ve seen Sony’s DualSense Edge discounted on a few occasions this year, and now it’s back on sale ahead of Black Friday as part of Sony’s ongoing holiday promo. Right now, you can snag the pro-style...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/822252/sony-dualsense-edge-controller-black-friday-deal-sale-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25845508/236834_Ray_Ban_Meta_Smart_Glasses_AKrales_0818.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>11h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank">The Ray-Ban Meta smart glasses are at their best-ever price for Black Friday</a></h2>
-                    <p class="ai-summary">Meta may have just released the Ray-Ban Meta (Gen 2) at the end of October, but they’re not significantly different from the last-gen model introduced in 2021. The overall experience is very similar, ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>13h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank">This Thanksgiving’s real drama may be Michael Burry versus Nvidia</a></h2>
-                    <p class="ai-summary">Is Burry the canary in the coal mine, warning of a collapse that's inevitable? Or could his fame, his track record, his now unrestricted voice, and a fast-growing audience trigger the very implosion h...</p>
-                    <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/72/637372_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>13h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank">Do you want an age limit for social media?</a></h2>
-                    <p class="ai-summary">Today's social media question
-
-		
-		
-		
-		
-		There has been a lot of talk about the age limit for social media recently and yesterday the EU Parliament stated that it advocates an age limit of 13 for...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/vill-du-ha-aldersgrans-for-sociala-medier/485933/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/8A0A1420.jpeg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>13h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank">Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday</a></h2>
-                    <p class="ai-summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are create...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>14h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank">Apple's Christmas commercial A Critter Carol is here</a></h2>
-                    <p class="ai-summary">Filmed with iPhone 17 Pro
-
-			
-			
-		
-		
-		
-		Apple has released its annual Christmas commercial and this year's entry is called A Critter Carol and takes place in a snowy forest where a group of animals find a lost iP...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/mobil/apples-julreklam-a-critter-carol-ar-har/485938/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334436/hong-kongs-tai-po-fire-what-you-need-know-about-citys-deadliest-blaze-decades?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -406,110 +376,13 @@
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>14h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank">A trip through Andermatt with a Ferrari F40</a></h2>
-                    <p class="ai-summary">Not a bad day
-
-			
-			
-		
-		
-		
-		Do you remember when it was summer, sunny and warm outside? In any case, here is a look back at how it might look. Extra lovely if you have money, a Ferrari F40 and ...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/bil/en-tur-genom-andermatt-med-en-ferrari-f40/485902/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/46/637446_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank">The next Meta headset may get external puck</a></h2>
-                    <p class="ai-summary">Also stated to scrap the Quest name
-
-		
-		
-		
-		
-		According to VR expert Nima Zeighami, Meta is planning a new strategy for its upcoming headset. Instead of releasing a direct sequel to Quest 3, rumored…<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/pryl/nasta-meta-headset-kan-fa-extern-puck/485937/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
                         <div class="source-badge">TechCrunch</div>
-                        <time>15h Ago</time>
+                        <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank">Best iPad apps for unleashing and exploring your creativity</a></h2>
-                    <p class="ai-summary">We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.</p>
+                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/andurils-autonomous-weapons-stumble-in-tests-and-combat-wsj-reports/" target="_blank">Anduril’s autonomous weapons stumble in tests and combat, WSJ reports</a></h2>
+                    <p class="ai-summary">Defense tech startup Anduril Industries has faced numerous setbacks during testing of its autonomous weapons systems, according to new reporting by the WSJ. The problems cited include more than a doze...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/74/45/637445_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank">Humanoid robot walked over 10 miles</a></h2>
-                    <p class="ai-summary">AgiBot A2 Ultra has set a new world record in robot walking
-
-
-			
-			
-		
-		
-		
-		Chinese robotics company AgiBot's humanoid robot model A2 Ultra went on a really long walk earlier this…<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/pryl/humanoid-robot-promenerade-over-10-mil-/485936/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank">Glīd won Startup Battlefield 2025 by building solutions to make logistics simpler, safer, and smarter</a></h2>
-                    <p class="ai-summary">We're excited to interview the winner of Startup Battlefield 2025, and Glid co-founder Kevin Damoa, on this week's Build Mode!</p>
-                    <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/27/glid-won-startup-battlefield-2025-by-building-solutions-to-make-logistics-simpler-safer-and-smarter/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://techcrunch.com/2025/11/27/andurils-autonomous-weapons-stumble-in-tests-and-combat-wsj-reports/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -517,169 +390,18 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/6r3x2t872Pc/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/6354e25f-2150-4a5f-8efb-31087af2e560_b66a6716.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>15h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>4h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank">Amazon: Who pays the price? | DW Documentary</a></h2>
-                    <p class="ai-summary">Online retailer Amazon has been repeatedly criticized for its business practices. The US company puts pressure on retailers and exerts influence on pricing policies, thus fueling cut-throat competitio...</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/europe/article/3334464/bird-flu-could-risk-pandemic-worse-covid-if-it-mutates?utm_source=rss_feed" target="_blank">Bird flu could risk pandemic ‘worse than Covid’ if it mutates</a></h2>
+                    <p class="ai-summary">The bird flu virus that has been spreading among wild birds, poultry and mammals could lead to a pandemic worse than Covid-19 if it mutates to transmit between humans, the head of France’s Institut Pa...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=6r3x2t872Pc" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/46/637346_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank">Opel teases updated Astra</a></h2>
-                    <p class="ai-summary">Presented next year
-
-		
-		
-		
-		
-		In the next year, Opel will release an updated version of the model Astra. Among other things, it gets a new face and we get a first glimpse of this in these ...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/bil/opel-teasar-uppdaterad-astra/485921/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25762360/Philips_Hue_s_Festavia_string_lights_lifestyle_image.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank">Philips Hue’s Festavia string lights are up to $158 off just in time for Christmas</a></h2>
-                    <p class="ai-summary">If you want your house to be the one everyone slows down to look at this holiday season, Philips Hue’s Festavia lights can make that happen. They aren’t cheap, but thanks to an early Black Friday sale...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/826881/philips-hue-festavia-govee-christmas-lights-black-friday-deal-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK095_MICROSOFT_2_CVirginia_B.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>15h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank">How Microsoft’s developers are using AI</a></h2>
-                    <p class="ai-summary">Microsoft is pitching a future where AI controls everything on your PC and agents go and do work for you in the background. But before the company gets there, it has to build the tools to make these s...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/tech/831379/microsoft-developer-ai-usage-stats-notepad" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>16h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank">Plex starts charging for remote streaming</a></h2>
-                    <p class="ai-summary">Roku app first
-
-		
-		
-		
-		
-		Plex has now started rolling out the change that makes the feature that allows users to stream content from its server outside the home network a paid feature. Early...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Feber</div>
-                        <time>16h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank">Expedition Vildmark is a new reality show with celebrities</a></h2>
-                    <p class="ai-summary">Coming on Kanal 5 and HBO Max next year
-
-		
-		
-		
-		
-		Above you can see the gang that will participate in the new reality venture Expedition Wildland, which will premiere in the spring of 2026 on HBO Max...<span class="lang-note">(Translated)</span></p>
-                    <div class="card-footer">
-                        <a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>16h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
-                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>16h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
-                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst. ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/world/europe/article/3334464/bird-flu-could-risk-pandemic-worse-covid-if-it-mutates?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -687,96 +409,19 @@
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/vzF3Gv7TFUY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/52b6d4eb-b9d2-47c2-8b0a-69a9710e881e_6a10320d.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>17h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank">The 2025 Asian General Aviation Exhibition opens today.</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/law-and-crime/article/3334459/new-test-consent-reforming-hong-kongs-approach-sexual-crimes?utm_source=rss_feed" target="_blank">A new test for consent: reforming Hong Kong’s approach to sexual crimes</a></h2>
+                    <p class="ai-summary">Hong Kong has seen a number of amendments to its criminal law in recent years aimed at strengthening the response to sexual crimes.
+Notable examples are the new offences in the Crimes Ordinance regard...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/kuxiu_s3_1.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>17h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank">Kuxiu’s solid-state power bank now has more capacity and faster wireless charging</a></h2>
-                    <p class="ai-summary">Seven months after launching its first semi-solid state battery that used a safer and longer-lasting solid-liquid mixed electrolyte, Kuxiu is introducing a new version with some welcome upgrades. The ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/Bb0uDpvitoE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>17h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/Bb0uDpvitoE" target="_blank">I turned my phone into a microscope</a></h2>
-                    <p class="ai-summary">#Sponsored @madebygoogle A single drop of water is all it takes to turn the new Google #Pixel10Pro into a makeshift microscope.
-
-Promotional code offer expires 12/05/2025 at 11:59p.m. PT; while suppli...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/Bb0uDpvitoE" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/GettyImages-1395402951.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>17h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank">How to help your parents with their tech over the holidays</a></h2>
-                    <p class="ai-summary">Going home for the holidays isn't all turkey, holiday decorations, and political arguments discussions. It also comes with requests for tech support and questions like "Why does my computer do this?" ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/03/The_Studio_Photo_010101.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">The Verge</div>
-                        <time>17h Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank">Disney Plus, Hulu, and HBO Max are all over 60 percent off for Black Friday</a></h2>
-                    <p class="ai-summary">The holidays are a great time to see family, exchange gifts, and enjoy a good meal. It’s also the perfect time to gather around a TV and catch up on must-see shows and movies. Vince Gilligan’s Pluribu...</p>
-                    <div class="card-footer">
-                        <a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/hong-kong/law-and-crime/article/3334459/new-test-consent-reforming-hong-kongs-approach-sexual-crimes?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -784,20 +429,18 @@ Promotional code offer expires 12/05/2025 at 11:59p.m. PT; while suppli...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/BgI-TWLTkgA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">DW Documentary</div>
-                        <time>18h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/BgI-TWLTkgA" target="_blank">Why has Ecuador become a “war zone”? | DW Documentary</a></h2>
-                    <p class="ai-summary">Images of masked gunmen storming a TV station live on air in Ecuador in 2024 shocked the world. But how did this country, once considered one of Latin America’s most peaceful, became a “war zone”? 
-
-E...</p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/putin-says-he-is-ready-to-guarantee-in-writing-no-russian-attack-on-europe?traffic_source=rss" target="_blank">Putin says he is ready to guarantee in writing no Russian attack on Europe</a></h2>
+                    <p class="ai-summary">Putin also branded fears that Moscow is planning to invade another European nation 'ridiculous' and 'complete nonsense'.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/shorts/BgI-TWLTkgA" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/28/putin-says-he-is-ready-to-guarantee-in-writing-no-russian-attack-on-europe?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -805,18 +448,18 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/tm2aeBQnajE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/319fdbad-be51-44c1-a68d-c5d5f725bb81_d83efde3.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>19h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=tm2aeBQnajE" target="_blank">Cement-built hypersonic missiles by Chinese private firms—seriously?! Hand-built carriers next</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/diplomacy/article/3334452/beijing-freezes-japan-youth-exchange-programmes-over-pm-takaichis-taiwan-remarks?utm_source=rss_feed" target="_blank">Beijing freezes Japan youth exchange programmes over Takaichi Taiwan row</a></h2>
+                    <p class="ai-summary">Beijing has frozen youth exchange programmes with Tokyo amid the fallout over Japanese Prime Minister Sanae Takaichi’s remarks on Taiwan, according to a diplomatic source, raising concern that the bil...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=tm2aeBQnajE" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/china/diplomacy/article/3334452/beijing-freezes-japan-youth-exchange-programmes-over-pm-takaichis-taiwan-remarks?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -824,18 +467,18 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/KXTRB4I9U9w/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/2e02f475-6108-49ba-97fc-b8f6ae1c00cb_ff2fa925.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>19h Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>5h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=KXTRB4I9U9w" target="_blank">How did China’s special forces end a simulated hijacking in just two minutes?</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/economics/article/3334392/indonesia-blindsided-nusantaras-190-year-land-right-law-nullified-court?utm_source=rss_feed" target="_blank">Indonesia blindsided by ruling against Nusantara’s 190-year land right law</a></h2>
+                    <p class="ai-summary">Indonesia’s plan to build a new capital in East Kalimantan is facing renewed scrutiny after the Constitutional Court scrapped a regulation granting investors land rights of up to 190 years – a move we...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=KXTRB4I9U9w" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/week-asia/economics/article/3334392/indonesia-blindsided-nusantaras-190-year-land-right-law-nullified-court?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -843,56 +486,37 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/eZjLBmworOs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>20h Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=eZjLBmworOs" target="_blank">Can China’s new-generation artillery squad deliver with the army’s most advanced mobile howitzer</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/jordan-demands-russia-stop-recruiting-citizens-after-two-killed-in-fighting?traffic_source=rss" target="_blank">Jordan demands Russia stop recruiting citizens after two killed in fighting</a></h2>
+                    <p class="ai-summary">Aman says it will take 'all available measures' to stop its citizens from being recruited to fight for Russian forces.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=eZjLBmworOs" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/28/jordan-demands-russia-stop-recruiting-citizens-after-two-killed-in-fighting?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/the-future-will-be-explained-to-you-in-palo-alto/" target="_blank">The future will be explained to you in Palo Alto</a></h2>
-                    <p class="ai-summary">On Wednesday evening at PlayGround Global in Palo Alto, some very smart people who are building things you don’t understand yet will explain what’s coming. This is the final StrictlyVC event of 2025, ...</p>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/alstoms-hydrogen-retreat-marks-a-turning-point-for-european-rail/" target="_blank">Alstom’s Hydrogen Retreat Marks A Turning Point For European Rail</a></h2>
+                    <p class="ai-summary">Alstom’s announcement that it is pausing further development of hydrogen trains has landed with the weight of a company that has been at the center of Europe’s rail innovation story for decades. The f...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/the-future-will-be-explained-to-you-in-palo-alto/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="geopolitics">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/QNftj8oGpXw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=QNftj8oGpXw" target="_blank">Hong Kong Tai Po fire: Smoke lingers criminal probe possible citizens and businesses unite overnight</a></h2>
-                    <p class="ai-summary"></p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=QNftj8oGpXw" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://cleantechnica.com/2025/11/27/alstoms-hydrogen-retreat-marks-a-turning-point-for-european-rail/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -900,18 +524,18 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/tFOujJtPrGg/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/43d57513-173d-4864-b4c2-d9518cf98850_06005e72.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=tFOujJtPrGg" target="_blank">Fire Breaks Out Across Multiple Residential Buildings in Tai Po, Hong Kong</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334450/mama-awards-hong-kong-be-downsized-mirror-withdraws-wake-tai-po-fire?utm_source=rss_feed" target="_blank">MAMA Awards in Hong Kong to be downsized, Mirror withdraws, in wake of fire</a></h2>
+                    <p class="ai-summary">Asia’s largest K-pop award show, scheduled for Friday evening and Saturday at Hong Kong’s Kai Tak Stadium, will be downsized in light of the Tai Po fire, with boy band Mirror pulling out of the event....</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=tFOujJtPrGg" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334450/mama-awards-hong-kong-be-downsized-mirror-withdraws-wake-tai-po-fire?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -919,18 +543,18 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/a34FmkpyQaQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/e27cb6da-ce01-454f-864d-11df79af8960_d63d9750.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=a34FmkpyQaQ" target="_blank">Can China's J-11 really land vertically?</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/asia/southeast-asia/article/3334449/marcos-sister-says-philippines-faces-leadership-vacuum-new-jab-president?utm_source=rss_feed" target="_blank">Marcos’ sister says Philippines has leadership ‘vacuum’ in new jab at president</a></h2>
+                    <p class="ai-summary">Senator Imee Marcos, the estranged sister of Philippine President Ferdinand Marcos Jnr, said there is a void in the nation’s leadership as politicians grapple with a growing corruption scandal and ins...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=a34FmkpyQaQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/asia/southeast-asia/article/3334449/marcos-sister-says-philippines-faces-leadership-vacuum-new-jab-president?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -938,191 +562,516 @@ E...</p>
             <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">geopolitics</div>
-                    <img src="https://img.youtube.com/vi/xY7TAA-A5XY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">China Pulse</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=xY7TAA-A5XY" target="_blank">Shenzhen firefighters assembled at Liantang Port, ready to assist Hong Kong in firefighting</a></h2>
-                    <p class="ai-summary"></p>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/trump-says-us-will-soon-stop-venezuelan-drug-trafficking-by-land?traffic_source=rss" target="_blank">Trump says US will stop Venezuelan drug trafficking ‘by land’ soon</a></h2>
+                    <p class="ai-summary">US president claims attacks on vessels in Latin American region have stopped 85 percent of drugs trafficked by sea.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=xY7TAA-A5XY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.aljazeera.com/news/2025/11/28/trump-says-us-will-soon-stop-venezuelan-drug-trafficking-by-land?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/HBluLfX2F_k/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/d17d4dc6-832e-46bf-a15b-294556698a04_2f6f97c8.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Veritasium</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=HBluLfX2F_k" target="_blank">This graph will change how you see the world</a></h2>
-                    <p class="ai-summary">The world is not Normal. Sponsored by NordVPN. 🌏 Get exclusive NordVPN deal here ➵  https://NordVPN.com/veritasium It’s risk free with Nord’s 30 day money-back guarantee!✌
-
-Get your exclusive edition ...</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/economy/china-economy/article/3334370/china-targets-smarter-more-efficient-transport-infrastructure-next-5-year-plan?utm_source=rss_feed" target="_blank">Building the future: China eyes smarter, more efficient transport infrastructure</a></h2>
+                    <p class="ai-summary">With the world’s biggest high-speed rail network already established, China now plans a more balanced, integrated and intelligent transport system over the next five years, prioritising efficiency and...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=HBluLfX2F_k" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/economy/china-economy/article/3334370/china-targets-smarter-more-efficient-transport-infrastructure-next-5-year-plan?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="construction">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/video/nordic-founders-are-taking-bigger-swings-and-its-paying-off/" target="_blank">Nordic founders are taking bigger swings, and it’s paying off</a></h2>
-                    <p class="ai-summary">Ten years ago, raising €1 million in Copenhagen was enough to make waves in the region’s tech scene. Today, the Nordics are turning out billion-dollar companies like Lovable — which hit $200 million i...</p>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036386/college-robert-badinter-coldefy" target="_blank">College Robert Badinter / Coldefy</a></h2>
+                    <p class="ai-summary">French architecture studio Coldefy, in collaboration with Relief Architecture, has completed the 650-pupil Robert Badinter Secondary School, the first timber-framed school in northern France. The scho...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/video/nordic-founders-are-taking-bigger-swings-and-its-paying-off/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.archdaily.com/1036386/college-robert-badinter-coldefy" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/here-are-the-49-us-ai-startups-that-have-raised-100m-or-more-in-2025/" target="_blank">Here are the 49 US AI startups that have raised $100M or more in 2025</a></h2>
-                    <p class="ai-summary">Last year was monumental for the AI industry in the U.S. and beyond. How will 2025 compare?</p>
-                    <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/here-are-the-49-us-ai-startups-that-have-raised-100m-or-more-in-2025/" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="tech">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
+                    <div class="cat-tag">ev</div>
                     <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>6h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/justiguide-wants-to-use-ai-to-help-people-navigate-the-u-s-immigration-system/" target="_blank">JustiGuide wants to use AI to help people navigate the US immigration system</a></h2>
-                    <p class="ai-summary">The startup uses AI to help immigrants understand the system, connect with lawyers, and reduce associated costs.</p>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/texas-to-host-gigantic-11-gw-solar-energy-storage-nuclear-gas-energy-island/" target="_blank">Texas To Host Gigantic 11-GW Solar, Energy Storage, Nuclear, & Gas Energy Island</a></h2>
+                    <p class="ai-summary">The US startup Fermi has reserved a spot for solar power and energy storage in its plans for the 11-gigawat Project Matador campus in Texas alongside natural gas and nuclear energy.
+The post Texas To ...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/justiguide-wants-to-use-ai-to-help-people-navigate-the-u-s-immigration-system/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://cleantechnica.com/2025/11/27/texas-to-host-gigantic-11-gw-solar-energy-storage-nuclear-gas-energy-island/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/766183fe-7cc3-48f2-b241-41c2579cb8e1_0c55c2fb.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/openai-claims-teen-circumvented-safety-features-before-suicide-that-chatgpt-helped-plan/" target="_blank">OpenAI claims teen circumvented safety features before suicide that ChatGPT helped plan</a></h2>
-                    <p class="ai-summary">In August, parents Matthew and Maria Raine sued OpenAI and its CEO, Sam Altman, over their 16-year-old son Adam's suicide, accusing the company of wrongful death. On Tuesday, OpenAI responded to the l...</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/americas/article/3334445/peru-ex-president-castillo-sentenced-over-11-years-prison?utm_source=rss_feed" target="_blank">Peru ex-president Castillo sentenced to over 11 years in prison</a></h2>
+                    <p class="ai-summary">Peru’s Supreme Court on Thursday sentenced leftist ex-president Pedro Castillo to more than 11 years in jail for trying to dissolve Congress and rule by decree to avoid impeachment.
+Dubbed Peru’s firs...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/openai-claims-teen-circumvented-safety-features-before-suicide-that-chatgpt-helped-plan/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/news/world/americas/article/3334445/peru-ex-president-castillo-sentenced-over-11-years-prison?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/79096f43-bcd9-4957-adba-041fc509f0db_0b12f46d.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/redwood-materials-reportedly-cuts-5-of-staff-after-350m-raise/" target="_blank">Redwood Materials reportedly cuts 5% of staff after $350M raise</a></h2>
-                    <p class="ai-summary">The battery recycling and cathode production company, founded by former Tesla CTO JB Straubel, has started using recycled battery materials to create energy storage solutions for AI data centers.</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/business/china-business/article/3334444/hong-kong-stocks-end-4-day-streak-investors-move-rate-cut-expectations?utm_source=rss_feed" target="_blank">Hong Kong stocks end 4-day rising streak as investors seek fresh catalysts</a></h2>
+                    <p class="ai-summary">Hong Kong stocks dropped on Friday after four days of advances, as investors searched for fresh catalysts after pricing in expectations about a US interest-rate cut that reversed a tumble triggered by...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/redwood-materials-reportedly-cuts-5-of-staff-after-350m-raise/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/business/china-business/article/3334444/hong-kong-stocks-end-4-day-streak-investors-move-rate-cut-expectations?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
+                    <div class="cat-tag">ev</div>
                     <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/chatgpt-everything-to-know-about-the-ai-chatbot/" target="_blank">ChatGPT: Everything you need to know about the AI-powered chatbot</a></h2>
-                    <p class="ai-summary">A timeline of ChatGPT product updates and releases, starting with the latest, which we’ve been updating throughout the year.</p>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/uk-pay-per-mile-charge-for-evs-set-for-april-2028/" target="_blank">UK Pay-Per-Mile Charge For EVs Set For April 2028</a></h2>
+                    <p class="ai-summary">The automobile is both a curse and a benefit. On the one hand, it gives people the freedom to go where they want in relative safety and comfort whenever they want. That’s the theory, anyway. Ever sinc...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/chatgpt-everything-to-know-about-the-ai-chatbot/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://cleantechnica.com/2025/11/27/uk-pay-per-mile-charge-for-evs-set-for-april-2028/" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/608908fe-26bd-40cf-9d4c-01bff2e39a38_cef37f37.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/tech-layoffs-2025-list/" target="_blank">A comprehensive list of 2025 tech layoffs</a></h2>
-                    <p class="ai-summary">A complete list of all the known layoffs in tech, from Big Tech to startups, broken down by month throughout 2024.</p>
+                    <h2 class="card-title"><a href="https://www.scmp.com/economy/china-economy/article/3334440/chinas-top-economic-planning-agency-warns-rise-too-many-robots?utm_source=rss_feed" target="_blank">China’s top economic planning agency warns of rise of too many robots</a></h2>
+                    <p class="ai-summary">Beijing has flagged risks of excessive duplication in China’s rapidly growing humanoid robot sector, vowing to strengthen guidance for an industry that officials have identified as an important engine...</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/tech-layoffs-2025-list/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.scmp.com/economy/china-economy/article/3334440/chinas-top-economic-planning-agency-warns-rise-too-many-robots?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="tech">
+            <article class="news-card" data-category="construction">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">tech</div>
-                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">TechCrunch</div>
-                        <time>1d Ago</time>
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>7h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://techcrunch.com/2025/11/26/multiple-london-councils-report-disruption-amid-ongoing-cyberattack/" target="_blank">Multiple London councils report disruption amid ongoing cyberattack</a></h2>
-                    <p class="ai-summary">Three London councils reported disruption, prompting officials to shut down phone lines and networks and activate emergency plans.</p>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036422/haka-house-taouk-architects" target="_blank">Haka House / Taouk Architects</a></h2>
+                    <p class="ai-summary">This captivating ensemble of form and design intent is a masterclass in creative storytelling, where every element converges to craft a unique narrative.</p>
                     <div class="card-footer">
-                        <a href="https://techcrunch.com/2025/11/26/multiple-london-councils-report-disruption-amid-ongoing-cyberattack/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.archdaily.com/1036422/haka-house-taouk-architects" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/92c423fc-bf6b-4f09-ab0f-3a674c1acb6c_77653415.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/people/article/3334320/fate-south-koreas-han-duck-soo-set-tone-yoon-others-martial-law-trial?utm_source=rss_feed" target="_blank">South Korea awaits Han Duck-soo ruling as test case for martial law trials</a></h2>
+                    <p class="ai-summary">The sentencing of former South Korean prime minister Han Duck-soo in January next year will serve as a bellwether for others charged over impeached president Yoon Suk-yeol’s failed martial law decree,...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/week-asia/people/article/3334320/fate-south-koreas-han-duck-soo-set-tone-yoon-others-martial-law-trial?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/f89b8c0a-9090-4eaa-83ea-edba19d197f8_cfe5c521.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3333828/vacancy-tax-could-bring-back-hong-kongs-commercial-buzz?utm_source=rss_feed" target="_blank">A vacancy tax could bring back Hong Kong’s commercial buzz</a></h2>
+                    <p class="ai-summary">Take a walk through some of Hong Kong’s most iconic streets and you might notice a puzzling sight: prime retail spaces in Causeway Bay, Wan Chai, Tsim Sha Tsui and other areas are papered over with al...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/opinion/hong-kong-opinion/article/3333828/vacancy-tax-could-bring-back-hong-kongs-commercial-buzz?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="construction">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036070/behind-the-mirror-smart-space-saving-solutions-for-modern-restrooms" target="_blank">Behind the Mirror: Smart Space-Saving Solutions for Modern Restrooms</a></h2>
+                    <p class="ai-summary">In public restroom design, innovation goes far beyond aesthetics—it transforms the entire user experience. One of the most exciting trends today is integrating all functional elements—hand dryers, fau...</p>
+                    <div class="card-footer">
+                        <a href="https://www.archdaily.com/1036070/behind-the-mirror-smart-space-saving-solutions-for-modern-restrooms" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/7378e309-9004-4db3-b8b3-cf7c54ab29ad_f9c0e1e6.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/africa/article/3334438/guinea-bissau-general-sworn-junta-leader-deposed-president-arrives-senegal?utm_source=rss_feed" target="_blank">President leaves Guinea-Bissau as general takes power after coup</a></h2>
+                    <p class="ai-summary">Guinea-Bissau’s President Umaro Sissoco Embalo has left the country for Senegal after being detained during a military coup, the government in Dakar said on Thursday, as a lead opponent accused him of...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/africa/article/3334438/guinea-bissau-general-sworn-junta-leader-deposed-president-arrives-senegal?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/afcce735-9445-4a89-a113-be7a1e96fd1e_44c3a183.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/asia/east-asia/article/3334437/south-korean-woman-forces-daiso-worker-kneel-telling-child-not-run-store?utm_source=rss_feed" target="_blank">South Korean woman faces outrage after forcing worker to kneel in store</a></h2>
+                    <p class="ai-summary">A customer at a Daiso store in Suncheon, South Jeolla province, is facing public criticism after a video showed a staff member kneeling and apologising during a confrontation over a child running insi...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/asia/east-asia/article/3334437/south-korean-woman-forces-daiso-worker-kneel-telling-child-not-run-store?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/russia-ukraine-war-list-of-key-events-day-1373?traffic_source=rss" target="_blank">Russia-Ukraine war: List of key events, day 1,373</a></h2>
+                    <p class="ai-summary">Here are the key events from day 1,373 of Russia’s war on Ukraine.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/28/russia-ukraine-war-list-of-key-events-day-1373?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/c2f237b2-5138-440e-aad0-00103001ba40_c9ce7ff1.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/china/science/article/3334416/after-deadly-hong-kong-fire-can-new-tech-protect-chinas-high-rises-tragedy?utm_source=rss_feed" target="_blank">After Hong Kong fire, can new tech protect China’s high-rises from tragedy?</a></h2>
+                    <p class="ai-summary">The massive fire that engulfed the Wang Fuk Court residential estate in Hong Kong on Wednesday has prompted discussions about the potential for new firefighting technologies to improve rescues.
+The fi...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/china/science/article/3334416/after-deadly-hong-kong-fire-can-new-tech-protect-chinas-high-rises-tragedy?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/20/6c156f3f-a7a2-4841-bc13-17503b7f0e35_8b442de1.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>8h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/people-culture/trending-china/article/3333557/public-outrage-over-chinese-man-placing-hell-money-japanese-temple-donation-box?utm_source=rss_feed" target="_blank">Public outrage over Chinese man placing hell money in Japanese temple donation box</a></h2>
+                    <p class="ai-summary">A Chinese man who placed joss paper into a fortune-drawing money collection box at Japan’s Sensoji Temple has sparked online outrage and criticism of bad tourist behaviour.
+A video that circulated on ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/people-culture/trending-china/article/3333557/public-outrage-over-chinese-man-placing-hell-money-japanese-temple-donation-box?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/gac-t9-and-guangzhous-shift-to-bev-trucks/" target="_blank">GAC T9 and Guangzhou’s Shift to BEV Trucks</a></h2>
+                    <p class="ai-summary">Having been in Guangzhou last week, I wanted to give some firsthand context to Michael Barnard’s excellent article: China’s BEV Trucks and the End of Diesel’s Dominance. Overall, the heavy trucks that...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/gac-t9-and-guangzhous-shift-to-bev-trucks/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/af95473b-1af5-4c5f-957b-aa3bdbc723ec_cb6e4f7a.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/business/china-business/article/3334406/chinese-ev-makers-tipped-storm-worlds-top-10-carmakers-2030-mckinsey-forecasts?utm_source=rss_feed" target="_blank">Chinese EV makers tipped to storm global top 10 carmakers by 2030, McKinsey says</a></h2>
+                    <p class="ai-summary">Up to five Chinese vehicle assemblers, leveraging their technology and production advantages in building electric cars, are likely to make the list of the world’s top 10 carmakers by 2030, disrupting ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/business/china-business/article/3334406/chinese-ev-makers-tipped-storm-worlds-top-10-carmakers-2030-mckinsey-forecasts?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Al Jazeera – Breaking New</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.aljazeera.com/news/2025/11/28/trump-says-one-national-guard-soldier-shot-near-white-house-has-died?traffic_source=rss" target="_blank">Trump says National Guard’s Sarah Beckstrom has died after DC shooting</a></h2>
+                    <p class="ai-summary">US president says second National Guard member 'fighting for his life' after attack a day earlier in Washington, DC.</p>
+                    <div class="card-footer">
+                        <a href="https://www.aljazeera.com/news/2025/11/28/trump-says-one-national-guard-soldier-shot-near-white-house-has-died?traffic_source=rss" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/0cc6d565-f1b0-4fa6-8b93-74489b3c73c5_e12321da.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334430/hong-kong-blazes-heat-flames-main-challenges-rescuers-not-ladder-limits?utm_source=rss_feed" target="_blank">Hong Kong fire’s ‘heat, flames main challenges for rescuers, not ladder limits’</a></h2>
+                    <p class="ai-summary">Excessive heat and raging flames that engulfed a Tai Po estate in one of Hong Kong’s deadliest fires posed the biggest challenges for firefighters, experts have said, as they dismissed suggestions tha...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334430/hong-kong-blazes-heat-flames-main-challenges-rescuers-not-ladder-limits?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/9c23ba33-bf32-4ca7-930d-1bcfae51984c_3a94bcba.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/business/article/3334425/regal-joins-hong-kong-developers-hoteliers-offer-free-lodging-tai-po-fires-victims?utm_source=rss_feed" target="_blank">Hong Kong developers, hoteliers offer free lodging to Tai Po fire victims</a></h2>
+                    <p class="ai-summary">Regal Hotels International will offer free lodging at a dozen of its hotels across Hong Kong to the victims of Wednesday’s Tai Po fire, as it joins other hoteliers and corporate donors in rushing to t...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/business/article/3334425/regal-joins-hong-kong-developers-hoteliers-offer-free-lodging-tai-po-fires-victims?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/9f045b6f-5ebd-4305-b2eb-61be543d33b4_7669aa82.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/week-asia/health-environment/article/3334326/paper-eating-invasive-pest-could-wreak-havoc-japans-cultural-treasures?utm_source=rss_feed" target="_blank">A paper-eating invasive pest could wreak havoc on Japan’s cultural treasures</a></h2>
+                    <p class="ai-summary">The swift spread of a tiny invasive insect that gorges on paper threatens to ravage Japan’s priceless cultural treasures, historic records and delicate scrolls, as calls grow for stronger measures to ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/week-asia/health-environment/article/3334326/paper-eating-invasive-pest-could-wreak-havoc-japans-cultural-treasures?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="construction">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036307/xinchang-globular-center-line-plus-studio" target="_blank">Xinchang Globular Center / line+ studio</a></h2>
+                    <p class="ai-summary">The Xinchang Globular Center, designed by Dr. Zhu Peidong and the line+ studio team, is a 120,000 m² sports and public complex and a major component of Zhejiang Province's "4+1" strategic projects. Po...</p>
+                    <div class="card-footer">
+                        <a href="https://www.archdaily.com/1036307/xinchang-globular-center-line-plus-studio" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/f0f05872-1424-4218-bce0-eeda4b776365_c6173fea.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>9h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/hong-kong/society/article/3334435/hong-kong-fire-death-toll-rises-94-rescue-work-continues-day-3?utm_source=rss_feed" target="_blank">Hong Kong fire death toll hits 128, status of 200 unclear</a></h2>
+                    <p class="ai-summary">This story has been made freely available as a public service to our readers. Please consider supporting SCMP’s journalism by subscribing. Get faster notifications on the latest updates by downloading...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/hong-kong/society/article/3334435/hong-kong-fire-death-toll-rises-94-rescue-work-continues-day-3?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/27/615d469b-0708-4def-976a-1ed79008e5b8_90913c4e.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>10h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/business/china-business/article/3334300/chinese-ev-makers-step-gas-abroad-hedge-against-weaker-mainland-sales?utm_source=rss_feed" target="_blank">Chinese EV makers step on gas abroad amid weakening mainland sales</a></h2>
+                    <p class="ai-summary">Chinese electric vehicle (EV) builders are increasingly shipping their cars abroad to spur international sales ahead of an expected downturn in their home market, analysts say, as Beijing phases out i...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/business/china-business/article/3334300/chinese-ev-makers-step-gas-abroad-hedge-against-weaker-mainland-sales?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/9a61324a-2e0d-4f77-b294-eec8b0cf9487_aa3a61cf.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>10h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/united-states-canada/article/3334434/trump-admin-reviewing-every-green-card-19-countries-after-washington-shooting?utm_source=rss_feed" target="_blank">Trump orders review of immigrant visas after National Guard attack</a></h2>
+                    <p class="ai-summary">The Trump administration announced on Thursday that it would review the immigration status of every permanent resident or “green card” holder from Afghanistan and 18 other countries following the atta...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/united-states-canada/article/3334434/trump-admin-reviewing-every-green-card-19-countries-after-washington-shooting?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -1130,7 +1079,7 @@ Get your exclusive edition ...</p>
         </div>
 
         <div class="pagination">
-            <a href="index.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn active">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn ">4</a><a href="page3.html" class="page-btn">NEXT &rarr;</a>
+            <a href="index.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn active">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn ">4</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page11.html" class="page-btn ">11</a><a href="page3.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <footer class="site-footer">

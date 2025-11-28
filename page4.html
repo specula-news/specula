@@ -52,11 +52,11 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
 
-        /* LOGO ANIMATION (The Woggle) */
+        /* LOGO ANIMATION */
         .logo-icon { 
             height: 50px; width: auto; 
             filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
@@ -69,7 +69,7 @@
         }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
 
-        /* CATEGORY NAVIGATION (Under Logo) */
+        /* CATEGORY NAVIGATION */
         .category-nav {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
             padding-top: 20px; width: 100%;
@@ -151,7 +151,7 @@
 </head>
 <body>
     <a href="page3.html" class="floating-nav nav-prev">&larr;</a>
-    
+    <a href="page5.html" class="floating-nav nav-next">&rarr;</a>
 
     <!-- CHANGELOG MODAL -->
     <div class="modal-overlay" id="changelogModal">
@@ -163,25 +163,25 @@
             
             <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
                 
-                <!-- VERSION 7.1.0 -->
+                <!-- VERSION 7.2.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
-                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
-                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
-                        • <strong>UX:</strong> Version number is now clickable for full history.
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
                     </div>
                 </li>
 
-                <!-- VERSION 6.2.5 -->
+                <!-- VERSION 7.1.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
                     <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 6.2.5</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
-                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
-                        • Expanded auto-translation.
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
                     </div>
                 </li>
             </ul>
@@ -196,12 +196,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
 
-            <!-- NEW TOP NAVIGATION -->
+            <!-- TOP NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="filterNews('all')">All News</button>
                 <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>
@@ -214,43 +214,65 @@
 
         <div class="news-grid" id="newsGrid">
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="construction">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/nol0_4qxzb0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>135d Ago</time>
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank">The Hidden Engineering of Floating Bridges</a></h2>
-                    <p class="ai-summary">An engineering tour of Washington's floating concrete highways
-📰Compare news coverage. Spot media bias. Try Ground News today and get 40% off your subscription by going to https://ground.news/practica...</p>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/989114/nab-3-parramatta-square-and-nab-2-carrington-st-offices-woods-bagot" target="_blank">NAB 3 Parramatta Square & NAB 2 Carrington St. Offices / Woods Bagot</a></h2>
+                    <p class="ai-summary">A Tale of Two NABs. In Sydney, there's a red staircase that connects two workplaces located 24 kilometers apart. NAB 3 Parramatta Square (3PS) and NAB 2 Carrington St (2CS) are Woods Bagot's fraternal...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=nol0_4qxzb0" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.archdaily.com/989114/nab-3-parramatta-square-and-nab-2-carrington-st-offices-woods-bagot" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/cRaKMTK7ea0/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://cdn.i-scmp.com/sites/default/files/styles/1280x720/public/d8/images/canvas/2025/11/28/7de3a5c5-03d3-4ae8-ac3c-388af9502eb6_77bbf817.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>137d Ago</time>
+                        <div class="source-badge">News - South China Mornin</div>
+                        <time>16h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank">I Went Into a Nuclear Plant and It Changed How I Think About Radiation - Smarter Every Day 309</a></h2>
-                    <p class="ai-summary">KiwiCo has been great for my family. To get 50% off your first monthly crate go to https://kiwico.com/smarter and check it out. I believe you'll really enjoy the kids' reaction to it!
+                    <h2 class="card-title"><a href="https://www.scmp.com/news/world/united-states-canada/article/3334426/national-guard-shooting-afghan-suspect-drove-across-us-carry-out-attack-officials-say?utm_source=rss_feed" target="_blank">National Guard member dies as Afghan attacker’s past CIA link emerges</a></h2>
+                    <p class="ai-summary">US President Donald Trump said that one of the two West Virginia National Guard members shot by an Afghan national near the White House had died, calling the shooter who had worked with the CIA in his...</p>
+                    <div class="card-footer">
+                        <a href="https://www.scmp.com/news/world/united-states-canada/article/3334426/national-guard-shooting-afghan-suspect-drove-across-us-carry-out-attack-officials-say?utm_source=rss_feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/86/637386_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>17h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank">Plex starts charging for remote streaming</a></h2>
+                    <p class="ai-summary">Roku app first
 
-Click here if y...</p>
+		
+		
+		
+		
+		Plex has now started rolling out the change that makes the feature that allows users to stream content from its server outside the home network a paid feature. Early...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=cRaKMTK7ea0" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/pc/plex-borjar-ta-betalt-for-distansstromning/485934/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -258,65 +280,107 @@ Click here if y...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/fudWbvE8ZKw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/kV6WwXM5cHx999WkGeoinX-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>149d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>17h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank">How Liquid Dampers in Skyscrapers Work</a></h2>
-                    <p class="ai-summary">How sloshes quash wobbles in skyscrapers.
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch 17 Pages: https://nebula.tv/videos/17pages?re...</p>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/rock-your-stockings-with-this-guitar-playing-astronaut-star-projector-for-less-than-usd12-this-black-friday" target="_blank">Rock your stockings with this guitar-playing Astronaut Star Projector for less than $12 this Black Friday</a></h2>
+                    <p class="ai-summary">Looking for a small but perfectly formed gift, maybe for your office's Secret Santa? This mini astronaut star projector is $28 off for Black Friday, with Walmart's Amazon-beating Black Friday deal.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=fudWbvE8ZKw" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/stargazing/skywatching-kit/rock-your-stockings-with-this-guitar-playing-astronaut-star-projector-for-less-than-usd12-this-black-friday" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="ev">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/WhCNpX3s-D8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>163d Ago</time>
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>17h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank">How Water Recycling Works</a></h2>
-                    <p class="ai-summary">An overview of municipal water reclamation.
-🧠 To try everything Brilliant has to offer for free for a full 30 days, visit https://www.brilliant.org/practicalengineering
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/chinas-low-altitude-ambitions-just-got-higher-with-airship-purchase/" target="_blank">China’s Low-Altitude Ambitions Just Got Higher with Airship Purchase</a></h2>
+                    <p class="ai-summary">Zhejiang Airspace Integration Low-Altitude Industry Development Company just placed an order of 18 AS700 manned airships from the Aviation Industry Corporation of China (AVIC) last November 18. This d...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/chinas-low-altitude-ambitions-just-got-higher-with-airship-purchase/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/71/637371_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>17h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank">Expedition Vildmark is a new reality show with celebrities</a></h2>
+                    <p class="ai-summary">Coming on Kanal 5 and HBO Max next year
 
-Nearly all sewage in major cit...</p>
+		
+		
+		
+		
+		Above you can see the gang that will participate in the new reality venture Expedition Wildland, which will premiere in the spring of 2026 on HBO Max...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=WhCNpX3s-D8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/film/expedition-vildmark-ar-en-ny-realityshow-med-kandisar/485932/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/3ZTGwcHQfLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/apple_a_critter_carol.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>172d Ago</time>
+                        <div class="source-badge">The Verge</div>
+                        <time>17h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank">I Tried To Make Something In America (The Smarter Scrubber Experiment) - Smarter Every Day 308</a></h2>
-                    <p class="ai-summary">Get a Smarter Scrubber Here: http://smarterscrubber.com
-Interested in Wholesale, or helping us tell the story? Here's a link:
-https://forms.gle/XFrLTa5b8kxSvPnu8
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank">Watch how Apple made its new puppet-packed holiday ad</a></h2>
+                    <p class="ai-summary">While companies like Coca-Cola turned to generative AI to create “visually jarring” holiday ads this year, Apple continues to embrace practical effects with its new festive short film called A Critter...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831431/apple-a-critter-carol-holiday-ad-puppets-practical-effects" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>17h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank">The analogue supercar Nilu visits Jay Leno</a></h2>
+                    <p class="ai-summary">Sasha Selipanov's baby
 
-I would like to thank the Patrons of ...</p>
+			
+			
+		
+		
+		
+		Last fall, former Koenigsegg, Bugatti and Lamborghini designer Sasha Selipanovs presented his very own Nilu27 supercar. A futuristic beast out…<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=3ZTGwcHQfLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/bil/den-analoga-superbilen-nilu-halsar-pa-hos-jay-leno/485904/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -324,43 +388,164 @@ I would like to thank the Patrons of ...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/RnYdt4T76mk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/APfhjzKmxyQDbzhEQ9xVLP-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>177d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>17h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank">Why are Smokestacks So Tall?</a></h2>
-                    <p class="ai-summary">A peek behind the curtain of the Illium Works of the Federal Apparatus Corporation.
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch 17 ...</p>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/see-a-half-lit-moon-shine-among-the-stars-of-aquarius-on-nov-27" target="_blank">See a half-lit moon shine among the stars of Aquarius on Nov. 27</a></h2>
+                    <p class="ai-summary">Saturn shines near the half-lit moon at sunset on Nov. 27</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=RnYdt4T76mk" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/stargazing/see-a-half-lit-moon-shine-among-the-stars-of-aquarius-on-nov-27" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/jPJCYrxqyT8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/gettyimages-2247204481.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>191d Ago</time>
+                        <div class="source-badge">The Verge</div>
+                        <time>17h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank">The Most Implausible Tunneling Method</a></h2>
-                    <p class="ai-summary">How immersed tube tunnels are built.
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank">A humanoid robot-shaped bubble is forming, China warns</a></h2>
+                    <p class="ai-summary">A humanoid robot bubble could be brewing, warned China’s leading economic planning agency on Thursday. The alert comes amid growing fears that a bubble in a related industry — AI — is about to burst. ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831451/china-humanoid-robotics-bubble" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">CleanTechnica</div>
+                        <time>17h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://cleantechnica.com/2025/11/27/what-if-private-air-travel-meant-the-wealthiest-had-to-pay-a-climate-tax/" target="_blank">What If Private Air Travel Meant The Wealthiest Had To Pay A Climate Tax?</a></h2>
+                    <p class="ai-summary">Private jet owners and travelers bypass the hustle-and-bustle of major airports. They have the privilege of landing at secluded destinations with luxury concierge amenities, isolating themselves from ...</p>
+                    <div class="card-footer">
+                        <a href="https://cleantechnica.com/2025/11/27/what-if-private-air-travel-meant-the-wealthiest-had-to-pay-a-climate-tax/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank">Gemini seems to be perfect for fooling children</a></h2>
+                    <p class="ai-summary">Google makes commercial with Nano Banana
 
-Immersed tube construction makes tunneling less like drilling a hole and more like docking a spacecraft.
+			
+			
+		
+		
+		
+		Google's Nano Banana, an AI model for generating images and videos, has been widely praised since its release, and in a new commercial f...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/internet/gemini-verkar-vara-perfekt-for-att-lura-barn/485926/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/vzF3Gv7TFUY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank">The 2025 Asian General Aviation Exhibition opens today.</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=vzF3Gv7TFUY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/Jb97CyejVAfBuqhgrLi3LW-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/my-favorite-rechargeable-star-projector-is-cheaper-than-its-ever-been-this-black-friday" target="_blank">My favorite rechargeable star projector is cheaper than it's ever been this Black Friday</a></h2>
+                    <p class="ai-summary">This Pococo Galaxy Star Projector gives the more expensive competition a run for their money — and it's less than $80 this Black Friday.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/my-favorite-rechargeable-star-projector-is-cheaper-than-its-ever-been-this-black-friday" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/60/637360_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank">The Orion browser reaches version 1.0</a></h2>
+                    <p class="ai-summary">WebKit with support for Chrome extensions
 
-Watch this video ad-free on Nebula: https://nebula.tv/vi...</p>
+		
+		
+		
+		
+		After a five-year development period, Kagi has now released version 1.0 of its Orion browser for Mac. The browser is based on Safari's WebKit and should be...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=jPJCYrxqyT8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/mac/webblasaren-orion-nar-version-10/485925/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/kuxiu_s3_1.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank">Kuxiu’s solid-state power bank now has more capacity and faster wireless charging</a></h2>
+                    <p class="ai-summary">Seven months after launching its first semi-solid state battery that used a safer and longer-lasting solid-liquid mixed electrolyte, Kuxiu is introducing a new version with some welcome upgrades. The ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/news/831365/kuxiu-magsafe-semi-solid-state-wireless-power-bank-s3" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -368,41 +553,20 @@ Watch this video ad-free on Nebula: https://nebula.tv/vi...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/RZg1zOKm5wk/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/Bb0uDpvitoE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>205d Ago</time>
+                        <div class="source-badge">Veritasium</div>
+                        <time>18h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank">When Abandoned Mines Collapse</a></h2>
-                    <p class="ai-summary">An overview of mine subsidence
-🌌Get Nebula using my link for 40% off an annual subscription: https://go.nebula.tv/Practical-Engineering
-🏙️Watch The Logistics of Coal Mining: https://nebula.tv/videos/w...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=RZg1zOKm5wk" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/-D5iBAuXxeQ/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">Practical Engineering</div>
-                        <time>226d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank">When Kitty Litter Caused a Nuclear Catastrophe</a></h2>
-                    <p class="ai-summary">The silliest cause for a nuclear disaster
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/Bb0uDpvitoE" target="_blank">I turned my phone into a microscope</a></h2>
+                    <p class="ai-summary">#Sponsored @madebygoogle A single drop of water is all it takes to turn the new Google #Pixel10Pro into a makeshift microscope.
 
-There are enormous benefits to be had using nuclear materials in many areas of science, engineering, and medicine. But there are enormous costs as well, many...</p>
+Promotional code offer expires 12/05/2025 at 11:59p.m. PT; while suppli...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=-D5iBAuXxeQ" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/shorts/Bb0uDpvitoE" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -410,174 +574,277 @@ There are enormous benefits to be had using nuclear materials in many areas of s
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/8nilP--GFLY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://img.youtube.com/vi/omNvSHfIv7s/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>241d Ago</time>
+                        <div class="source-badge">Kurzgesagt – In a Nutshel</div>
+                        <time>18h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank">The Unsolved Mystery of Impact Flashes - Smarter Every Day 307</a></h2>
-                    <p class="ai-summary">A big thanks to Henson for sponsoring this video. Check them out at http://hensonshaving.com/smarter (Make sure the 100 pack is in your cart to get them for free.)
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/omNvSHfIv7s" target="_blank">Will Fungi Infect Us All?</a></h2>
+                    <p class="ai-summary">Who watched or played The Last of Us? Hopefully, with continuous research, we can make sure those scenarios stay on the screen, far away from the reality. 
 
-Want to get an email when I upload?...</p>
+#kurzgesagt
+#inanutshell #kurzgesagt_inanut...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=8nilP--GFLY" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/shorts/omNvSHfIv7s" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/JVROsxtjoCw/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/43/637343_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>300d Ago</time>
+                        <div class="source-badge">Feber</div>
+                        <time>18h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank">I Explored the World's First Nuclear Power Plant (and How It Works) - Smarter Every Day 306</a></h2>
-                    <p class="ai-summary">You can try AnyDesk for free.  It's good.  https://anydesk.com/smarter 
-Get Email Updates: https://www.smartereveryday.com/email
+                    <h2 class="card-title"><a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank">The world's largest Supercharger station now completely ready</a></h2>
+                    <p class="ai-summary">Completely solar powered
 
-Second Channel Video: 
-https://www.youtube.com/watch?v=OVzNPO1pZGo
+		
+		
+		
+		
+		This summer, Tesla sneakily opened its solar-powered Supercharger station. Now it is completely ready and this will be the manufacturer's largest to date. A total of 164 charging stations are offered...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/varldens-storsta-supercharger-station-nu-helt-klar/485919/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/11/GettyImages-1395402951.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank">How to help your parents with their tech over the holidays</a></h2>
+                    <p class="ai-summary">Going home for the holidays isn't all turkey, holiday decorations, and political arguments discussions. It also comes with requests for tech support and questions like "Why does my computer do this?" ...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/tech/827812/tech-support-family-thanksgiving-how-to" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/03/The_Studio_Photo_010101.jpg?quality=90&strip=all&crop=0,0,100,100" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">The Verge</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank">Disney Plus, Hulu, and HBO Max are all over 60 percent off for Black Friday</a></h2>
+                    <p class="ai-summary">The holidays are a great time to see family, exchange gifts, and enjoy a good meal. It’s also the perfect time to gather around a TV and catch up on must-see shows and movies. Vince Gilligan’s Pluribu...</p>
+                    <div class="card-footer">
+                        <a href="https://www.theverge.com/gadgets/829306/best-black-friday-streaming-deals-hulu-disney-plus-paramount-hbo-max-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/BHG5W6KHScfbE5ZBQKHU6d-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/im-a-northern-lights-chasing-expert-and-these-are-10-things-i-think-you-need-for-your-next-expedition" target="_blank">I'm a northern lights-chasing expert and these are 10 things I think you need for your next expedition</a></h2>
+                    <p class="ai-summary">You'll need more than a sense of adventure if you’re chasing aurora in freezing conditions.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/im-a-northern-lights-chasing-expert-and-these-are-10-things-i-think-you-need-for-your-next-expedition" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/gnzSMR6Bp6Z2HrhVXrRStL-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/space-exploration/nasa-confirms-exomars-rover-participation" target="_blank">NASA renews commitment to Europe's life-hunting Mars rover despite Trump budget cuts</a></h2>
+                    <p class="ai-summary">"These confirmations have been given to us in writing, so this is a very important step."</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/space-exploration/nasa-confirms-exomars-rover-participation" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/WLnJrAkr2nGYQbZkEBMtWf-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/ive-hand-picked-these-early-black-friday-deals-on-image-stabilized-binoculars-helping-you-to-get-steady-views-of-the-night-sky" target="_blank">I've hand-picked these early Black Friday deals on image-stabilized binoculars, helping you to get steady views of the night sky</a></h2>
+                    <p class="ai-summary">Early Black Friday deals are seeing prices slashed across image-stabilized binoculars, and this selection is perfect for detailed stargazing and steady wildlife observation.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/ive-hand-picked-these-early-black-friday-deals-on-image-stabilized-binoculars-helping-you-to-get-steady-views-of-the-night-sky" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/cenjrJbSVZkdwTRy3UWAf4-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/everything-you-need-to-go-stargazing-this-winter-and-into-2026" target="_blank">Everything you need to go stargazing this winter and into 2026</a></h2>
+                    <p class="ai-summary">The best gear to help you capture the Orion Nebula, see a close-up of a ‘Christmas Star’ and get the best from the night sky in 2026.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/everything-you-need-to-go-stargazing-this-winter-and-into-2026" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="construction">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">construction</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">ArchDaily Global</div>
+                        <time>18h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.archdaily.com/1036417/country-house-arquipelago-arquitetos" target="_blank">Country House / Arquipélago Arquitetos</a></h2>
+                    <p class="ai-summary">Located 100 meters above sea level, in the Caboclo neighborhood of Paraty, the house is immersed in a natural incline of Atlantic forest that extends to form the Serra da Bocaina.</p>
+                    <div class="card-footer">
+                        <a href="https://www.archdaily.com/1036417/country-house-arquipelago-arquitetos" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>19h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank">Hack allows you to use CDs on PS5</a></h2>
+                    <p class="ai-summary">That's how it works
 
-⇊ ...</p>
+			
+			
+		
+		
+		
+		In a new YouTube video, the channel demonstrates the Will it work? how to bypass PlayStation 5's lack of CD support using a specific external reader from Lite-On…<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=JVROsxtjoCw" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/spel/hack-later-dig-anvanda-cd-skivor-pa-ps5/485929/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/lylCYkgC63Q/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/61/637361_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>347d Ago</time>
+                        <div class="source-badge">Feber</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank">The Backwards Brain Tractor - Smarter Every Day 305</a></h2>
-                    <p class="ai-summary">I'm excited to send out this year's stickers!! Click here to join the sticker team:
- 👉 https://www.patreon.com/smartereveryday  👈
+                    <h2 class="card-title"><a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank">Five unique Beatles photos are to be auctioned off</a></h2>
+                    <p class="ai-summary">Taken at a concert in Karlstad in 1963
 
-Sign up for the SED Email List: https://www.smartereveryday.com/email...</p>
+		
+		
+		
+		
+		The Beatles' first concert outside the UK after the breakthrough was filmed, and now five previously unknown color slides from this occasion are to be auctioned ...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=lylCYkgC63Q" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://tjock.se/hemmet/fem-unika-beatles-bilder-ska-auktioneras-ivag/485928/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="geopolitics">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/jDusS--bZZA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/BgI-TWLTkgA/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>368d Ago</time>
+                        <div class="source-badge">DW Documentary</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank">The Incredibly Unique Triple Barreled Pistol...  - Smarter Every Day 304</a></h2>
-                    <p class="ai-summary">Get a Ridge Wallet!  👉👉  https://ridge.com/smarter  👈👈
-Sign up for the SED Email List: https://www.smartereveryday.com/email-list
+                    <h2 class="card-title"><a href="https://www.youtube.com/shorts/BgI-TWLTkgA" target="_blank">Why has Ecuador become a “war zone”? | DW Documentary</a></h2>
+                    <p class="ai-summary">Images of masked gunmen storming a TV station live on air in Ecuador in 2024 shocked the world. But how did this country, once considered one of Latin America’s most peaceful, became a “war zone”? 
 
-Click here if you're interested in subscribing: http://bit.ly/Subscri...</p>
+E...</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=jDusS--bZZA" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.youtube.com/shorts/BgI-TWLTkgA" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
             
-            <article class="news-card" data-category="science">
+            <article class="news-card" data-category="tech">
                 <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/JJofuF2zcTE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>396d Ago</time>
+                        <div class="source-badge">Feber</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank">Live Interview from the ISS Cupola - Smarter Every Day 303</a></h2>
-                    <p class="ai-summary">A huge thanks to Don and Matt for their time!  Thanks to Mission Control for making it happen!https://whoisinspace.com/    https://x.com/whoisinspace
-Click here if you're interested in subscribing: ht...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=JJofuF2zcTE" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/sEK6wZWMbCY/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>423d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank">Climbing Kilimanjaro - Smarter Every Day 302</a></h2>
-                    <p class="ai-summary">No Dumb Questions Episode - NDQ 187 "Songs of Ascent"
-https://www.nodumbquestions.fm/listen/2024/8/22/187-songs-of-ascent
-https://www.youtube.com/watch?v=OTLmyV8MSz4
-Brady's Video: https://www.youtube...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=sEK6wZWMbCY" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/frbLIoqDIO8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>452d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank">How Disc Golf Discs Are Made (MVP Manufacturing Tour) - Smarter Every Day 301</a></h2>
-                    <p class="ai-summary">The coolest part about this is that Brad and Chad didn't ask me to say anything in particular.... they partner with wholesale dealers so you should be able to find them at your local disc golf store. ...</p>
-                    <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=frbLIoqDIO8" target="_blank" class="read-more">FULL STORY &rarr;</a>
-                    </div>
-                </div>
-            </article>
-            
-            <article class="news-card" data-category="science">
-                <div class="card-image-wrapper">
-                    <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/VPSm9gJkPxU/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
-                    <div class="card-overlay"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>487d Ago</time>
-                    </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank">Nature's Incredible ROTATING MOTOR (It’s Electric!) - Smarter Every Day 300</a></h2>
-                    <p class="ai-summary">Thank you for considering support for Smarter Every Day on Patreon:
-http://www.patreon.com/smartereveryday
+                    <h2 class="card-title"><a href="https://feber.se/bil/kinesisk-elbil-sladdar-loss-likt-ken-block/485903/?utm_source=rss&utm_medium=feed" target="_blank">Chinese electric car rips loose like Ken Block</a></h2>
+                    <p class="ai-summary">Good at burning rubber
 
-Click here if you're interested in subscribing: http://bit.ly/Subscribe2SED
-
-I notify people...</p>
+			
+			
+		
+		
+		
+		Here we get to see when the Chinese car manufacturer GAC's sporty electric car Hyptec SSR goes wild. It should have 1224 horses which as we can see is ugly...<span class="lang-note">(Translated)</span></p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=VPSm9gJkPxU" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://feber.se/bil/kinesisk-elbil-sladdar-loss-likt-ken-block/485903/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -585,20 +852,18 @@ I notify people...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/TWc48iVC8u8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/jYRxVTBiwxPT7rHdECsiDN-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>543d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank">How Do Cicadas Make Noise? (In Slow Motion)  - Smarter Every Day 299</a></h2>
-                    <p class="ai-summary">Here's that link for Ridge! https://www.ridge.com/smarter
-
-Do you think all the frequencies are happening on this one mechanical device, or do you think there are multiple animals making the call at d...</p>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/skywatching-kit/astrophotographers-rejoice-at-this-stellar-black-friday-smart-telescope-deal-from-celestron" target="_blank">Astrophotographers, rejoice at this stellar Black Friday smart telescope deal from Celestron</a></h2>
+                    <p class="ai-summary">Want to capture the wonders of the universe? The Celestron Origin Home Observatory makes it super-easy to photograph the deep sky and it's a stellar deal at $200 off for Black Friday.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=TWc48iVC8u8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/stargazing/skywatching-kit/astrophotographers-rejoice-at-this-stellar-black-friday-smart-telescope-deal-from-celestron" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -606,22 +871,18 @@ Do you think all the frequencies are happening on this one mechanical device, or
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/bQF51mqzrY4/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/sJz44exiwaoSWpWJMHDLYb-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>557d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank">I Accidentally Photographed Something Unknown During the Eclipse - Smarter Every Day 298</a></h2>
-                    <p class="ai-summary">Thanks to everyone who supports on Patreon and makes this possible! 
-http://www.patreon.com/smartereveryday
-Patrons, please check for a special post about this photo!
-
-Many people asked if I would mak...</p>
+                    <h2 class="card-title"><a href="https://www.space.com/stargazing/thanksgiving-night-sky-2025-moon-saturn-and-autumn-stars-put-on-a-post-turkey-show" target="_blank">Thanksgiving night sky 2025: Moon, Saturn and autumn stars put on a post-turkey show</a></h2>
+                    <p class="ai-summary">Enjoy a post-dinner stargazing session as the first-quarter moon, Saturn and the season's brightest stars light up the Thanksgiving night sky.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=bQF51mqzrY4" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/stargazing/thanksgiving-night-sky-2025-moon-saturn-and-autumn-stars-put-on-a-post-turkey-show" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -629,20 +890,271 @@ Many people asked if I would mak...</p>
             <article class="news-card" data-category="science">
                 <div class="card-image-wrapper">
                     <div class="cat-tag">science</div>
-                    <img src="https://img.youtube.com/vi/Bh7Xf3Ox7K8/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <img src="https://cdn.mos.cms.futurecdn.net/G9CKVMdZmZKPPnWDEeLSkb-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
                     <div class="card-overlay"></div>
                 </div>
                 <div class="card-content">
                     <div class="card-meta">
-                        <div class="source-badge">SmarterEveryDay</div>
-                        <time>578d Ago</time>
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>19h Ago</time>
                     </div>
-                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank">Touring the Vulcan Rocket on the Launch Pad - Smarter Every Day 297</a></h2>
-                    <p class="ai-summary">Use code SMARTER50 to get 50% OFF your first Factor box plus 20% off your next month at https://bit.ly/4b9SLO9!
-
-If you found this video to be valuable, thanks for considering supporting Smarter Every...</p>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-toys-lego/the-ucs-death-star-is-the-biggest-lego-star-wars-set-yet-heres-why-we-wont-get-it" target="_blank">The UCS Death Star is the biggest Lego Star Wars set yet: Here's why we WON'T get it</a></h2>
+                    <p class="ai-summary">As attractive as the Lego Star Wars UCS Death Star is, we just can't justify spending $1000 on a single set.</p>
                     <div class="card-footer">
-                        <a href="https://www.youtube.com/watch?v=Bh7Xf3Ox7K8" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                        <a href="https://www.space.com/entertainment/space-toys-lego/the-ucs-death-star-is-the-biggest-lego-star-wars-set-yet-heres-why-we-wont-get-it" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/new-holland-hybrid-telehandler-MAIN.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>19h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/27/diesel-gas-new-holland-hybrid-uses-methane-to-charge-its-batteries/" target="_blank">Diesel? Gas? New Holland hybrid uses METHANE to charge its batteries</a></h2>
+                    <p class="ai-summary">The latest hybrid telehandler from New Holland packs a range-extending combustion engine to boost its battery power during longer shifts – but it doesn’t run on gas or diesel. Instead, this farm-frien...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/27/diesel-gas-new-holland-hybrid-uses-methane-to-charge-its-batteries/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/vetenskap/kolla-in-grottfisken-clarias-cavernicola/485927/?utm_source=rss&utm_medium=feed" target="_blank">Check out the cave fish Clarias cavernicola</a></h2>
+                    <p class="ai-summary">One of the world's rarest freshwater fish
+
+			
+			
+		
+		
+		
+		BBC Earth has released a clip checking out the Namibian cave catfish, which in Latin has been named "Clarias cavernicola", but...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/vetenskap/kolla-in-grottfisken-clarias-cavernicola/485927/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/69/637369_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/vetenskap/blixtar-pa-mars-registrerade-for-forsta-gangen/485930/?utm_source=rss&utm_medium=feed" target="_blank">Lightning on Mars recorded for the first time</a></h2>
+                    <p class="ai-summary">Created by dust storms on the Red Planet
+
+		
+		
+		
+		
+		A research team with researchers from, among others, the French University of Toulouse writes in a new study that for the first time data has been recorded ...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/vetenskap/blixtar-pa-mars-registrerade-for-forsta-gangen/485930/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/tm2aeBQnajE/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=tm2aeBQnajE" target="_blank">Cement-built hypersonic missiles by Chinese private firms—seriously?! Hand-built carriers next</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=tm2aeBQnajE" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://cdn.motor1.com/images/mgl/0eELpj/s3/2024-chevy-blazer-ev-owner-review.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">InsideEVs - Articles</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://insideevs.com/news/780007/chevy-blazer-ev-used-prices/" target="_blank">Used Chevy Blazer EVs Are A Crazy Good Deal</a></h2>
+                    <p class="ai-summary">A used Blazer EV offers nearly 300 miles of range, all-wheel-drive, tons of room and great tech for under $25,000.</p>
+                    <div class="card-footer">
+                        <a href="https://insideevs.com/news/780007/chevy-blazer-ev-used-prices/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/24/637324_980.jpeg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/bil/snart-kan-du-bara-fa-audi-q6-e-tron-med-fyrhjulsdrift/485909/?utm_source=rss&utm_medium=feed" target="_blank">Soon you can only get the Audi Q6 e-tron with four-wheel drive</a></h2>
+                    <p class="ai-summary">The question is, does it help sales?
+
+		
+		
+		
+		
+		Soon it will only be possible to buy the Audi Q6 e-tron with four-wheel drive here in Sweden. They slim down the range and upgrade the hardware and for...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/bil/snart-kan-du-bara-fa-audi-q6-e-tron-med-fyrhjulsdrift/485909/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="ev">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">ev</div>
+                    <img src="https://electrek.co/wp-content/uploads/sites/3/2025/11/9to5Toys-Black-Friday-electrek-2025.jpg?quality=82&strip=all&w=1600" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Electrek</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://electrek.co/2025/11/27/black-friday-green-deals-hub/" target="_blank">Black Friday Green Deals Hub: e-bikes, EVs, power stations, tools, appliances, more</a></h2>
+                    <p class="ai-summary">It’s that time of the year, everyone! Black Friday sales are in full momentum for 2025 after extensive early discounts for weeks, and like every year we’re seeing the best prices on Green Deals across...</p>
+                    <div class="card-footer">
+                        <a href="https://electrek.co/2025/11/27/black-friday-green-deals-hub/" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/4bxHiYAiEjfXPB4yfQPZba-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/space-exploration/international-space-station/iss-astronaut-jonny-kim-floats-with-his-lunch-space-photo-of-the-day-for-nov-27-2025" target="_blank">ISS astronaut Jonny Kim floats with his lunch | Space photo of the day for Nov. 27, 2025</a></h2>
+                    <p class="ai-summary">A perfect Thanksgiving image of the day for all who celebrate.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/space-exploration/international-space-station/iss-astronaut-jonny-kim-floats-with-his-lunch-space-photo-of-the-day-for-nov-27-2025" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="science">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">science</div>
+                    <img src="https://cdn.mos.cms.futurecdn.net/aXwAD6TKiTVYuvmpSoBMLT-1280-80.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Latest from Space.com</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.space.com/entertainment/space-movies-shows/save-over-60-percent-disney-plus-and-hulu-black-friday-streaming-deal-stream-the-alien-movies-" target="_blank">I love this Black Friday streaming deal — save over 60% on Disney Plus and Hulu where you can stream the Alien movies and TV show this holiday season</a></h2>
+                    <p class="ai-summary">This Disney Plus and Hulu bundle is over 60% off in this Black Friday streaming deal, so you can stream all Alien content and other top sci-fi for less.</p>
+                    <div class="card-footer">
+                        <a href="https://www.space.com/entertainment/space-movies-shows/save-over-60-percent-disney-plus-and-hulu-black-friday-streaming-deal-stream-the-alien-movies-" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/KXTRB4I9U9w/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=KXTRB4I9U9w" target="_blank">How did China’s special forces end a simulated hijacking in just two minutes?</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=KXTRB4I9U9w" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="geopolitics">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">geopolitics</div>
+                    <img src="https://img.youtube.com/vi/eZjLBmworOs/maxresdefault.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">China Pulse</div>
+                        <time>20h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://www.youtube.com/watch?v=eZjLBmworOs" target="_blank">Can China’s new-generation artillery squad deliver with the army’s most advanced mobile howitzer</a></h2>
+                    <p class="ai-summary"></p>
+                    <div class="card-footer">
+                        <a href="https://www.youtube.com/watch?v=eZjLBmworOs" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="news-card" data-category="tech">
+                <div class="card-image-wrapper">
+                    <div class="cat-tag">tech</div>
+                    <img src="https://static.feber.se/article_images/63/73/67/637367_980.jpg" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <div class="source-badge">Feber</div>
+                        <time>21h Ago</time>
+                    </div>
+                    <h2 class="card-title"><a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank">Cigg tax may be increased further in 2027</a></h2>
+                    <p class="ai-summary">The snus does not require extra surcharges
+
+		
+		
+		
+		
+		The government has put forward a proposal to raise the tax on the majority of tobacco products from January 1, 2027, reports Aftonbladet. According to a new...<span class="lang-note">(Translated)</span></p>
+                    <div class="card-footer">
+                        <a href="https://feber.se/samhalle/cigg-skatt-kan-hojas-ytterligare-2027/485931/?utm_source=rss&utm_medium=feed" target="_blank" class="read-more">FULL STORY &rarr;</a>
                     </div>
                 </div>
             </article>
@@ -650,7 +1162,7 @@ If you found this video to be valuable, thanks for considering supporting Smarte
         </div>
 
         <div class="pagination">
-            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a>
+            <a href="page3.html" class="page-btn">&larr; PREV</a><a href="index.html" class="page-btn ">1</a><a href="page2.html" class="page-btn ">2</a><a href="page3.html" class="page-btn ">3</a><a href="page4.html" class="page-btn active">4</a><a href="page5.html" class="page-btn ">5</a><a href="page6.html" class="page-btn ">6</a><span style="color:var(--text-secondary); align-self:center;">...</span><a href="page11.html" class="page-btn ">11</a><a href="page5.html" class="page-btn">NEXT &rarr;</a>
         </div>
 
         <footer class="site-footer">
