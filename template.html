@@ -52,11 +52,11 @@
         .logo span { color: var(--accent); }
         .logo-tag { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 1px; color: var(--text-secondary); margin-left: 10px; }
 
-        /* LOGO ANIMATION (The Woggle) */
+        /* LOGO ANIMATION */
         .logo-icon { 
             height: 50px; width: auto; 
             filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
@@ -69,7 +69,7 @@
         }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
 
-        /* CATEGORY NAVIGATION (Under Logo) */
+        /* CATEGORY NAVIGATION */
         .category-nav {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
             padding-top: 20px; width: 100%;
@@ -163,25 +163,25 @@
             
             <ul style="list-style:none; padding:0; color:var(--text-secondary); font-size:0.9rem; max-height: 400px; overflow-y: auto;">
                 
-                <!-- VERSION 7.1.0 -->
+                <!-- VERSION 7.2.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Layout:</strong> Replaced sidebar with top navigation bar under the logo.<br>
-                        • <strong>Animation:</strong> Fixed logo hover effect ("voggle").<br>
-                        • <strong>New Sources:</strong> Added <em>DW Documentary</em> & <em>Science Channel</em>.<br>
-                        • <strong>UX:</strong> Version number is now clickable for full history.
+                        • <strong>Fix:</strong> Populated empty categories (EV/Energy & Construction).<br>
+                        • <strong>New Sources:</strong> Added Electrek, CleanTechnica, ArchDaily, Construction Dive & more.<br>
+                        • <strong>Logic:</strong> Enhanced categorization algorithm for diverse feeds.
                     </div>
                 </li>
 
-                <!-- VERSION 6.2.5 -->
+                <!-- VERSION 7.1.0 -->
                 <li style="margin-bottom:20px; padding-left:15px; border-left: 2px solid #333;">
                     <span style="font-size:0.7rem; opacity:0.5;">Previous</span><br>
-                    <strong>Version 6.2.5</strong>
+                    <strong>Version 7.1.0</strong>
                     <div style="margin-top:5px;">
-                        • Added Dagens PS, Ny Teknik, Inside China Business, Johnny Harris & Diary of a CEO.<br>
-                        • Expanded auto-translation.
+                        • New UI with Top Navigation.<br>
+                        • Added DW Documentary & Science Channel.<br>
+                        • Fixed logo animation.
                     </div>
                 </li>
             </ul>
@@ -196,12 +196,12 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 7.2.0</div>
                 </div>
                 <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
             </div>
 
-            <!-- NEW TOP NAVIGATION -->
+            <!-- TOP NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="filterNews('all')">All News</button>
                 <button class="filter-btn" onclick="filterNews('geopolitics')">Geopolitics & Docu</button>

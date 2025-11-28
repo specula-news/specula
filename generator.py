@@ -8,7 +8,20 @@ from deep_translator import GoogleTranslator
 
 # --- KONFIGURATION ---
 ARTICLES_PER_PAGE = 45   
-MAX_ARTICLES_PER_SOURCE = 15
+MAX_ARTICLES_PER_SOURCE = 50 
+
+# --- MANUELLA INLÄGG ---
+MANUAL_ENTRIES = [
+    {
+        "title": "New EV Battery Tech Analysis (Specula Pick)",
+        "link": "https://youtu.be/Fb0s1uBZu44",
+        "summary": "Featured video analysis regarding the latest breakthroughs in EV battery technology and market dynamics.",
+        "image": "https://img.youtube.com/vi/Fb0s1uBZu44/maxresdefault.jpg",
+        "source": "Specula Select",
+        "category": "ev",
+        "published": time.gmtime()
+    }
+]
 
 # --- KÄLLOR MED KATEGORIER ---
 RSS_SOURCES = [
@@ -17,8 +30,9 @@ RSS_SOURCES = [
     ("https://www.nyteknik.se/rss", "tech"), 
     ("https://feber.se/rss/", "tech"),
 
-    # --- DOCUMENTARIES / GEOPOLITICS / SOCIETY ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Documentary (NEW)
+    # --- GEOPOLITICS / SOCIETY / DOCU ---
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), # Asianometry
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Documentary
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), # Inside China Business
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), # Johnny Harris
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), # Diary Of A CEO
@@ -33,37 +47,46 @@ RSS_SOURCES = [
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China TV
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
-
-    # --- TEXT NEWS: GEOPOLITICS ---
-    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
-    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"), # SCMP
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"), # Al Jazeera
 
     # --- TECH / AI ---
     ("https://anastasiintech.substack.com/feed", "tech"), 
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), 
     ("https://techcrunch.com/feed/", "tech"),
     ("https://www.theverge.com/rss/index.xml", "tech"),
+    ("https://arstechnica.com/feed/", "tech"),
 
-    # --- EV / ENERGY ---
+    # --- EV / ENERGY (Expanded Sources) ---
+    ("https://cleantechnica.com/feed/", "ev"), # CleanTechnica (NEW)
+    ("https://electrek.co/feed/", "ev"), # Electrek (NEW)
+    ("https://insideevs.com/rss/articles/all/", "ev"), # InsideEVs (NEW)
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # Electric Viking
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged (NEW)
 
-    # --- SCIENCE / SPACE / ENG ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), # Science Channel (NEW)
+    # --- SCIENCE / SPACE ---
+    ("https://www.space.com/feeds/all", "science"), # Space.com (NEW)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), # Science Channel
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), # Veritasium
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), # SmarterEveryDay
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), # Practical Engineering
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), # FII Institute
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), # SpaceEyeTech
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q", "science"), # Kurzgesagt
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g", "science"), # PBS Space Time
 
-    # --- CONSTRUCTION ---
+    # --- CONSTRUCTION (Expanded Sources) ---
+    ("https://www.constructiondive.com/feeds/news/", "construction"), # Construction Dive (NEW)
+    ("http://feeds.feedburner.com/ArchDaily", "construction"), # ArchDaily (NEW)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7z8sK378O9H5_2-lJg9gDw", "construction"), # FD Engineering
     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), # The B1M
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL3a7Xr-W8L7TC6K5am41DQ", "construction"), # Tomorrow's Build
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# Fallback-bilder
 FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", 
     "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", 
@@ -129,6 +152,9 @@ def generate_pagination_html(current_page, total_pages):
 def generate_pages():
     print("Fetching news...")
     all_articles = []
+
+    for entry in MANUAL_ENTRIES:
+        all_articles.append(entry)
 
     for url, category in RSS_SOURCES:
         try:
