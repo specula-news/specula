@@ -5,7 +5,15 @@ from bs4 import BeautifulSoup
 import math
 import random
 import json
+import sys
+import os
 from deep_translator import GoogleTranslator
+
+# --- FIX: Tvinga UTF-8 för att undvika krasch i GitHub Actions loggar ---
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+except AttributeError:
+    pass
 
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
@@ -19,7 +27,8 @@ MANUAL_ENTRIES = [
         "image": "https://img.youtube.com/vi/Fb0s1uBZu44/maxresdefault.jpg",
         "source": "Specula Select",
         "category": "ev",
-        "published": time.gmtime(),
+        "published": time.time(),
+        "time_str": "Just Now",
         "is_video": True
     }
 ]
@@ -34,22 +43,22 @@ RSS_SOURCES = [
     # GEOPOLITICS
     ("https://www.scmp.com/rss/91/feed", "geopolitics"),
     ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), # Asianometry
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Docu
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), # Inside China Biz
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), # Johnny Harris
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), # Diary CEO
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), # ShanghaiEye
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), # CGTN US
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), # CCTV
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), # CGTN EU
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN Main
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopol Eco
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), 
 
     # TECH
     ("https://anastasiintech.substack.com/feed", "tech"), 
@@ -66,33 +75,33 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # Electric Viking
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
 
     # SCIENCE
     ("https://www.space.com/feeds/all", "science"),
     ("https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss", "science"),
     ("http://rss.sciam.com/ScientificAmerican-Global", "science"),
     ("https://www.newscientist.com/feed/home/", "science"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), # Science Channel
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), # Veritasium
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), # SmarterEveryDay
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), # Practical Eng
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), # FII
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), # SpaceEyeTech
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q", "science"), # Kurzgesagt
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g", "science"), # PBS Space
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q", "science"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g", "science"), 
 
     # CONSTRUCTION
     ("https://www.constructiondive.com/feeds/news/", "construction"),
     ("http://feeds.feedburner.com/ArchDaily", "construction"),
     ("https://www.building.co.uk/rss/news", "construction"),
     ("https://www.constructionenquirer.com/feed/", "construction"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7z8sK378O9H5_2-lJg9gDw", "construction"), # FD Engineering
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), # The B1M
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL3a7Xr-W8L7TC6K5am41DQ", "construction"), # Tomorrow's Build
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7z8sK378O9H5_2-lJg9gDw", "construction"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL3a7Xr-W8L7TC6K5am41DQ", "construction"), 
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
@@ -147,10 +156,12 @@ def get_smart_fallback(title, category):
 
 def clean_summary(summary):
     if not summary: return ""
-    soup = BeautifulSoup(summary, 'html.parser')
-    text = soup.get_text()
-    text = text.replace("Continue reading", "").replace("Read more", "").replace("Läs mer", "")
-    return text[:200] + "..." if len(text) > 200 else text
+    try:
+        soup = BeautifulSoup(summary, 'html.parser')
+        text = soup.get_text()
+        text = text.replace("Continue reading", "").replace("Read more", "").replace("Läs mer", "")
+        return text[:200] + "..." if len(text) > 200 else text
+    except: return summary[:200]
 
 def translate_text(text, source_lang='sv'):
     try:
@@ -166,59 +177,81 @@ def generate_json_data():
     for entry in MANUAL_ENTRIES:
         all_articles.append(entry)
 
+    # Headers to bypass bot protection
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            print(f"Loaded {len(feed.entries)} from {source_name}")
+            
+            # SAFE PRINT (Hanterar Unicode errors i loggar)
+            try:
+                print(f"Loaded {len(feed.entries)} from {source_name}")
+            except:
+                print(f"Loaded {len(feed.entries)} from {url}")
             
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
             is_youtube = "youtube.com" in url or "youtu.be" in url
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                pub_ts = time.time()
-                if 'published_parsed' in entry:
-                    pub_ts = time.mktime(entry.published_parsed)
-                
-                now = time.time()
-                hours_ago = int((now - pub_ts) / 3600)
-                if hours_ago < 1: time_str = "Just Now"
-                elif hours_ago < 24: time_str = f"{hours_ago}h Ago"
-                else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
+                try:
+                    # SAFE DATE PARSING
+                    pub_ts = time.time()
+                    if 'published_parsed' in entry and entry.published_parsed:
+                        pub_ts = time.mktime(entry.published_parsed)
+                    
+                    now = time.time()
+                    hours_ago = int((now - pub_ts) / 3600)
+                    if hours_ago < 1: time_str = "Just Now"
+                    elif hours_ago < 24: time_str = f"{hours_ago}h Ago"
+                    else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
 
-                title = entry.title
-                summary = clean_summary(entry.summary if 'summary' in entry else "")
-                note_html = ""
+                    title = entry.title
+                    summary = clean_summary(entry.summary if 'summary' in entry else "")
+                    note_html = ""
 
-                if is_swedish:
-                    try:
-                        title = translate_text(title)
-                        summary = translate_text(summary)
-                        note_html = ' <span class="lang-note">(Translated)</span>'
-                    except: pass
+                    if is_swedish:
+                        try:
+                            title = translate_text(title)
+                            summary = translate_text(summary)
+                            note_html = ' <span class="lang-note">(Translated)</span>'
+                        except: pass
 
-                found_image = get_image_from_entry(entry)
-                final_image = found_image if found_image else get_smart_fallback(title, category)
+                    found_image = get_image_from_entry(entry)
+                    final_image = found_image if found_image else get_smart_fallback(title, category)
 
-                article = {
-                    "title": title,
-                    "link": entry.link,
-                    "summary": summary + note_html,
-                    "image": final_image,
-                    "source": source_name,
-                    "category": category,
-                    "published": pub_ts,
-                    "time_str": time_str,
-                    "is_video": is_youtube
-                }
-                all_articles.append(article)
+                    article = {
+                        "title": title,
+                        "link": entry.link,
+                        "summary": summary + note_html,
+                        "image": final_image,
+                        "source": source_name,
+                        "category": category,
+                        "published": pub_ts,
+                        "time_str": time_str,
+                        "is_video": is_youtube
+                    }
+                    all_articles.append(article)
+                except Exception as inner_e:
+                    # Hoppa bara över denna artikel om den är trasig
+                    continue
+
         except Exception as e:
             print(f"Error loading {url}: {e}")
 
-    all_articles.sort(key=lambda x: x['published'], reverse=True)
+    # Sortering med säkerhetskoll
+    try:
+        all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
+    except:
+        pass # Om sortering misslyckas, behåll ordningen
+    
     json_data = json.dumps(all_articles)
+
+    # Check template exists
+    if not os.path.exists("template.html"):
+        print("Error: template.html not found!")
+        return
 
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
