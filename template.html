@@ -115,36 +115,36 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.0.0 -->
+                <!-- V8.1.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Current Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.0.0</strong>
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.1.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Feature:</strong> Added dedicated "YOUTUBE NEWS" tab that aggregates videos from all channels.<br>
-                        • <strong>Optimization:</strong> Video filtering logic refined to show the latest clips from Electric Viking, Johnny Harris, etc.<br>
-                        • <strong>UX:</strong> Highlighted Video tab with distinct color.
+                        • <strong>Priority Feed:</strong> Force-injected the 3 latest videos from <em>The Electric Viking</em> to ensure they appear even if RSS is blocked.<br>
+                        • <strong>YOUTUBE NEWS:</strong> Dedicated tab now reliably aggregates all subscribed video content.<br>
+                        • <strong>Source Check:</strong> Implemented aggressive fetching for YouTube channels.
                     </div>
                 </li>
 
+                <!-- V8.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.0.0</strong><br>
+                    Added "YOUTUBE NEWS" tab. Filtered video logic.
+                </li>
                 <!-- V7.9.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.9.0</strong><br>
-                    Anti-Duplicate Logic, YouTube High-Res thumbnails fixed.
+                    Anti-Duplicate Logic, YouTube High-Res thumbnails.
                 </li>
                 <!-- V7.8.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.8.1</strong><br>
-                    Randomized Generic Fallback images to prevent duplicate images.
+                    Randomized Generic Fallback images.
                 </li>
                 <!-- V7.8.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.8.0</strong><br>
-                    Added "Previous/Next/First" buttons.
-                </li>
-                <!-- V7.0 - V7.7.0 (Shortened for brevity in this view) -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Versions 7.0 - 7.7.0</strong><br>
-                    Major UI Overhaul, SPA Engine, Categories, Massive Source Expansion.
+                    Added "Previous/Next/First" buttons to pagination.
                 </li>
             </ul>
         </div>
@@ -158,7 +158,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.1.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -208,7 +208,6 @@
                 const btnText = btn.textContent.toLowerCase();
                 const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
                 
-                // Special handle for Video tab
                 if (cat === 'video' && btnText.includes('youtube')) {
                     btn.classList.add('active');
                 } else if (cat !== 'video' && btnText.includes(catMatch) && !btnText.includes('youtube')) {
