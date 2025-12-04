@@ -17,7 +17,7 @@ except AttributeError:
 
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
-MAX_DAYS_OLD = 5 # Filter: Max 5 dagar gammalt
+MAX_DAYS_OLD = 5
 
 # --- YOUTUBE KANALER ---
 YOUTUBE_CHANNELS = [
@@ -94,14 +94,11 @@ SMART_IMAGES = {
     "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
     "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"],
     "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop"]
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"]
 }
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
 ]
 
 used_image_urls = []
@@ -136,7 +133,6 @@ def get_smart_fallback(title, category, source):
                     used_image_urls.append(img)
                     return img
             return random.choice(urls)
-    
     for _ in range(5):
         img = random.choice(GENERIC_FALLBACKS)
         if img not in used_image_urls:
@@ -163,7 +159,7 @@ def fetch_youtube_videos(channel_url, category):
     ydl_opts = {
         'quiet': True,
         'extract_flat': 'in_playlist',
-        'playlistend': 10, # Hämta 10 senaste
+        'playlistend': 10, 
         'ignoreerrors': True
     }
     videos = []
@@ -179,23 +175,20 @@ def fetch_youtube_videos(channel_url, category):
                     url = entry.get('url')
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
+                    
+                    # 1. Hämta MaxResDefault först
                     img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
                     
-                    # DATE PARSING (YYYYMMDD)
                     upload_date = entry.get('upload_date')
                     if upload_date:
                         dt = datetime.strptime(upload_date, "%Y%m%d")
                         pub_ts = dt.timestamp()
                     else:
-                        pub_ts = time.time() # Fallback
+                        pub_ts = time.time()
 
-                    # TIME STRING
                     now = time.time()
                     days_ago = (now - pub_ts) / 86400
-                    
-                    # 5-DAY FILTER
-                    if days_ago > MAX_DAYS_OLD:
-                        continue
+                    if days_ago > MAX_DAYS_OLD: continue
 
                     if days_ago < 1: time_str = "Just Now"
                     else: time_str = f"{int(days_ago)}d Ago"
@@ -209,7 +202,8 @@ def fetch_youtube_videos(channel_url, category):
                         "category": category,
                         "published": pub_ts,
                         "time_str": time_str,
-                        "is_video": True
+                        "is_video": True,
+                        "yt_id": video_id  # NYTT: Skicka med ID så frontend kan fixa bilden
                     })
                     print(f"Fetched YT: {title}")
     except Exception as e:
@@ -253,11 +247,9 @@ def generate_json_data():
                     if 'published_parsed' in entry and entry.published_parsed:
                         pub_ts = time.mktime(entry.published_parsed)
                     
-                    # 5-DAY FILTER (RSS)
                     now = time.time()
                     days_ago = (now - pub_ts) / 86400
-                    if days_ago > MAX_DAYS_OLD:
-                        continue
+                    if days_ago > MAX_DAYS_OLD: continue
 
                     if days_ago < 1: time_str = "Just Now"
                     else: time_str = f"{int(days_ago)}d Ago"
@@ -284,7 +276,8 @@ def generate_json_data():
                         "category": category,
                         "published": pub_ts,
                         "time_str": time_str,
-                        "is_video": False
+                        "is_video": False,
+                        "yt_id": None
                     }
                     all_articles.append(article)
                 except Exception: continue

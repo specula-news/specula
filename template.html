@@ -74,6 +74,7 @@
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; cursor: pointer; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
         .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        
         .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent); text-decoration: none; font-size: 1.5rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer; }
         .floating-nav:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-50%) scale(1.1); background: var(--bg-card-hover); }
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
@@ -114,26 +115,30 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.7.0 -->
+                <!-- V8.8.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.7.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.8.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>More Content:</strong> Increased YouTube fetch limit to 10 videos per channel (Total 300+ videos).<br>
-                        • <strong>5-Day Filter:</strong> Implemented strict date filter to show older but relevant news (max 5 days old).<br>
-                        • <strong>Correct Sorting:</strong> YouTube videos now sort by actual upload date, mixing perfectly with articles.
+                        • <strong>Thumbnail Repair:</strong> Implemented "HQ Fallback" logic. If a YouTube video lacks a 4K thumbnail (which causes gray boxes), the system now auto-downgrades to the HD version which always exists.<br>
+                        • <strong>Bugfix:</strong> Fixed issue where some videos displayed placeholder images instead of thumbnails.
                     </div>
                 </li>
 
+                <!-- V8.7.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.7.0</strong><br>
+                    Increased fetch limit (300+ videos), 5-Day Filter, Fixed Date Sorting.
+                </li>
                 <!-- V8.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.6.0</strong><br>
-                    Replaced RSS with <code>yt-dlp</code> for YouTube channels. Bypasses RSS delays.
+                    Replaced RSS with <code>yt-dlp</code> for YouTube channels.
                 </li>
                 <!-- V8.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.5.0</strong><br>
-                    Automated Logic cleanup. Removed hardcoded manual entries.
+                    Automated Logic cleanup.
                 </li>
                 <!-- V8.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
@@ -144,6 +149,21 @@
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.3.0</strong><br>
                     Fixed "Earth image" spam on OilPrice.
+                </li>
+                <!-- V8.2.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.2.0</strong><br>
+                    Correct YouTube Links, Inverted Dark Mode Logic.
+                </li>
+                <!-- V8.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.1.0</strong><br>
+                    Priority Feed force-injection.
+                </li>
+                <!-- V8.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.0.0</strong><br>
+                    Added "YOUTUBE NEWS" tab.
                 </li>
             </ul>
         </div>
@@ -157,7 +177,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.7.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.8.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -244,7 +264,11 @@
                         <div class="card-image-wrapper">
                             <div class="cat-tag">${art.category}</div>
                             ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                            <img src="${art.image}" class="card-image" loading="lazy" alt="News" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                            <img src="${art.image}" 
+                                 class="card-image" 
+                                 loading="lazy" 
+                                 alt="News" 
+                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'}">
                             <div class="card-overlay"></div>
                         </div>
                     </a>
