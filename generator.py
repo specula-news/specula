@@ -1,242 +1,472 @@
 import feedparser
-import json
-import os
-import glob
-import random
-import datetime
-import yt_dlp
+import time
+from datetime import datetime, timezone
 from bs4 import BeautifulSoup
+import math
+import random
+import json
+import sys
+import os
+import re
 from deep_translator import GoogleTranslator
+from yt_dlp import YoutubeDL
+
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+except AttributeError:
+    pass
 
 # --- KONFIGURATION ---
-OUTPUT_DIR = "public"
-TEMPLATE_FILE = "template.html"
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "index.html")
+MAX_ARTICLES_PER_SOURCE = 50 
+MAX_DAYS_OLD = 5 
+MAX_VIDEO_DAYS_OLD = 3 
 
-# --- IMAGE MANAGER CLASS (LÖSNINGEN PÅ DUBBLETTER) ---
+SITE_URL = "https://specula-news.netlify.app"
+
+# --- YOUTUBE KANALER ---
+YOUTUBE_CHANNELS = [
+    ("https://www.youtube.com/@electricviking", "ev"),
+    ("https://www.youtube.com/@Asianometry", "geopolitics"),
+    ("https://www.youtube.com/@DWDocumentary", "geopolitics"),
+    ("https://www.youtube.com/@inside_china_business", "geopolitics"),
+    ("https://www.youtube.com/@johnnyharris", "geopolitics"),
+    ("https://www.youtube.com/@TheDiaryOfACEO", "geopolitics"),
+    ("https://www.youtube.com/@ShanghaiEyeMagic", "geopolitics"),
+    ("https://www.youtube.com/@cgtnamerica", "geopolitics"),
+    ("https://www.youtube.com/@CCTVVideoNewsAgency", "geopolitics"),
+    ("https://www.youtube.com/@CGTNEurope", "geopolitics"),
+    ("https://www.youtube.com/@cgtn", "geopolitics"),
+    ("https://www.youtube.com/channel/UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
+    ("https://www.youtube.com/@channelnewsasia", "geopolitics"),
+    ("https://www.youtube.com/@GeopoliticalEconomyReport", "geopolitics"),
+    ("https://www.youtube.com/@chinaviewtv", "geopolitics"),
+    ("https://www.youtube.com/@eudebateslive", "geopolitics"),
+    ("https://www.youtube.com/@wocomodocs", "geopolitics"),
+    ("https://www.youtube.com/@elithecomputerguy", "tech"),
+    ("https://www.youtube.com/@undecidedmf", "ev"),
+    ("https://www.youtube.com/@elektromanija", "ev"),
+    ("https://www.youtube.com/@fullychargedshow", "ev"),
+    ("https://www.youtube.com/@ScienceChannel", "science"),
+    ("https://www.youtube.com/@veritasium", "science"),
+    ("https://www.youtube.com/@smartereveryday", "science"),
+    ("https://www.youtube.com/@PracticalEngineeringChannel", "science"),
+    ("https://www.youtube.com/@fii_institute", "science"),
+    ("https://www.youtube.com/@spaceeyetech", "science"),
+    ("https://www.youtube.com/@kzjut", "science"), 
+    ("https://www.youtube.com/@pbsspacetime", "science"),
+    ("https://www.youtube.com/@FD_Engineering", "construction"),
+    ("https://www.youtube.com/@TheB1M", "construction"),
+    ("https://www.youtube.com/@TomorrowsBuild", "construction"),
+]
+
+# --- TEXT NYHETER ---
+RSS_SOURCES = [
+    ("https://www.dagensps.se/feed/", "geopolitics"), 
+    ("https://www.nyteknik.se/rss", "tech"), 
+    ("https://feber.se/rss/", "tech"),
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
+    ("https://anastasiintech.substack.com/feed", "tech"), 
+    ("https://techcrunch.com/feed/", "tech"),
+    ("https://www.theverge.com/rss/index.xml", "tech"),
+    ("https://arstechnica.com/feed/", "tech"),
+    ("https://cleantechnica.com/feed/", "ev"), 
+    ("https://electrek.co/feed/", "ev"), 
+    ("https://insideevs.com/rss/articles/all/", "ev"),
+    ("https://www.greencarreports.com/rss/news", "ev"),
+    ("https://oilprice.com/rss/main", "ev"),
+    ("https://www.renewableenergyworld.com/feed/", "ev"),
+    ("https://www.autoblog.com/category/green/rss.xml", "ev"),
+    ("https://www.space.com/feeds/all", "science"),
+    ("https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss", "science"),
+    ("http://rss.sciam.com/ScientificAmerican-Global", "science"),
+    ("https://www.newscientist.com/feed/home/", "science"),
+    ("https://www.constructiondive.com/feeds/news/", "construction"),
+    ("http://feeds.feedburner.com/ArchDaily", "construction"),
+    ("https://www.building.co.uk/rss/news", "construction"),
+    ("https://www.constructionenquirer.com/feed/", "construction"),
+]
+
+SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
+
+# --- IMAGE MANAGER CLASS V9.7.0 ---
 class ImageManager:
     def __init__(self):
-        # Global tracker för att minnas vilka bilder som använts under denna körning
+        # Håller koll på ALLA bilder som delats ut under denna körning
         self.used_images = set()
         
-        # HÄR DEFINIERAR DU DINA BILD-LISTOR (Kopiera in dina 150+ länkar här)
-        # Jag har lagt in platshållare, se till att fylla på dessa listor rejält!
         self.image_pools = {
-            "Geopolitics": [
-                "https://images.unsplash.com/photo-1529101091760-6149d3c879d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1532375810709-75b1da00537c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                # ... Lägg till dina kartor/militär/politik bilder här
+            "china": [
+                "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000",
+                "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000",
+                "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000",
+                "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000",
+                "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000",
+                "https://images.unsplash.com/photo-1518506533724-65464c5d9813?q=80&w=1000",
+                "https://images.unsplash.com/photo-1537254326439-0e78a8257938?q=80&w=1000",
+                "https://images.unsplash.com/photo-1504512485720-7d83a16ee930?q=80&w=1000",
+                "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000",
+                "https://images.unsplash.com/photo-1516023353357-357c6032d288?q=80&w=1000"
             ],
-            "Tech": [
-                "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                # ... Lägg till dina kretskort/cyber/kod bilder här
+            "asia": [
+                "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000",
+                "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000",
+                "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000",
+                "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?q=80&w=1000",
+                "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?q=80&w=1000"
             ],
-            "EV": [
-                "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1617788138017-80ad40651399?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                # ... Lägg till bilar/laddstolpar/batterier
+            "ev": [
+                "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000",
+                "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000",
+                "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000",
+                "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000",
+                "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000",
+                "https://images.unsplash.com/photo-1558628818-40db7871d007?q=80&w=1000",
+                "https://images.unsplash.com/photo-1562424070-d69865365737?q=80&w=1000",
+                "https://images.unsplash.com/photo-1594535182308-8ff248971649?q=80&w=1000",
+                "https://images.unsplash.com/photo-1605733513597-a8f8341084e6?q=80&w=1000",
+                "https://images.unsplash.com/photo-1618038483079-bfe64dcb17f1?q=80&w=1000"
             ],
-            "Science": [
-                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                # ... Rymden/Mikroskop/DNA
+            "oil": [
+                "https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000",
+                "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000",
+                "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000",
+                "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000",
+                "https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?q=80&w=1000",
+                "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1000",
+                "https://images.unsplash.com/photo-1582555618296-5427d25365b6?q=80&w=1000",
+                "https://images.unsplash.com/photo-1596463059283-32d70243b13c?q=80&w=1000",
+                "https://images.unsplash.com/photo-1474376962954-d8a681cc53b2?q=80&w=1000",
+                "https://images.unsplash.com/photo-1595835008848-1200699190b7?q=80&w=1000"
             ],
-            "Construction": [
-                 "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                 "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            "gas": [
+                "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000",
+                "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000",
+                "https://images.unsplash.com/photo-1584351622213-344767352781?q=80&w=1000",
+                "https://images.unsplash.com/photo-1534543987518-6139a617dd30?q=80&w=1000"
             ],
-            "All News": [
-                # En generell pool om inget annat passar
-                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            "money": [
+                "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000",
+                "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000",
+                "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?q=80&w=1000",
+                "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=1000",
+                "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=1000",
+                "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?q=80&w=1000"
+            ],
+            "market": [
+                "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1000",
+                "https://images.unsplash.com/photo-1612178991541-b48cc8e92a4d?q=80&w=1000",
+                "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?q=80&w=1000",
+                "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?q=80&w=1000",
+                "https://images.unsplash.com/photo-1604594849809-dfedbc827105?q=80&w=1000"
+            ],
+            "space": [
+                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000",
+                "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000",
+                "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000",
+                "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000",
+                "https://images.unsplash.com/photo-1541185933-710f50746747?q=80&w=1000",
+                "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1000",
+                "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=1000",
+                "https://images.unsplash.com/photo-1533475418392-41543084b4f7?q=80&w=1000"
+            ],
+            "tech": [
+                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000",
+                "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000",
+                "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000",
+                "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=1000",
+                "https://images.unsplash.com/photo-1535378437268-13d143445347?q=80&w=1000",
+                "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000",
+                "https://images.unsplash.com/photo-1550009158-9ebf69056955?q=80&w=1000",
+                "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000"
+            ],
+            "construction": [
+                "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000",
+                "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000",
+                "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000",
+                "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?q=80&w=1000",
+                "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?q=80&w=1000",
+                "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000",
+                "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?q=80&w=1000",
+                "https://images.unsplash.com/photo-1470290449668-02dd93d9420a?q=80&w=1000"
             ]
         }
+        
+        self.generic_fallbacks = [
+            "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000",
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000",
+            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000",
+            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
+            "https://images.unsplash.com/photo-1480506132288-68f7705954bd?q=80&w=1000",
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1000",
+            "https://images.unsplash.com/photo-1501854140884-074cf272492b?q=80&w=1000",
+            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
+            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1000"
+        ]
 
-    def get_image(self, category):
-        """
-        Returnerar en bild som GARANTERAT inte visats tidigare i denna körning,
-        om det finns några bilder kvar att välja på.
-        """
-        # 1. Bestäm vilken lista vi ska leta i
-        target_pool = self.image_pools.get(category, self.image_pools["All News"])
+    def get_image(self, title, category, source):
+        # 1. Hitta potentiella bilder baserat på nyckelord
+        text = title.lower() + " " + category.lower()
+        if "oilprice" in source.lower(): text += " oil gas money market energy" 
         
-        # 2. Hitta bilder i denna pool som INTE finns i self.used_images
-        available_images = [img for img in target_pool if img not in self.used_images]
+        potential_list = []
+        for key, urls in self.image_pools.items():
+            if key in text:
+                potential_list.extend(urls)
         
-        # 3. Om poolen för kategorin är slut (alla använda), gå till reservplanen
-        if not available_images:
-            print(f"WARNING: Slut på unika bilder för {category}. Letar i globala poolen...")
-            # Samla ALLA bilder från alla kategorier
-            all_images = []
-            for pool in self.image_pools.values():
-                all_images.extend(pool)
+        # Om inga specifika nyckelord matchar, använd generella
+        if not potential_list:
+            potential_list = self.generic_fallbacks
+
+        # 2. Filtrera bort redan använda bilder från potential_list
+        available = [img for img in potential_list if img not in self.used_images]
+        
+        # 3. Om specifika poolen är slut, försök med generella poolen (om vi inte redan är där)
+        if not available and potential_list != self.generic_fallbacks:
+            available = [img for img in self.generic_fallbacks if img not in self.used_images]
             
-            # Filtrera igen mot använda bilder
-            available_images = [img for img in all_images if img not in self.used_images]
+        # 4. CRITICAL FIX: Om ÄVEN generella poolen är slut -> Låna från ALLA andra pooler
+        # Detta garanterar att vi aldrig duplicerar så länge det finns *någon* oanvänd bild i hela systemet
+        if not available:
+            all_images_in_system = []
+            for urls in self.image_pools.values():
+                all_images_in_system.extend(urls)
+            all_images_in_system.extend(self.generic_fallbacks)
+            
+            available = [img for img in all_images_in_system if img not in self.used_images]
 
-        # 4. Om det FORTFARANDE är tomt (extremt sällsynt om du har 150 bilder),
-        # då måste vi tyvärr återanvända en (panic mode), men vi tar en slumpmässig.
-        if not available_images:
-             print("CRITICAL: Slut på ALLA unika bilder. Måste återanvända.")
-             # Återgå till kategorins pool även om de är använda
-             available_images = target_pool
+        # 5. PANIC MODE: Om precis ALLT är slut (150+ bilder använda), då måste vi återanvända
+        if not available:
+            print(f"Warning: Exhausted all unique images for {title}")
+            available = potential_list # Reset to duplicates allowed
 
-        # 5. Välj en bild, markera som använd, returnera
-        selected_image = random.choice(available_images)
-        self.used_images.add(selected_image)
-        return selected_image
+        # Välj en slumpmässig bild från de tillgängliga
+        selected = random.choice(available)
+        self.used_images.add(selected)
+        return selected
 
-# Initiera bildhanteraren
+# Initiera manager globalt
 image_manager = ImageManager()
 
-# --- INSTÄLLNINGAR FÖR FEEDS ---
-FEEDS = [
-    # Dina RSS-feeds här (exempel)
-    {"url": "https://feeds.feedburner.com/TechCrunch/", "category": "Tech"},
-    {"url": "http://feeds.arstechnica.com/arstechnica/index", "category": "Tech"},
-    {"url": "https://www.aljazeera.com/xml/rss/all.xml", "category": "Geopolitics"},
-    {"url": "https://insideevs.com/rss/articles/all/", "category": "EV"},
-    {"url": "https://www.space.com/feeds/all", "category": "Science"},
-    # Lägg till resten av dina feeds...
-]
+def get_image_from_entry(entry):
+    # Primary: RSS Data
+    try:
+        if 'media_content' in entry: return entry.media_content[0]['url']
+        if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
+        if 'links' in entry:
+            for link in entry.links:
+                if link.type.startswith('image/'): return link.href
+        content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
+        if content:
+            soup = BeautifulSoup(content, 'html.parser')
+            images = soup.find_all('img')
+            for img in images:
+                src = img.get('src')
+                if not src: continue
+                if 'pixel' in src or 'tracker' in src or 'feedburner' in src: continue
+                return src
+    except: pass
+    return ""
 
-YOUTUBE_CHANNELS = [
-    # Dina YT-kanaler här...
-]
+def clean_youtube_description(text):
+    if not text: return "Watch video for details."
+    text = re.sub(r'http\S+', '', text)
+    text = re.sub(r'#\S+', '', text)
+    spam_phrases = ["subscribe", "patreon", "instagram", "twitter", "facebook", "follow me", "support", "merch", "discord", "copyright"]
+    lines = text.split('\n')
+    clean_lines = []
+    for line in lines:
+        line_lower = line.lower()
+        if not any(spam in line_lower for spam in spam_phrases):
+            clean_line = line.strip()
+            if len(clean_line) > 20:
+                clean_lines.append(clean_line)
+    summary = ". ".join(clean_lines[:2])
+    return summary[:220] + "..." if len(summary) > 220 else summary
 
 def clean_summary(summary):
-    soup = BeautifulSoup(summary, "html.parser")
-    return soup.get_text()[:200] + "..."
+    if not summary: return ""
+    try:
+        soup = BeautifulSoup(summary, 'html.parser')
+        text = soup.get_text()
+        text = text.replace("Continue reading", "").replace("Read more", "").replace("Läs mer", "")
+        return text[:200] + "..." if len(text) > 200 else text
+    except: return summary[:200]
 
-def get_thumbnail(entry, category):
-    # 1. Försök hitta en bild i RSS-flödet först (Media thumbnail etc)
-    if 'media_content' in entry:
-        for media in entry.media_content:
-            if 'url' in media and ('jpg' in media['url'] or 'png' in media['url']):
-                return media['url']
-    if 'media_thumbnail' in entry:
-        return entry.media_thumbnail[0]['url']
-    
-    # 2. Om ingen bild finns i RSS -> Använd ImageManager för Smart Fallback utan dubbletter
-    return image_manager.get_image(category)
+def translate_text(text, source_lang='sv'):
+    try:
+        return GoogleTranslator(source=source_lang, target='en').translate(text)
+    except:
+        return text 
 
-def get_youtube_video(channel_url, category):
+def fetch_youtube_videos(channel_url, category):
     ydl_opts = {
         'quiet': True,
-        'extract_flat': True,
-        'force_generic_extractor': False,
-        'playlistend': 2  # Hämtar de 2 senaste
+        'extract_flat': 'in_playlist',
+        'playlistend': 10,
+        'ignoreerrors': True
     }
     videos = []
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            if "@" in channel_url and not channel_url.endswith("/videos"):
+                channel_url += "/videos"
             info = ydl.extract_info(channel_url, download=False)
             if 'entries' in info:
+                source_title = info.get('uploader', 'YouTube Channel')
                 for entry in info['entries']:
-                    # Prioritera hqdefault för att slippa gråa rutor
-                    thumb = entry.get('thumbnails', [{}])[-1].get('url', '')
-                    # Fix för vanliga youtube thumbnails
-                    if not thumb or "hqdefault" not in thumb:
-                         video_id = entry.get('id')
-                         thumb = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+                    title = entry.get('title')
+                    url = entry.get('url')
+                    if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
+                    video_id = entry.get('id')
+                    
+                    # --- KEY FIX: Use HQ Default always (Guaranteed to exist) ---
+                    img = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+                    
+                    raw_desc = entry.get('description', '')
+                    clean_desc = clean_youtube_description(raw_desc)
 
+                    upload_date = entry.get('upload_date')
+                    if upload_date:
+                        dt = datetime.strptime(upload_date, "%Y%m%d")
+                        pub_ts = dt.timestamp()
+                    else:
+                        pub_ts = time.time()
+
+                    now = time.time()
+                    days_ago = (now - pub_ts) / 86400
+                    
+                    if days_ago > MAX_VIDEO_DAYS_OLD: continue
+                    if days_ago < 1: time_str = "Just Now"
+                    else: time_str = f"{int(days_ago)}d Ago"
+                    
                     videos.append({
-                        "title": entry.get('title'),
-                        "link": f"https://www.youtube.com/watch?v={entry.get('id')}",
-                        "summary": "Watch the latest coverage on YouTube.",
-                        "published": datetime.datetime.now().strftime("%Y-%m-%d"),
-                        "image": thumb, # Youtube har sina egna bilder, behöver inte ImageManager oftast
-                        "source": info.get('uploader', 'YouTube'),
+                        "title": title,
+                        "link": url,
+                        "summary": clean_desc,
+                        "image": img,
+                        "source": source_title,
                         "category": category,
-                        "is_video": True
+                        "published": pub_ts,
+                        "time_str": time_str,
+                        "is_video": True,
+                        "yt_id": video_id
                     })
-        except Exception as e:
-            print(f"Error fetching YouTube {channel_url}: {e}")
+                    print(f"Fetched YT: {title}")
+    except Exception as e:
+        print(f"Failed to fetch YT {channel_url}: {e}")
     return videos
 
-def generate_site():
-    print("Startar SPECULA Generator v9.6.0...")
+def generate_sitemap():
+    now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    sitemap_content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>{SITE_URL}/index.html</loc>
+      <lastmod>{now}</lastmod>
+      <changefreq>hourly</changefreq>
+      <priority>1.0</priority>
+   </url>
+</urlset>
+"""
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(sitemap_content)
+
+def generate_json_data():
+    print("Fetching news...")
     all_articles = []
+    seen_titles = set()
 
-    # Hämta RSS
-    for feed_info in FEEDS:
-        print(f"Processing RSS: {feed_info['url']}")
+    # 1. YOUTUBE
+    print("Starting YouTube Fetch...")
+    for url, category in YOUTUBE_CHANNELS:
+        videos = fetch_youtube_videos(url, category)
+        for v in videos:
+            if v['title'] not in seen_titles:
+                all_articles.append(v)
+                seen_titles.add(v['title'])
+
+    # 2. RSS
+    print("Starting RSS Fetch...")
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+
+    for url, category in RSS_SOURCES:
         try:
-            feed = feedparser.parse(feed_info['url'])
-            for entry in feed.entries[:4]: # Begränsa till 4 per feed
-                img_url = get_thumbnail(entry, feed_info['category'])
-                
-                article = {
-                    "title": entry.title,
-                    "link": entry.link,
-                    "summary": clean_summary(entry.get('summary', '')),
-                    "published": entry.get('published', 'Just Now'),
-                    "image": img_url,
-                    "source": feed.feed.get('title', 'Unknown Source'),
-                    "category": feed_info['category'],
-                    "is_video": False
-                }
-                all_articles.append(article)
+            feed = feedparser.parse(url, agent=headers['User-Agent'])
+            source_name = feed.feed.title if 'title' in feed.feed else "News"
+            try: print(f"Loaded {len(feed.entries)} from {source_name}")
+            except: pass
+            
+            is_swedish = any(s in url for s in SWEDISH_SOURCES)
+            
+            for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
+                try:
+                    title = entry.title
+                    if title in seen_titles: continue
+                    seen_titles.add(title)
+
+                    pub_ts = time.time()
+                    if 'published_parsed' in entry and entry.published_parsed:
+                        pub_ts = time.mktime(entry.published_parsed)
+                    
+                    now = time.time()
+                    days_ago = (now - pub_ts) / 86400
+                    if days_ago > MAX_DAYS_OLD: continue
+
+                    if days_ago < 1: time_str = "Just Now"
+                    else: time_str = f"{int(days_ago)}d Ago"
+
+                    summary = clean_summary(entry.summary if 'summary' in entry else "")
+                    note_html = ""
+
+                    if is_swedish:
+                        try:
+                            title = translate_text(title)
+                            summary = translate_text(summary)
+                            note_html = ' <span class="lang-note">(Translated)</span>'
+                        except: pass
+
+                    found_image = get_image_from_entry(entry)
+                    # ANVÄND NYA MANAGERN HÄR
+                    final_image = found_image if found_image else image_manager.get_image(title, category, source_name)
+
+                    article = {
+                        "title": title,
+                        "link": entry.link,
+                        "summary": summary + note_html,
+                        "image": final_image,
+                        "source": source_name,
+                        "category": category,
+                        "published": pub_ts,
+                        "time_str": time_str,
+                        "is_video": False,
+                        "yt_id": None
+                    }
+                    all_articles.append(article)
+                except Exception: continue
+
         except Exception as e:
-            print(f"Error parsing feed {feed_info['url']}: {e}")
+            print(f"Error loading RSS {url}: {e}")
 
-    # Hämta YouTube
-    for channel in YOUTUBE_CHANNELS:
-        print(f"Processing YouTube: {channel['url']}")
-        videos = get_youtube_video(channel['url'], channel['category'])
-        all_articles.extend(videos)
+    try: all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
+    except: pass
+    
+    json_data = json.dumps(all_articles)
 
-    # Blanda artiklarna för en dynamisk feed
-    random.shuffle(all_articles)
+    if not os.path.exists("template.html"): return
 
-    # Generera HTML
-    print("Genererar HTML...")
-    articles_html = ""
-    for article in all_articles:
-        # Bestäm etikettklass
-        cat_class = article['category'].lower().replace(" ", "-")
-        
-        # Ikon overlay för video
-        play_icon = ""
-        if article.get('is_video'):
-            play_icon = """<div class="play-overlay"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></div>"""
-
-        article_html = f"""
-        <article class="news-card" data-category="{article['category']}">
-            <div class="card-image-container">
-                <img src="{article['image']}" alt="{article['title']}" loading="lazy">
-                {play_icon}
-                <span class="category-tag {cat_class}">{article['category']}</span>
-            </div>
-            <div class="card-content">
-                <div class="meta">
-                    <span class="source">{article['source'].upper()}</span>
-                    <span class="time">{article['published'][:16]}</span>
-                </div>
-                <h3><a href="{article['link']}" target="_blank">{article['title']}</a></h3>
-                <p>{article['summary']}</p>
-                <a href="{article['link']}" class="read-more" target="_blank">FULL STORY &rarr;</a>
-            </div>
-        </article>
-        """
-        articles_html += article_html
-
-    # Läs template och skriv fil
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
-    with open(TEMPLATE_FILE, "r", encoding="utf-8") as f:
+    with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
 
-    final_html = template.replace("<!-- CONTENT_PLACEHOLDER -->", articles_html)
-    final_html = final_html.replace("<!-- DATE_GENERATED -->", datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    final_html = template.replace("<!-- NEWS_DATA_JSON -->", json_data)
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
-
-    print(f"Klar! index.html genererad i {OUTPUT_DIR}/ med {len(all_articles)} artiklar.")
+    
+    generate_sitemap()
+    print("Success! index.html generated.")
 
 if __name__ == "__main__":
-    generate_site()
+    generate_json_data()
