@@ -115,16 +115,22 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.9.1 -->
+                <!-- V9.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.9.1</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.0.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>YouTube Image Fix:</strong> Switched thumbnail logic to use 'HQ' (High Quality) instead of 'MaxRes' for channels that don't support 4K thumbnails (fixes gray "missing image" artifacts).<br>
-                        • <strong>Fail-safe:</strong> Added an extra layer of fallback that switches to a Cyberpunk genre image if a YouTube thumbnail fails completely.
+                        • <strong>Content Balancing:</strong> Reduced YouTube fetch limit per channel (4 videos) to prevent video-flooding. Text articles remain at 50.<br>
+                        • <strong>Strict Sorting:</strong> Enforced accurate timestamps. Content without valid dates is now filtered out instead of defaulting to "Now".<br>
+                        • <strong>Result:</strong> A much more balanced "All News" feed where videos and articles mix naturally by time.
                     </div>
                 </li>
 
+                <!-- V8.9.1 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.9.1</strong><br>
+                    YouTube Thumbnail HQ Fallback.
+                </li>
                 <!-- V8.9.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.9.0</strong><br>
@@ -145,21 +151,6 @@
                     <strong>Version 8.6.0</strong><br>
                     Replaced RSS with <code>yt-dlp</code> for YouTube channels.
                 </li>
-                <!-- V8.5.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.5.0</strong><br>
-                    Automated Logic cleanup.
-                </li>
-                <!-- V8.4.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.4.0</strong><br>
-                    Manual Hotfix for EV videos.
-                </li>
-                <!-- V8.3.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.3.0</strong><br>
-                    Fixed "Earth image" spam on OilPrice.
-                </li>
             </ul>
         </div>
     </div>
@@ -172,7 +163,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.9.1</div>
+                    <div class="version-btn" id="versionBtn">Version 9.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -263,7 +254,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'}">
                             <div class="card-overlay"></div>
                         </div>
                     </a>

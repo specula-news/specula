@@ -16,7 +16,8 @@ except AttributeError:
     pass
 
 # --- KONFIGURATION ---
-MAX_ARTICLES_PER_SOURCE = 50 
+MAX_ARTICLES_PER_SOURCE = 50 # Textnyheter
+MAX_YOUTUBE_PER_CHANNEL = 4  # YouTube (Begränsad för balans)
 MAX_DAYS_OLD = 5
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -160,7 +161,7 @@ def fetch_youtube_videos(channel_url, category):
     ydl_opts = {
         'quiet': True,
         'extract_flat': 'in_playlist',
-        'playlistend': 10,
+        'playlistend': MAX_YOUTUBE_PER_CHANNEL,
         'ignoreerrors': True
     }
     videos = []
@@ -176,19 +177,15 @@ def fetch_youtube_videos(channel_url, category):
                     url = entry.get('url')
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
-                    
-                    # 1. Prefer the thumbnail provided by yt-dlp (best avail)
-                    # 2. Fallback to hqdefault (ALWAYS exists, unlike maxres)
-                    img = entry.get('thumbnail')
-                    if not img:
-                        img = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+                    img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
                     
                     upload_date = entry.get('upload_date')
                     if upload_date:
                         dt = datetime.strptime(upload_date, "%Y%m%d")
                         pub_ts = dt.timestamp()
                     else:
-                        pub_ts = time.time()
+                        # SKIP IF NO DATE (Fixes sorting issue)
+                        continue
 
                     now = time.time()
                     days_ago = (now - pub_ts) / 86400
@@ -214,7 +211,6 @@ def fetch_youtube_videos(channel_url, category):
         print(f"Failed to fetch YT {channel_url}: {e}")
     return videos
 
-# --- SITEMAP ---
 def generate_sitemap():
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     sitemap_content = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -229,14 +225,13 @@ def generate_sitemap():
 """
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write(sitemap_content)
-    print("Sitemap generated.")
 
 def generate_json_data():
     print("Fetching news...")
     all_articles = []
     seen_titles = set()
 
-    # 1. YOUTUBE
+    # 1. YOUTUBE (Balanced Limit)
     print("Starting YouTube Fetch...")
     for url, category in YOUTUBE_CHANNELS:
         videos = fetch_youtube_videos(url, category)
