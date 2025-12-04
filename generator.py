@@ -10,7 +10,6 @@ import os
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
 
-# --- FIX: UTF-8 Encoding ---
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except AttributeError:
@@ -18,9 +17,9 @@ except AttributeError:
 
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
+MAX_DAYS_OLD = 5 # Filter: Max 5 dagar gammalt
 
-# --- YOUTUBE KANALER (ANVÄNDER YT-DLP) ---
-# Format: ("Channel URL", "Category")
+# --- YOUTUBE KANALER ---
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@electricviking", "ev"),
     ("https://www.youtube.com/@Asianometry", "geopolitics"),
@@ -33,7 +32,7 @@ YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@CCTVVideoNewsAgency", "geopolitics"),
     ("https://www.youtube.com/@CGTNEurope", "geopolitics"),
     ("https://www.youtube.com/@cgtn", "geopolitics"),
-    ("https://www.youtube.com/channel/UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
+    ("https://www.youtube.com/channel/UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
     ("https://www.youtube.com/@channelnewsasia", "geopolitics"),
     ("https://www.youtube.com/@GeopoliticalEconomyReport", "geopolitics"),
     ("https://www.youtube.com/@chinaviewtv", "geopolitics"),
@@ -49,14 +48,14 @@ YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@PracticalEngineeringChannel", "science"),
     ("https://www.youtube.com/@fii_institute", "science"),
     ("https://www.youtube.com/@spaceeyetech", "science"),
-    ("https://www.youtube.com/@kzjut", "science"), # Kurzgesagt
+    ("https://www.youtube.com/@kzjut", "science"), 
     ("https://www.youtube.com/@pbsspacetime", "science"),
     ("https://www.youtube.com/@FD_Engineering", "construction"),
     ("https://www.youtube.com/@TheB1M", "construction"),
     ("https://www.youtube.com/@TomorrowsBuild", "construction"),
 ]
 
-# --- TEXT NYHETER (ANVÄNDER RSS) ---
+# --- TEXT NYHETER ---
 RSS_SOURCES = [
     ("https://www.dagensps.se/feed/", "geopolitics"), 
     ("https://www.nyteknik.se/rss", "tech"), 
@@ -86,21 +85,23 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop"],
+    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
     "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
-    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
-    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"],
-    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"]
+    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
+    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop"],
+    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
+    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
+    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"],
+    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"],
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop"]
 }
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
 ]
 
 used_image_urls = []
@@ -124,8 +125,9 @@ def get_image_from_entry(entry):
     except: pass
     return ""
 
-def get_smart_fallback(title, category):
+def get_smart_fallback(title, category, source):
     text = title.lower() + " " + category.lower()
+    if "oilprice" in source.lower(): text += " oil gas money market energy" 
     for key, urls in SMART_IMAGES.items():
         if key in text:
             for _ in range(5):
@@ -158,45 +160,45 @@ def translate_text(text, source_lang='sv'):
         return text 
 
 def fetch_youtube_videos(channel_url, category):
-    """
-    Hämtar 3 senaste videos med yt-dlp.
-    Garanterar att vi får data om kanalen finns.
-    """
     ydl_opts = {
         'quiet': True,
         'extract_flat': 'in_playlist',
-        'playlistend': 3, # Hämta bara 3 senaste
+        'playlistend': 10, # Hämta 10 senaste
         'ignoreerrors': True
     }
-    
     videos = []
-    
     try:
         with YoutubeDL(ydl_opts) as ydl:
-            # Om det är en @handle, lägg till /videos för att vara säker
             if "@" in channel_url and not channel_url.endswith("/videos"):
                 channel_url += "/videos"
-                
             info = ydl.extract_info(channel_url, download=False)
-            
             if 'entries' in info:
                 source_title = info.get('uploader', 'YouTube Channel')
-                
                 for entry in info['entries']:
                     title = entry.get('title')
-                    url = entry.get('url') # Video URL or ID
-                    
-                    # Fixa URL om yt-dlp bara ger ID
-                    if "youtube.com" not in url and "youtu.be" not in url:
-                        url = f"https://www.youtube.com/watch?v={url}"
-                        
-                    # Fixa bild (Max res)
+                    url = entry.get('url')
+                    if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
                     img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
                     
-                    # Fixa datum (yt-dlp ger inte alltid exakt timestamp i flat mode, så vi tar nu-tid för "New")
-                    # För att sortering ska fungera bra, sätter vi dem som "färska"
-                    pub_ts = time.time()
+                    # DATE PARSING (YYYYMMDD)
+                    upload_date = entry.get('upload_date')
+                    if upload_date:
+                        dt = datetime.strptime(upload_date, "%Y%m%d")
+                        pub_ts = dt.timestamp()
+                    else:
+                        pub_ts = time.time() # Fallback
+
+                    # TIME STRING
+                    now = time.time()
+                    days_ago = (now - pub_ts) / 86400
+                    
+                    # 5-DAY FILTER
+                    if days_ago > MAX_DAYS_OLD:
+                        continue
+
+                    if days_ago < 1: time_str = "Just Now"
+                    else: time_str = f"{int(days_ago)}d Ago"
                     
                     videos.append({
                         "title": title,
@@ -206,13 +208,12 @@ def fetch_youtube_videos(channel_url, category):
                         "source": source_title,
                         "category": category,
                         "published": pub_ts,
-                        "time_str": "Just Now",
+                        "time_str": time_str,
                         "is_video": True
                     })
                     print(f"Fetched YT: {title}")
     except Exception as e:
         print(f"Failed to fetch YT {channel_url}: {e}")
-        
     return videos
 
 def generate_json_data():
@@ -220,7 +221,7 @@ def generate_json_data():
     all_articles = []
     seen_titles = set()
 
-    # 1. HÄMTA YOUTUBE VIDEOS (YT-DLP)
+    # 1. YOUTUBE
     print("Starting YouTube Fetch...")
     for url, category in YOUTUBE_CHANNELS:
         videos = fetch_youtube_videos(url, category)
@@ -229,7 +230,7 @@ def generate_json_data():
                 all_articles.append(v)
                 seen_titles.add(v['title'])
 
-    # 2. HÄMTA TEXT NYHETER (RSS)
+    # 2. RSS
     print("Starting RSS Fetch...")
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
@@ -237,7 +238,8 @@ def generate_json_data():
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            print(f"Loaded RSS: {source_name}")
+            try: print(f"Loaded {len(feed.entries)} from {source_name}")
+            except: pass
             
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
             
@@ -251,11 +253,14 @@ def generate_json_data():
                     if 'published_parsed' in entry and entry.published_parsed:
                         pub_ts = time.mktime(entry.published_parsed)
                     
+                    # 5-DAY FILTER (RSS)
                     now = time.time()
-                    hours_ago = int((now - pub_ts) / 3600)
-                    if hours_ago < 1: time_str = "Just Now"
-                    elif hours_ago < 24: time_str = f"{hours_ago}h Ago"
-                    else: days = int(hours_ago / 24); time_str = f"{days}d Ago"
+                    days_ago = (now - pub_ts) / 86400
+                    if days_ago > MAX_DAYS_OLD:
+                        continue
+
+                    if days_ago < 1: time_str = "Just Now"
+                    else: time_str = f"{int(days_ago)}d Ago"
 
                     summary = clean_summary(entry.summary if 'summary' in entry else "")
                     note_html = ""
@@ -268,7 +273,7 @@ def generate_json_data():
                         except: pass
 
                     found_image = get_image_from_entry(entry)
-                    final_image = found_image if found_image else get_smart_fallback(title, category)
+                    final_image = found_image if found_image else get_smart_fallback(title, category, source_name)
 
                     article = {
                         "title": title,
@@ -287,7 +292,6 @@ def generate_json_data():
         except Exception as e:
             print(f"Error loading RSS {url}: {e}")
 
-    # Sortera allt (Videos kommer hamna högt eftersom vi satte dem till "Nu", men om RSS har nya datum blandas de)
     try: all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     except: pass
     
