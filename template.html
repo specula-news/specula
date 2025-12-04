@@ -115,32 +115,26 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.8.0 -->
+                <!-- V9.9.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.8.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.9.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Massive Image Expansion:</strong> Added 200+ curated high-quality images to the fallback library to ensure diversity.<br>
-                        • <strong>Strict Relevance Policy:</strong> Logic updated to prioritize correct category matching above all else. Only falls back to generic/abstract images if absolutely necessary.<br>
+                        • <strong>Global ID Registry:</strong> Switched to Unsplash IDs instead of URL lists. The system now tracks unique IDs globally. An image used in 'Tech' is now forbidden in 'EV'.<br>
+                        • <strong>Scorched Earth Policy:</strong> If a category runs out of images, it will steal unused images from other categories rather than repeating a used one.<br>
                     </div>
+                </li>
+                
+                <!-- V9.8.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.8.0</strong><br>
+                    Massive Image Expansion & Strict Relevance Policy.
                 </li>
 
                 <!-- V9.7.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.7.0</strong><br>
                     Stateful Image Manager (Global Tracking), Cross-Category Fallback.
-                </li>
-
-                <!-- V9.6.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 9.6.0</strong><br>
-                    <strong>YouTube Fix:</strong> Implemented bulletproof image logic. Uses <code>yt-dlp</code> native thumbnails first, then falls back to 'HQ Default'.
-                </li>
-
-                <!-- V9.5.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 9.5.0</strong><br>
-                    Smart Summaries for YouTube, cleaned spam from descriptions.
                 </li>
             </ul>
         </div>
@@ -154,7 +148,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.8.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.9.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
