@@ -18,10 +18,25 @@ except AttributeError:
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
 
+# --- MANUELLA INLÄGG (Endast om nödvändigt) ---
+MANUAL_ENTRIES = [
+    {
+        "title": "New EV Battery Tech Analysis (Specula Pick)",
+        "link": "https://youtu.be/Fb0s1uBZu44",
+        "summary": "Featured video analysis regarding the latest breakthroughs in EV battery technology and market dynamics.",
+        "image": "https://img.youtube.com/vi/Fb0s1uBZu44/maxresdefault.jpg",
+        "source": "Specula Select",
+        "category": "ev",
+        "published": time.time(),
+        "time_str": "Just Now",
+        "is_video": True
+    }
+]
+
 # --- KÄLLOR ---
 RSS_SOURCES = [
     # --- EV / ENERGY (PRIORITY) ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking
     ("https://cleantechnica.com/feed/", "ev"), 
     ("https://electrek.co/feed/", "ev"), 
     ("https://insideevs.com/rss/articles/all/", "ev"),
@@ -29,29 +44,29 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged
 
     # --- GEOPOLITICS ---
     ("https://www.scmp.com/rss/91/feed", "geopolitics"),
     ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), # Asianometry
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), # DW Docu
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), # Inside China Biz
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), # Johnny Harris
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), # Diary CEO
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), # ShanghaiEye
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), # CGTN US
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), # CCTV
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), # CGTN EU
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), # CGTN Main
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), # CNA
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), # Geopol Eco
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), # New China
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), # EU Debates
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), # wocomoDOCS
 
     # --- TECH ---
     ("https://anastasiintech.substack.com/feed", "tech"), 
@@ -89,38 +104,45 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK (LISTOR) ---
+# --- SMART FALLBACK (NYA KATEGORIER) ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
+    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop"],
+    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
+    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop"],
     "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop"],
+    "tanker": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=1000&auto=format&fit=crop"],
     "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
     "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
     "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop"],
+    "nasa": ["https://images.unsplash.com/photo-1454789548728-85d2696cf667?q=80&w=1000&auto=format&fit=crop"],
+    "ai": ["https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop"],
+    "data center": ["https://images.unsplash.com/photo-1558494949-ef526b0042a0?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1544197150-b99a580bbcbf?q=80&w=1000&auto=format&fit=crop"],
     "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"]
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"],
+    "building": ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"],
+    "industry": ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop"]
 }
+
+# --- GENERISK FALLBACK (RENSAD FRÅN RYMDEN) ---
 GENERIC_FALLBACKS = [
-    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", # Cyber City
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop", # Abstract Tech
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop", # Matrix
+    "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop", # Circuit
+    "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"  # Asia Night
 ]
 
 used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
-        # YOUTUBE: Force Max Res thumbnail
         if 'yt_videoid' in entry:
             return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
-        
-        # STANDARD RSS
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
             for link in entry.links:
                 if link.type.startswith('image/'): return link.href
-        
         content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
         if content:
             soup = BeautifulSoup(content, 'html.parser')
@@ -133,21 +155,22 @@ def get_image_from_entry(entry):
     except: pass
     return ""
 
-def get_smart_fallback(title, category):
+def get_smart_fallback(title, category, source):
     text = title.lower() + " " + category.lower()
     
-    # Check specific keywords
+    # OILPRICE SPECIFIC FIX
+    if "oilprice" in source.lower():
+        text += " oil gas money market energy" 
+
     for key, urls in SMART_IMAGES.items():
         if key in text:
-            # Try to pick unused image
             for _ in range(5):
                 img = random.choice(urls)
                 if img not in used_image_urls:
                     used_image_urls.append(img)
                     return img
-            return random.choice(urls) # Re-use if we must
+            return random.choice(urls)
     
-    # Generic fallback
     for _ in range(5):
         img = random.choice(GENERIC_FALLBACKS)
         if img not in used_image_urls:
@@ -175,11 +198,21 @@ def generate_json_data():
     all_articles = []
     seen_titles = set()
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    for entry in MANUAL_ENTRIES:
+        all_articles.append(entry)
+        seen_titles.add(entry['title'])
+
+    # ROTATING USER AGENTS FOR YOUTUBE
+    user_agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+        'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
+    ]
 
     for url, category in RSS_SOURCES:
         try:
-            feed = feedparser.parse(url, agent=headers['User-Agent'])
+            agent = random.choice(user_agents)
+            feed = feedparser.parse(url, agent=agent)
             source_name = feed.feed.title if 'title' in feed.feed else "News"
             
             try: print(f"Loaded {len(feed.entries)} from {source_name}")
@@ -216,11 +249,10 @@ def generate_json_data():
                         except: pass
 
                     found_image = get_image_from_entry(entry)
-                    final_image = found_image if found_image else get_smart_fallback(title, category)
+                    final_image = found_image if found_image else get_smart_fallback(title, category, source_name)
 
                     # CORRECT LINK LOGIC
                     final_link = entry.link
-                    # If it's a YouTube video, ensure we have the direct link
                     if 'yt_videoid' in entry:
                         final_link = f"https://www.youtube.com/watch?v={entry.yt_videoid}"
 
