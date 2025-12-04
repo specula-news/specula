@@ -1,4 +1,5 @@
 feedparser
+yt-dlp
 beautifulsoup4
 deep-translator
-yt-dlp
+requests
