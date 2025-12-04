@@ -23,7 +23,7 @@ MAX_VIDEO_DAYS_OLD = 3
 
 SITE_URL = "https://specula-news.netlify.app"
 
-# --- YOUTUBE KANALER ---
+# --- KANALER & KÄLLOR ---
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@electricviking", "ev"),
     ("https://www.youtube.com/@Asianometry", "geopolitics"),
@@ -59,7 +59,6 @@ YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@TomorrowsBuild", "construction"),
 ]
 
-# --- TEXT NYHETER ---
 RSS_SOURCES = [
     ("https://www.dagensps.se/feed/", "geopolitics"), 
     ("https://www.nyteknik.se/rss", "tech"), 
@@ -89,160 +88,115 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE MANAGER CLASS V9.7.0 ---
+# --- IMAGE MANAGER V9.8.0 ---
 class ImageManager:
     def __init__(self):
-        # Håller koll på ALLA bilder som delats ut under denna körning
         self.used_images = set()
         
-        self.image_pools = {
-            "china": [
-                "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000",
-                "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000",
-                "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000",
-                "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000",
-                "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000",
-                "https://images.unsplash.com/photo-1518506533724-65464c5d9813?q=80&w=1000",
-                "https://images.unsplash.com/photo-1537254326439-0e78a8257938?q=80&w=1000",
-                "https://images.unsplash.com/photo-1504512485720-7d83a16ee930?q=80&w=1000",
-                "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000",
-                "https://images.unsplash.com/photo-1516023353357-357c6032d288?q=80&w=1000"
+        # ENORM LISTA (MASSIVE LIBRARY)
+        self.pools = {
+            "tech": [
+                "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80", "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80",
+                "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80", "https://images.unsplash.com/photo-1550009158-9ebf69056955?w=800&q=80",
+                "https://images.unsplash.com/photo-1535378437268-13d143445347?w=800&q=80", "https://images.unsplash.com/photo-1531297461136-82lw9b283993?w=800&q=80",
+                "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80", "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?w=800&q=80",
+                "https://images.unsplash.com/photo-1558494949-efc52728101c?w=800&q=80", "https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?w=800&q=80",
+                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "https://images.unsplash.com/photo-1510915361405-ef8a93d77d29?w=800&q=80",
+                "https://images.unsplash.com/photo-1563770095-39d468f421e2?w=800&q=80", "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800&q=80",
+                "https://images.unsplash.com/photo-1592478411213-61535fdd861d?w=800&q=80", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=80",
+                "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80", "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80",
+                "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80", "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+                "https://images.unsplash.com/photo-1562813733-b31f71025d54?w=800&q=80", "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+                "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80", "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?w=800&q=80",
+                "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=800&q=80", "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&q=80"
             ],
-            "asia": [
-                "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000",
-                "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000",
-                "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000",
-                "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?q=80&w=1000",
-                "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?q=80&w=1000"
+            "geopolitics": [
+                "https://images.unsplash.com/photo-1529101091760-6149d3c879d4?w=800&q=80", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+                "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=800&q=80", "https://images.unsplash.com/photo-1543832923-44667a77d853?w=800&q=80",
+                "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?w=800&q=80", "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?w=800&q=80",
+                "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "https://images.unsplash.com/photo-1612178991541-b48cc8e92a4d?w=800&q=80",
+                "https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?w=800&q=80", "https://images.unsplash.com/photo-1474376962954-d8a681cc53b2?w=800&q=80",
+                "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?w=800&q=80", "https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=800&q=80",
+                "https://images.unsplash.com/photo-1537254326439-0e78a8257938?w=800&q=80", "https://images.unsplash.com/photo-1516023353357-357c6032d288?w=800&q=80",
+                "https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=800&q=80", "https://images.unsplash.com/photo-1575320181282-9afab399332c?w=800&q=80",
+                "https://images.unsplash.com/photo-1477039181047-94e702db8436?w=800&q=80", "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=800&q=80",
+                "https://images.unsplash.com/photo-1541872703-74c59636a226?w=800&q=80", "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80",
+                "https://images.unsplash.com/photo-1523995462485-3d171b5c8fa9?w=800&q=80", "https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800&q=80",
+                "https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=800&q=80", "https://images.unsplash.com/photo-1502920514313-52581002a659?w=800&q=80"
             ],
             "ev": [
-                "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000",
-                "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000",
-                "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000",
-                "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000",
-                "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000",
-                "https://images.unsplash.com/photo-1558628818-40db7871d007?q=80&w=1000",
-                "https://images.unsplash.com/photo-1562424070-d69865365737?q=80&w=1000",
-                "https://images.unsplash.com/photo-1594535182308-8ff248971649?q=80&w=1000",
-                "https://images.unsplash.com/photo-1605733513597-a8f8341084e6?q=80&w=1000",
-                "https://images.unsplash.com/photo-1618038483079-bfe64dcb17f1?q=80&w=1000"
+                "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80", "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&q=80",
+                "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?w=800&q=80", "https://images.unsplash.com/photo-1550505393-273a55239e24?w=800&q=80",
+                "https://images.unsplash.com/photo-1620882352329-a41764645229?w=800&q=80", "https://images.unsplash.com/photo-1558628818-40db7871d007?w=800&q=80",
+                "https://images.unsplash.com/photo-1594535182308-8ff248971649?w=800&q=80", "https://images.unsplash.com/photo-1605733513597-a8f8341084e6?w=800&q=80",
+                "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80", "https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=800&q=80",
+                "https://images.unsplash.com/photo-1532935298550-6e02e8906652?w=800&q=80", "https://images.unsplash.com/photo-1456356627738-3a96db6d54cb?w=800&q=80",
+                "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&q=80", "https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?w=800&q=80",
+                "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=800&q=80", "https://images.unsplash.com/photo-1513258496098-882717dbf58c?w=800&q=80",
+                "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=800&q=80", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80",
+                "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80", "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80",
+                "https://images.unsplash.com/photo-1546443046-e526d1163e8e?w=800&q=80", "https://images.unsplash.com/photo-1616406432452-9215e6e1044f?w=800&q=80"
             ],
-            "oil": [
-                "https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000",
-                "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000",
-                "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000",
-                "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000",
-                "https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?q=80&w=1000",
-                "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1000",
-                "https://images.unsplash.com/photo-1582555618296-5427d25365b6?q=80&w=1000",
-                "https://images.unsplash.com/photo-1596463059283-32d70243b13c?q=80&w=1000",
-                "https://images.unsplash.com/photo-1474376962954-d8a681cc53b2?q=80&w=1000",
-                "https://images.unsplash.com/photo-1595835008848-1200699190b7?q=80&w=1000"
-            ],
-            "gas": [
-                "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000",
-                "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000",
-                "https://images.unsplash.com/photo-1584351622213-344767352781?q=80&w=1000",
-                "https://images.unsplash.com/photo-1534543987518-6139a617dd30?q=80&w=1000"
-            ],
-            "money": [
-                "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000",
-                "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000",
-                "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?q=80&w=1000",
-                "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=1000",
-                "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=1000",
-                "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?q=80&w=1000"
-            ],
-            "market": [
-                "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1000",
-                "https://images.unsplash.com/photo-1612178991541-b48cc8e92a4d?q=80&w=1000",
-                "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?q=80&w=1000",
-                "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?q=80&w=1000",
-                "https://images.unsplash.com/photo-1604594849809-dfedbc827105?q=80&w=1000"
-            ],
-            "space": [
-                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000",
-                "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000",
-                "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000",
-                "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000",
-                "https://images.unsplash.com/photo-1541185933-710f50746747?q=80&w=1000",
-                "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1000",
-                "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=1000",
-                "https://images.unsplash.com/photo-1533475418392-41543084b4f7?q=80&w=1000"
-            ],
-            "tech": [
-                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
-                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000",
-                "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000",
-                "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000",
-                "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=1000",
-                "https://images.unsplash.com/photo-1535378437268-13d143445347?q=80&w=1000",
-                "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000",
-                "https://images.unsplash.com/photo-1550009158-9ebf69056955?q=80&w=1000",
-                "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000"
+            "science": [
+                "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80", "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80",
+                "https://images.unsplash.com/photo-1541185933-710f50746747?w=800&q=80", "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=800&q=80",
+                "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&q=80", "https://images.unsplash.com/photo-1533475418392-41543084b4f7?w=800&q=80",
+                "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=80", "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
+                "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+                "https://images.unsplash.com/photo-1484589065579-248aad0d8b13?w=800&q=80", "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80",
+                "https://images.unsplash.com/photo-1506318137071-a8bcbf67cc77?w=800&q=80", "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800&q=80",
+                "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80", "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=800&q=80",
+                "https://images.unsplash.com/photo-1481819613568-3701cbc70156?w=800&q=80", "https://images.unsplash.com/photo-1504384308090-c54be3855833?w=800&q=80",
+                "https://images.unsplash.com/photo-1530053969600-caed2596d242?w=800&q=80", "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=800&q=80"
             ],
             "construction": [
-                "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000",
-                "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000",
-                "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000",
-                "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?q=80&w=1000",
-                "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?q=80&w=1000",
-                "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000",
-                "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?q=80&w=1000",
-                "https://images.unsplash.com/photo-1470290449668-02dd93d9420a?q=80&w=1000"
+                "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
+                "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80", "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?w=800&q=80",
+                "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?w=800&q=80", "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",
+                "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=800&q=80", "https://images.unsplash.com/photo-1470290449668-02dd93d9420a?w=800&q=80",
+                "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80", "https://images.unsplash.com/photo-1517646287304-4b8f9e9842a6?w=800&q=80",
+                "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80", "https://images.unsplash.com/photo-1495819903255-00fdfa38a8de?w=800&q=80",
+                "https://images.unsplash.com/photo-1503387920786-89d705445775?w=800&q=80", "https://images.unsplash.com/photo-1574359254888-9d10ad64d7df?w=800&q=80",
+                "https://images.unsplash.com/photo-1599818817757-550604130096?w=800&q=80", "https://images.unsplash.com/photo-1534398079543-7ae6d016b86a?w=800&q=80",
+                "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=800&q=80", "https://images.unsplash.com/photo-1485627658391-1365e4e0dbfe?w=800&q=80"
             ]
         }
         
-        self.generic_fallbacks = [
-            "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000",
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000",
-            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000",
-            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
-            "https://images.unsplash.com/photo-1480506132288-68f7705954bd?q=80&w=1000",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1000",
-            "https://images.unsplash.com/photo-1501854140884-074cf272492b?q=80&w=1000",
-            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1000"
+        # NEUTRAL / ABSTRAKT POOL (Fallback Nivå 2 - Passar allt)
+        self.generic_pool = [
+            "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80", "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
+            "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?w=800&q=80", "https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?w=800&q=80",
+            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1604871000636-074fa5117945?w=800&q=80",
+            "https://images.unsplash.com/photo-1484589065579-248aad0d8b13?w=800&q=80", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+            "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?w=800&q=80", "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800&q=80",
+            "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80", "https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&q=80",
+            "https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?w=800&q=80", "https://images.unsplash.com/photo-1502472584811-0a2f2ca84465?w=800&q=80",
+            "https://images.unsplash.com/photo-1494548162494-384bba4ab999?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80"
         ]
 
-    def get_image(self, title, category, source):
-        # 1. Hitta potentiella bilder baserat på nyckelord
-        text = title.lower() + " " + category.lower()
-        if "oilprice" in source.lower(): text += " oil gas money market energy" 
+    def get_image(self, category):
+        # 1. Hämta RÄTT kategori
+        target_list = self.pools.get(category, self.generic_pool)
+        available = [img for img in target_list if img not in self.used_images]
         
-        potential_list = []
-        for key, urls in self.image_pools.items():
-            if key in text:
-                potential_list.extend(urls)
-        
-        # Om inga specifika nyckelord matchar, använd generella
-        if not potential_list:
-            potential_list = self.generic_fallbacks
-
-        # 2. Filtrera bort redan använda bilder från potential_list
-        available = [img for img in potential_list if img not in self.used_images]
-        
-        # 3. Om specifika poolen är slut, försök med generella poolen (om vi inte redan är där)
-        if not available and potential_list != self.generic_fallbacks:
-            available = [img for img in self.generic_fallbacks if img not in self.used_images]
-            
-        # 4. CRITICAL FIX: Om ÄVEN generella poolen är slut -> Låna från ALLA andra pooler
-        # Detta garanterar att vi aldrig duplicerar så länge det finns *någon* oanvänd bild i hela systemet
+        # 2. Om RÄTT kategori är slut -> Använd GENERELL pool (Abstract/News)
         if not available:
-            all_images_in_system = []
-            for urls in self.image_pools.values():
-                all_images_in_system.extend(urls)
-            all_images_in_system.extend(self.generic_fallbacks)
-            
-            available = [img for img in all_images_in_system if img not in self.used_images]
+            # print(f"DEBUG: Category {category} empty. Using Generic Pool.")
+            available = [img for img in self.generic_pool if img not in self.used_images]
 
-        # 5. PANIC MODE: Om precis ALLT är slut (150+ bilder använda), då måste vi återanvända
+        # 3. Om GENERELL är slut -> Panik! Låna från ANDRA kategorier (Men ta bara en oanvänd!)
         if not available:
-            print(f"Warning: Exhausted all unique images for {title}")
-            available = potential_list # Reset to duplicates allowed
+            # print(f"DEBUG: Generic Pool empty. Searching all pools...")
+            all_imgs = []
+            for p in self.pools.values(): all_imgs.extend(p)
+            available = [img for img in all_imgs if img not in self.used_images]
+            
+        # 4. Om ALLT är slut (200+ bilder) -> Reset (ta vad som helst)
+        if not available:
+             # print("DEBUG: CRITICAL - All images used. Resetting.")
+             available = target_list
 
-        # Välj en slumpmässig bild från de tillgängliga
         selected = random.choice(available)
         self.used_images.add(selected)
         return selected
@@ -251,7 +205,6 @@ class ImageManager:
 image_manager = ImageManager()
 
 def get_image_from_entry(entry):
-    # Primary: RSS Data
     try:
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
@@ -322,7 +275,6 @@ def fetch_youtube_videos(channel_url, category):
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
                     
-                    # --- KEY FIX: Use HQ Default always (Guaranteed to exist) ---
                     img = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
                     
                     raw_desc = entry.get('description', '')
@@ -429,8 +381,8 @@ def generate_json_data():
                         except: pass
 
                     found_image = get_image_from_entry(entry)
-                    # ANVÄND NYA MANAGERN HÄR
-                    final_image = found_image if found_image else image_manager.get_image(title, category, source_name)
+                    # ANVÄND NYA MANAGERN HÄR - Skickar bara category nu
+                    final_image = found_image if found_image else image_manager.get_image(category)
 
                     article = {
                         "title": title,

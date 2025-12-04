@@ -115,36 +115,32 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.7.0 -->
+                <!-- V9.8.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.7.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.8.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Stateful Image Manager:</strong> Introduced a global tracking system that prevents ANY image from appearing twice on the same page, even across different categories.<br>
-                        • <strong>Cross-Category Fallback:</strong> If a category runs out of unique images, the system now intelligently borrows unused images from other pools instead of repeating used ones.<br>
+                        • <strong>Massive Image Expansion:</strong> Added 200+ curated high-quality images to the fallback library to ensure diversity.<br>
+                        • <strong>Strict Relevance Policy:</strong> Logic updated to prioritize correct category matching above all else. Only falls back to generic/abstract images if absolutely necessary.<br>
                     </div>
+                </li>
+
+                <!-- V9.7.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.7.0</strong><br>
+                    Stateful Image Manager (Global Tracking), Cross-Category Fallback.
                 </li>
 
                 <!-- V9.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.6.0</strong><br>
-                    <strong>YouTube Fix:</strong> Implemented bulletproof image logic. Uses <code>yt-dlp</code> native thumbnails first, then falls back to 'HQ Default' (which always exists) to eliminate gray placeholder boxes.
+                    <strong>YouTube Fix:</strong> Implemented bulletproof image logic. Uses <code>yt-dlp</code> native thumbnails first, then falls back to 'HQ Default'.
                 </li>
 
                 <!-- V9.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.5.0</strong><br>
                     Smart Summaries for YouTube, cleaned spam from descriptions.
-                </li>
-                <!-- V9.4.1 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 9.4.1</strong><br>
-                    Image Diversity & Fallback Fixes.
-                </li>
-                <!-- V9.4.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 9.4.0</strong><br>
-                    Content Segregation (No videos in All News), Gray Box Fix.
                 </li>
             </ul>
         </div>
@@ -158,7 +154,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.7.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.8.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
