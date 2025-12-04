@@ -16,8 +16,7 @@ except AttributeError:
     pass
 
 # --- KONFIGURATION ---
-MAX_ARTICLES_PER_SOURCE = 50 # Textnyheter
-MAX_YOUTUBE_PER_CHANNEL = 4  # YouTube (Begränsad för balans)
+MAX_ARTICLES_PER_SOURCE = 50 
 MAX_DAYS_OLD = 5
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -87,20 +86,74 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
+# --- EXTENDED IMAGE LIBRARY (TRIPLE SIZE) ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
-    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop"],
-    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
-    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"],
-    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"]
+    "china": [
+        "https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518506533724-65464c5d9813?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1537254326439-0e78a8257938?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "asia": [
+        "https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "ev": [
+        "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1558628818-40db7871d007?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1562424070-d69865365737?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "oil": [
+        "https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "gas": [
+        "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1584351622213-344767352781?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "money": [
+        "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "space": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "tech": [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "construction": [
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?q=80&w=1000&auto=format&fit=crop"
+    ]
 }
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
 ]
 
 used_image_urls = []
@@ -127,20 +180,27 @@ def get_image_from_entry(entry):
 def get_smart_fallback(title, category, source):
     text = title.lower() + " " + category.lower()
     if "oilprice" in source.lower(): text += " oil gas money market energy" 
+    
+    # --- CYCLING LOGIC TO PREVENT DUPLICATES ---
+    potential_images = []
+    
+    # 1. Find all matching lists
     for key, urls in SMART_IMAGES.items():
         if key in text:
-            for _ in range(5):
-                img = random.choice(urls)
-                if img not in used_image_urls:
-                    used_image_urls.append(img)
-                    return img
-            return random.choice(urls)
-    for _ in range(5):
-        img = random.choice(GENERIC_FALLBACKS)
+            potential_images.extend(urls)
+    
+    # 2. If no match, use generic
+    if not potential_images:
+        potential_images = GENERIC_FALLBACKS
+        
+    # 3. Try to find an unused image in the list
+    for img in potential_images:
         if img not in used_image_urls:
             used_image_urls.append(img)
             return img
-    return random.choice(GENERIC_FALLBACKS)
+            
+    # 4. If all used, pick random but don't crash
+    return random.choice(potential_images)
 
 def clean_summary(summary):
     if not summary: return ""
@@ -161,7 +221,7 @@ def fetch_youtube_videos(channel_url, category):
     ydl_opts = {
         'quiet': True,
         'extract_flat': 'in_playlist',
-        'playlistend': MAX_YOUTUBE_PER_CHANNEL,
+        'playlistend': 4, # Balanced fetch
         'ignoreerrors': True
     }
     videos = []
@@ -177,20 +237,22 @@ def fetch_youtube_videos(channel_url, category):
                     url = entry.get('url')
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
+                    
+                    # Fallback to HQ if MaxRes missing handled in frontend, just send MaxRes link here
                     img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
                     
                     upload_date = entry.get('upload_date')
+                    # --- RELAXED DATE LOGIC ---
                     if upload_date:
                         dt = datetime.strptime(upload_date, "%Y%m%d")
                         pub_ts = dt.timestamp()
                     else:
-                        # SKIP IF NO DATE (Fixes sorting issue)
-                        continue
+                        # If NO DATE, assume NEW (Top of list)
+                        pub_ts = time.time()
 
                     now = time.time()
                     days_ago = (now - pub_ts) / 86400
-                    if days_ago > MAX_DAYS_OLD: continue
-
+                    
                     if days_ago < 1: time_str = "Just Now"
                     else: time_str = f"{int(days_ago)}d Ago"
                     
@@ -231,7 +293,7 @@ def generate_json_data():
     all_articles = []
     seen_titles = set()
 
-    # 1. YOUTUBE (Balanced Limit)
+    # 1. YOUTUBE (First to catch fresh videos)
     print("Starting YouTube Fetch...")
     for url, category in YOUTUBE_CHANNELS:
         videos = fetch_youtube_videos(url, category)
@@ -265,6 +327,8 @@ def generate_json_data():
                     
                     now = time.time()
                     days_ago = (now - pub_ts) / 86400
+                    
+                    # 5-DAY FILTER (Only for RSS text news, let YouTube slide)
                     if days_ago > MAX_DAYS_OLD: continue
 
                     if days_ago < 1: time_str = "Just Now"

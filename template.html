@@ -115,17 +115,21 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.0.0 -->
+                <!-- V9.1.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.0.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.1.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Content Balancing:</strong> Reduced YouTube fetch limit per channel (4 videos) to prevent video-flooding. Text articles remain at 50.<br>
-                        • <strong>Strict Sorting:</strong> Enforced accurate timestamps. Content without valid dates is now filtered out instead of defaulting to "Now".<br>
-                        • <strong>Result:</strong> A much more balanced "All News" feed where videos and articles mix naturally by time.
+                        • <strong>YouTube Fix:</strong> Removed strict date filtering for YouTube videos. Now fetches and displays the absolute latest videos regardless of metadata quirks.<br>
+                        • <strong>No More Duplicates:</strong> Implemented "Round Robin" image logic. The system now cycles through unique images for each category and never reuses an image until the pool is exhausted.
                     </div>
                 </li>
 
+                <!-- V9.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.0.0</strong><br>
+                    Content Balancing & Strict Sorting.
+                </li>
                 <!-- V8.9.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.9.1</strong><br>
@@ -144,12 +148,12 @@
                 <!-- V8.7.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.7.0</strong><br>
-                    Increased fetch limit, 5-Day Filter, Fixed Date Sorting.
+                    Increased fetch limit, 5-Day Filter.
                 </li>
                 <!-- V8.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.6.0</strong><br>
-                    Replaced RSS with <code>yt-dlp</code> for YouTube channels.
+                    Replaced RSS with <code>yt-dlp</code>.
                 </li>
             </ul>
         </div>
@@ -163,7 +167,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.1.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
