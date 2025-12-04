@@ -8,6 +8,7 @@ import json
 import sys
 import os
 from deep_translator import GoogleTranslator
+from yt_dlp import YoutubeDL
 
 # --- FIX: UTF-8 Encoding ---
 try:
@@ -18,13 +19,54 @@ except AttributeError:
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
 
-# --- MANUELLA INLÄGG (RENSAD - ENDAST LIVE NEWS NU) ---
-MANUAL_ENTRIES = []
+# --- YOUTUBE KANALER (ANVÄNDER YT-DLP) ---
+# Format: ("Channel URL", "Category")
+YOUTUBE_CHANNELS = [
+    ("https://www.youtube.com/@electricviking", "ev"),
+    ("https://www.youtube.com/@Asianometry", "geopolitics"),
+    ("https://www.youtube.com/@DWDocumentary", "geopolitics"),
+    ("https://www.youtube.com/@inside_china_business", "geopolitics"),
+    ("https://www.youtube.com/@johnnyharris", "geopolitics"),
+    ("https://www.youtube.com/@TheDiaryOfACEO", "geopolitics"),
+    ("https://www.youtube.com/@ShanghaiEyeMagic", "geopolitics"),
+    ("https://www.youtube.com/@cgtnamerica", "geopolitics"),
+    ("https://www.youtube.com/@CCTVVideoNewsAgency", "geopolitics"),
+    ("https://www.youtube.com/@CGTNEurope", "geopolitics"),
+    ("https://www.youtube.com/@cgtn", "geopolitics"),
+    ("https://www.youtube.com/channel/UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), # China Pulse
+    ("https://www.youtube.com/@channelnewsasia", "geopolitics"),
+    ("https://www.youtube.com/@GeopoliticalEconomyReport", "geopolitics"),
+    ("https://www.youtube.com/@chinaviewtv", "geopolitics"),
+    ("https://www.youtube.com/@eudebateslive", "geopolitics"),
+    ("https://www.youtube.com/@wocomodocs", "geopolitics"),
+    ("https://www.youtube.com/@elithecomputerguy", "tech"),
+    ("https://www.youtube.com/@undecidedmf", "ev"),
+    ("https://www.youtube.com/@elektromanija", "ev"),
+    ("https://www.youtube.com/@fullychargedshow", "ev"),
+    ("https://www.youtube.com/@ScienceChannel", "science"),
+    ("https://www.youtube.com/@veritasium", "science"),
+    ("https://www.youtube.com/@smartereveryday", "science"),
+    ("https://www.youtube.com/@PracticalEngineeringChannel", "science"),
+    ("https://www.youtube.com/@fii_institute", "science"),
+    ("https://www.youtube.com/@spaceeyetech", "science"),
+    ("https://www.youtube.com/@kzjut", "science"), # Kurzgesagt
+    ("https://www.youtube.com/@pbsspacetime", "science"),
+    ("https://www.youtube.com/@FD_Engineering", "construction"),
+    ("https://www.youtube.com/@TheB1M", "construction"),
+    ("https://www.youtube.com/@TomorrowsBuild", "construction"),
+]
 
-# --- KÄLLOR ---
+# --- TEXT NYHETER (ANVÄNDER RSS) ---
 RSS_SOURCES = [
-    # --- EV / ENERGY (PRIORITY) ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # The Electric Viking
+    ("https://www.dagensps.se/feed/", "geopolitics"), 
+    ("https://www.nyteknik.se/rss", "tech"), 
+    ("https://feber.se/rss/", "tech"),
+    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
+    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
+    ("https://anastasiintech.substack.com/feed", "tech"), 
+    ("https://techcrunch.com/feed/", "tech"),
+    ("https://www.theverge.com/rss/index.xml", "tech"),
+    ("https://arstechnica.com/feed/", "tech"),
     ("https://cleantechnica.com/feed/", "ev"), 
     ("https://electrek.co/feed/", "ev"), 
     ("https://insideevs.com/rss/articles/all/", "ev"),
@@ -32,95 +74,39 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
-
-    # --- GEOPOLITICS ---
-    ("https://www.scmp.com/rss/91/feed", "geopolitics"),
-    ("https://www.aljazeera.com/xml/rss/all.xml", "geopolitics"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1DXHptI9MNh9NRcDqGnIqw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCW39zufHfsuGgpLviKh297Q", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2mg_hL_8XqD06sDk9-0hNw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmGSJVG3mCRXVOP4yXU1rQQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGq-a57w-1PqqjiISbS-iuA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5V3r52K5jY8f4oW-9i4iig", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCgrNz-aDmcr2uNt5IN47eEQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5i9r5iM8hJ69h_y_ZqT8_g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj0T5BI5xK7Y_4rT8jW-XFw", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCv3tL4Qv7jJ8r0x8t6lB4wA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWP1FO6PhA-LildwUO70lsA", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC83tJtfQf-gmsso-gS5_tIQ", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCF_1M7c6o-Kj_5azz8d-X8A", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8Z1r7k-2gD6xX7c5l6b6g", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6D3-Z2y7c8c9a0b1e1f1f1", "geopolitics"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1yBDrf0w8h8q8q0t8b8g8g", "geopolitics"), 
-
-    # --- TECH ---
-    ("https://anastasiintech.substack.com/feed", "tech"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4EOyXKjfDUhI6ZLfc9XNg", "tech"), 
-    ("https://techcrunch.com/feed/", "tech"),
-    ("https://www.theverge.com/rss/index.xml", "tech"),
-    ("https://arstechnica.com/feed/", "tech"),
-    ("https://www.nyteknik.se/rss", "tech"), 
-    ("https://feber.se/rss/", "tech"),
-
-    # --- SCIENCE ---
     ("https://www.space.com/feeds/all", "science"),
     ("https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss", "science"),
     ("http://rss.sciam.com/ScientificAmerican-Global", "science"),
     ("https://www.newscientist.com/feed/home/", "science"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCvMj6UH48y1Ps-p-e-eJzHQ", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6107grRI4m0o2-emgoDnAA", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMOqf8ab-42UUQIdVoKwjlQ", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9w7f8f7g8h8j8j8j8j8j8", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8c8c8c8c8c8c8c8c8c8c8", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q", "science"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g", "science"), 
-
-    # --- CONSTRUCTION ---
     ("https://www.constructiondive.com/feeds/news/", "construction"),
     ("http://feeds.feedburner.com/ArchDaily", "construction"),
     ("https://www.building.co.uk/rss/news", "construction"),
     ("https://www.constructionenquirer.com/feed/", "construction"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7z8sK378O9H5_2-lJg9gDw", "construction"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6n8I1UDTKP1IWjQMg6_sZw", "construction"), 
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL3a7Xr-W8L7TC6K5am41DQ", "construction"), 
-    ("https://www.dagensps.se/feed/", "geopolitics"), 
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK (LISTOR) ---
+# --- SMART FALLBACK ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1557164223-9c4c79de936f?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?q=80&w=1000&auto=format&fit=crop"],
-    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1620882352329-a41764645229?q=80&w=1000&auto=format&fit=crop"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
-    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
-    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
-    "market": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1000&auto=format&fit=crop"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1614728853970-36279f57520b?q=80&w=1000&auto=format&fit=crop"],
-    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop"],
-    "building": ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"],
-    "industry": ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop"]
+    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop"],
+    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
+    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop"],
+    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
+    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
+    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
+    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"],
+    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"],
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"]
 }
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
 ]
 
 used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
-        if 'yt_videoid' in entry:
-            return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
@@ -138,12 +124,8 @@ def get_image_from_entry(entry):
     except: pass
     return ""
 
-def get_smart_fallback(title, category, source):
+def get_smart_fallback(title, category):
     text = title.lower() + " " + category.lower()
-    
-    if "oilprice" in source.lower():
-        text += " oil gas money market energy" 
-
     for key, urls in SMART_IMAGES.items():
         if key in text:
             for _ in range(5):
@@ -175,32 +157,93 @@ def translate_text(text, source_lang='sv'):
     except:
         return text 
 
+def fetch_youtube_videos(channel_url, category):
+    """
+    Hämtar 3 senaste videos med yt-dlp.
+    Garanterar att vi får data om kanalen finns.
+    """
+    ydl_opts = {
+        'quiet': True,
+        'extract_flat': 'in_playlist',
+        'playlistend': 3, # Hämta bara 3 senaste
+        'ignoreerrors': True
+    }
+    
+    videos = []
+    
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            # Om det är en @handle, lägg till /videos för att vara säker
+            if "@" in channel_url and not channel_url.endswith("/videos"):
+                channel_url += "/videos"
+                
+            info = ydl.extract_info(channel_url, download=False)
+            
+            if 'entries' in info:
+                source_title = info.get('uploader', 'YouTube Channel')
+                
+                for entry in info['entries']:
+                    title = entry.get('title')
+                    url = entry.get('url') # Video URL or ID
+                    
+                    # Fixa URL om yt-dlp bara ger ID
+                    if "youtube.com" not in url and "youtu.be" not in url:
+                        url = f"https://www.youtube.com/watch?v={url}"
+                        
+                    # Fixa bild (Max res)
+                    video_id = entry.get('id')
+                    img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+                    
+                    # Fixa datum (yt-dlp ger inte alltid exakt timestamp i flat mode, så vi tar nu-tid för "New")
+                    # För att sortering ska fungera bra, sätter vi dem som "färska"
+                    pub_ts = time.time()
+                    
+                    videos.append({
+                        "title": title,
+                        "link": url,
+                        "summary": f"Latest update from {source_title}.",
+                        "image": img,
+                        "source": source_title,
+                        "category": category,
+                        "published": pub_ts,
+                        "time_str": "Just Now",
+                        "is_video": True
+                    })
+                    print(f"Fetched YT: {title}")
+    except Exception as e:
+        print(f"Failed to fetch YT {channel_url}: {e}")
+        
+    return videos
+
 def generate_json_data():
     print("Fetching news...")
     all_articles = []
     seen_titles = set()
 
-    for entry in MANUAL_ENTRIES:
-        all_articles.append(entry)
-        seen_titles.add(entry['title'])
+    # 1. HÄMTA YOUTUBE VIDEOS (YT-DLP)
+    print("Starting YouTube Fetch...")
+    for url, category in YOUTUBE_CHANNELS:
+        videos = fetch_youtube_videos(url, category)
+        for v in videos:
+            if v['title'] not in seen_titles:
+                all_articles.append(v)
+                seen_titles.add(v['title'])
 
+    # 2. HÄMTA TEXT NYHETER (RSS)
+    print("Starting RSS Fetch...")
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            
-            try: print(f"Loaded {len(feed.entries)} from {source_name}")
-            except: pass
+            print(f"Loaded RSS: {source_name}")
             
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
-            is_youtube = "youtube.com" in url or "youtu.be" in url
             
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
                 try:
                     title = entry.title
-                    
                     if title in seen_titles: continue
                     seen_titles.add(title)
 
@@ -225,30 +268,26 @@ def generate_json_data():
                         except: pass
 
                     found_image = get_image_from_entry(entry)
-                    final_image = found_image if found_image else get_smart_fallback(title, category, source_name)
-
-                    final_link = entry.link
-                    if 'yt_videoid' in entry:
-                        final_link = f"https://www.youtube.com/watch?v={entry.yt_videoid}"
+                    final_image = found_image if found_image else get_smart_fallback(title, category)
 
                     article = {
                         "title": title,
-                        "link": final_link,
+                        "link": entry.link,
                         "summary": summary + note_html,
                         "image": final_image,
                         "source": source_name,
                         "category": category,
                         "published": pub_ts,
                         "time_str": time_str,
-                        "is_video": is_youtube
+                        "is_video": False
                     }
                     all_articles.append(article)
-                except Exception as inner_e:
-                    continue
+                except Exception: continue
 
         except Exception as e:
-            print(f"Error loading {url}: {e}")
+            print(f"Error loading RSS {url}: {e}")
 
+    # Sortera allt (Videos kommer hamna högt eftersom vi satte dem till "Nu", men om RSS har nya datum blandas de)
     try: all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     except: pass
     
