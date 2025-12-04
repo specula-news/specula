@@ -39,24 +39,10 @@
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         
-        /* --- SPECIAL YOUTUBE BUTTON STYLE (FIXED) --- */
-        .filter-btn[onclick="setCategory('video')"] { 
-            border-color: #ff0040; /* Red Border */
-            color: #ff0040; /* Red Text */
-        }
-        .filter-btn[onclick="setCategory('video')"]:hover { 
-            background: transparent; 
-            color: #ff0040; 
-            border-color: #ff0040; /* RED BORDER ON HOVER (No White) */
-            box-shadow: 0 0 20px rgba(255, 0, 64, 0.8); /* Red Glow */
-            text-shadow: 0 0 8px rgba(255, 0, 64, 0.8);
-        }
-        .filter-btn[onclick="setCategory('video')"].active { 
-            background: #ff0040; 
-            color: white; 
-            border-color: #ff0040; 
-            box-shadow: 0 0 15px rgba(255, 0, 64, 0.4); 
-        }
+        /* YOUTUBE BUTTON */
+        .filter-btn[onclick="setCategory('video')"] { border-color: #ff0040; color: #ff0040; }
+        .filter-btn[onclick="setCategory('video')"]:hover { background: transparent; color: #ff0040; border-color: #ff0040; box-shadow: 0 0 20px rgba(255, 0, 64, 0.8); text-shadow: 0 0 8px rgba(255, 0, 64, 0.8); }
+        .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.4); }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
@@ -129,46 +115,40 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.5.0 -->
+                <!-- V8.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.5.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.6.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Automated Logic:</strong> Removed hardcoded manual entries. Now fully relying on live RSS fetches for all video channels.<br>
-                        • <strong>Style Fix:</strong> Removed white border from YouTube button on hover (now pure Red Glow).
+                        • <strong>New Engine:</strong> Replaced RSS with <code>yt-dlp</code> for YouTube channels. This bypasses RSS delays and guarantees the 3 latest videos always load.<br>
+                        • <strong>Content:</strong> Electric Viking & other channels now update instantly.<br>
                     </div>
                 </li>
 
+                <!-- V8.5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.5.0</strong><br>
+                    Automated Logic cleanup. Removed hardcoded manual entries.
+                </li>
                 <!-- V8.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.4.0</strong><br>
-                    Emergency Fix: Manually injected recent videos from <em>The Electric Viking</em>.
+                    Manual Hotfix for EV videos.
                 </li>
-
                 <!-- V8.3.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.3.0</strong><br>
-                    Fixed "Earth image" spam on OilPrice. YouTube button style update.
+                    Fixed image repetition logic.
                 </li>
                 <!-- V8.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.2.0</strong><br>
-                    Correct YouTube Links, Inverted Dark Mode Logic.
-                </li>
-                <!-- V8.1.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.1.0</strong><br>
-                    Priority Feed force-injection.
+                    Inverted Dark Mode Button Logic.
                 </li>
                 <!-- V8.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.0.0</strong><br>
-                    Added "YOUTUBE NEWS" tab.
-                </li>
-                <!-- V7.9.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.9.0</strong><br>
-                    Anti-Duplicate Logic, YouTube High-Res thumbnails.
+                    Added YOUTUBE NEWS Tab.
                 </li>
             </ul>
         </div>
@@ -182,7 +162,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.5.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.6.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
