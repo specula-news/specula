@@ -7,7 +7,7 @@ import json
 import sys
 import os
 import re
-import requests  # NYTT BIBLIOTEK KRÄVS
+import requests
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
 
@@ -20,7 +20,7 @@ except AttributeError:
 MAX_ARTICLES_PER_SOURCE = 50
 MAX_DAYS_OLD = 5
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 3  # Max tid vi väntar på att en sida ska ladda bild
+TIMEOUT_SECONDS = 4  # Tid vi väntar på att en sida ska svara för bild-scraping
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -89,30 +89,57 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE MANAGER (LAST RESORT FALLBACK) ---
+# --- IMAGE MANAGER (SAFETY NET) ---
 class ImageManager:
     def __init__(self):
         self.used_ids = set()
-        # Fallback IDs if real scraping fails
         self.id_pools = {
-            "tech": ["1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd"],
-            "ev": ["1593941707882-a5bba14938c7", "1617788138017-80ad40651399", "1565373676955-349f71c4acbe", "1550505393-273a55239e24"],
-            "geopolitics": ["1529101091760-6149d3c879d4", "1532375810709-75b1da00537c", "1543832923-44667a77d853", "1464817739973-0128fe77aaa1"],
-            "science": ["1446776811953-b23d57bd21aa", "1614728853970-36279f57520b", "1541185933-710f50746747", "1517976487492-5750f3195933"],
-            "construction": ["1541888946425-d81bb19240f5", "1503387762-592deb58ef4e", "1581094794329-c8112a89af12", "1535732759880-bbd5c7265e3f"]
+            "tech": [
+                "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
+                "1526374965328-7f61d4dc18c5", "1550009158-9ebf69056955", "1535378437268-13d143445347", "1531297461136-82lw9b283993",
+                "1485827404703-89b55fcc595e", "1523961131990-5ea7c61b2107", "1558494949-efc52728101c", "1610563166150-b34df4f3bcd6",
+                "1510915361405-ef8a93d77d29", "1563770095-39d468f421e2", "1525547719571-a2d4ac8945e2", "1592478411213-61535fdd861d",
+                "1515378791036-0648a3ef77b2", "1555255707-c07966088b7b", "1517694712202-14dd9538aa97", "1531482615713-2afd69097998"
+            ],
+            "ev": [
+                "1593941707882-a5bba14938c7", "1617788138017-80ad40651399", "1565373676955-349f71c4acbe", "1550505393-273a55239e24",
+                "1620882352329-a41764645229", "1558628818-40db7871d007", "1594535182308-8ff248971649", "1605733513597-a8f8341084e6",
+                "1494976388531-d1058494cdd8", "1558449028-b53a39d100fc", "1532935298550-6e02e8906652", "1456356627738-3a96db6d54cb",
+                "1497435334941-8c899ee9e8e9", "1521618755572-156ae0cdd74d", "1487887235947-a955ef187fcc", "1513258496098-882717dbf58c"
+            ],
+            "geopolitics": [
+                "1529101091760-6149d3c879d4", "1532375810709-75b1da00537c", "1543832923-44667a77d853", "1547981609-4b6bfe6770b7",
+                "1464817739973-0128fe77aaa1", "1590283603385-17ffb3a7f29f", "1612178991541-b48cc8e92a4d", "1520699697851-3dc68aa3a474",
+                "1474376962954-d8a681cc53b2", "1496442226666-8d4a0e62e6e9", "1524601500432-1e1a4c71d692", "1537254326439-0e78a8257938",
+                "1516023353357-357c6032d288", "1555848962-6e79363ec58f", "1575320181282-9afab399332c", "1477039181047-94e702db8436"
+            ],
+            "science": [
+                "1446776811953-b23d57bd21aa", "1614728853970-36279f57520b", "1541185933-710f50746747", "1517976487492-5750f3195933",
+                "1457369804613-52c61a468e7d", "1533475418392-41543084b4f7", "1507413245164-6160d8298b31", "1532094349884-543bc11b234d",
+                "1532187863486-abf9dbad1b69", "1451187580459-43490279c0fa", "1484589065579-248aad0d8b13", "1462331940025-496dfbfc7564",
+                "1506318137071-a8bcbf67cc77", "1516339901601-2e1b62dc0c45", "1576086213369-97a306d36557", "1507668077129-56e32842fceb"
+            ],
+            "construction": [
+                "1541888946425-d81bb19240f5", "1503387762-592deb58ef4e", "1581094794329-c8112a89af12", "1535732759880-bbd5c7265e3f",
+                "1590644365607-1c5a38d07399", "1504307651254-35680f356dfd", "1531834685032-c34bf0d84c77", "1470290449668-02dd93d9420a",
+                "1504917595217-d4dc5ebe6122", "1517646287304-4b8f9e9842a6", "1589939705384-5185137a7f0f", "1495819903255-00fdfa38a8de",
+                "1503387920786-89d705445775", "1574359254888-9d10ad64d7df", "1599818817757-550604130096", "1534398079543-7ae6d016b86a"
+            ]
         }
         self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
 
     def get_image(self, category):
         target_list = self.id_pools.get(category, self.generic_ids)
         available = [pid for pid in target_list if pid not in self.used_ids]
+        
+        # Cross-pool fallback
         if not available:
-            # Cross-pool fallback
             all_ids = []
             for pool in self.id_pools.values(): all_ids.extend(pool)
             available = [pid for pid in all_ids if pid not in self.used_ids]
         
-        if not available: available = target_list # Reset if totally full
+        # Reset if full
+        if not available: available = target_list 
 
         selected_id = random.choice(available)
         self.used_ids.add(selected_id)
@@ -120,13 +147,14 @@ class ImageManager:
 
 image_manager = ImageManager()
 
-# --- REAL IMAGE SCRAPER (The "Magic" Part) ---
+# --- REAL IMAGE SCRAPER (The Solution) ---
 def fetch_og_image(url):
     """
     Besöker artikeln och hämtar 'og:image' metataggen.
     Detta ger den exakta bilden som nyhetssajten själv använder.
     """
     try:
+        # Låtsas vara en riktig webbläsare för att inte bli blockerad
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         
@@ -155,14 +183,12 @@ def get_best_image(entry, category, article_url):
                 if link.type.startswith('image/'): rss_img = link.href
     except: pass
     
-    # 2. SVARTLISTA KÄNDA DÅLIGA BILDER
-    # Om RSS ger oss en bild, kolla om det är en känd "placeholder"
+    # 2. SVARTLISTA KÄNDA DÅLIGA BILDER (Dessa blockeras nu)
     if rss_img:
-        bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default"]
+        bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
     
-    # Om vi hittade en bra RSS-bild, använd den (snabbast)
     if rss_img:
         return rss_img
 
@@ -234,7 +260,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.0.0 (The Scraper)...")
+    print("Startar SPECULA Generator v10.1.0 (SEO + Scraper)...")
     all_articles = []
     seen_titles = set()
 
@@ -306,12 +332,20 @@ def generate_site():
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(final_html)
         
-        # Sitemap
+        # --- GENERERA SITEMAP ---
         now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
         with open("sitemap.xml", "w") as f:
             f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
-            
-        print("Klar! index.html genererad.")
+        
+        # --- GENERERA ROBOTS.TXT (FÖR GOOGLE) ---
+        robots_content = f"""User-agent: *
+Allow: /
+Sitemap: {SITE_URL}/sitemap.xml
+"""
+        with open("robots.txt", "w", encoding="utf-8") as f:
+            f.write(robots_content)
+
+        print("Klar! index.html, sitemap.xml och robots.txt genererade.")
 
 if __name__ == "__main__":
     generate_site()
