@@ -38,12 +38,6 @@
         .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        
-        /* SPECIAL VIDEO BTN STYLE */
-        .filter-btn[onclick="setCategory('video')"] { border-color: #ff0055; color: #ff0055; }
-        .filter-btn[onclick="setCategory('video')"]:hover, 
-        .filter-btn[onclick="setCategory('video')"].active { background: #ff0055; color: white; border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
-
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
         /* GRID */
@@ -115,17 +109,22 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.1.0 -->
+                <!-- V8.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.2.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Priority Feed:</strong> Force-injected the 3 latest videos from <em>The Electric Viking</em> to ensure they appear even if RSS is blocked.<br>
-                        • <strong>YOUTUBE NEWS:</strong> Dedicated tab now reliably aggregates all subscribed video content.<br>
-                        • <strong>Source Check:</strong> Implemented aggressive fetching for YouTube channels.
+                        • <strong>Correct Links:</strong> YouTube cards now link directly to the video, not the channel.<br>
+                        • <strong>Better Images:</strong> Strict "No Duplicate" logic forces image variety on text articles.<br>
+                        • <strong>UI:</strong> Inverted Dark/Light mode button text for better logic.
                     </div>
                 </li>
 
+                <!-- V8.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.1.0</strong><br>
+                    Priority Feed force-injection, Dedicated YouTube Tab.
+                </li>
                 <!-- V8.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.0.0</strong><br>
@@ -141,11 +140,6 @@
                     <strong>Version 7.8.1</strong><br>
                     Randomized Generic Fallback images.
                 </li>
-                <!-- V7.8.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.8.0</strong><br>
-                    Added "Previous/Next/First" buttons to pagination.
-                </li>
             </ul>
         </div>
     </div>
@@ -158,13 +152,13 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.2.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
                     <span class="search-icon">🔍</span>
                 </div>
-                <button class="theme-switch" id="themeBtn">☾ DARK MODE</button>
+                <button class="theme-switch" id="themeBtn">☀ LIGHT MODE</button>
             </div>
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="setCategory('all')">All News</button>
@@ -295,11 +289,25 @@
 
         const toggleBtn = document.getElementById('themeBtn');
         const body = document.body;
-        if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+        
+        // Initial State (Default Dark)
+        if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'dark') {
+            body.classList.remove('light-mode');
+            toggleBtn.innerText = '☀ LIGHT MODE';
+        } else {
+            body.classList.add('light-mode');
+            toggleBtn.innerText = '☾ DARK MODE';
+        }
+
         toggleBtn.addEventListener('click', () => {
             body.classList.toggle('light-mode');
-            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
-            toggleBtn.innerText = body.classList.contains('light-mode') ? '☀ LIGHT MODE' : '☾ DARK MODE';
+            if (body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                toggleBtn.innerText = '☾ DARK MODE';
+            } else {
+                localStorage.setItem('theme', 'dark');
+                toggleBtn.innerText = '☀ LIGHT MODE';
+            }
         });
 
         const modal = document.getElementById('changelogModal');

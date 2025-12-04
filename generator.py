@@ -18,63 +18,10 @@ except AttributeError:
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
 
-# --- MANUELLA INLÄGG (FORCE INJECT ELECTRIC VIKING) ---
-# Tvingar in de 3 senaste videorna om RSS misslyckas
-MANUAL_ENTRIES = [
-    {
-        "title": "Tesla Model Y Rival the Xpeng G6 (My Personal Car) Gets HUGE Discount",
-        "link": "https://www.youtube.com/watch?v=some_id_1", # Generic link as placeholder if needed, usually direct links are better
-        # Let's try to get real recent ones or keep the placeholder logic clean
-        # Actually, let's just use the RSS primarily, but since you said it fails:
-        # I will inject these specific recent ones found in search.
-        "link": "https://www.youtube.com/@electricviking/videos", # Fallback link to channel if specific video link fails
-        "summary": "The Electric Viking discusses the massive discounts on the Xpeng G6.",
-        "image": "https://img.youtube.com/vi/AuJ1_z5w_w8/maxresdefault.jpg", # Placeholder ID, will likely break if not real. 
-        # BETTER STRATEGY: Rely on the RSS fix below, but keep one static welcome message video
-        "title": "The Electric Viking: Latest EV News Channel",
-        "link": "https://www.youtube.com/@electricviking",
-        "summary": "Click here to visit The Electric Viking channel directly for the latest daily EV news updates.",
-        "image": "https://yt3.googleusercontent.com/ytc/AIdro_k7_..._placeholder", # Hard to guess
-        # Let's revert to the solid logic: The code below IS the fix.
-        # I will manually add the specific video you requested first.
-        "title": "New EV Battery Tech Analysis", 
-        "link": "https://youtu.be/Fb0s1uBZu44",
-        "summary": "Featured video analysis regarding the latest breakthroughs in EV battery technology.",
-        "image": "https://img.youtube.com/vi/Fb0s1uBZu44/maxresdefault.jpg",
-        "source": "Specula Select",
-        "category": "ev",
-        "published": time.time(),
-        "time_str": "Just Now",
-        "is_video": True
-    },
-    {
-        "title": "EV Sales SKYROCKET 48% Worldwide in Q3 2025",
-        "link": "https://www.youtube.com/@electricviking", # Direct link not available without browsing
-        "summary": "Global EV sales are defying expectations with massive growth in Q3.",
-        "image": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", # Fallback
-        "source": "The Electric Viking",
-        "category": "ev",
-        "published": time.time() - 3600,
-        "time_str": "1h Ago",
-        "is_video": True
-    },
-    {
-        "title": "GAC and SAIC Reveal Solid State Battery Production Lines",
-        "link": "https://www.youtube.com/@electricviking",
-        "summary": "Major breakthrough in solid state battery manufacturing from Chinese giants.",
-        "image": "https://images.unsplash.com/photo-1619641472917-832744843764?q=80&w=1000&auto=format&fit=crop",
-        "source": "The Electric Viking",
-        "category": "ev",
-        "published": time.time() - 7200,
-        "time_str": "2h Ago",
-        "is_video": True
-    }
-]
-
-# --- KÄLLOR MED KATEGORIER ---
+# --- KÄLLOR ---
 RSS_SOURCES = [
     # --- EV / ENERGY (PRIORITY) ---
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), # Electric Viking (RSS)
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCy6tF-2i3h3l_5c5r6t7u7g", "ev"), 
     ("https://cleantechnica.com/feed/", "ev"), 
     ("https://electrek.co/feed/", "ev"), 
     ("https://insideevs.com/rss/articles/all/", "ev"),
@@ -82,9 +29,9 @@ RSS_SOURCES = [
     ("https://oilprice.com/rss/main", "ev"),
     ("https://www.renewableenergyworld.com/feed/", "ev"),
     ("https://www.autoblog.com/category/green/rss.xml", "ev"),
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), # Matt Ferrell
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), # ELEKTROmanija
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), # Fully Charged
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2A8478U3_hO9e9s8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3W19-5_6a5x8a5b8c8c8c8", "ev"), 
+    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCczkqjGBMjcnXuV41jBSHKQ", "ev"), 
 
     # --- GEOPOLITICS ---
     ("https://www.scmp.com/rss/91/feed", "geopolitics"),
@@ -142,32 +89,38 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SMART FALLBACK ---
+# --- SMART FALLBACK (LISTOR) ---
 SMART_IMAGES = {
-    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop"],
-    "asia": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?q=80&w=1000&auto=format&fit=crop"],
-    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop"],
-    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop"],
-    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"],
-    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"],
-    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"]
+    "china": ["https://images.unsplash.com/photo-1543832923-44667a77d853?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1504966981333-60a880373d32?q=80&w=1000&auto=format&fit=crop"],
+    "ev": ["https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1550505393-273a55239e24?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1565373676955-349f71c4acbe?q=80&w=1000&auto=format&fit=crop"],
+    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1518709414768-a88986a45ca5?q=80&w=1000&auto=format&fit=crop"],
+    "gas": ["https://images.unsplash.com/photo-1628522333060-637998ca4448?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1579766927552-308b4974457e?q=80&w=1000&auto=format&fit=crop"],
+    "money": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1000&auto=format&fit=crop"],
+    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop"],
+    "tech": ["https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop"],
+    "construction": ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop", "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop"]
 }
 GENERIC_FALLBACKS = [
     "https://images.unsplash.com/photo-1531297461136-82lw9b283993?q=80&w=1000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop"
 ]
+
+used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
+        # YOUTUBE: Force Max Res thumbnail
         if 'yt_videoid' in entry:
             return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
+        
+        # STANDARD RSS
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
             for link in entry.links:
                 if link.type.startswith('image/'): return link.href
+        
         content = entry.content[0].value if 'content' in entry else (entry.summary if 'summary' in entry else "")
         if content:
             soup = BeautifulSoup(content, 'html.parser')
@@ -182,8 +135,24 @@ def get_image_from_entry(entry):
 
 def get_smart_fallback(title, category):
     text = title.lower() + " " + category.lower()
+    
+    # Check specific keywords
     for key, urls in SMART_IMAGES.items():
-        if key in text: return random.choice(urls)
+        if key in text:
+            # Try to pick unused image
+            for _ in range(5):
+                img = random.choice(urls)
+                if img not in used_image_urls:
+                    used_image_urls.append(img)
+                    return img
+            return random.choice(urls) # Re-use if we must
+    
+    # Generic fallback
+    for _ in range(5):
+        img = random.choice(GENERIC_FALLBACKS)
+        if img not in used_image_urls:
+            used_image_urls.append(img)
+            return img
     return random.choice(GENERIC_FALLBACKS)
 
 def clean_summary(summary):
@@ -205,10 +174,6 @@ def generate_json_data():
     print("Fetching news...")
     all_articles = []
     seen_titles = set()
-
-    for entry in MANUAL_ENTRIES:
-        all_articles.append(entry)
-        seen_titles.add(entry['title'])
 
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
@@ -253,9 +218,15 @@ def generate_json_data():
                     found_image = get_image_from_entry(entry)
                     final_image = found_image if found_image else get_smart_fallback(title, category)
 
+                    # CORRECT LINK LOGIC
+                    final_link = entry.link
+                    # If it's a YouTube video, ensure we have the direct link
+                    if 'yt_videoid' in entry:
+                        final_link = f"https://www.youtube.com/watch?v={entry.yt_videoid}"
+
                     article = {
                         "title": title,
-                        "link": entry.link,
+                        "link": final_link,
                         "summary": summary + note_html,
                         "image": final_image,
                         "source": source_name,
