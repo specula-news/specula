@@ -115,16 +115,21 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.4.0 -->
+                <!-- V9.4.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.4.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.4.1</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Content Segregation:</strong> "ALL NEWS" now strictly excludes YouTube videos. Videos have their own exclusive tab.<br>
-                        • <strong>Gray Box Fix:</strong> Switched YouTube thumbnail fetching to 'HQ Default' to guarantee 100% image availability and eliminate gray placeholders.<br>
+                        • <strong>Image Diversity:</strong> Expanded fallback library to 30+ images per category. Added distinct images for "Climate", "Conflict" and "Business" to prevent repeated tech-backgrounds.<br>
+                        • <strong>Fix:</strong> Solved the issue where non-tech articles (like Climate or War) were receiving generic tech-chip backgrounds.<br>
                     </div>
                 </li>
 
+                <!-- V9.4.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.4.0</strong><br>
+                    Content Segregation (No videos in All News), Gray Box Fix.
+                </li>
                 <!-- V9.3.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.3.0</strong><br>
@@ -140,11 +145,6 @@
                     <strong>Version 9.1.0</strong><br>
                     YouTube Fix (removed strict limits), Round Robin Images.
                 </li>
-                <!-- V9.0.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 9.0.0</strong><br>
-                    Content Balancing & Strict Sorting.
-                </li>
             </ul>
         </div>
     </div>
@@ -157,7 +157,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.4.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.4.1</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -223,10 +223,9 @@
 
         function renderApp() {
             const filtered = state.articles.filter(art => {
-                // FILTER LOGIC UPDATE: Exclude videos from 'all'
                 let matchesCat = false;
                 if (state.category === 'all') {
-                    matchesCat = !art.is_video; // NO VIDEOS IN ALL NEWS
+                    matchesCat = !art.is_video; 
                 } else if (state.category === 'video') {
                     matchesCat = art.is_video;
                 } else {
@@ -253,7 +252,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
+                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'}">
                             <div class="card-overlay"></div>
                         </div>
                     </a>
