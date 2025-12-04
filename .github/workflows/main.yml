@@ -1,17 +1,16 @@
-name: Update News Feed
+name: Update News
 
 on:
   schedule:
-    - cron: '0 */2 * * *'  # Runs every 2 hours
-  workflow_dispatch:       # Allows you to click the "Run workflow" button manually
+    - cron: '0 */4 * * *' # Körs var 4:e timme
+  workflow_dispatch:      # Knapp för att köra manuellt
 
 permissions:
-  contents: write          # REQUIRED: Allows the robot to save files to your repo
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -21,28 +20,19 @@ jobs:
       with:
         python-version: '3.9'
 
+    # HÄR ÄR FIXEN: Vi tvingar installationen av yt-dlp manuellt här
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install feedparser beautifulsoup4 deep-translator
+        pip install feedparser beautifulsoup4 deep-translator yt-dlp
 
     - name: Run generator script
       run: python generator.py
 
     - name: Commit and push changes
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # 1. Add all the news pages
+        git config --global user.name 'SpeculaBot'
+        git config --global user.email 'bot@specula.ai'
         git add *.html
-        
-        # 2. Add the Sitemap (This fixes your issue!)
-        git add sitemap.xml
-        
-        # 3. Add the Google Verification file
-        git add google*.html
-        
-        # 4. Commit and Push
-        git commit -m "Update news, sitemap, and verification" || echo "No changes to commit"
-        git push
+        # Spara endast om det finns ändringar
+        git diff --staged --quiet || (git commit -m "Auto-update news" && git push)
