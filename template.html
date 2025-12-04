@@ -38,6 +38,12 @@
         .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        
+        /* SPECIAL VIDEO BTN STYLE */
+        .filter-btn[onclick="setCategory('video')"] { border-color: #ff0055; color: #ff0055; }
+        .filter-btn[onclick="setCategory('video')"]:hover, 
+        .filter-btn[onclick="setCategory('video')"].active { background: #ff0055; color: white; border-color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
         /* GRID */
@@ -109,33 +115,36 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V7.9.0 -->
+                <!-- V8.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 7.9.0</strong>
+                    <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Current Build</span><br>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.0.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Anti-Duplicate Logic:</strong> Fixed issue where multiple articles displayed the same fallback image. The system now enforces variety.<br>
-                        • <strong>New Categories:</strong> Added fallback image support for "Oil", "Gas", "Money" and "Politics".<br>
-                        • <strong>YouTube Fix:</strong> Forced High-Res thumbnail fetching to ensure video news look crisp.
+                        • <strong>New Feature:</strong> Added dedicated "YOUTUBE NEWS" tab that aggregates videos from all channels.<br>
+                        • <strong>Optimization:</strong> Video filtering logic refined to show the latest clips from Electric Viking, Johnny Harris, etc.<br>
+                        • <strong>UX:</strong> Highlighted Video tab with distinct color.
                     </div>
                 </li>
 
+                <!-- V7.9.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 7.9.0</strong><br>
+                    Anti-Duplicate Logic, YouTube High-Res thumbnails fixed.
+                </li>
                 <!-- V7.8.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.8.1</strong><br>
-                    Randomized Generic Fallback images to prevent duplicate images on feeds without thumbnails.
+                    Randomized Generic Fallback images to prevent duplicate images.
                 </li>
-
                 <!-- V7.8.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 7.8.0</strong><br>
-                    Added "Previous/Next/First" buttons to pagination. De-duplication logic.
+                    Added "Previous/Next/First" buttons.
                 </li>
-
-                <!-- V7.7.0 -->
+                <!-- V7.0 - V7.7.0 (Shortened for brevity in this view) -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 7.7.0</strong><br>
-                    Priority feeds (Electric Viking), improved search.
+                    <strong>Versions 7.0 - 7.7.0</strong><br>
+                    Major UI Overhaul, SPA Engine, Categories, Massive Source Expansion.
                 </li>
             </ul>
         </div>
@@ -149,7 +158,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 7.9.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -159,6 +168,7 @@
             </div>
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="setCategory('all')">All News</button>
+                <button class="filter-btn" onclick="setCategory('video')">YOUTUBE NEWS</button>
                 <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics & Docu</button>
                 <button class="filter-btn" onclick="setCategory('tech')">Tech & AI</button>
                 <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
@@ -195,8 +205,17 @@
         function setCategory(cat) {
             state.category = cat; state.page = 1;
             filterBtns.forEach(btn => {
-                if(btn.textContent.toLowerCase().includes(cat === 'all' ? 'all' : cat.split(' ')[0])) btn.classList.add('active');
-                else btn.classList.remove('active');
+                const btnText = btn.textContent.toLowerCase();
+                const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
+                
+                // Special handle for Video tab
+                if (cat === 'video' && btnText.includes('youtube')) {
+                    btn.classList.add('active');
+                } else if (cat !== 'video' && btnText.includes(catMatch) && !btnText.includes('youtube')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
             });
             renderApp();
         }
@@ -206,7 +225,11 @@
 
         function renderApp() {
             const filtered = state.articles.filter(art => {
-                const matchesCat = state.category === 'all' || art.category === state.category;
+                let matchesCat = false;
+                if (state.category === 'all') matchesCat = true;
+                else if (state.category === 'video') matchesCat = art.is_video;
+                else matchesCat = art.category === state.category;
+
                 const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
                 return matchesCat && matchesSearch;
             });
@@ -249,25 +272,19 @@
             if (totalPages <= 1) { pagContainer.innerHTML = ''; floatPrev.style.display = 'none'; floatNext.style.display = 'none'; return; }
             let html = '';
             
-            // PREV BUTTON
             if (state.page > 1) {
                 html += `<button class="page-btn" onclick="changePage(${state.page - 1})">« PREV</button>`;
             }
-
-            // FIRST PAGE JUMP
             if (state.page > 3) {
                 html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
                 html += `<span style="color:var(--text-secondary); margin:0 5px;">...</span>`;
             }
-
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
                     if(i === 1 && state.page > 3) continue;
                     html += `<button class="page-btn ${i === state.page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
                 }
             }
-
-            // NEXT BUTTON
             if (state.page < totalPages) {
                 html += `<button class="page-btn" onclick="changePage(${state.page + 1})">NEXT »</button>`;
             }
