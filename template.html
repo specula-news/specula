@@ -115,45 +115,36 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.1.0 -->
+                <!-- V9.3.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.1.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.3.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>YouTube Fix:</strong> Removed strict date filtering for YouTube videos. Now fetches and displays the absolute latest videos regardless of metadata quirks.<br>
-                        • <strong>No More Duplicates:</strong> Implemented "Round Robin" image logic. The system now cycles through unique images for each category and never reuses an image until the pool is exhausted.
+                        • <strong>Image Engine Overhaul:</strong> Added 100+ unique fallback images for Oil, Industry, Finance & Science.<br>
+                        • <strong>No-Repeat Logic:</strong> The system now refuses to reuse an image until the entire pool for a category is exhausted.<br>
+                        • <strong>Fix:</strong> Resolved duplicate "Earth" images on OilPrice/Finance articles.
                     </div>
                 </li>
 
+                <!-- V9.2.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.2.0</strong><br>
+                    YouTube 3-Day Filter, Strict Sorting, HQ Image Fallback.
+                </li>
+                <!-- V9.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.1.0</strong><br>
+                    Round Robin Image Logic.
+                </li>
                 <!-- V9.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.0.0</strong><br>
                     Content Balancing & Strict Sorting.
                 </li>
-                <!-- V8.9.1 -->
+                <!-- V8.x -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.9.1</strong><br>
-                    YouTube Thumbnail HQ Fallback.
-                </li>
-                <!-- V8.9.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.9.0</strong><br>
-                    Added Sitemap generation.
-                </li>
-                <!-- V8.8.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.8.0</strong><br>
-                    Refined YouTube thumbnail fetching.
-                </li>
-                <!-- V8.7.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.7.0</strong><br>
-                    Increased fetch limit, 5-Day Filter.
-                </li>
-                <!-- V8.6.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.6.0</strong><br>
-                    Replaced RSS with <code>yt-dlp</code>.
+                    <strong>Version 8.x Series</strong><br>
+                    YouTube Integration (yt-dlp), Video Tab, Manual Hotfixes, Sitemap.
                 </li>
             </ul>
         </div>
@@ -167,7 +158,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.3.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -258,7 +249,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'}">
+                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'}">
                             <div class="card-overlay"></div>
                         </div>
                     </a>
