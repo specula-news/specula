@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://specula-news.netlify.app/sitemap.xml
