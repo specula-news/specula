@@ -1,6 +1,6 @@
 import feedparser
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 import math
 import random
@@ -18,6 +18,7 @@ except AttributeError:
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
 MAX_DAYS_OLD = 5
+SITE_URL = "https://specula-news.netlify.app" # Din URL
 
 # --- YOUTUBE KANALER ---
 YOUTUBE_CHANNELS = [
@@ -105,6 +106,8 @@ used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
+        if 'yt_videoid' in entry:
+            return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
@@ -159,7 +162,7 @@ def fetch_youtube_videos(channel_url, category):
     ydl_opts = {
         'quiet': True,
         'extract_flat': 'in_playlist',
-        'playlistend': 10, 
+        'playlistend': 10,
         'ignoreerrors': True
     }
     videos = []
@@ -175,8 +178,6 @@ def fetch_youtube_videos(channel_url, category):
                     url = entry.get('url')
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
-                    
-                    # 1. Hämta MaxResDefault först
                     img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
                     
                     upload_date = entry.get('upload_date')
@@ -203,12 +204,29 @@ def fetch_youtube_videos(channel_url, category):
                         "published": pub_ts,
                         "time_str": time_str,
                         "is_video": True,
-                        "yt_id": video_id  # NYTT: Skicka med ID så frontend kan fixa bilden
+                        "yt_id": video_id
                     })
                     print(f"Fetched YT: {title}")
     except Exception as e:
         print(f"Failed to fetch YT {channel_url}: {e}")
     return videos
+
+# --- NEW SITEMAP GENERATOR ---
+def generate_sitemap():
+    now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    sitemap_content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>{SITE_URL}/index.html</loc>
+      <lastmod>{now}</lastmod>
+      <changefreq>hourly</changefreq>
+      <priority>1.0</priority>
+   </url>
+</urlset>
+"""
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(sitemap_content)
+    print("Sitemap generated.")
 
 def generate_json_data():
     print("Fetching news...")
@@ -300,7 +318,8 @@ def generate_json_data():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print("Success! index.html generated.")
+    generate_sitemap() # GENERATE SITEMAP
+    print("Success! index.html and sitemap.xml generated.")
 
 if __name__ == "__main__":
     generate_json_data()
