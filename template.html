@@ -115,20 +115,30 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V8.8.0 -->
+                <!-- V8.9.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.8.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 8.9.1</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Thumbnail Repair:</strong> Implemented "HQ Fallback" logic. If a YouTube video lacks a 4K thumbnail (which causes gray boxes), the system now auto-downgrades to the HD version which always exists.<br>
-                        • <strong>Bugfix:</strong> Fixed issue where some videos displayed placeholder images instead of thumbnails.
+                        • <strong>YouTube Image Fix:</strong> Switched thumbnail logic to use 'HQ' (High Quality) instead of 'MaxRes' for channels that don't support 4K thumbnails (fixes gray "missing image" artifacts).<br>
+                        • <strong>Fail-safe:</strong> Added an extra layer of fallback that switches to a Cyberpunk genre image if a YouTube thumbnail fails completely.
                     </div>
                 </li>
 
+                <!-- V8.9.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.9.0</strong><br>
+                    Added Sitemap generation.
+                </li>
+                <!-- V8.8.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 8.8.0</strong><br>
+                    Refined YouTube thumbnail fetching.
+                </li>
                 <!-- V8.7.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 8.7.0</strong><br>
-                    Increased fetch limit (300+ videos), 5-Day Filter, Fixed Date Sorting.
+                    Increased fetch limit, 5-Day Filter, Fixed Date Sorting.
                 </li>
                 <!-- V8.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
@@ -150,21 +160,6 @@
                     <strong>Version 8.3.0</strong><br>
                     Fixed "Earth image" spam on OilPrice.
                 </li>
-                <!-- V8.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.2.0</strong><br>
-                    Correct YouTube Links, Inverted Dark Mode Logic.
-                </li>
-                <!-- V8.1.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.1.0</strong><br>
-                    Priority Feed force-injection.
-                </li>
-                <!-- V8.0.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 8.0.0</strong><br>
-                    Added "YOUTUBE NEWS" tab.
-                </li>
             </ul>
         </div>
     </div>
@@ -177,7 +172,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 8.8.0</div>
+                    <div class="version-btn" id="versionBtn">Version 8.9.1</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -268,7 +263,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop'}">
+                                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                             <div class="card-overlay"></div>
                         </div>
                     </a>

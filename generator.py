@@ -18,7 +18,7 @@ except AttributeError:
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50 
 MAX_DAYS_OLD = 5
-SITE_URL = "https://specula-news.netlify.app" # Din URL
+SITE_URL = "https://specula-news.netlify.app"
 
 # --- YOUTUBE KANALER ---
 YOUTUBE_CHANNELS = [
@@ -106,8 +106,6 @@ used_image_urls = []
 
 def get_image_from_entry(entry):
     try:
-        if 'yt_videoid' in entry:
-            return f"https://img.youtube.com/vi/{entry.yt_videoid}/maxresdefault.jpg"
         if 'media_content' in entry: return entry.media_content[0]['url']
         if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url']
         if 'links' in entry:
@@ -178,7 +176,12 @@ def fetch_youtube_videos(channel_url, category):
                     url = entry.get('url')
                     if "youtube.com" not in url and "youtu.be" not in url: url = f"https://www.youtube.com/watch?v={url}"
                     video_id = entry.get('id')
-                    img = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+                    
+                    # 1. Prefer the thumbnail provided by yt-dlp (best avail)
+                    # 2. Fallback to hqdefault (ALWAYS exists, unlike maxres)
+                    img = entry.get('thumbnail')
+                    if not img:
+                        img = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
                     
                     upload_date = entry.get('upload_date')
                     if upload_date:
@@ -211,7 +214,7 @@ def fetch_youtube_videos(channel_url, category):
         print(f"Failed to fetch YT {channel_url}: {e}")
     return videos
 
-# --- NEW SITEMAP GENERATOR ---
+# --- SITEMAP ---
 def generate_sitemap():
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     sitemap_content = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -318,8 +321,8 @@ def generate_json_data():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    generate_sitemap() # GENERATE SITEMAP
-    print("Success! index.html and sitemap.xml generated.")
+    generate_sitemap()
+    print("Success! index.html generated.")
 
 if __name__ == "__main__":
     generate_json_data()
