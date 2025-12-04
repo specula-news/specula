@@ -115,14 +115,20 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.9.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
+                <!-- V10.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.9.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.0.0 - The Scraper</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Global ID Registry:</strong> Switched to Unsplash IDs instead of URL lists. The system now tracks unique IDs globally. An image used in 'Tech' is now forbidden in 'EV'.<br>
-                        • <strong>Scorched Earth Policy:</strong> If a category runs out of images, it will steal unused images from other categories rather than repeating a used one.<br>
+                        • <strong>Real Image Scraping:</strong> Specula now physically visits every article URL to fetch the authentic 'Open Graph' image used by the publisher, instead of relying on broken RSS placeholders.<br>
+                        • <strong>Anti-Duplicate Engine:</strong> Generic images are now detected and discarded in favor of real article photography.<br>
                     </div>
+                </li>
+
+                <!-- V9.9.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.9.0</strong><br>
+                    Global ID Registry & Scorched Earth Policy.
                 </li>
                 
                 <!-- V9.8.0 -->
@@ -134,7 +140,7 @@
                 <!-- V9.7.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.7.0</strong><br>
-                    Stateful Image Manager (Global Tracking), Cross-Category Fallback.
+                    Stateful Image Manager (Global Tracking).
                 </li>
             </ul>
         </div>
@@ -148,7 +154,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.9.0</div>
+                    <div class="version-btn" id="versionBtn">Version 10.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
