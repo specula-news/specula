@@ -115,16 +115,21 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V9.5.0 -->
+                <!-- V9.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.5.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 9.6.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Smart Summaries:</strong> Implemented AI-like text cleaning for YouTube descriptions. It now extracts relevant context while removing spam (links, subscribe requests, hashtags).<br>
-                        • <strong>Visuals:</strong> News cards now display these summaries below the image, giving context to videos.
+                        • <strong>YouTube Fix:</strong> Implemented bulletproof image logic. Uses <code>yt-dlp</code> native thumbnails first, then falls back to 'HQ Default' (which always exists) to eliminate gray placeholder boxes.<br>
+                        • <strong>Massive Library:</strong> Added 150+ unique high-quality fallback images across all categories to kill repetition.<br>
                     </div>
                 </li>
 
+                <!-- V9.5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 9.5.0</strong><br>
+                    Smart Summaries for YouTube, cleaned spam from descriptions.
+                </li>
                 <!-- V9.4.1 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 9.4.1</strong><br>
@@ -157,7 +162,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 9.5.0</div>
+                    <div class="version-btn" id="versionBtn">Version 9.6.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -252,7 +257,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="if(this.src.includes('maxresdefault')){this.src=this.src.replace('maxresdefault','hqdefault')}else{this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'}">
+                                 onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop'">
                             <div class="card-overlay"></div>
                         </div>
                     </a>
