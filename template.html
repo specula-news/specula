@@ -129,14 +129,20 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V10.8.0 -->
+                <!-- V11.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.8.0 - Operation Variation</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 11.0.0 - The Frontend Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Reloaded Image Library:</strong> Removed all algorithmic ID guessing. Replaced the generic fallback logic with a hardcoded list of 60+ verified, high-quality Unsplash URLs covering varied topics (City, Tech, Nature, Business).<br>
-                        • <strong>Mixed Categories:</strong> Fallback images are now mixed across categories. A blocked source will receive a random high-quality image from the full pool, ensuring maximum visual variety and preventing repetitive "abstract" placeholders.<br>
+                        • <strong>Smart HTML Fallback:</strong> Replaced the static "onerror" image (which caused the gradient duplicates) with a dynamic JavaScript function that picks a unique random image if the main one fails.<br>
+                        • <strong>Auto-Deduplication Script:</strong> A new "Image Police" script runs in the browser after the page loads. It scans all images, detects duplicates (even from different sources), and instantly swaps them for fresh ones.<br>
                     </div>
+                </li>
+
+                <!-- V10.8.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 10.8.0</strong><br>
+                    Operation Variation (Hardcoded List).
                 </li>
 
                 <!-- V10.7.0 -->
@@ -198,7 +204,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 10.8.0</div>
+                    <div class="version-btn" id="versionBtn">Version 11.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -238,7 +244,101 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const searchInput = document.getElementById('searchInput');
 
-        function init() { renderApp(); }
+        // --- CLIENT SIDE IMAGE POLICE ---
+        const fallbackImages = [
+            "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1501854140884-074cf272492b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1518005052351-53b29640dd26?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1526304640152-d29241528c7d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1620882352329-a41764645229?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1521791136064-7986608178d4?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531297461136-82lw9b283993?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503387920786-89d705445775?auto=format&fit=crop&w=800&q=80",
+        ];
+
+        let usedClientImages = new Set();
+
+        function handleImageError(img) {
+            // Om bilden misslyckas, ta en slumpmässig som vi inte använt än
+            let attempts = 0;
+            let newSrc = "";
+            do {
+                newSrc = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+                attempts++;
+            } while (usedClientImages.has(newSrc) && attempts < 50);
+            
+            usedClientImages.add(newSrc);
+            img.src = newSrc;
+            img.onerror = null; // Förhindra loop
+        }
+
+        function deduplicateImages() {
+            const images = document.querySelectorAll('.card-image');
+            const seenSrcs = new Set();
+
+            images.forEach(img => {
+                const src = img.src;
+                
+                // Om vi redan sett denna bild, byt ut den direkt!
+                if (seenSrcs.has(src)) {
+                    console.log("Duplicate found on frontend, swapping:", src);
+                    handleImageError(img); // Använd felhanteraren för att byta bild
+                } else {
+                    seenSrcs.add(src);
+                }
+            });
+        }
+
+        function init() { 
+            renderApp(); 
+            // Kör bild-polisen efter en kort stund för att hinna fånga allt
+            setTimeout(deduplicateImages, 500);
+        }
 
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
@@ -293,7 +393,7 @@
                                  class="card-image" 
                                  loading="lazy" 
                                  alt="News" 
-                                 onerror="this.src='https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1000&auto=format&fit=crop'">
+                                 onerror="handleImageError(this)">
                             <div class="card-overlay"></div>
                         </div>
                     </a>
@@ -313,6 +413,9 @@
 
             if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found.</div>`;
             renderPagination(totalPages);
+            
+            // Kör polisen igen varje gång vi renderar om
+            setTimeout(deduplicateImages, 100);
         }
 
         function renderPagination(totalPages) {

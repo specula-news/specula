@@ -89,70 +89,67 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- STATIC IMAGE LIBRARY (GARANTERAT UNIKA BILDER) ---
-# En hårdkodad lista med bra bilder för att slippa strul med Unsplash IDn.
+# --- STATIC FALLBACKS (Used by Python) ---
 STATIC_FALLBACK_IMAGES = [
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", # High rise
-    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80", # City
-    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80", # Urban
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80", # Tech chip
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80", # Coding
-    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80", # Code screen
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", # Globe/Network
-    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80", # Digital abstract
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", # Matrix code
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80", # Cyberpunk city
-    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80", # EV Charging
-    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80", # Electric car
-    "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80", # Nature road
-    "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=800&q=80", # Mountains
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", # Sea
-    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", # Nature
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80", # Forest
-    "https://images.unsplash.com/photo-1501854140884-074cf272492b?auto=format&fit=crop&w=800&q=80", # Dark mountain
-    "https://images.unsplash.com/photo-1518005052351-53b29640dd26?auto=format&fit=crop&w=800&q=80", # Abstract landscape
-    "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?auto=format&fit=crop&w=800&q=80", # New York
-    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80", # City night
-    "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80", # City skyline
-    "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?auto=format&fit=crop&w=800&q=80", # Satellite
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", # Earth network
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80", # Tech
-    "https://images.unsplash.com/photo-1526304640152-d29241528c7d?auto=format&fit=crop&w=800&q=80", # Plants
-    "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&w=800&q=80", # Rocks
-    "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&w=800&q=80", # Abstract dark
-    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80", # Fluid
-    "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80", # Solar panels
-    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80", # Charging
-    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80", # Charger
-    "https://images.unsplash.com/photo-1620882352329-a41764645229?auto=format&fit=crop&w=800&q=80", # EV car
-    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80", # Earth
-    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80", # Chart
-    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80", # Data
-    "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=800&q=80", # Groceries
-    "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80", # Meeting
-    "https://images.unsplash.com/photo-1521791136064-7986608178d4?auto=format&fit=crop&w=800&q=80", # Shakehand
-    "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80", # Money
-    "https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&w=800&q=80", # Stock graph
-    "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80", # Stock
-    "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?auto=format&fit=crop&w=800&q=80", # Job
-    "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?auto=format&fit=crop&w=800&q=80", # Papers
-    "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80", # Business
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80", # Typing
-    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?auto=format&fit=crop&w=800&q=80", # Keyboard
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80", # Industry
-    "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80", # Construction
-    "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80", # Building
-    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80", # Construction
-    "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80", # Worker
-    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80", # Blueprint
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1501854140884-074cf272492b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1518005052351-53b29640dd26?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1526304640152-d29241528c7d?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1620882352329-a41764645229?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1521791136064-7986608178d4?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
 ]
 
-# --- IMAGE MANAGER (SIMPLE & ROBUST) ---
+# --- IMAGE MANAGER ---
 class ImageManager:
     def __init__(self):
         self.used_urls = set()
-        
-        # Kopiera listan och blanda den
         self.deck = list(STATIC_FALLBACK_IMAGES)
         random.shuffle(self.deck)
 
@@ -163,13 +160,9 @@ class ImageManager:
         self.used_urls.add(url)
 
     def get_random_fallback(self):
-        """Hämtar en bild från kortleken och tar bort den."""
         if not self.deck:
-            # Om leken är slut, återställ och blanda om (nödfall)
             self.deck = list(STATIC_FALLBACK_IMAGES)
             random.shuffle(self.deck)
-        
-        # Ta översta bilden
         img = self.deck.pop(0)
         self.used_urls.add(img)
         return img
@@ -193,13 +186,8 @@ def fetch_og_image(url):
 def get_best_image(entry, category, article_url, source_name):
     # --- HARD BLOCK: DO NOT TRUST THESE SOURCES ---
     BANNED_SOURCES = [
-        "cleantechnica", 
-        "oilprice", 
-        "dagens ps", 
-        "dagensps",
-        "al jazeera", 
-        "scmp", 
-        "south china morning post"
+        "cleantechnica", "oilprice", "dagens ps", "dagensps",
+        "al jazeera", "scmp", "south china morning post"
     ]
     
     source_lower = source_name.lower()
@@ -208,7 +196,7 @@ def get_best_image(entry, category, article_url, source_name):
     if any(banned in source_lower for banned in BANNED_SOURCES):
         return image_manager.get_random_fallback()
 
-    # 2. Om källan är OK, försök hitta bild i RSS
+    # 2. RSS (Med Global Dubblett-koll)
     rss_img = None
     try:
         if 'media_content' in entry: rss_img = entry.media_content[0]['url']
@@ -219,21 +207,17 @@ def get_best_image(entry, category, article_url, source_name):
     except: pass
     
     if rss_img:
-        # Extra koll: innehåller URL:en namnet på en bannad källa?
-        if any(banned in rss_img.lower() for banned in BANNED_SOURCES):
+        bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
+        if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
-        else:
-            bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
-            if any(bad in rss_img.lower() for bad in bad_keywords):
-                rss_img = None
-            elif image_manager.is_url_used(rss_img):
-                rss_img = None
+        elif image_manager.is_url_used(rss_img):
+            rss_img = None
     
     if rss_img:
         image_manager.mark_as_used(rss_img)
         return rss_img
 
-    # 3. Scraper (Om RSS misslyckades men källan är OK)
+    # 3. Scraper
     real_img = fetch_og_image(article_url)
     if real_img:
         if any(banned in real_img.lower() for banned in BANNED_SOURCES):
@@ -245,7 +229,7 @@ def get_best_image(entry, category, article_url, source_name):
         image_manager.mark_as_used(real_img)
         return real_img
 
-    # 4. Sista utväg för alla: Kortleken
+    # 4. Sista utväg
     return image_manager.get_random_fallback()
 
 
@@ -308,7 +292,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.8.0 (Operation Variation)...")
+    print("Startar SPECULA Generator v11.0.0 (The Frontend Fix)...")
     all_articles = []
     seen_titles = set()
 
