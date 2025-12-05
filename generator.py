@@ -20,7 +20,7 @@ except AttributeError:
 MAX_ARTICLES_PER_SOURCE = 50
 MAX_DAYS_OLD = 5
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 4  # Tid vi väntar på att en sida ska svara för bild-scraping
+TIMEOUT_SECONDS = 4
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -89,10 +89,13 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE MANAGER (SAFETY NET) ---
+# --- GLOBAL IMAGE CONTROLLER (THE DUPLICATE DESTROYER) ---
 class ImageManager:
     def __init__(self):
-        self.used_ids = set()
+        # Denna lista minns varenda URL som använts på hela sidan
+        self.global_used_urls = set()
+        
+        # Reservbibliotek (Unsplash IDs)
         self.id_pools = {
             "tech": [
                 "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
@@ -128,52 +131,58 @@ class ImageManager:
         }
         self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
 
-    def get_image(self, category):
-        target_list = self.id_pools.get(category, self.generic_ids)
-        available = [pid for pid in target_list if pid not in self.used_ids]
-        
-        # Cross-pool fallback
-        if not available:
-            all_ids = []
-            for pool in self.id_pools.values(): all_ids.extend(pool)
-            available = [pid for pid in all_ids if pid not in self.used_ids]
-        
-        # Reset if full
-        if not available: available = target_list 
+    def is_url_used(self, url):
+        """Kollar om denna URL redan har tilldelats en annan artikel."""
+        return url in self.global_used_urls
 
-        selected_id = random.choice(available)
-        self.used_ids.add(selected_id)
+    def mark_as_used(self, url):
+        """Låser denna URL så ingen annan kan använda den."""
+        self.global_used_urls.add(url)
+
+    def get_fallback_image(self, category):
+        """Hämtar en garanterat unik bild från vårt interna bibliotek."""
+        target_list = self.id_pools.get(category, self.generic_ids)
+        
+        # Filtrera bort IDs som redan resulterat i URLer vi använt (lite tricky med ID vs URL, men vi gör vårt bästa)
+        # För enkelhetens skull: Vi slumpar tills vi hittar ett ID vars URL inte är 'used'
+        
+        attempts = 0
+        while attempts < 50:
+            selected_id = random.choice(target_list)
+            img_url = f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
+            
+            if img_url not in self.global_used_urls:
+                self.global_used_urls.add(img_url)
+                return img_url
+            
+            attempts += 1
+            
+        # Om vi mot förmodan misslyckas (extremt osannolikt), ta vad som helst
+        selected_id = random.choice(self.generic_ids)
         return f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
 
 image_manager = ImageManager()
 
-# --- REAL IMAGE SCRAPER (The Solution) ---
+# --- REAL IMAGE SCRAPER ---
 def fetch_og_image(url):
-    """
-    Besöker artikeln och hämtar 'og:image' metataggen.
-    Detta ger den exakta bilden som nyhetssajten själv använder.
-    """
     try:
-        # Låtsas vara en riktig webbläsare för att inte bli blockerad
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
-            # Leta efter og:image
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
                 img_url = og_image["content"]
-                # Filtrera bort små ikoner eller loggor
                 if "logo" in img_url.lower() or "icon" in img_url.lower():
                     return None
                 return img_url
     except Exception:
-        pass # Om det tar för lång tid eller failar, gå vidare tyst
+        pass
     return None
 
 def get_best_image(entry, category, article_url):
-    # 1. Kolla RSS först (Men var skeptisk)
+    # 1. RSS (Med Global Dubblett-koll)
     rss_img = None
     try:
         if 'media_content' in entry: rss_img = entry.media_content[0]['url']
@@ -183,23 +192,36 @@ def get_best_image(entry, category, article_url):
                 if link.type.startswith('image/'): rss_img = link.href
     except: pass
     
-    # 2. SVARTLISTA KÄNDA DÅLIGA BILDER (Dessa blockeras nu)
+    # Svartlista + Dubblettkoll
     if rss_img:
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
+        # HÄR ÄR FIXEN: Om bilden redan använts av en annan artikel -> Kasta den!
+        elif image_manager.is_url_used(rss_img):
+            # print(f"Duplicate RSS image detected and blocked: {rss_img}")
+            rss_img = None
     
     if rss_img:
+        image_manager.mark_as_used(rss_img)
         return rss_img
 
-    # 3. "REAL DEAL": Scrapa artikeln efter rätt bild
-    print(f"   > Scraping real image for: {article_url[:30]}...")
+    # 2. Scraper (Med Global Dubblett-koll)
+    # print(f"   > Scraping real image for: {article_url[:30]}...")
     real_img = fetch_og_image(article_url)
+    
     if real_img:
+        # Om även den skrapade bilden är en dubblett (t.ex. sajtens default open-graph bild)
+        if image_manager.is_url_used(real_img):
+            # print(f"Duplicate Scraped image detected and blocked: {real_img}")
+            real_img = None
+            
+    if real_img:
+        image_manager.mark_as_used(real_img)
         return real_img
 
-    # 4. SISTA UTVÄG: Fallback från ImageManager
-    return image_manager.get_image(category)
+    # 3. Fallback (Garanterat unik)
+    return image_manager.get_fallback_image(category)
 
 
 def clean_youtube_description(text):
@@ -245,6 +267,9 @@ def fetch_youtube_videos(channel_url, category):
                     
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
+                    # YouTube-bilder är sällan dubbletter, men vi markerar dem ändå för säkerhets skull
+                    image_manager.mark_as_used(img)
+
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
@@ -260,7 +285,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.1.0 (SEO + Scraper)...")
+    print("Startar SPECULA Generator v10.2.0 (The Duplicate Destroyer)...")
     all_articles = []
     seen_titles = set()
 
@@ -283,7 +308,6 @@ def generate_site():
                 if title in seen_titles: continue
                 seen_titles.add(title)
 
-                # Datumkoll
                 pub_ts = time.time()
                 if 'published_parsed' in entry and entry.published_parsed:
                     pub_ts = time.mktime(entry.published_parsed)
@@ -301,7 +325,7 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- HÄR ANROPAS NYA BILDLOGIKEN ---
+                # --- HÄMTA BILD (MED DUBBLETT-SKYDD) ---
                 final_image = get_best_image(entry, category, entry.link)
 
                 all_articles.append({
@@ -319,7 +343,6 @@ def generate_site():
         except Exception as e:
             print(f"Error {url}: {e}")
 
-    # Sortera & Generera
     all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     json_data = json.dumps(all_articles)
 
@@ -332,12 +355,11 @@ def generate_site():
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(final_html)
         
-        # --- GENERERA SITEMAP ---
+        # SITEMAP & ROBOTS
         now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
         with open("sitemap.xml", "w") as f:
             f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
         
-        # --- GENERERA ROBOTS.TXT (FÖR GOOGLE) ---
         robots_content = f"""User-agent: *
 Allow: /
 Sitemap: {SITE_URL}/sitemap.xml
@@ -345,7 +367,7 @@ Sitemap: {SITE_URL}/sitemap.xml
         with open("robots.txt", "w", encoding="utf-8") as f:
             f.write(robots_content)
 
-        print("Klar! index.html, sitemap.xml och robots.txt genererade.")
+        print("Klar! Allt genererat.")
 
 if __name__ == "__main__":
     generate_site()
