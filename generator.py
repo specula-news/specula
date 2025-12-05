@@ -92,7 +92,6 @@ SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se"
 # --- IMAGE MANAGER (NORMALIZED TRACKING) ---
 class ImageManager:
     def __init__(self):
-        # Vi sparar nu "rensad" URL för att fånga dubbletter som har olika parametrar
         self.global_used_urls = set()
         
         self.id_pools = {
@@ -131,17 +130,14 @@ class ImageManager:
         self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
 
     def clean_url(self, url):
-        """Tar bort query parameters (allt efter ?) för att hitta dolda dubbletter."""
         if not url: return ""
         return url.split('?')[0].strip()
 
     def is_url_used(self, url):
-        """Kollar om den REINA urlen finns."""
         clean = self.clean_url(url)
         return clean in self.global_used_urls
 
     def mark_as_used(self, url):
-        """Låser URLen."""
         clean = self.clean_url(url)
         if clean:
             self.global_used_urls.add(clean)
@@ -151,15 +147,11 @@ class ImageManager:
         attempts = 0
         while attempts < 50:
             selected_id = random.choice(target_list)
-            # Vi skapar en ren URL här
             base_url = f"https://images.unsplash.com/photo-{selected_id}"
-            
             if base_url not in self.global_used_urls:
                 self.global_used_urls.add(base_url)
                 return f"{base_url}?auto=format&fit=crop&w=800&q=80"
-            
             attempts += 1
-            
         selected_id = random.choice(self.generic_ids)
         return f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
 
@@ -184,21 +176,28 @@ def fetch_og_image(url):
     return None
 
 def get_best_image(entry, category, article_url, source_name):
-    # 1. SPECIALREGEL: Blockera RSS-bilder från kända problemkällor
-    # CleanTechnica skickar alltid dubbletter som ser olika ut. Vi tvingar dem att använda scraping eller fallback.
-    block_rss_sources = ["CleanTechnica", "Al Jazeera"] 
+    # --- HARD BLOCK: DO NOT TRUST THESE SOURCES FOR IMAGES ---
+    # Dessa källor använder generiska bilder som scrapers inte kan skilja från riktiga.
+    # Vi tvingar dem att använda vårt interna bibliotek för att garantera variation.
+    BANNED_IMAGE_SOURCES = ["cleantechnica", "oilprice", "dagens ps"]
+    
+    source_lower = source_name.lower()
+    
+    # 1. Om källan är svartlistad -> GÅ DIREKT TILL FALLBACK
+    if any(banned in source_lower for banned in BANNED_IMAGE_SOURCES):
+        # print(f"Source '{source_name}' blocked from external images. Using internal library.")
+        return image_manager.get_fallback_image(category)
+
+    # 2. RSS (Med Global Dubblett-koll)
     rss_img = None
+    try:
+        if 'media_content' in entry: rss_img = entry.media_content[0]['url']
+        elif 'media_thumbnail' in entry: rss_img = entry.media_thumbnail[0]['url']
+        elif 'links' in entry:
+            for link in entry.links:
+                if link.type.startswith('image/'): rss_img = link.href
+    except: pass
     
-    if not any(blocked in source_name for blocked in block_rss_sources):
-        try:
-            if 'media_content' in entry: rss_img = entry.media_content[0]['url']
-            elif 'media_thumbnail' in entry: rss_img = entry.media_thumbnail[0]['url']
-            elif 'links' in entry:
-                for link in entry.links:
-                    if link.type.startswith('image/'): rss_img = link.href
-        except: pass
-    
-    # Svartlista + SMART Dubblettkoll
     if rss_img:
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
@@ -210,7 +209,7 @@ def get_best_image(entry, category, article_url, source_name):
         image_manager.mark_as_used(rss_img)
         return rss_img
 
-    # 2. Scraper
+    # 3. Scraper
     real_img = fetch_og_image(article_url)
     
     if real_img:
@@ -221,7 +220,7 @@ def get_best_image(entry, category, article_url, source_name):
         image_manager.mark_as_used(real_img)
         return real_img
 
-    # 3. Fallback (Garanterat unik)
+    # 4. Fallback (Garanterat unik)
     return image_manager.get_fallback_image(category)
 
 
@@ -284,7 +283,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.3.0 (CleanTechnica Fix)...")
+    print("Startar SPECULA Generator v10.4.0 (Hard Block CleanTechnica)...")
     all_articles = []
     seen_titles = set()
 
@@ -324,7 +323,7 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- FIX: Skicka med source_name för att kunna blockera specifika källor ---
+                # --- HÄMTA BILD (MED HARD BLOCK FÖR CLEANTECHNICA) ---
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({

@@ -129,14 +129,20 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V10.3.0 -->
+                <!-- V10.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.3.0 - The CleanTechnica Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.4.0 - The Hard Block</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>URL Normalization:</strong> The engine now strips query parameters (e.g., ?width=800) from image URLs before checking for duplicates. This solves the "same image, different URL" problem.<br>
-                        • <strong>Source Blocking:</strong> Explicitly blocked RSS images from "CleanTechnica" and "Al Jazeera" as they are known to send duplicate placeholder images. They are now forced to use scraping or fallback logic.<br>
+                        • <strong>CleanTechnica Block:</strong> Implemented a "hard block" for CleanTechnica, OilPrice, and Dagens PS. The system will now refuse to download images from these sources entirely, forcing the use of the internal, duplicate-proof image library.<br>
+                        • <strong>Duplicate Eradication:</strong> Since these sources are forced to use the <code>ImageManager</code>, and the manager guarantees uniqueness, the "circuit board" issue is permanently solved.<br>
                     </div>
+                </li>
+
+                <!-- V10.3.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 10.3.0</strong><br>
+                    URL Normalization & Source Blocking.
                 </li>
 
                 <!-- V10.2.0 -->
@@ -168,7 +174,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 10.3.0</div>
+                    <div class="version-btn" id="versionBtn">Version 10.4.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
