@@ -129,14 +129,20 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V10.2.0 -->
+                <!-- V10.3.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.2.0 - The Duplicate Destroyer</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.3.0 - The CleanTechnica Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Global Image Police:</strong> Implemented a ruthless tracking system that forbids ANY image URL from appearing more than once, regardless if it comes from RSS, Scraping, or Fallback.<br>
-                        • <strong>Fix for CleanTechnica/RSS:</strong> Specifically targets and blocks recurring default images from RSS feeds by checking them against the global usage history.<br>
+                        • <strong>URL Normalization:</strong> The engine now strips query parameters (e.g., ?width=800) from image URLs before checking for duplicates. This solves the "same image, different URL" problem.<br>
+                        • <strong>Source Blocking:</strong> Explicitly blocked RSS images from "CleanTechnica" and "Al Jazeera" as they are known to send duplicate placeholder images. They are now forced to use scraping or fallback logic.<br>
                     </div>
+                </li>
+
+                <!-- V10.2.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 10.2.0</strong><br>
+                    The Duplicate Destroyer (Global Image Police).
                 </li>
 
                 <!-- V10.1.0 -->
@@ -148,7 +154,7 @@
                 <!-- V10.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 10.0.0</strong><br>
-                    The Scraper Update.
+                    The Scraper Method.
                 </li>
             </ul>
         </div>
@@ -162,7 +168,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 10.2.0</div>
+                    <div class="version-btn" id="versionBtn">Version 10.3.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">

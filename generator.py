@@ -89,13 +89,12 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- GLOBAL IMAGE CONTROLLER (THE DUPLICATE DESTROYER) ---
+# --- IMAGE MANAGER (NORMALIZED TRACKING) ---
 class ImageManager:
     def __init__(self):
-        # Denna lista minns varenda URL som använts på hela sidan
+        # Vi sparar nu "rensad" URL för att fånga dubbletter som har olika parametrar
         self.global_used_urls = set()
         
-        # Reservbibliotek (Unsplash IDs)
         self.id_pools = {
             "tech": [
                 "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
@@ -131,33 +130,36 @@ class ImageManager:
         }
         self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
 
+    def clean_url(self, url):
+        """Tar bort query parameters (allt efter ?) för att hitta dolda dubbletter."""
+        if not url: return ""
+        return url.split('?')[0].strip()
+
     def is_url_used(self, url):
-        """Kollar om denna URL redan har tilldelats en annan artikel."""
-        return url in self.global_used_urls
+        """Kollar om den REINA urlen finns."""
+        clean = self.clean_url(url)
+        return clean in self.global_used_urls
 
     def mark_as_used(self, url):
-        """Låser denna URL så ingen annan kan använda den."""
-        self.global_used_urls.add(url)
+        """Låser URLen."""
+        clean = self.clean_url(url)
+        if clean:
+            self.global_used_urls.add(clean)
 
     def get_fallback_image(self, category):
-        """Hämtar en garanterat unik bild från vårt interna bibliotek."""
         target_list = self.id_pools.get(category, self.generic_ids)
-        
-        # Filtrera bort IDs som redan resulterat i URLer vi använt (lite tricky med ID vs URL, men vi gör vårt bästa)
-        # För enkelhetens skull: Vi slumpar tills vi hittar ett ID vars URL inte är 'used'
-        
         attempts = 0
         while attempts < 50:
             selected_id = random.choice(target_list)
-            img_url = f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
+            # Vi skapar en ren URL här
+            base_url = f"https://images.unsplash.com/photo-{selected_id}"
             
-            if img_url not in self.global_used_urls:
-                self.global_used_urls.add(img_url)
-                return img_url
+            if base_url not in self.global_used_urls:
+                self.global_used_urls.add(base_url)
+                return f"{base_url}?auto=format&fit=crop&w=800&q=80"
             
             attempts += 1
             
-        # Om vi mot förmodan misslyckas (extremt osannolikt), ta vad som helst
         selected_id = random.choice(self.generic_ids)
         return f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
 
@@ -181,39 +183,38 @@ def fetch_og_image(url):
         pass
     return None
 
-def get_best_image(entry, category, article_url):
-    # 1. RSS (Med Global Dubblett-koll)
+def get_best_image(entry, category, article_url, source_name):
+    # 1. SPECIALREGEL: Blockera RSS-bilder från kända problemkällor
+    # CleanTechnica skickar alltid dubbletter som ser olika ut. Vi tvingar dem att använda scraping eller fallback.
+    block_rss_sources = ["CleanTechnica", "Al Jazeera"] 
     rss_img = None
-    try:
-        if 'media_content' in entry: rss_img = entry.media_content[0]['url']
-        elif 'media_thumbnail' in entry: rss_img = entry.media_thumbnail[0]['url']
-        elif 'links' in entry:
-            for link in entry.links:
-                if link.type.startswith('image/'): rss_img = link.href
-    except: pass
     
-    # Svartlista + Dubblettkoll
+    if not any(blocked in source_name for blocked in block_rss_sources):
+        try:
+            if 'media_content' in entry: rss_img = entry.media_content[0]['url']
+            elif 'media_thumbnail' in entry: rss_img = entry.media_thumbnail[0]['url']
+            elif 'links' in entry:
+                for link in entry.links:
+                    if link.type.startswith('image/'): rss_img = link.href
+        except: pass
+    
+    # Svartlista + SMART Dubblettkoll
     if rss_img:
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
-        # HÄR ÄR FIXEN: Om bilden redan använts av en annan artikel -> Kasta den!
         elif image_manager.is_url_used(rss_img):
-            # print(f"Duplicate RSS image detected and blocked: {rss_img}")
             rss_img = None
     
     if rss_img:
         image_manager.mark_as_used(rss_img)
         return rss_img
 
-    # 2. Scraper (Med Global Dubblett-koll)
-    # print(f"   > Scraping real image for: {article_url[:30]}...")
+    # 2. Scraper
     real_img = fetch_og_image(article_url)
     
     if real_img:
-        # Om även den skrapade bilden är en dubblett (t.ex. sajtens default open-graph bild)
         if image_manager.is_url_used(real_img):
-            # print(f"Duplicate Scraped image detected and blocked: {real_img}")
             real_img = None
             
     if real_img:
@@ -258,7 +259,6 @@ def fetch_youtube_videos(channel_url, category):
                     vid_id = entry.get('id')
                     img = f"https://i.ytimg.com/vi/{vid_id}/hqdefault.jpg"
                     
-                    # Datumkoll
                     upload_date = entry.get('upload_date')
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
@@ -267,7 +267,6 @@ def fetch_youtube_videos(channel_url, category):
                     
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
-                    # YouTube-bilder är sällan dubbletter, men vi markerar dem ändå för säkerhets skull
                     image_manager.mark_as_used(img)
 
                     videos.append({
@@ -285,7 +284,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.2.0 (The Duplicate Destroyer)...")
+    print("Startar SPECULA Generator v10.3.0 (CleanTechnica Fix)...")
     all_articles = []
     seen_titles = set()
 
@@ -325,8 +324,8 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- HÄMTA BILD (MED DUBBLETT-SKYDD) ---
-                final_image = get_best_image(entry, category, entry.link)
+                # --- FIX: Skicka med source_name för att kunna blockera specifika källor ---
+                final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({
                     "title": title,
@@ -355,7 +354,6 @@ def generate_site():
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(final_html)
         
-        # SITEMAP & ROBOTS
         now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
         with open("sitemap.xml", "w") as f:
             f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
