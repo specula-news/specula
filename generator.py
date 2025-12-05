@@ -8,9 +8,10 @@ import sys
 import os
 import re
 import requests
+import hashlib
+from urllib.parse import urljoin  # NYCKELN FÖR ATT FIXA TRASIGA LÄNKAR
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
-import hashlib
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -90,7 +91,7 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- ENORM STATISK BILD-POOL (Blandad kompott för maximal variation) ---
+# --- SÄKRA BILDER (RESERV) ---
 STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
@@ -145,29 +146,16 @@ STATIC_POOL = [
     "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1558494949-efc52728101c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1562813733-b31f71025d54?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
 ]
 
-# --- DETERMINISTIC IMAGE SELECTOR ---
+# --- IMAGE LOGIC (FIX BROKEN LINKS) ---
 def get_deterministic_image(title):
-    """
-    Använder artikelns titel för att välja en bild matematiskt.
-    Samma titel ger alltid samma bild.
-    Olika titlar ger (nästan alltid) olika bilder.
-    """
     if not title: return STATIC_POOL[0]
-    
-    # Skapa ett "hash" (unikt nummer) från titeln
     hash_object = hashlib.md5(title.encode())
     hash_int = int(hash_object.hexdigest(), 16)
-    
-    # Välj ett index baserat på numret
     index = hash_int % len(STATIC_POOL)
     return STATIC_POOL[index]
 
-# --- REAL IMAGE SCRAPER ---
 def fetch_og_image(url):
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
@@ -176,13 +164,20 @@ def fetch_og_image(url):
             soup = BeautifulSoup(response.content, 'html.parser')
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
-                return og_image["content"]
+                img_url = og_image["content"]
+                
+                # *** HÄR ÄR FIXEN FÖR "BROKEN LINKS" ***
+                # Om länken är relativ (t.ex. "/uploads/img.jpg") lägger vi till domänen före.
+                if img_url and not img_url.startswith(('http:', 'https:')):
+                    img_url = urljoin(url, img_url)
+                    
+                return img_url
     except Exception:
         pass
     return None
 
 def get_best_image(entry, category, article_url, source_name):
-    # --- HARD BLOCK: DO NOT TRUST THESE SOURCES ---
+    # KÄLLOR VI ALDRIG LITAR PÅ
     BANNED_SOURCES = [
         "cleantechnica", "oilprice", "dagens ps", "dagensps",
         "al jazeera", "scmp", "south china morning post"
@@ -190,11 +185,11 @@ def get_best_image(entry, category, article_url, source_name):
     
     source_lower = source_name.lower()
     
-    # 1. Om källan är svartlistad -> GÅ DIREKT TILL MATEMATISK BILD
+    # 1. HÅRD BLOCKERING -> VÄLJ MATEMATISK BILD
     if any(banned in source_lower for banned in BANNED_SOURCES):
         return get_deterministic_image(entry.title)
 
-    # 2. RSS (Om ej bannad)
+    # 2. FÖRSÖK MED RSS
     rss_img = None
     try:
         if 'media_content' in entry: rss_img = entry.media_content[0]['url']
@@ -205,6 +200,11 @@ def get_best_image(entry, category, article_url, source_name):
     except: pass
     
     if rss_img:
+        # Extra koll så inte RSS-bilden är "relativ" (börjar med /)
+        if not rss_img.startswith(('http:', 'https:')):
+             # Försök gissa domän från artikelns länk, annars kasta
+             rss_img = urljoin(article_url, rss_img)
+
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
@@ -212,19 +212,20 @@ def get_best_image(entry, category, article_url, source_name):
     if rss_img:
         return rss_img
 
-    # 3. Scraper
+    # 3. SCRAPING
     real_img = fetch_og_image(article_url)
-    if real_img:
-        if any(banned in real_img.lower() for banned in BANNED_SOURCES):
-            real_img = None
     
     if real_img:
+        # Om den skrapade bilden är från en bannad domän
+        if any(banned in real_img.lower() for banned in BANNED_SOURCES):
+            return get_deterministic_image(entry.title)
         return real_img
 
-    # 4. Sista utväg
+    # 4. SISTA UTVÄG
     return get_deterministic_image(entry.title)
 
 
+# --- HELPERS ---
 def clean_youtube_description(text):
     if not text: return "Watch video for details."
     text = re.sub(r'http\S+', '', text)
@@ -258,12 +259,10 @@ def fetch_youtube_videos(channel_url, category):
                 for entry in info['entries']:
                     vid_id = entry.get('id')
                     img = f"https://i.ytimg.com/vi/{vid_id}/hqdefault.jpg"
-                    
                     upload_date = entry.get('upload_date')
+                    pub_ts = time.time()
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
-                    else:
-                        pub_ts = time.time()
                     
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
@@ -282,44 +281,42 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v12.0.0 (The Hash-Map Strategy)...")
+    print("Startar SPECULA Generator v12.1.0...")
     all_articles = []
-    seen_titles = set()
-
+    
+    # 1. YouTube
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
 
+    # 2. RSS
     headers = {'User-Agent': 'Mozilla/5.0'}
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                title = entry.title
-                if title in seen_titles: continue
-                seen_titles.add(title)
+                # Enkel titel-deduplication
+                if any(a['title'] == entry.title for a in all_articles): continue
 
                 pub_ts = time.time()
                 if 'published_parsed' in entry and entry.published_parsed:
                     pub_ts = time.mktime(entry.published_parsed)
                 
-                days_old = (time.time() - pub_ts) / 86400
-                if days_old > MAX_DAYS_OLD: continue
-                
-                time_str = "Just Now" if days_old < 1 else f"{int(days_old)}d Ago"
+                if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
+                time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
 
                 summary = clean_summary(entry.summary if 'summary' in entry else "")
-                note_html = ""
+                note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
                 
                 if is_swedish:
-                    title = translate_text(title)
+                    title = translate_text(entry.title)
                     summary = translate_text(summary)
-                    note_html = ' <span class="lang-note">(Translated)</span>'
+                else:
+                    title = entry.title
 
-                # --- ANROPA NYA HASH-LOGIKEN ---
+                # Hämta bild
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({
@@ -337,30 +334,25 @@ def generate_site():
         except Exception as e:
             print(f"Error {url}: {e}")
 
+    # Sortera och spara
     all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     json_data = json.dumps(all_articles)
 
-    if os.path.exists("template.html"):
-        with open("template.html", "r", encoding="utf-8") as f:
-            template = f.read()
-        
-        final_html = template.replace("<!-- NEWS_DATA_JSON -->", json_data)
-        
-        with open("index.html", "w", encoding="utf-8") as f:
-            f.write(final_html)
-        
-        now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
-        with open("sitemap.xml", "w") as f:
-            f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
-        
-        robots_content = f"""User-agent: *
-Allow: /
-Sitemap: {SITE_URL}/sitemap.xml
-"""
-        with open("robots.txt", "w", encoding="utf-8") as f:
-            f.write(robots_content)
+    with open("template.html", "r", encoding="utf-8") as f:
+        template = f.read()
+    
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
+    
+    # SEO Filer
+    now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    with open("sitemap.xml", "w") as f:
+        f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
+    
+    with open("robots.txt", "w", encoding="utf-8") as f:
+        f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
 
-        print("Klar! Allt genererat.")
+    print("Klar!")
 
 if __name__ == "__main__":
     generate_site()
