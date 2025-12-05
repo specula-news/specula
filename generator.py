@@ -89,13 +89,13 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE DECK (KORTLEKS-LOGIK) ---
+# --- IMAGE DECK (EXORCISM EDITION) ---
 class ImageDeck:
     def __init__(self):
-        # Rådata: Endast IDn för att spara plats
+        # NOTERA: Jag har tagit bort den förbannade kretskortsbilden (1550751827...) från alla listor.
         self.raw_pools = {
             "tech": [
-                "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
+                "1518770660439-4636190af475", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
                 "1526374965328-7f61d4dc18c5", "1550009158-9ebf69056955", "1535378437268-13d143445347", "1531297461136-82lw9b283993",
                 "1485827404703-89b55fcc595e", "1523961131990-5ea7c61b2107", "1558494949-efc52728101c", "1610563166150-b34df4f3bcd6",
                 "1510915361405-ef8a93d77d29", "1563770095-39d468f421e2", "1525547719571-a2d4ac8945e2", "1592478411213-61535fdd861d",
@@ -126,33 +126,43 @@ class ImageDeck:
                 "1503387920786-89d705445775", "1574359254888-9d10ad64d7df", "1599818817757-550604130096", "1534398079543-7ae6d016b86a"
             ]
         }
-        self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
         
-        # ACTIVE DECKS (Kortlekarna)
-        # Vi kopierar och blandar IDs vid start. När vi tar en bild, tar vi bort den från leken.
+        # ACTIVE DECKS
         self.decks = {}
         for cat, ids in self.raw_pools.items():
             self.decks[cat] = list(ids)
             random.shuffle(self.decks[cat])
             
-        # Generell lek
-        self.generic_deck = list(self.generic_ids)
+        # MASSIVE GENERIC DECK (Slå ihop ALLA bilder från ALLA kategorier)
+        # Detta ger oss en fallback-pool på 100+ bilder istället för 4.
+        all_ids = []
+        for ids in self.raw_pools.values():
+            all_ids.extend(ids)
+            
+        # Extra generella bilder (abstrakta)
+        extras = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
+        all_ids.extend(extras)
+        
+        self.generic_deck = list(set(all_ids)) # Ta bort ev. dubbletter i själva datan
         random.shuffle(self.generic_deck)
 
     def get_unique_image(self, category):
-        """Drar ett kort från leken. Garanterat unikt tills leken är slut."""
+        """Drar ett kort från leken. Garanterat unikt."""
         deck = self.decks.get(category, self.generic_deck)
         
-        # Om leken är slut, fyll på och blanda om (men varna)
+        # Om kategorins lek är slut, använd den enorma generella leken
         if not deck:
-            if category in self.raw_pools:
-                deck = list(self.raw_pools[category])
-            else:
-                deck = list(self.generic_ids)
-            random.shuffle(deck)
-            self.decks[category] = deck
+            deck = self.generic_deck
             
-        # Ta översta kortet (Pop)
+        # Om även den generella leken är slut (osannolikt med 100+ bilder), blanda om
+        if not deck:
+            all_ids = []
+            for ids in self.raw_pools.values(): all_ids.extend(ids)
+            self.generic_deck = list(set(all_ids))
+            random.shuffle(self.generic_deck)
+            deck = self.generic_deck
+            
+        # Ta översta kortet
         img_id = deck.pop(0)
         return f"https://images.unsplash.com/photo-{img_id}?auto=format&fit=crop&w=800&q=80"
 
@@ -173,10 +183,9 @@ def fetch_og_image(url):
     return None
 
 def get_best_image(entry, category, article_url, source_name):
-    # --- DOMÄN-BASERAD SVARTLISTA (Den säkra metoden) ---
-    # Vi kollar på LÄNKEN, inte vad källan heter.
-    # Om länken går till någon av dessa, blockerar vi ALLA externa bilder.
-    
+    # --- DOMÄN-BASERAD SVARTLISTA ---
+    # Om domänen är blockerad, gå DIREKT till kortleken.
+    # Försök inte ens hämta RSS eller Scraper-bild, för de ljuger.
     BANNED_DOMAINS = [
         "cleantechnica.com", 
         "oilprice.com", 
@@ -185,13 +194,11 @@ def get_best_image(entry, category, article_url, source_name):
         "scmp.com"
     ]
     
-    # Kolla om artikel-URL innehåller en förbjuden domän
     for domain in BANNED_DOMAINS:
         if domain in article_url.lower():
-            # print(f"BANNED DOMAIN DETECTED: {domain} -> Forcing Deck Image")
             return image_deck.get_unique_image(category)
 
-    # Om inte svartlistad, försök hitta bild normalt
+    # För andra källor:
     # 1. RSS
     rss_img = None
     try:
@@ -202,7 +209,6 @@ def get_best_image(entry, category, article_url, source_name):
                 if link.type.startswith('image/'): rss_img = link.href
     except: pass
     
-    # Filter för dåliga RSS-bilder
     if rss_img:
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
@@ -216,7 +222,7 @@ def get_best_image(entry, category, article_url, source_name):
     if real_img:
         return real_img
 
-    # 3. Sista utväg: Kortleken
+    # 3. Kortleken
     return image_deck.get_unique_image(category)
 
 
@@ -277,15 +283,13 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.6.0 (Deck of Cards Logic)...")
+    print("Startar SPECULA Generator v10.7.0 (The Exorcism)...")
     all_articles = []
     seen_titles = set()
 
-    # YOUTUBE
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
 
-    # RSS
     headers = {'User-Agent': 'Mozilla/5.0'}
     for url, category in RSS_SOURCES:
         try:
@@ -316,7 +320,6 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- ANVÄND NYA KORTLEKS-LOGIKEN ---
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({
