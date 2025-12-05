@@ -89,11 +89,11 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE MANAGER ---
-class ImageManager:
+# --- IMAGE DECK (KORTLEKS-LOGIK) ---
+class ImageDeck:
     def __init__(self):
-        self.global_used_urls = set()
-        self.id_pools = {
+        # Rådata: Endast IDn för att spara plats
+        self.raw_pools = {
             "tech": [
                 "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
                 "1526374965328-7f61d4dc18c5", "1550009158-9ebf69056955", "1535378437268-13d143445347", "1531297461136-82lw9b283993",
@@ -127,72 +127,72 @@ class ImageManager:
             ]
         }
         self.generic_ids = ["1550684848-fac1c5b4e853", "1618005182384-a83a8bd57fbe", "1614850523060-8da1d56ae167", "1634152962476-4b8a00e1915c"]
+        
+        # ACTIVE DECKS (Kortlekarna)
+        # Vi kopierar och blandar IDs vid start. När vi tar en bild, tar vi bort den från leken.
+        self.decks = {}
+        for cat, ids in self.raw_pools.items():
+            self.decks[cat] = list(ids)
+            random.shuffle(self.decks[cat])
+            
+        # Generell lek
+        self.generic_deck = list(self.generic_ids)
+        random.shuffle(self.generic_deck)
 
-    def clean_url(self, url):
-        if not url: return ""
-        return url.split('?')[0].strip()
+    def get_unique_image(self, category):
+        """Drar ett kort från leken. Garanterat unikt tills leken är slut."""
+        deck = self.decks.get(category, self.generic_deck)
+        
+        # Om leken är slut, fyll på och blanda om (men varna)
+        if not deck:
+            if category in self.raw_pools:
+                deck = list(self.raw_pools[category])
+            else:
+                deck = list(self.generic_ids)
+            random.shuffle(deck)
+            self.decks[category] = deck
+            
+        # Ta översta kortet (Pop)
+        img_id = deck.pop(0)
+        return f"https://images.unsplash.com/photo-{img_id}?auto=format&fit=crop&w=800&q=80"
 
-    def is_url_used(self, url):
-        clean = self.clean_url(url)
-        return clean in self.global_used_urls
-
-    def mark_as_used(self, url):
-        clean = self.clean_url(url)
-        if clean:
-            self.global_used_urls.add(clean)
-
-    def get_fallback_image(self, category):
-        target_list = self.id_pools.get(category, self.generic_ids)
-        attempts = 0
-        while attempts < 50:
-            selected_id = random.choice(target_list)
-            base_url = f"https://images.unsplash.com/photo-{selected_id}"
-            if base_url not in self.global_used_urls:
-                self.global_used_urls.add(base_url)
-                return f"{base_url}?auto=format&fit=crop&w=800&q=80"
-            attempts += 1
-        selected_id = random.choice(self.generic_ids)
-        return f"https://images.unsplash.com/photo-{selected_id}?auto=format&fit=crop&w=800&q=80"
-
-image_manager = ImageManager()
+image_deck = ImageDeck()
 
 # --- REAL IMAGE SCRAPER ---
 def fetch_og_image(url):
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0'}
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
-                img_url = og_image["content"]
-                if "logo" in img_url.lower() or "icon" in img_url.lower():
-                    return None
-                return img_url
+                return og_image["content"]
     except Exception:
         pass
     return None
 
 def get_best_image(entry, category, article_url, source_name):
-    # --- AGGRESSIV SVARTLISTA ---
-    # Vi lägger till varianter för att vara säkra på att fånga dem
-    BANNED_SOURCES = [
-        "cleantechnica", 
-        "oilprice", 
-        "dagens ps", 
-        "dagensps",  # Utan mellanslag
-        "al jazeera", 
-        "scmp", 
-        "south china morning post"
+    # --- DOMÄN-BASERAD SVARTLISTA (Den säkra metoden) ---
+    # Vi kollar på LÄNKEN, inte vad källan heter.
+    # Om länken går till någon av dessa, blockerar vi ALLA externa bilder.
+    
+    BANNED_DOMAINS = [
+        "cleantechnica.com", 
+        "oilprice.com", 
+        "dagensps.se",
+        "aljazeera.com", 
+        "scmp.com"
     ]
     
-    source_lower = source_name.lower()
-    
-    # 1. Om källan är svartlistad -> GÅ DIREKT TILL FALLBACK (Ingen diskussion)
-    if any(banned in source_lower for banned in BANNED_SOURCES):
-        return image_manager.get_fallback_image(category)
+    # Kolla om artikel-URL innehåller en förbjuden domän
+    for domain in BANNED_DOMAINS:
+        if domain in article_url.lower():
+            # print(f"BANNED DOMAIN DETECTED: {domain} -> Forcing Deck Image")
+            return image_deck.get_unique_image(category)
 
-    # 2. RSS (Med Global Dubblett-koll)
+    # Om inte svartlistad, försök hitta bild normalt
+    # 1. RSS
     rss_img = None
     try:
         if 'media_content' in entry: rss_img = entry.media_content[0]['url']
@@ -202,36 +202,22 @@ def get_best_image(entry, category, article_url, source_name):
                 if link.type.startswith('image/'): rss_img = link.href
     except: pass
     
+    # Filter för dåliga RSS-bilder
     if rss_img:
-        # Extra koll: Om bild-URL innehåller namnet på en svartlistad källa
-        if any(banned in rss_img.lower() for banned in BANNED_SOURCES):
+        bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
+        if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
-        else:
-            bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
-            if any(bad in rss_img.lower() for bad in bad_keywords):
-                rss_img = None
-            elif image_manager.is_url_used(rss_img):
-                rss_img = None
     
     if rss_img:
-        image_manager.mark_as_used(rss_img)
         return rss_img
 
-    # 3. Scraper
+    # 2. Scraper
     real_img = fetch_og_image(article_url)
     if real_img:
-        # Samma här: Blockera om URLen tillhör svartlistad domän
-        if any(banned in real_img.lower() for banned in BANNED_SOURCES):
-            real_img = None
-        elif image_manager.is_url_used(real_img):
-            real_img = None
-            
-    if real_img:
-        image_manager.mark_as_used(real_img)
         return real_img
 
-    # 4. Fallback (Garanterat unik)
-    return image_manager.get_fallback_image(category)
+    # 3. Sista utväg: Kortleken
+    return image_deck.get_unique_image(category)
 
 
 def clean_youtube_description(text):
@@ -276,8 +262,6 @@ def fetch_youtube_videos(channel_url, category):
                     
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
-                    image_manager.mark_as_used(img)
-
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
@@ -293,7 +277,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.5.0 (Total Block)...")
+    print("Startar SPECULA Generator v10.6.0 (Deck of Cards Logic)...")
     all_articles = []
     seen_titles = set()
 
@@ -307,7 +291,6 @@ def generate_site():
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.title if 'title' in feed.feed else "News"
-            print(f"RSS: {source_name}")
             
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
@@ -333,7 +316,7 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- HÄMTA BILD (MED HARD BLOCK) ---
+                # --- ANVÄND NYA KORTLEKS-LOGIKEN ---
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({

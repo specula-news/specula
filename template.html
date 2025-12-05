@@ -129,14 +129,20 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V10.5.0 -->
+                <!-- V10.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.5.0 - Total Block</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.6.0 - Deck of Cards Logic</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Expanded Blacklist:</strong> Added variations for "Dagens PS", "Al Jazeera", and "SCMP" to the hard block list. These sources are now permanently banned from using their own images due to persistent duplicate issues.<br>
-                        • <strong>URL Pattern Blocking:</strong> Added logic to check image URLs for banned source names, catching edge cases where the feed name might differ.<br>
+                        • <strong>Domain Blocking:</strong> Replaced imprecise "Source Name" blocking with strict URL inspection. If an article comes from <code>scmp.com</code>, <code>cleantechnica.com</code>, or <code>dagensps.se</code>, all external images are banned immediately.<br>
+                        • <strong>Card Deck Logic:</strong> Replaced random image selection with a "Card Deck" system. Images are shuffled once at startup and drawn one by one. This makes it mathematically impossible to draw the same duplicate image until the entire library is exhausted.<br>
                     </div>
+                </li>
+
+                <!-- V10.5.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 10.5.0</strong><br>
+                    Total Block (Expanded Blacklist).
                 </li>
 
                 <!-- V10.4.0 -->
@@ -180,7 +186,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 10.5.0</div>
+                    <div class="version-btn" id="versionBtn">Version 10.6.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
