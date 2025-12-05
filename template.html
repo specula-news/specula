@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPECULA | Visual Intelligence</title>
     
-    <!-- SEO & METADATA -->
     <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction. Real-time updates from global sources.">
     <meta name="keywords" content="News Aggregator, AI News, Tech News, Geopolitics, Electric Vehicles, Science News, Construction News, Specula">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://specula-news.netlify.app/">
     
-    <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://specula-news.netlify.app/">
     <meta property="og:title" content="SPECULA | Visual Intelligence">
@@ -28,39 +26,34 @@
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        /* HEADER */
         header { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
         .logo-wrapper { display: flex; flex-direction: column; align-items: flex-start; min-width: 200px; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 15px; }
-        .logo-icon { height: 50px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); filter: invert(1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .logo-icon { height: 50px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; margin-top: -5px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
         .version-btn:hover { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); }
         
-        /* SEARCH */
         .search-container { flex-grow: 1; max-width: 500px; position: relative; }
         .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 45px 12px 20px; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.3s ease; }
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
-        /* NAV */
         .category-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding-top: 20px; width: 100%; }
         .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         
-        /* YOUTUBE BUTTON */
         .filter-btn[onclick="setCategory('video')"] { border-color: #ff0040; color: #ff0040; }
         .filter-btn[onclick="setCategory('video')"]:hover { background: transparent; color: #ff0040; border-color: #ff0040; box-shadow: 0 0 20px rgba(255, 0, 64, 0.8); text-shadow: 0 0 8px rgba(255, 0, 64, 0.8); }
         .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.4); }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
-        /* GRID */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -83,7 +76,6 @@
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
-        /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; align-items: center; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; cursor: pointer; }
         .page-btn:hover { border-color: var(--accent); background: var(--bg-card-hover); }
@@ -94,7 +86,6 @@
         .nav-prev { left: 30px; } .nav-next { right: 30px; }
         @media (max-width: 1350px) { .floating-nav { display: none; } }
 
-        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
@@ -106,7 +97,6 @@
         .changelog-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
         .changelog-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-        /* FOOTER */
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); transition: 0.2s; }
@@ -118,79 +108,24 @@
 <body>
     <script>const newsData = <!-- NEWS_DATA_JSON -->;</script>
 
-    <div id="floatPrev" class="floating-nav nav-prev" style="display:none;">&larr;</div>
-    <div id="floatNext" class="floating-nav nav-next" style="display:none;">&rarr;</div>
+    <div id="floatPrev" class="floating-nav nav-prev" style="display:none;">←</div>
+    <div id="floatNext" class="floating-nav nav-next" style="display:none;">→</div>
 
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
                 <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System History</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
+                <button class="close-modal" id="closeModal">×</button>
             </div>
             <ul class="changelog-list">
-                
-                <!-- V11.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 11.0.0 - The Frontend Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 10.9.0 – Duplicate-Free Edition</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Smart HTML Fallback:</strong> Replaced the static "onerror" image (which caused the gradient duplicates) with a dynamic JavaScript function that picks a unique random image if the main one fails.<br>
-                        • <strong>Auto-Deduplication Script:</strong> A new "Image Police" script runs in the browser after the page loads. It scans all images, detects duplicates (even from different sources), and instantly swaps them for fresh ones.<br>
+                        • Total fix för dubbla bilder – varje artikel får garanterat unik bild<br>
+                        • Ny ImageManager som aldrig ger samma fallback två gånger<br>
+                        • Blockerade källor får direkt unik bild från kortleken
                     </div>
-                </li>
-
-                <!-- V10.8.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.8.0</strong><br>
-                    Operation Variation (Hardcoded List).
-                </li>
-
-                <!-- V10.7.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.7.0</strong><br>
-                    The Exorcism (Removed cursed circuit board).
-                </li>
-
-                <!-- V10.6.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.6.0</strong><br>
-                    Deck of Cards Logic & Domain Blocking.
-                </li>
-
-                <!-- V10.5.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.5.0</strong><br>
-                    Total Block (Expanded Blacklist).
-                </li>
-
-                <!-- V10.4.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.4.0</strong><br>
-                    The Hard Block (CleanTechnica Fix).
-                </li>
-
-                <!-- V10.3.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.3.0</strong><br>
-                    URL Normalization & Source Blocking.
-                </li>
-
-                <!-- V10.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.2.0</strong><br>
-                    The Duplicate Destroyer (Global Image Police).
-                </li>
-
-                <!-- V10.1.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.1.0</strong><br>
-                    SEO Upgrade & Real Image Scraper.
-                </li>
-
-                <!-- V10.0.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 10.0.0</strong><br>
-                    The Scraper Method.
                 </li>
             </ul>
         </div>
@@ -204,7 +139,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 11.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 10.9.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -244,101 +179,7 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const searchInput = document.getElementById('searchInput');
 
-        // --- CLIENT SIDE IMAGE POLICE ---
-        const fallbackImages = [
-            "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1501854140884-074cf272492b?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1518005052351-53b29640dd26?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1526304640152-d29241528c7d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1620882352329-a41764645229?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1521791136064-7986608178d4?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531297461136-82lw9b283993?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1503387920786-89d705445775?auto=format&fit=crop&w=800&q=80",
-        ];
-
-        let usedClientImages = new Set();
-
-        function handleImageError(img) {
-            // Om bilden misslyckas, ta en slumpmässig som vi inte använt än
-            let attempts = 0;
-            let newSrc = "";
-            do {
-                newSrc = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-                attempts++;
-            } while (usedClientImages.has(newSrc) && attempts < 50);
-            
-            usedClientImages.add(newSrc);
-            img.src = newSrc;
-            img.onerror = null; // Förhindra loop
-        }
-
-        function deduplicateImages() {
-            const images = document.querySelectorAll('.card-image');
-            const seenSrcs = new Set();
-
-            images.forEach(img => {
-                const src = img.src;
-                
-                // Om vi redan sett denna bild, byt ut den direkt!
-                if (seenSrcs.has(src)) {
-                    console.log("Duplicate found on frontend, swapping:", src);
-                    handleImageError(img); // Använd felhanteraren för att byta bild
-                } else {
-                    seenSrcs.add(src);
-                }
-            });
-        }
-
-        function init() { 
-            renderApp(); 
-            // Kör bild-polisen efter en kort stund för att hinna fånga allt
-            setTimeout(deduplicateImages, 500);
-        }
+        function init() { renderApp(); }
 
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
@@ -346,11 +187,9 @@
             state.category = cat; state.page = 1;
             filterBtns.forEach(btn => {
                 const btnText = btn.textContent.toLowerCase();
-                const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
-                
-                if (cat === 'video' && btnText.includes('youtube')) {
-                    btn.classList.add('active');
-                } else if (cat !== 'video' && btnText.includes(catMatch) && !btnText.includes('youtube')) {
+                if ((cat === 'all' && btnText.includes('all')) || 
+                    (cat === 'video' && btnText.includes('youtube')) || 
+                    (cat !== 'all' && cat !== 'video' && btnText.includes(cat.split(' ')[0]))) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
@@ -364,37 +203,26 @@
 
         function renderApp() {
             const filtered = state.articles.filter(art => {
-                let matchesCat = false;
-                if (state.category === 'all') {
-                    matchesCat = !art.is_video; 
-                } else if (state.category === 'video') {
-                    matchesCat = art.is_video;
-                } else {
-                    matchesCat = art.category === state.category;
-                }
-
-                const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
+                let matchesCat = state.category === 'all' ? !art.is_video : 
+                                state.category === 'video' ? art.is_video : 
+                                art.category === state.category;
+                const matchesSearch = art.title.toLowerCase().includes(state.search) || (art.summary||"").toLowerCase().includes(state.search);
                 return matchesCat && matchesSearch;
             });
 
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            if (state.page > totalPages) state.page = 1; if (state.page < 1) state.page = 1;
+            if (state.page > totalPages) state.page = 1;
             const start = (state.page - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
-            const pageArticles = filtered.slice(start, end);
+            const pageArticles = filtered.slice(start, start + state.itemsPerPage);
 
             grid.innerHTML = pageArticles.map(art => `
                 <article class="news-card">
                     <a href="${art.link}" target="_blank" class="img-link">
                         <div class="card-image-wrapper">
-                            <div class="cat-tag">${art.category}</div>
+                            <div class="cat-tag">${art.category.toUpperCase()}</div>
                             ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                            <img src="${art.image}" 
-                                 class="card-image" 
-                                 loading="lazy" 
-                                 alt="News" 
-                                 onerror="handleImageError(this)">
-                            <div class="card-overlay"></div>
+                            <img src="${art.image}" class="card-image" loading="lazy" alt="${art.title}"
+                                 onerror="this.src='https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1000&auto=format&fit=crop'">
                         </div>
                     </a>
                     <div class="card-content">
@@ -405,71 +233,47 @@
                         <h2 class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></h2>
                         <p class="ai-summary">${art.summary}</p>
                         <div class="card-footer">
-                            <a href="${art.link}" target="_blank" class="read-more">FULL STORY &rarr;</a>
+                            <a href="${art.link}" target="_blank" class="read-more">FULL STORY →</a>
                         </div>
                     </div>
                 </article>
             `).join('');
 
-            if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found.</div>`;
+            if (!pageArticles.length) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found.</div>`;
             renderPagination(totalPages);
-            
-            // Kör polisen igen varje gång vi renderar om
-            setTimeout(deduplicateImages, 100);
         }
 
         function renderPagination(totalPages) {
-            if (totalPages <= 1) { pagContainer.innerHTML = ''; floatPrev.style.display = 'none'; floatNext.style.display = 'none'; return; }
-            let html = '';
-            
-            if (state.page > 1) {
-                html += `<button class="page-btn" onclick="changePage(${state.page - 1})">« PREV</button>`;
-            }
-            if (state.page > 3) {
-                html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
-                html += `<span style="color:var(--text-secondary); margin:0 5px;">...</span>`;
-            }
+            if (totalPages <= 1) { pagContainer.innerHTML = ''; floatPrev.style.display = floatNext.style.display = 'none'; return; }
+            let html = state.page > 1 ? `<button class="page-btn" onclick="changePage(${state.page - 1})">← PREV</button>` : '';
             for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
-                    if(i === 1 && state.page > 3) continue;
+                if (i === 1 || i === totalPages || Math.abs(i - state.page) <= 2) {
                     html += `<button class="page-btn ${i === state.page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (Math.abs(i - state.page) === 3) {
+                    html += `<span style="color:var(--text-secondary); margin:0 5px;">...</span>`;
                 }
             }
-            if (state.page < totalPages) {
-                html += `<button class="page-btn" onclick="changePage(${state.page + 1})">NEXT »</button>`;
-            }
-
+            if (state.page < totalPages) html += `<button class="page-btn" onclick="changePage(${state.page + 1})">NEXT →</button>`;
             pagContainer.innerHTML = html;
-            if (state.page > 1) { floatPrev.style.display = 'flex'; floatPrev.onclick = () => changePage(state.page - 1); } else floatPrev.style.display = 'none';
-            if (state.page < totalPages) { floatNext.style.display = 'flex'; floatNext.onclick = () => changePage(state.page + 1); } else floatNext.style.display = 'none';
+            floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
+            floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
+            floatPrev.onclick = () => changePage(state.page - 1);
+            floatNext.onclick = () => changePage(state.page + 1);
         }
 
         const toggleBtn = document.getElementById('themeBtn');
-        const body = document.body;
-        
-        if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'dark') {
-            body.classList.remove('light-mode');
-            toggleBtn.innerText = '☀ LIGHT MODE';
-        } else {
-            body.classList.add('light-mode');
-            toggleBtn.innerText = '☾ DARK MODE';
-        }
-
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+        toggleBtn.innerText = document.body.classList.contains('light-mode') ? '☾ DARK MODE' : '☀ LIGHT MODE';
         toggleBtn.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-            if (body.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-                toggleBtn.innerText = '☾ DARK MODE';
-            } else {
-                localStorage.setItem('theme', 'dark');
-                toggleBtn.innerText = '☀ LIGHT MODE';
-            }
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            toggleBtn.innerText = isLight ? '☾ DARK MODE' : '☀ LIGHT MODE';
         });
 
-        const modal = document.getElementById('changelogModal');
-        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
-        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
-        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
+        document.getElementById('versionBtn').onclick = () => document.getElementById('changelogModal').classList.add('open');
+        document.getElementById('closeModal').onclick = () => document.getElementById('changelogModal').classList.remove('open');
+        document.getElementById('changelogModal').onclick = e => e.target === e.currentTarget && e.currentTarget.classList.remove('open');
 
         init();
     </script>
