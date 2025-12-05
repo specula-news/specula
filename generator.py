@@ -25,7 +25,7 @@ TIMEOUT_SECONDS = 4
 
 SITE_URL = "https://specula-news.netlify.app"
 
-# --- STATIC IMAGE LIBRARY (60+ unika, högkvalitativa bilder) ---
+# --- STATIC IMAGE LIBRARY (60+ unika bilder) ---
 STATIC_FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
@@ -69,10 +69,9 @@ STATIC_FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
-    # Lägg gärna till fler om du vill – minst 60 räcker gott och väl
 ]
 
-# --- NY IMAGE MANAGER – 100% DUBBELFRI ---
+# --- DUBBELFRI IMAGE MANAGER ---
 class ImageManager:
     def __init__(self):
         self.available = list(STATIC_FALLBACK_IMAGES)
@@ -81,8 +80,7 @@ class ImageManager:
 
     def get_unique_fallback(self):
         if not self.available:
-            # Nödläge – återanvänd slumpvis (bättre än dubletter)
-            return random.choice(STATIC_FALLBACK_IMAGES) if STATIC_FALLBACK_IMAGES else "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1000&auto=format&fit=crop"
+            return "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1000&auto=format&fit=crop"
         img = self.available.pop(0)
         self.used.add(img)
         return img
@@ -94,10 +92,9 @@ class ImageManager:
         if url:
             self.used.add(url)
 
-# Skapas om varje gång vi genererar sidan
 image_manager = None
 
-# --- RESTEN AV KÄLLORNA (oförändrade) ---
+# --- KÄLLOR (oförändrade) ---
 YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@electricviking", "ev"),
     ("https://www.youtube.com/@Asianometry", "geopolitics"),
@@ -161,17 +158,12 @@ RSS_SOURCES = [
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
-
-# --- BLOCKERADE KÄLLOR (får alltid fallback) ---
-BANNED_SOURCES = [
-    "cleantechnica", "oilprice", "dagens ps", "dagensps",
-    "al jazeera", "scmp", "south china morning post"
-]
+BANNED_SOURCES = ["cleantechnica", "oilprice", "dagens ps", "dagensps", "al jazeera", "scmp", "south china morning post"]
 
 def fetch_og_image(url):
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
-        r = requests.get url, headers=headers, timeout=TIMEOUT_SECONDS)
+        r = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)  # <-- FIXAT HÄR
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             og = soup.find("meta", property="og:image")
@@ -183,12 +175,9 @@ def fetch_og_image(url):
 
 def get_best_image(entry, category, article_url, source_name):
     source_lower = source_name.lower()
-
-    # 1. Blockerade källor → unik fallback direkt
     if any(b in source_lower for b in BANNED_SOURCES):
         return image_manager.get_unique_fallback()
 
-    # 2. Försök RSS-bild
     rss_img = None
     try:
         if hasattr(entry, 'media_content') and entry.media_content:
@@ -208,17 +197,15 @@ def get_best_image(entry, category, article_url, source_name):
                 image_manager.mark_used(rss_img)
                 return rss_img
 
-    # 3. Försök og:image
     real_img = fetch_og_image(article_url)
     if real_img and not image_manager.is_used(real_img):
         if not any(b in real_img.lower() for b in BANNED_SOURCES):
             image_manager.mark_used(real_img)
             return real_img
 
-    # 4. Unik fallback
     return image_manager.get_unique_fallback()
 
-# --- YouTube & övriga funktioner (oförändrade) ---
+# --- Hjälpfunktioner ---
 def clean_youtube_description(text):
     if not text: return "Watch video for details."
     text = re.sub(r'http\S+', '', text)
@@ -258,8 +245,7 @@ def fetch_youtube_videos(channel_url, category):
                     img = f"https://i.ytimg.com/vi/{vid_id}/hqdefault.jpg"
                     upload_date = entry.get('upload_date')
                     pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp() if upload_date else time.time()
-                    if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD:
-                        continue
+                    if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     image_manager.mark_used(img)
                     videos.append({
                         "title": entry.get('title', 'Video'),
@@ -278,23 +264,20 @@ def fetch_youtube_videos(channel_url, category):
 
 def generate_site():
     global image_manager
-    image_manager = ImageManager()  # NY REN LEK VARJE GÅNG
-    print("SPECULA Generator v10.9.0 – Duplicate-Free Edition")
+    image_manager = ImageManager()
+    print("SPECULA Generator v10.9.1 – No More Duplicates + Syntax Fixed")
 
     all_articles = []
     seen_titles = set()
 
-    # YouTube
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
 
-    # RSS
     headers = {'User-Agent': 'Mozilla/5.0'}
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
             source_name = feed.feed.get('title', 'News')
-
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
@@ -305,9 +288,8 @@ def generate_site():
                 pub_ts = time.time()
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
                     pub_ts = time.mktime(entry.published_parsed)
-                days_old = (time.time() - pub_ts) / 86400
-                if days_old > MAX_DAYS_OLD: continue
-                time_str = "Just Now" if days_old < 1 else f"{int(days_old)}d Ago"
+                if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
+                time_str = "Just Now" if (time.time() - pub_ts) / 86400 < 1 else f"{int((time.time() - pub_ts) / 86400)}d Ago"
 
                 summary = clean_summary(getattr(entry, 'summary', ''))
                 note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
@@ -339,18 +321,16 @@ def generate_site():
         with open("template.html", "r", encoding="utf-8") as f:
             template = f.read()
         final_html = template.replace("<!-- NEWS_DATA_JSON -->", json_data)
-
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(final_html)
 
         now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
         with open("sitemap.xml", "w") as f:
             f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
-        
         with open("robots.txt", "w") as f:
             f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
 
-        print("KLAR! index.html, sitemap.xml och robots.txt genererade – inga dubbla bilder längre!")
+        print("KLAR! index.html genererad – inga dubbla bilder, inget syntaxfel!")
     else:
         print("template.html saknas!")
 
