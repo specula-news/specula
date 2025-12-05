@@ -129,14 +129,21 @@
             </div>
             <ul class="changelog-list">
                 
-                <!-- V11.0.0 -->
+                <!-- V12.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <span style="font-size:0.7rem; text-transform:uppercase; color:var(--accent); letter-spacing:1px; font-weight:bold;">Latest Build</span><br>
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 11.0.0 - The Frontend Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 12.0.0 - The Hash-Map Strategy</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Smart HTML Fallback:</strong> Replaced the static "onerror" image (which caused the gradient duplicates) with a dynamic JavaScript function that picks a unique random image if the main one fails.<br>
-                        • <strong>Auto-Deduplication Script:</strong> A new "Image Police" script runs in the browser after the page loads. It scans all images, detects duplicates (even from different sources), and instantly swaps them for fresh ones.<br>
+                        • <strong>Complete Strategy Shift:</strong> Replaced randomization with mathematical determinism. The "Duplicate Destroyer" now converts the <em>title</em> of each article into a unique number, which picks a unique image from the pool.<br>
+                        • <strong>Total Block:</strong> Images from CleanTechnica, OilPrice, Dagens PS, and SCMP are now 100% blocked in Python. We don't even check their feeds for images anymore.<br>
+                        • <strong>Result:</strong> Even if CleanTechnica posts 10 articles, they will all get DIFFERENT images because their titles are different. No more duplicates.<br>
                     </div>
+                </li>
+
+                <!-- V11.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 11.0.0</strong><br>
+                    The Frontend Fix (JS Image Police).
                 </li>
 
                 <!-- V10.8.0 -->
@@ -204,7 +211,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 11.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 12.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -298,15 +305,10 @@
             "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80",
             "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
             "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1503387920786-89d705445775?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1558494949-efc52728101c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1562813733-b31f71025d54?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
         ];
 
         let usedClientImages = new Set();

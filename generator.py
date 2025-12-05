@@ -10,6 +10,7 @@ import re
 import requests
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
+import hashlib
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -89,8 +90,8 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- STATIC FALLBACKS (IDENTISK MED FRONTEND!) ---
-STATIC_FALLBACK_IMAGES = [
+# --- ENORM STATISK BILD-POOL (Blandad kompott för maximal variation) ---
+STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
@@ -143,39 +144,28 @@ STATIC_FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1503387920786-89d705445775?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1558494949-efc52728101c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1562813733-b31f71025d54?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
 ]
 
-# --- IMAGE MANAGER ---
-class ImageManager:
-    def __init__(self):
-        self.used_urls = set()
-        self.deck = list(STATIC_FALLBACK_IMAGES)
-        random.shuffle(self.deck)
-
-    def is_url_used(self, url):
-        return url in self.used_urls
-
-    def mark_as_used(self, url):
-        self.used_urls.add(url)
-
-    def get_random_fallback(self):
-        if not self.deck:
-            self.deck = list(STATIC_FALLBACK_IMAGES)
-            random.shuffle(self.deck)
-        img = self.deck.pop(0)
-        self.used_urls.add(img)
-        return img
-
-image_manager = ImageManager()
+# --- DETERMINISTIC IMAGE SELECTOR ---
+def get_deterministic_image(title):
+    """
+    Använder artikelns titel för att välja en bild matematiskt.
+    Samma titel ger alltid samma bild.
+    Olika titlar ger (nästan alltid) olika bilder.
+    """
+    if not title: return STATIC_POOL[0]
+    
+    # Skapa ett "hash" (unikt nummer) från titeln
+    hash_object = hashlib.md5(title.encode())
+    hash_int = int(hash_object.hexdigest(), 16)
+    
+    # Välj ett index baserat på numret
+    index = hash_int % len(STATIC_POOL)
+    return STATIC_POOL[index]
 
 # --- REAL IMAGE SCRAPER ---
 def fetch_og_image(url):
@@ -200,11 +190,11 @@ def get_best_image(entry, category, article_url, source_name):
     
     source_lower = source_name.lower()
     
-    # 1. Om källan är svartlistad -> GÅ DIREKT TILL KORTLEKEN
+    # 1. Om källan är svartlistad -> GÅ DIREKT TILL MATEMATISK BILD
     if any(banned in source_lower for banned in BANNED_SOURCES):
-        return image_manager.get_random_fallback()
+        return get_deterministic_image(entry.title)
 
-    # 2. RSS (Med Global Dubblett-koll)
+    # 2. RSS (Om ej bannad)
     rss_img = None
     try:
         if 'media_content' in entry: rss_img = entry.media_content[0]['url']
@@ -218,11 +208,8 @@ def get_best_image(entry, category, article_url, source_name):
         bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
         if any(bad in rss_img.lower() for bad in bad_keywords):
             rss_img = None
-        elif image_manager.is_url_used(rss_img):
-            rss_img = None
     
     if rss_img:
-        image_manager.mark_as_used(rss_img)
         return rss_img
 
     # 3. Scraper
@@ -230,15 +217,12 @@ def get_best_image(entry, category, article_url, source_name):
     if real_img:
         if any(banned in real_img.lower() for banned in BANNED_SOURCES):
             real_img = None
-        elif image_manager.is_url_used(real_img):
-            real_img = None
-            
+    
     if real_img:
-        image_manager.mark_as_used(real_img)
         return real_img
 
     # 4. Sista utväg
-    return image_manager.get_random_fallback()
+    return get_deterministic_image(entry.title)
 
 
 def clean_youtube_description(text):
@@ -283,8 +267,6 @@ def fetch_youtube_videos(channel_url, category):
                     
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
-                    image_manager.mark_as_used(img)
-
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
@@ -300,7 +282,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v11.0.0 (The Frontend Fix)...")
+    print("Startar SPECULA Generator v12.0.0 (The Hash-Map Strategy)...")
     all_articles = []
     seen_titles = set()
 
@@ -337,6 +319,7 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
+                # --- ANROPA NYA HASH-LOGIKEN ---
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({
