@@ -89,11 +89,10 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- IMAGE MANAGER (NORMALIZED TRACKING) ---
+# --- IMAGE MANAGER ---
 class ImageManager:
     def __init__(self):
         self.global_used_urls = set()
-        
         self.id_pools = {
             "tech": [
                 "1518770660439-4636190af475", "1550751827-4bd374c3f58b", "1519389950473-47ba0277781c", "1504639725590-34d0984388bd",
@@ -162,7 +161,6 @@ def fetch_og_image(url):
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
-        
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             og_image = soup.find("meta", property="og:image")
@@ -176,16 +174,22 @@ def fetch_og_image(url):
     return None
 
 def get_best_image(entry, category, article_url, source_name):
-    # --- HARD BLOCK: DO NOT TRUST THESE SOURCES FOR IMAGES ---
-    # Dessa källor använder generiska bilder som scrapers inte kan skilja från riktiga.
-    # Vi tvingar dem att använda vårt interna bibliotek för att garantera variation.
-    BANNED_IMAGE_SOURCES = ["cleantechnica", "oilprice", "dagens ps"]
+    # --- AGGRESSIV SVARTLISTA ---
+    # Vi lägger till varianter för att vara säkra på att fånga dem
+    BANNED_SOURCES = [
+        "cleantechnica", 
+        "oilprice", 
+        "dagens ps", 
+        "dagensps",  # Utan mellanslag
+        "al jazeera", 
+        "scmp", 
+        "south china morning post"
+    ]
     
     source_lower = source_name.lower()
     
-    # 1. Om källan är svartlistad -> GÅ DIREKT TILL FALLBACK
-    if any(banned in source_lower for banned in BANNED_IMAGE_SOURCES):
-        # print(f"Source '{source_name}' blocked from external images. Using internal library.")
+    # 1. Om källan är svartlistad -> GÅ DIREKT TILL FALLBACK (Ingen diskussion)
+    if any(banned in source_lower for banned in BANNED_SOURCES):
         return image_manager.get_fallback_image(category)
 
     # 2. RSS (Med Global Dubblett-koll)
@@ -199,11 +203,15 @@ def get_best_image(entry, category, article_url, source_name):
     except: pass
     
     if rss_img:
-        bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
-        if any(bad in rss_img.lower() for bad in bad_keywords):
+        # Extra koll: Om bild-URL innehåller namnet på en svartlistad källa
+        if any(banned in rss_img.lower() for banned in BANNED_SOURCES):
             rss_img = None
-        elif image_manager.is_url_used(rss_img):
-            rss_img = None
+        else:
+            bad_keywords = ["placeholder", "pixel", "tracker", "feedburner", "default", "icon"]
+            if any(bad in rss_img.lower() for bad in bad_keywords):
+                rss_img = None
+            elif image_manager.is_url_used(rss_img):
+                rss_img = None
     
     if rss_img:
         image_manager.mark_as_used(rss_img)
@@ -211,9 +219,11 @@ def get_best_image(entry, category, article_url, source_name):
 
     # 3. Scraper
     real_img = fetch_og_image(article_url)
-    
     if real_img:
-        if image_manager.is_url_used(real_img):
+        # Samma här: Blockera om URLen tillhör svartlistad domän
+        if any(banned in real_img.lower() for banned in BANNED_SOURCES):
+            real_img = None
+        elif image_manager.is_url_used(real_img):
             real_img = None
             
     if real_img:
@@ -283,7 +293,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v10.4.0 (Hard Block CleanTechnica)...")
+    print("Startar SPECULA Generator v10.5.0 (Total Block)...")
     all_articles = []
     seen_titles = set()
 
@@ -323,7 +333,7 @@ def generate_site():
                     summary = translate_text(summary)
                     note_html = ' <span class="lang-note">(Translated)</span>'
 
-                # --- HÄMTA BILD (MED HARD BLOCK FÖR CLEANTECHNICA) ---
+                # --- HÄMTA BILD (MED HARD BLOCK) ---
                 final_image = get_best_image(entry, category, entry.link, source_name)
 
                 all_articles.append({
