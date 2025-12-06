@@ -22,7 +22,7 @@ except AttributeError:
 MAX_ARTICLES_PER_SOURCE = 50
 MAX_DAYS_OLD = 5
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 5 # Ökad timeout för att hinna hämta bilder
+TIMEOUT_SECONDS = 6  # Lite längre tid för att hinna hämta bilder
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -91,69 +91,20 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SEMANTISK BILD-MOTOR (Uppdaterad för att fånga Sudan/Chad) ---
+# --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
-    "crisis": [
-        "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", 
-        "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80",
-        "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", 
-        "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80",
-        "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80" # Charity/Children
-    ],
-    "war": [
-        "https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80",
-        "https://images.unsplash.com/photo-1550614000-4b9519e09eb3?w=800&q=80",
-        "https://images.unsplash.com/photo-1618609204739-9993309a4563?w=800&q=80"
-    ],
-    "police": [
-        "https://images.unsplash.com/photo-1595150824222-6b9623e80069?w=800&q=80",
-        "https://images.unsplash.com/photo-1455273397940-2777dfb20c93?w=800&q=80",
-        "https://images.unsplash.com/photo-1587329107937-234b3e390c21?w=800&q=80"
-    ],
-    "china": [
-        "https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?w=800&q=80",
-        "https://images.unsplash.com/photo-1504966981333-60a880373d32?w=800&q=80",
-        "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800&q=80",
-        "https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800&q=80"
-    ],
-    "usa": [
-        "https://images.unsplash.com/photo-1501229691287-95713437517c?w=800&q=80",
-        "https://images.unsplash.com/photo-1550505393-273a55239e24?w=800&q=80",
-        "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800&q=80"
-    ],
-    "market": [
-        "https://images.unsplash.com/photo-1611974765270-ca1258634369?w=800&q=80",
-        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80",
-        "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?w=800&q=80"
-    ],
-    "chips": [
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-        "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&q=80",
-        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80"
-    ],
-    "oil": [
-        "https://images.unsplash.com/photo-1516937941348-c09645f31e88?w=800&q=80",
-        "https://images.unsplash.com/photo-1628522333060-637998ca4448?w=800&q=80",
-        "https://images.unsplash.com/photo-1582555618296-5427d25365b6?w=800&q=80"
-    ],
-    "solar": [
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
-        "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80",
-        "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80"
-    ],
-    "space": [
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80",
-        "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80"
-    ],
-    "general": [
-        "https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80",
-        "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80",
-        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80",
-        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"
-    ]
+    "crisis": ["https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80", "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80", "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"],
+    "war": ["https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80", "https://images.unsplash.com/photo-1550614000-4b9519e09eb3?w=800&q=80", "https://images.unsplash.com/photo-1618609204739-9993309a4563?w=800&q=80"],
+    "police": ["https://images.unsplash.com/photo-1595150824222-6b9623e80069?w=800&q=80", "https://images.unsplash.com/photo-1455273397940-2777dfb20c93?w=800&q=80", "https://images.unsplash.com/photo-1587329107937-234b3e390c21?w=800&q=80"],
+    "china": ["https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?w=800&q=80", "https://images.unsplash.com/photo-1504966981333-60a880373d32?w=800&q=80", "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800&q=80", "https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800&q=80"],
+    "usa": ["https://images.unsplash.com/photo-1501229691287-95713437517c?w=800&q=80", "https://images.unsplash.com/photo-1550505393-273a55239e24?w=800&q=80", "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800&q=80"],
+    "market": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?w=800&q=80", "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?w=800&q=80"],
+    "chips": ["https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80"],
+    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?w=800&q=80", "https://images.unsplash.com/photo-1628522333060-637998ca4448?w=800&q=80", "https://images.unsplash.com/photo-1582555618296-5427d25365b6?w=800&q=80"],
+    "pollution": ["https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=800&q=80", "https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80", "https://images.unsplash.com/photo-1464039397811-476f652a343b?w=800&q=80"],
+    "solar": ["https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80", "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80", "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80"],
+    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80", "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80"],
+    "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80", "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"]
 }
 
 TOPIC_KEYWORDS = {
@@ -165,6 +116,7 @@ TOPIC_KEYWORDS = {
     "market": ["market", "stock", "trade", "economy", "dollar", "bank", "inflation", "price", "share"],
     "chips": ["chip", "semiconductor", "nvidia", "intel", "processor", "compute", "ai", "hardware"],
     "oil": ["oil", "gas", "petroleum", "fuel", "pipeline", "barrel", "energy"],
+    "pollution": ["pollution", "haze", "smoke", "epa", "emission", "carbon", "climate"],
     "solar": ["solar", "wind", "renewable", "climate", "green", "battery", "grid"],
     "space": ["space", "nasa", "moon", "mars", "rocket", "orbit", "satellite", "star"]
 }
@@ -172,7 +124,6 @@ TOPIC_KEYWORDS = {
 def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
-    
     for topic, keywords in TOPIC_KEYWORDS.items():
         if any(k in text for k in keywords):
             pool = IMAGE_TOPICS.get(topic, IMAGE_TOPICS["general"])
@@ -180,34 +131,30 @@ def get_images_by_context(title, category):
             random.shuffle(shuffled)
             selected_images.extend(shuffled[:3])
             break
-            
     if len(selected_images) < 3:
         general_pool = list(IMAGE_TOPICS["general"])
         random.shuffle(general_pool)
         while len(selected_images) < 3 and general_pool:
             img = general_pool.pop()
-            if img not in selected_images:
-                selected_images.append(img)
-                
-    while len(selected_images) < 3:
-        selected_images.append(selected_images[0])
-        
+            if img not in selected_images: selected_images.append(img)
+    while len(selected_images) < 3: selected_images.append(selected_images[0])
     return selected_images[:3]
 
-# --- SCRAPER (IMPROVED HEADERS) ---
+# --- SCRAPER (FIXED: UNBLOCK CLEANTECHNICA) ---
 def fetch_og_image(url):
     try:
-        # Fler headers för att lura brandväggar (Al Jazeera fix)
+        # Dessa headers får scriptet att se ut som en vanlig Chrome-webbläsare
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Referer': 'https://www.google.com/'
+            'Referer': 'https://www.google.com/',
+            'Accept-Language': 'en-US,en;q=0.9'
         }
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             
-            # 1. Försök med og:image
+            # Prioritera og:image
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
                 img_url = og_image["content"]
@@ -215,46 +162,43 @@ def fetch_og_image(url):
                     img_url = urljoin(url, img_url)
                 return img_url
             
-            # 2. Försök med twitter:image (Al Jazeera använder ibland detta)
+            # Försök med twitter:image
             tw_image = soup.find("meta", property="twitter:image")
             if tw_image and tw_image.get("content"):
                 return tw_image["content"]
-
     except Exception:
         pass
     return None
 
 def get_article_images(entry, category, article_url, source_name):
-    # Vi har tagit bort Al Jazeera från ban-listan för att försöka hämta Sudan-bilden
-    BANNED_SOURCES = ["cleantechnica", "oilprice", "dagens ps", "dagensps"] 
-    source_lower = source_name.lower()
+    # Vi har TÖMT blockeringslistan! Nu försöker vi skrapa ALLA.
+    # Endast om skrapning misslyckas använder vi fallback.
     
     context_images = get_images_by_context(entry.title, category)
     
-    if any(banned in source_lower for banned in BANNED_SOURCES):
-        return context_images 
-
     real_img = None
-    try:
-        if 'media_content' in entry: real_img = entry.media_content[0]['url']
-        elif 'media_thumbnail' in entry: real_img = entry.media_thumbnail[0]['url']
-        elif 'links' in entry:
-            for link in entry.links:
-                if link.type.startswith('image/'): real_img = link.href
-    except: pass
     
-    # Om ingen RSS-bild, eller om det är en potentiell dubblett, försök skrapa
-    # För Al Jazeera vill vi ALLTID skrapa för att få bästa bilden
-    if not real_img or "al jazeera" in source_lower:
-        scraped = fetch_og_image(article_url)
-        if scraped:
-            real_img = scraped
+    # 1. Försök skrapa direkt (Bästa chansen för CleanTechnica)
+    real_img = fetch_og_image(article_url)
+    
+    # 2. Om skrapning misslyckades, försök RSS
+    if not real_img:
+        try:
+            if 'media_content' in entry: real_img = entry.media_content[0]['url']
+            elif 'media_thumbnail' in entry: real_img = entry.media_thumbnail[0]['url']
+            elif 'links' in entry:
+                for link in entry.links:
+                    if link.type.startswith('image/'): real_img = link.href
+        except: pass
         
+    # Validera bilden
     if real_img:
         bad = ["placeholder", "pixel", "tracker", "icon", "blank"]
         if not any(b in real_img.lower() for b in bad):
+            # Sätt den äkta bilden först!
             return [real_img] + context_images[:2]
             
+    # Om ingen äkta bild hittades, använd kontextuella bilder
     return context_images
 
 def clean_youtube_description(text):
@@ -295,12 +239,11 @@ def fetch_youtube_videos(channel_url, category):
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
-                    img_list = [img, img, img] 
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
                         "summary": clean_youtube_description(entry.get('description', '')),
-                        "images": img_list,
+                        "images": [img, img, img],
                         "source": source,
                         "category": category,
                         "published": pub_ts,
@@ -311,7 +254,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v14.0.0...")
+    print("Startar SPECULA Generator v14.1.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
