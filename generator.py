@@ -1,4 +1,7 @@
-import feedparser
+import os
+
+# --- GENERATOR.PY (Version 16.0.0 - Robust Fix) ---
+generator_code = r'''import feedparser
 import time
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
@@ -19,10 +22,10 @@ except AttributeError:
     pass
 
 # --- KONFIGURATION ---
-MAX_ARTICLES_PER_SOURCE = 50
-MAX_DAYS_OLD = 5
-MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 6
+MAX_ARTICLES_PER_SOURCE = 60
+MAX_DAYS_OLD = 14  # Ökat till 14 dagar för att garantera innehåll
+MAX_VIDEO_DAYS_OLD = 7
+TIMEOUT_SECONDS = 5
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -194,6 +197,20 @@ IMAGE_TOPICS = {
     "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80", "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"]
 }
 
+TOPIC_KEYWORDS = {
+    "crisis": ["struggle", "refugee", "crisis", "aid", "humanitarian", "disaster", "famine", "camp", "dead", "chad", "sudan", "gaza"],
+    "war": ["war", "attack", "strike", "missile", "army", "military", "defense", "conflict", "bomb", "blast", "russia", "ukraine"],
+    "police": ["police", "arrest", "crime", "jail", "court", "law", "prison", "investigation", "suspect"],
+    "china": ["china", "chinese", "beijing", "shanghai", "hong kong", "asia", "taiwan"],
+    "usa": ["usa", "us", "america", "trump", "biden", "white house", "congress", "senate"],
+    "market": ["market", "stock", "trade", "economy", "dollar", "bank", "inflation", "price", "share"],
+    "chips": ["chip", "semiconductor", "nvidia", "intel", "processor", "compute", "ai", "hardware"],
+    "oil": ["oil", "gas", "petroleum", "fuel", "pipeline", "barrel", "energy"],
+    "pollution": ["pollution", "haze", "smoke", "epa", "emission", "carbon", "climate"],
+    "solar": ["solar", "wind", "renewable", "climate", "green", "battery", "grid"],
+    "space": ["space", "nasa", "moon", "mars", "rocket", "orbit", "satellite", "star"]
+}
+
 def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
@@ -292,7 +309,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v15.5.0...")
+    print("Startar SPECULA Generator v16.0.0 (Safety First)...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -305,47 +322,74 @@ def generate_site():
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                if any(a['title'] == entry.title for a in all_articles): continue
-                pub_ts = time.time()
-                if 'published_parsed' in entry and entry.published_parsed:
-                    pub_ts = time.mktime(entry.published_parsed)
-                if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
-                time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
-                summary = clean_summary(entry.summary if 'summary' in entry else "")
-                note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
-                
-                if is_swedish:
-                    title = translate_text(entry.title)
-                    summary = translate_text(summary)
-                else:
+                # --- TRY-EXCEPT PER ARTIKEL (RÄDDNINGEN) ---
+                try:
+                    if any(a['title'] == entry.title for a in all_articles): continue
+
+                    pub_ts = time.time()
+                    if 'published_parsed' in entry and entry.published_parsed:
+                        pub_ts = time.mktime(entry.published_parsed)
+                    
+                    if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
+                    time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
+
+                    summary = clean_summary(entry.summary if 'summary' in entry else "")
+                    note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
+                    
                     title = entry.title
+                    if is_swedish:
+                        try:
+                            title = translate_text(entry.title)
+                            summary = translate_text(summary)
+                        except:
+                            # Om översättning failar, använd originalet
+                            pass 
 
-                images = get_article_images(entry, category, entry.link, source_name)
+                    images = get_article_images(entry, category, entry.link, source_name)
 
-                all_articles.append({
-                    "title": title,
-                    "link": entry.link,
-                    "summary": summary + note_html,
-                    "images": images,
-                    "source": source_name,
-                    "category": category,
-                    "published": pub_ts,
-                    "time_str": time_str,
-                    "is_video": False
-                })
+                    all_articles.append({
+                        "title": title,
+                        "link": entry.link,
+                        "summary": summary + note_html,
+                        "images": images,
+                        "source": source_name,
+                        "category": category,
+                        "published": pub_ts,
+                        "time_str": time_str,
+                        "is_video": False
+                    })
+                except Exception as e:
+                    print(f"Skipping article due to error: {e}")
+                    continue
+
         except Exception as e:
-            print(f"Error {url}: {e}")
+            print(f"Error reading feed {url}: {e}")
+
+    # Fallback om tomt (ska inte hända nu, men bra att ha)
+    if not all_articles:
+        print("WARNING: No articles found. Creating dummy article.")
+        all_articles.append({
+            "title": "System Update in Progress",
+            "link": "#",
+            "summary": "We are currently updating our feeds. Please check back in a few minutes.",
+            "images": [STATIC_POOL[0], STATIC_POOL[1], STATIC_POOL[2]],
+            "source": "SPECULA",
+            "category": "All",
+            "published": time.time(),
+            "time_str": "Now",
+            "is_video": False
+        })
 
     all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
     json_data = json.dumps(all_articles)
 
+    # --- HTML & SITEMAP ---
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
     
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
-    # --- MANIFEST GENERATION ---
     manifest_content = {
         "name": "SPECULA News",
         "short_name": "SPECULA",
