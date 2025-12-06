@@ -140,10 +140,9 @@ def get_images_by_context(title, category):
     while len(selected_images) < 3: selected_images.append(selected_images[0])
     return selected_images[:3]
 
-# --- SCRAPER (FIXED: UNBLOCK CLEANTECHNICA) ---
+# --- SCRAPER (FAKE BROWSER) ---
 def fetch_og_image(url):
     try:
-        # Dessa headers får scriptet att se ut som en vanlig Chrome-webbläsare
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -153,16 +152,12 @@ def fetch_og_image(url):
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Prioritera og:image
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
                 img_url = og_image["content"]
                 if img_url and not img_url.startswith(('http:', 'https:')):
                     img_url = urljoin(url, img_url)
                 return img_url
-            
-            # Försök med twitter:image
             tw_image = soup.find("meta", property="twitter:image")
             if tw_image and tw_image.get("content"):
                 return tw_image["content"]
@@ -171,17 +166,13 @@ def fetch_og_image(url):
     return None
 
 def get_article_images(entry, category, article_url, source_name):
-    # Vi har TÖMT blockeringslistan! Nu försöker vi skrapa ALLA.
-    # Endast om skrapning misslyckas använder vi fallback.
-    
     context_images = get_images_by_context(entry.title, category)
-    
     real_img = None
     
-    # 1. Försök skrapa direkt (Bästa chansen för CleanTechnica)
+    # 1. Scraping (Best quality)
     real_img = fetch_og_image(article_url)
     
-    # 2. Om skrapning misslyckades, försök RSS
+    # 2. RSS (Fallback)
     if not real_img:
         try:
             if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -191,14 +182,11 @@ def get_article_images(entry, category, article_url, source_name):
                     if link.type.startswith('image/'): real_img = link.href
         except: pass
         
-    # Validera bilden
     if real_img:
         bad = ["placeholder", "pixel", "tracker", "icon", "blank"]
         if not any(b in real_img.lower() for b in bad):
-            # Sätt den äkta bilden först!
             return [real_img] + context_images[:2]
             
-    # Om ingen äkta bild hittades, använd kontextuella bilder
     return context_images
 
 def clean_youtube_description(text):
@@ -239,11 +227,12 @@ def fetch_youtube_videos(channel_url, category):
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
+                    img_list = [img, img, img] 
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
                         "summary": clean_youtube_description(entry.get('description', '')),
-                        "images": [img, img, img],
+                        "images": img_list,
                         "source": source,
                         "category": category,
                         "published": pub_ts,
@@ -254,7 +243,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v14.1.0...")
+    print("Startar SPECULA Generator v14.2.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))

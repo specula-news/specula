@@ -73,13 +73,6 @@
         .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
         .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
 
-        /* FLOATING NAV */
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 100px; background: var(--bg-card); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; color: var(--accent); font-size: 2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer; border-radius: 8px; }
-        .floating-nav:hover { border-color: var(--accent); background: var(--bg-card-hover); }
-        .nav-prev { left: 10px; } .nav-next { right: 10px; }
-        @media (max-width: 1000px) { .floating-nav { display: none; } }
-
-        /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; flex-wrap: wrap; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; min-width: 40px; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
@@ -95,6 +88,13 @@
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); }
         .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
+        .disclaimer-box { max-width: 600px; margin: 10px auto; line-height: 1.5; opacity: 0.8; }
+        
+        /* Floating Nav */
+        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 100px; background: var(--bg-card); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; color: var(--accent); font-size: 2rem; z-index: 100; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer; border-radius: 8px; }
+        .floating-nav:hover { border-color: var(--accent); background: var(--bg-card-hover); }
+        .nav-prev { left: 10px; } .nav-next { right: 10px; }
+        @media (max-width: 1000px) { .floating-nav { display: none; } }
     </style>
 </head>
 <body>
@@ -110,14 +110,18 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                <!-- V14.1.0 -->
+                <!-- V14.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 14.1.0 - The Full Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 14.2.0 - Personal Touch</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>CleanTechnica/Al Jazeera Unblocked:</strong> Allowed scraper to fetch real images again, but with advanced "Fake Browser" headers to bypass blocks. This should fix the missing "Smoke Stacks" and "Lady in Red" images.<br>
-                        • <strong>Smart Broken Image Handler:</strong> If the fetched image fails to load (403/404), JavaScript now instantly swaps it to the next available image in the carousel instead of hiding it.<br>
-                        • <strong>Pagination:</strong> Fixed to show blocks of 10 pages with simple arrow navigation.<br>
+                        • <strong>Pagination Tweaks:</strong> Now shows 6 pages per block with a dedicated "First" button.<br>
+                        • <strong>Footer Update:</strong> Updated disclaimer text to reflect the personal nature of the project.<br>
                     </div>
+                </li>
+                 <!-- V14.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 14.1.0</strong><br>
+                    The Full Fix (Scraping & Broken Images).
                 </li>
                  <!-- V14.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
@@ -128,11 +132,6 @@
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 13.1.0</strong><br>
                     Semantic Engine & Rectangle UI.
-                </li>
-                <!-- V13.0.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 13.0.0</strong><br>
-                    Smart Carousel & Contextual Images.
                 </li>
             </ul>
         </div>
@@ -146,7 +145,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 14.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 14.2.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -173,7 +172,9 @@
                 <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
                 <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
             </div>
-            <div class="disclaimer-box" style="font-size:0.75rem; opacity:0.7;">SPECULA is a non-profit news aggregator.</div>
+            <div class="disclaimer-box">
+                SPECULA is primarily built to save my own time, aggregating topics I personally follow. I update it according to my preferences, but if you have a great idea, feel free to use the Suggest button. You should never feel obligated to donate, but if you do, I am incredibly grateful—it gives my ego a massive boost knowing someone else appreciates my work!
+            </div>
         </footer>
     </div>
 
@@ -186,18 +187,12 @@
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
 
-        // --- SMART ERROR HANDLER ---
         window.handleImageError = function(img) {
-            // Om bilden går sönder (403/404), dölj den så nästa bild i stapeln syns
             img.classList.remove('active');
             img.style.display = 'none';
-            
-            // Hitta nästa bild i samma container
             const parent = img.parentElement;
             const nextImg = parent.querySelector('.card-image:not([style*="none"])');
-            if(nextImg) {
-                nextImg.classList.add('active');
-            }
+            if(nextImg) nextImg.classList.add('active');
         }
 
         window.switchImage = function(cardId, imgIndex) {
@@ -216,24 +211,14 @@
         }
 
         function init() { 
-            // SWIPE SUPPORT
             let touchStartX = 0;
             let touchEndX = 0;
-            
-            grid.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-            });
-
+            grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
             grid.addEventListener('touchend', e => {
                 touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
+                if (touchEndX < touchStartX - 50) changePage(state.page + 1);
+                if (touchEndX > touchStartX + 50) changePage(state.page - 1);
             });
-
-            function handleSwipe() {
-                if (touchEndX < touchStartX - 50) changePage(state.page + 1); // Swipe Left -> Next
-                if (touchEndX > touchStartX + 50) changePage(state.page - 1); // Swipe Right -> Prev
-            }
-
             renderApp(); 
         }
 
@@ -254,9 +239,7 @@
         function changePage(newPage) { 
             const filtered = getFilteredArticles();
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            
             if(newPage < 1 || newPage > totalPages) return;
-            
             state.page = newPage; 
             renderApp(); 
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
@@ -284,7 +267,6 @@
             const end = start + state.itemsPerPage;
             const pageArticles = filtered.slice(start, end);
 
-            // Hide/Show Floating Nav
             floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
             floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
 
@@ -295,7 +277,6 @@
                 let imgsHtml = '';
                 imgs.forEach((url, i) => {
                     let active = i === 0 ? 'active' : '';
-                    // OBS: onerror anropar vår smarta funktion
                     imgsHtml += `<img src="${url}" class="card-image ${active}" loading="lazy" alt="News" onerror="handleImageError(this)">`;
                 });
 
@@ -329,22 +310,26 @@
 
             if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found.</div>`;
             
-            // Paginering 1-10
             let pHTML = '';
             if (totalPages > 1) {
-                if(state.page > 1) pHTML += `<button class="page-btn" onclick="changePage(${state.page-1})">«</button>`;
+                if(state.page > 1) {
+                    pHTML += `<button class="page-btn" onclick="changePage(1)">First</button>`;
+                    pHTML += `<button class="page-btn" onclick="changePage(${state.page-1})">«</button>`;
+                }
                 
-                // Visa block om 10
-                let currentBlock = Math.floor((state.page - 1) / 10);
-                let startPage = currentBlock * 10 + 1;
-                let endPage = Math.min(startPage + 9, totalPages);
+                const BLOCK_SIZE = 6;
+                let currentBlock = Math.floor((state.page - 1) / BLOCK_SIZE);
+                let startPage = currentBlock * BLOCK_SIZE + 1;
+                let endPage = Math.min(startPage + BLOCK_SIZE - 1, totalPages);
                 
                 for (let i = startPage; i <= endPage; i++) {
                     let active = i === state.page ? 'active' : '';
                     pHTML += `<button class="page-btn ${active}" onclick="changePage(${i})">${i}</button>`;
                 }
                 
-                if(state.page < totalPages) pHTML += `<button class="page-btn" onclick="changePage(${state.page+1})">»</button>`;
+                if(state.page < totalPages) {
+                    pHTML += `<button class="page-btn" onclick="changePage(${state.page+1})">»</button>`;
+                }
             }
             pagContainer.innerHTML = pHTML;
         }
