@@ -91,7 +91,7 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- STATIC POOL (RESERV) ---
+# --- STATIC POOL ---
 STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
     "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
@@ -148,6 +148,36 @@ STATIC_POOL = [
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
 ]
 
+def get_deterministic_image(title):
+    if not title: return STATIC_POOL[0]
+    hash_object = hashlib.md5(title.encode())
+    hash_int = int(hash_object.hexdigest(), 16)
+    index = hash_int % len(STATIC_POOL)
+    return STATIC_POOL[index]
+
+def fetch_og_image(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Referer': 'https://www.google.com/'
+        }
+        response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+            og_image = soup.find("meta", property="og:image")
+            if og_image and og_image.get("content"):
+                img_url = og_image["content"]
+                if img_url and not img_url.startswith(('http:', 'https:')):
+                    img_url = urljoin(url, img_url)
+                return img_url
+            tw_image = soup.find("meta", property="twitter:image")
+            if tw_image and tw_image.get("content"):
+                return tw_image["content"]
+    except Exception:
+        pass
+    return None
+
 # --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
     "crisis": ["https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80", "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80", "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"],
@@ -197,39 +227,15 @@ def get_images_by_context(title, category):
     while len(selected_images) < 3: selected_images.append(selected_images[0])
     return selected_images[:3]
 
-# --- SCRAPER (FAKE BROWSER) ---
-def fetch_og_image(url):
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Referer': 'https://www.google.com/',
-            'Accept-Language': 'en-US,en;q=0.9'
-        }
-        response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            og_image = soup.find("meta", property="og:image")
-            if og_image and og_image.get("content"):
-                img_url = og_image["content"]
-                if img_url and not img_url.startswith(('http:', 'https:')):
-                    img_url = urljoin(url, img_url)
-                return img_url
-            tw_image = soup.find("meta", property="twitter:image")
-            if tw_image and tw_image.get("content"):
-                return tw_image["content"]
-    except Exception:
-        pass
-    return None
-
 def get_article_images(entry, category, article_url, source_name):
+    # Unblock all sources (we want to try scraping them)
     context_images = get_images_by_context(entry.title, category)
     real_img = None
     
     # 1. Scraping (Best quality)
     real_img = fetch_og_image(article_url)
     
-    # 2. RSS (Fallback)
+    # 2. RSS fallback
     if not real_img:
         try:
             if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -300,7 +306,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v15.0.0...")
+    print("Startar SPECULA Generator v15.1.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
