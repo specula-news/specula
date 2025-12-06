@@ -20,9 +20,9 @@ except AttributeError:
 
 # --- KONFIGURATION ---
 MAX_ARTICLES_PER_SOURCE = 50
-MAX_DAYS_OLD = 14
-MAX_VIDEO_DAYS_OLD = 7
-TIMEOUT_SECONDS = 5
+MAX_DAYS_OLD = 5
+MAX_VIDEO_DAYS_OLD = 3
+TIMEOUT_SECONDS = 6
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -60,35 +60,26 @@ YOUTUBE_CHANNELS = [
     ("https://www.youtube.com/@FD_Engineering", "construction"),
     ("https://www.youtube.com/@TheB1M", "construction"),
     ("https://www.youtube.com/@TomorrowsBuild", "construction"),
-    # GAMING YOUTUBE (Optional extension)
-    ("https://www.youtube.com/@IGN", "gaming"),
-    ("https://www.youtube.com/@gameranxTV", "gaming"),
 ]
 
 RSS_SOURCES = [
-    # --- GAMING (NEW) ---
+    # GAMING
     ("https://feeds.feedburner.com/ign/news", "gaming"),
     ("https://www.gamespot.com/feeds/news/", "gaming"),
     ("https://www.polygon.com/rss/index.xml", "gaming"),
     ("https://kotaku.com/rss", "gaming"),
     ("https://www.eurogamer.net/?format=rss", "gaming"),
     ("https://www.pcgamer.com/rss/", "gaming"),
-    ("https://www.rockpapershotgun.com/feed/news", "gaming"),
     ("https://www.vg247.com/feed", "gaming"),
     ("https://www.videogameschronicle.com/feed/", "gaming"),
     ("https://www.gematsu.com/feed", "gaming"),
-    ("https://www.siliconera.com/feed/", "gaming"),
-    ("https://www.destructoid.com/feed/", "gaming"),
     ("https://www.nintendolife.com/feeds/news", "gaming"),
     ("https://www.pushsquare.com/feeds/news", "gaming"),
     ("https://www.purexbox.com/feeds/news", "gaming"),
     ("https://gamingbolt.com/feed", "gaming"),
     ("https://www.theverge.com/games/rss/index.xml", "gaming"),
-    ("https://arstechnica.com/gaming/feed/", "gaming"),
-    ("https://feeds.feedburner.com/TouchArcade", "gaming"),
-    ("https://www.pocketgamer.com/rss/", "gaming"),
 
-    # --- EXISTING ---
+    # STANDARD
     ("https://www.dagensps.se/feed/", "geopolitics"), 
     ("https://www.nyteknik.se/rss", "tech"), 
     ("https://feber.se/rss/", "tech"),
@@ -204,14 +195,14 @@ def fetch_og_image(url):
         pass
     return None
 
-# --- SEMANTISK BILD-MOTOR (MED GAMING) ---
+# --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
     "gaming": [
-        "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", # Controller
-        "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80", # Setup
-        "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80", # VR
-        "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80", # Playstation
-        "https://images.unsplash.com/photo-1605901309584-818e25960b8f?w=800&q=80"  # Xbox
+        "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", 
+        "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80",
+        "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80",
+        "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80",
+        "https://images.unsplash.com/photo-1605901309584-818e25960b8f?w=800&q=80"
     ],
     "crisis": ["https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80", "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80", "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"],
     "war": ["https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80", "https://images.unsplash.com/photo-1550614000-4b9519e09eb3?w=800&q=80", "https://images.unsplash.com/photo-1618609204739-9993309a4563?w=800&q=80"],
@@ -275,6 +266,7 @@ def get_images_by_context(title, category):
     return selected_images[:3]
 
 def get_article_images(entry, category, article_url, source_name):
+    # BANNED_SOURCES removed to allow scraping for everyone
     context_images = get_images_by_context(entry.title, category)
     real_img = None
     
@@ -352,7 +344,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v16.1.0 (The Gamer Update)...")
+    print("Startar SPECULA Generator v17.0.0 (The Gaming Center)...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -365,37 +357,34 @@ def generate_site():
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                # Robust Error Handling
-                try:
-                    if any(a['title'] == entry.title for a in all_articles): continue
-                    pub_ts = time.time()
-                    if 'published_parsed' in entry and entry.published_parsed:
-                        pub_ts = time.mktime(entry.published_parsed)
-                    if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
-                    time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
-                    summary = clean_summary(entry.summary if 'summary' in entry else "")
-                    note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
-                    
-                    if is_swedish:
-                        title = translate_text(entry.title)
-                        summary = translate_text(summary)
-                    else:
-                        title = entry.title
+                if any(a['title'] == entry.title for a in all_articles): continue
+                pub_ts = time.time()
+                if 'published_parsed' in entry and entry.published_parsed:
+                    pub_ts = time.mktime(entry.published_parsed)
+                if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
+                time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
+                summary = clean_summary(entry.summary if 'summary' in entry else "")
+                note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
+                
+                if is_swedish:
+                    title = translate_text(entry.title)
+                    summary = translate_text(summary)
+                else:
+                    title = entry.title
 
-                    images = get_article_images(entry, category, entry.link, source_name)
+                images = get_article_images(entry, category, entry.link, source_name)
 
-                    all_articles.append({
-                        "title": title,
-                        "link": entry.link,
-                        "summary": summary + note_html,
-                        "images": images,
-                        "source": source_name,
-                        "category": category,
-                        "published": pub_ts,
-                        "time_str": time_str,
-                        "is_video": False
-                    })
-                except Exception: continue
+                all_articles.append({
+                    "title": title,
+                    "link": entry.link,
+                    "summary": summary + note_html,
+                    "images": images,
+                    "source": source_name,
+                    "category": category,
+                    "published": pub_ts,
+                    "time_str": time_str,
+                    "is_video": False
+                })
         except Exception as e:
             print(f"Error {url}: {e}")
 
@@ -408,23 +397,6 @@ def generate_site():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
-    # --- MANIFEST ---
-    manifest_content = {
-        "name": "SPECULA News",
-        "short_name": "SPECULA",
-        "start_url": "/index.html",
-        "display": "standalone",
-        "background_color": "#050505",
-        "theme_color": "#00f0ff",
-        "scope": "/",
-        "icons": [
-            {"src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
-            {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
-        ]
-    }
-    with open("manifest.json", "w", encoding="utf-8") as f:
-        json.dump(manifest_content, f)
-
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     with open("sitemap.xml", "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
