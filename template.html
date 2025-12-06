@@ -5,12 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction. Real-time updates from global sources.">
-    <meta name="keywords" content="News Aggregator, AI News, Tech News, Geopolitics, Electric Vehicles, Science News, Construction News, Specula">
-    <meta name="robots" content="index, follow">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
     <link rel="canonical" href="https://specula-news.netlify.app/">
-    
-    <!-- PWA SETTINGS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -132,24 +128,23 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V16.0.0 -->
+                <!-- V15.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 16.0.0 - Safety First</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.5.0 - Final Polish</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Error Immunity:</strong> Implemented article-level error handling. If a single translation or image fetch fails, the generator now skips ONLY that article instead of crashing the entire build process.<br>
-                        • <strong>Extended Reach:</strong> Increased date range to 14 days to ensure the site is never empty, even during low-news periods.<br>
-                        • <strong>Logo Fix:</strong> Corrected the logo display logic to prevent color inversion in dark mode.<br>
+                        • <strong>Logo Fix:</strong> Disabled CSS inversion on the logo. It now always displays in its original colors, regardless of theme.<br>
+                        • <strong>Toggle Logic:</strong> The theme button now correctly updates its text to '☾ DARK MODE' or '☀ LIGHT MODE' when clicked.<br>
                     </div>
                 </li>
-                <!-- V15.5.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.5.0</strong><br>
-                    Final Polish (Logo & Toggle).
-                </li>
-                <!-- V15.4.0 -->
+                 <!-- V15.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 15.4.0</strong><br>
                     Mobile UI Fix.
+                </li>
+                <!-- V15.2.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 15.2.0</strong><br>
+                    Full App Support (PWA).
                 </li>
             </ul>
         </div>
@@ -163,7 +158,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 16.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 15.5.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -241,9 +236,10 @@
             });
             renderApp(); 
             
+            const themeBtn = document.getElementById('themeBtn');
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
-                document.getElementById('themeBtn').innerText = '☾ DARK MODE';
+                themeBtn.innerText = '☾ DARK MODE';
             }
         }
 
