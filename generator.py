@@ -306,7 +306,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v15.1.0...")
+    print("Startar SPECULA Generator v15.2.0 (PWA + Service Worker)...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -359,11 +359,11 @@ def generate_site():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
-    # --- MANIFEST GENERATION ---
+    # --- MANIFEST GENERATION (UPDATED FOR STANDALONE) ---
     manifest_content = {
         "name": "SPECULA News",
         "short_name": "SPECULA",
-        "start_url": "/",
+        "start_url": "/index.html",
         "display": "standalone",
         "background_color": "#050505",
         "theme_color": "#00f0ff",
@@ -374,6 +374,27 @@ def generate_site():
     }
     with open("manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest_content, f)
+
+    # --- SERVICE WORKER GENERATION (REQUIRED FOR ANDROID PWA) ---
+    sw_content = """
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open('specula-store').then((cache) => cache.addAll([
+      '/',
+      '/index.html',
+      '/icon.png'
+    ]))
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => response || fetch(e.request))
+  );
+});
+"""
+    with open("service-worker.js", "w", encoding="utf-8") as f:
+        f.write(sw_content)
 
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     with open("sitemap.xml", "w") as f:
