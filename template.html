@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://specula-news.netlify.app/">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
@@ -24,7 +25,7 @@
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
-        header { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+        header { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
         .logo-wrapper { display: flex; flex-direction: column; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
@@ -40,33 +41,77 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
+        /* MAIN NAV */
         .category-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding-top: 20px; width: 100%; }
         .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: 0.2s; text-transform: uppercase; font-size: 0.8rem; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        .filter-btn[onclick="setCategory('video')"] { border-color: #ff0040; color: #ff0040; }
-        .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; }
+        
+        /* YOUTUBE BUTTON - CLEAN UNTIL HOVER */
+        .filter-btn[onclick="setCategory('video')"] { 
+            /* Inga specialfärger som standard */
+        }
+        .filter-btn[onclick="setCategory('video')"]:hover,
+        .filter-btn[onclick="setCategory('video')"].active { 
+            background: transparent; 
+            color: #ff0040; 
+            border-color: #ff0040; 
+            box-shadow: 0 0 15px rgba(255, 0, 64, 0.4); 
+        }
+        .filter-btn[onclick="setCategory('video')"].active {
+            background: #ff0040;
+            color: white;
+        }
 
-        /* GAMING BUTTON SPECIAL STYLE */
-        .filter-btn[onclick="setCategory('gaming')"] { border-color: #9d00ff; color: #9d00ff; }
+        /* GAMING BUTTON */
         .filter-btn[onclick="setCategory('gaming')"]:hover,
-        .filter-btn[onclick="setCategory('gaming')"].active { background: #9d00ff; color: white; box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); }
+        .filter-btn[onclick="setCategory('gaming')"].active { background: #9d00ff; color: white; box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); border-color: #9d00ff; }
 
+        /* SUB-NAV (VIDEO CATEGORIES) */
+        .sub-nav {
+            display: none; /* Hidden by default */
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 15px 0 5px 0;
+            width: 100%;
+            animation: slideDown 0.3s ease forwards;
+            border-top: 1px dashed var(--border);
+            margin-top: 15px;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .sub-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .sub-btn:hover { border-color: #ff0040; color: #ff0040; }
+        .sub-btn.active { background: #ff0040; color: white; border-color: #ff0040; }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
 
+        /* MOBILE FIX */
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
             .header-top { flex-wrap: wrap; gap: 15px; }
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
-            .category-nav { 
+            .category-nav, .sub-nav { 
                 justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; 
                 width: 100vw; margin-left: -10px; padding: 10px 15px; 
                 -webkit-overflow-scrolling: touch; 
             }
-            .category-nav::-webkit-scrollbar { display: none; }
-            .filter-btn { flex-shrink: 0; white-space: nowrap; font-size: 0.8rem; padding: 8px 16px; }
+            .category-nav::-webkit-scrollbar, .sub-nav::-webkit-scrollbar { display: none; }
+            .filter-btn, .sub-btn { flex-shrink: 0; white-space: nowrap; font-size: 0.8rem; padding: 8px 16px; }
+            .sub-nav { margin-top: 0; border-top: none; padding-top: 0;}
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -76,7 +121,6 @@
         
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
         .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%); }
-        
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 0; pointer-events: none; }
         .card-image.active { opacity: 1; z-index: 2; pointer-events: auto; }
         
@@ -134,15 +178,20 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                <!-- V16.1.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 16.1.0 - The Gamer Update</strong>
+                 <!-- V16.2.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 16.2.0 - Video Hub</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Category:</strong> Added 'Gaming' with 20+ major sources like IGN, GameSpot, and Kotaku.<br>
-                        • <strong>Smart Images:</strong> Updated AI to recognize gaming keywords (PS5, Xbox, Steam) and serve relevant fallback images.<br>
+                        • <strong>Youtube News Upgrade:</strong> Clicking 'Youtube News' now reveals a dedicated sub-menu to filter videos by topic (Tech, EV, Geopolitics, etc.).<br>
+                        • <strong>Cleaner UI:</strong> Removed the forced red outline from the video button. It now blends in until hovered or active.<br>
                     </div>
                 </li>
-                <!-- V16.0.0 -->
+                <!-- V16.1.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 16.1.0</strong><br>
+                    The Gamer Update.
+                </li>
+                 <!-- V16.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 16.0.0</strong><br>
                     Safety First (Robust Parsing).
@@ -159,7 +208,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 16.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 16.2.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -167,6 +216,8 @@
                 </div>
                 <button class="theme-switch" id="themeBtn">☀ LIGHT MODE</button>
             </div>
+            
+            <!-- MAIN NAVIGATION -->
             <nav class="category-nav">
                 <button class="filter-btn active" onclick="setCategory('all')">All News</button>
                 <button class="filter-btn" onclick="setCategory('video')">YOUTUBE NEWS</button>
@@ -177,6 +228,18 @@
                 <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                 <button class="filter-btn" onclick="setCategory('gaming')">Gaming</button>
             </nav>
+
+            <!-- VIDEO SUB-NAVIGATION (Hidden by default) -->
+            <div id="videoSubNav" class="sub-nav">
+                <button class="sub-btn active" onclick="setVideoSubCategory('all')">All Videos</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('geopolitics')">Geopolitics</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('tech')">Tech</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('ev')">EV</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('science')">Science</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('gaming')">Gaming</button>
+                <button class="sub-btn" onclick="setVideoSubCategory('construction')">Construction</button>
+            </div>
+
         </header>
 
         <div class="news-grid" id="newsGrid"></div>
@@ -194,13 +257,23 @@
     </div>
 
     <script>
-        const state = { category: 'all', search: '', page: 1, itemsPerPage: 45, articles: typeof newsData !== 'undefined' ? newsData : [] };
+        const state = { 
+            category: 'all', 
+            videoSubCat: 'all', // Track video sub-filter
+            search: '', 
+            page: 1, 
+            itemsPerPage: 45, 
+            articles: typeof newsData !== 'undefined' ? newsData : [] 
+        };
+        
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
         const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
+        const videoSubNav = document.getElementById('videoSubNav');
+        const subBtns = document.querySelectorAll('.sub-btn');
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
@@ -247,7 +320,19 @@
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
         function setCategory(cat) {
-            state.category = cat; state.page = 1;
+            state.category = cat; 
+            state.page = 1;
+            
+            // Hantera undermenyn för video
+            if (cat === 'video') {
+                videoSubNav.style.display = 'flex';
+                state.videoSubCat = 'all'; // Reset sub-filter when opening tab
+                updateSubNavUI();
+            } else {
+                videoSubNav.style.display = 'none';
+            }
+
+            // Uppdatera huvudknappar
             filterBtns.forEach(btn => {
                 const btnText = btn.textContent.toLowerCase();
                 const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
@@ -256,6 +341,23 @@
                 else btn.classList.remove('active');
             });
             renderApp();
+        }
+
+        function setVideoSubCategory(subCat) {
+            state.videoSubCat = subCat;
+            state.page = 1;
+            updateSubNavUI();
+            renderApp();
+        }
+
+        function updateSubNavUI() {
+            subBtns.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(state.videoSubCat)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
         }
 
         function changePage(newPage) { 
@@ -271,25 +373,26 @@
 
         function getFilteredArticles() {
             return state.articles.filter(art => {
-                // VIDEO TAB: Only show videos
+                // 1. VIDEO TAB LOGIC
                 if (state.category === 'video') {
-                    return art.is_video && (art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search));
+                    if (!art.is_video) return false; // Måste vara video
+                    
+                    // Sub-kategori filter
+                    if (state.videoSubCat !== 'all') {
+                        if (!art.category.toLowerCase().includes(state.videoSubCat)) return false;
+                    }
+                    
+                    return (art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search));
                 }
                 
-                // OTHER TABS: No videos
+                // 2. OTHER TABS: Text articles only
                 if (art.is_video) return false;
 
-                // CATEGORY FILTER
                 let matchesCat = false;
-                if (state.category === 'all') {
-                    matchesCat = true; 
-                } else {
-                    matchesCat = (art.category === state.category);
-                }
+                if (state.category === 'all') matchesCat = true; 
+                else matchesCat = (art.category === state.category);
                 
-                // SEARCH
                 const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
-                
                 return matchesCat && matchesSearch;
             });
         }
@@ -370,18 +473,7 @@
             pagContainer.innerHTML = pHTML;
         }
 
-        const themeBtn = document.getElementById('themeBtn');
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-                themeBtn.innerText = '☾ DARK MODE';
-            } else {
-                localStorage.setItem('theme', 'dark');
-                themeBtn.innerText = '☀ LIGHT MODE';
-            }
-        });
-
+        document.getElementById('themeBtn').addEventListener('click', () => document.body.classList.toggle('light-mode'));
         const modal = document.getElementById('changelogModal');
         document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
         document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
