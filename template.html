@@ -7,8 +7,6 @@
     
     <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
     <link rel="canonical" href="https://specula-news.netlify.app/">
-    
-    <!-- PWA SETTINGS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,6 +35,7 @@
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
         
+        /* DESKTOP SEARCH */
         .search-container { flex-grow: 1; max-width: 500px; position: relative; }
         .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 45px 12px 20px; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; }
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
@@ -50,6 +49,25 @@
         .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+
+        /* === MOBILE OPTIMIZATION (THE FIX) === */
+        @media (max-width: 768px) {
+            header { padding: 20px 10px; align-items: stretch; }
+            .header-top { flex-wrap: wrap; gap: 15px; }
+            .logo-wrapper { flex: 1; }
+            
+            /* Stack Search Bar */
+            .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
+            
+            /* Horizontal Scroll Menu */
+            .category-nav { 
+                justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; 
+                width: 100vw; margin-left: -10px; padding: 10px 15px; 
+                -webkit-overflow-scrolling: touch; 
+            }
+            .category-nav::-webkit-scrollbar { display: none; }
+            .filter-btn { flex-shrink: 0; white-space: nowrap; font-size: 0.8rem; padding: 8px 16px; }
+        }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
         .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; animation: fadeIn 0.5s; position:relative;}
@@ -119,24 +137,23 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V15.2.0 -->
+                 <!-- V15.4.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.2.0 - Full App Support</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.4.0 - Mobile UI Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Service Worker:</strong> Implemented a background script that enables "Install App" on Android and improves loading speed.<br>
-                        • <strong>Apple Icons:</strong> Added specific metadata for iPhones to display the correct logo on the home screen.<br>
-                        • <strong>Invisible Nav:</strong> Floating arrows are now fully transparent buttons with only the symbol visible, positioned at the extreme edges.<br>
+                        • <strong>Horizontal Scroll Menu:</strong> Transformed the category buttons into a sleek, swipeable horizontal list on mobile. No more cluttered stacking.<br>
+                        • <strong>Full Width Search:</strong> The search bar now gets its own dedicated row on mobile for better usability.<br>
                     </div>
                 </li>
-                 <!-- V15.1.0 -->
+                 <!-- V15.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.1.0</strong><br>
-                    Invisible Navigation.
+                    <strong>Version 15.2.0</strong><br>
+                    Full App Support (PWA).
                 </li>
-                <!-- V15.0.0 -->
+                 <!-- V14.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.0.0</strong><br>
-                    App Upgrade (PWA Support).
+                    <strong>Version 14.2.0</strong><br>
+                    Personal Touch & Pagination.
                 </li>
             </ul>
         </div>
@@ -150,7 +167,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 15.2.0</div>
+                    <div class="version-btn" id="versionBtn">Version 15.4.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -192,9 +209,7 @@
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
         window.handleImageError = function(img) {
             img.classList.remove('active');

@@ -228,14 +228,11 @@ def get_images_by_context(title, category):
     return selected_images[:3]
 
 def get_article_images(entry, category, article_url, source_name):
-    # Unblock all sources (we want to try scraping them)
     context_images = get_images_by_context(entry.title, category)
     real_img = None
     
-    # 1. Scraping (Best quality)
     real_img = fetch_og_image(article_url)
     
-    # 2. RSS fallback
     if not real_img:
         try:
             if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -306,7 +303,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v15.2.0 (PWA + Service Worker)...")
+    print("Startar SPECULA Generator v15.4.0 (Mobile UI Clean)...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -359,7 +356,7 @@ def generate_site():
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
-    # --- MANIFEST GENERATION (UPDATED FOR STANDALONE) ---
+    # --- MANIFEST GENERATION ---
     manifest_content = {
         "name": "SPECULA News",
         "short_name": "SPECULA",
@@ -367,34 +364,14 @@ def generate_site():
         "display": "standalone",
         "background_color": "#050505",
         "theme_color": "#00f0ff",
+        "scope": "/",
         "icons": [
-            {"src": "icon.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "icon.png", "sizes": "512x512", "type": "image/png"}
+            {"src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+            {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
         ]
     }
     with open("manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest_content, f)
-
-    # --- SERVICE WORKER GENERATION (REQUIRED FOR ANDROID PWA) ---
-    sw_content = """
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open('specula-store').then((cache) => cache.addAll([
-      '/',
-      '/index.html',
-      '/icon.png'
-    ]))
-  );
-});
-
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request))
-  );
-});
-"""
-    with open("service-worker.js", "w", encoding="utf-8") as f:
-        f.write(sw_content)
 
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     with open("sitemap.xml", "w") as f:
