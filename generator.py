@@ -22,7 +22,7 @@ except AttributeError:
 MAX_ARTICLES_PER_SOURCE = 50
 MAX_DAYS_OLD = 5
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 4
+TIMEOUT_SECONDS = 5 # Ökad timeout för att hinna hämta bilder
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -91,13 +91,14 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- SEMANTISK BILD-MOTOR (Expanded Library) ---
+# --- SEMANTISK BILD-MOTOR (Uppdaterad för att fånga Sudan/Chad) ---
 IMAGE_TOPICS = {
     "crisis": [
-        "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80",
+        "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", 
         "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80",
-        "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80",
-        "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80"
+        "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", 
+        "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80",
+        "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80" # Charity/Children
     ],
     "war": [
         "https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80",
@@ -145,20 +146,19 @@ IMAGE_TOPICS = {
         "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80",
         "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80"
     ],
-    # Backup-pools
     "general": [
         "https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80",
         "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80",
         "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80",
         "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
+        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"
     ]
 }
 
-# ORDBOK: Kopplar ord i titeln till bildkategorier
 TOPIC_KEYWORDS = {
-    "crisis": ["struggle", "refugee", "crisis", "aid", "humanitarian", "disaster", "famine", "camp", "dead"],
-    "war": ["war", "attack", "strike", "missile", "army", "military", "defense", "conflict", "bomb", "blast"],
+    "crisis": ["struggle", "refugee", "crisis", "aid", "humanitarian", "disaster", "famine", "camp", "dead", "chad", "sudan", "gaza"],
+    "war": ["war", "attack", "strike", "missile", "army", "military", "defense", "conflict", "bomb", "blast", "russia", "ukraine"],
     "police": ["police", "arrest", "crime", "jail", "court", "law", "prison", "investigation", "suspect"],
     "china": ["china", "chinese", "beijing", "shanghai", "hong kong", "asia", "taiwan"],
     "usa": ["usa", "us", "america", "trump", "biden", "white house", "congress", "senate"],
@@ -173,7 +173,6 @@ def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
     
-    # 1. Hitta nyckelord i titeln
     for topic, keywords in TOPIC_KEYWORDS.items():
         if any(k in text for k in keywords):
             pool = IMAGE_TOPICS.get(topic, IMAGE_TOPICS["general"])
@@ -182,48 +181,59 @@ def get_images_by_context(title, category):
             selected_images.extend(shuffled[:3])
             break
             
-    # 2. Om ingen match, fyll på från General
     if len(selected_images) < 3:
         general_pool = list(IMAGE_TOPICS["general"])
         random.shuffle(general_pool)
-        
         while len(selected_images) < 3 and general_pool:
             img = general_pool.pop()
             if img not in selected_images:
                 selected_images.append(img)
                 
-    # 3. Nödfall: Dubblera om slut på unika bilder
     while len(selected_images) < 3:
         selected_images.append(selected_images[0])
         
     return selected_images[:3]
 
+# --- SCRAPER (IMPROVED HEADERS) ---
 def fetch_og_image(url):
     try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
+        # Fler headers för att lura brandväggar (Al Jazeera fix)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Referer': 'https://www.google.com/'
+        }
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # 1. Försök med og:image
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
                 img_url = og_image["content"]
                 if img_url and not img_url.startswith(('http:', 'https:')):
                     img_url = urljoin(url, img_url)
                 return img_url
+            
+            # 2. Försök med twitter:image (Al Jazeera använder ibland detta)
+            tw_image = soup.find("meta", property="twitter:image")
+            if tw_image and tw_image.get("content"):
+                return tw_image["content"]
+
     except Exception:
         pass
     return None
 
 def get_article_images(entry, category, article_url, source_name):
-    BANNED_SOURCES = ["cleantechnica", "oilprice", "dagens ps", "dagensps", "al jazeera", "scmp", "south china morning post"]
+    # Vi har tagit bort Al Jazeera från ban-listan för att försöka hämta Sudan-bilden
+    BANNED_SOURCES = ["cleantechnica", "oilprice", "dagens ps", "dagensps"] 
     source_lower = source_name.lower()
     
-    # Förbjudna källor -> Direkt till semantisk bild
     context_images = get_images_by_context(entry.title, category)
+    
     if any(banned in source_lower for banned in BANNED_SOURCES):
         return context_images 
 
-    # Andra källor -> Försök hitta riktig bild
     real_img = None
     try:
         if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -233,11 +243,15 @@ def get_article_images(entry, category, article_url, source_name):
                 if link.type.startswith('image/'): real_img = link.href
     except: pass
     
-    if not real_img:
-        real_img = fetch_og_image(article_url)
+    # Om ingen RSS-bild, eller om det är en potentiell dubblett, försök skrapa
+    # För Al Jazeera vill vi ALLTID skrapa för att få bästa bilden
+    if not real_img or "al jazeera" in source_lower:
+        scraped = fetch_og_image(article_url)
+        if scraped:
+            real_img = scraped
         
     if real_img:
-        bad = ["placeholder", "pixel", "tracker", "icon"]
+        bad = ["placeholder", "pixel", "tracker", "icon", "blank"]
         if not any(b in real_img.lower() for b in bad):
             return [real_img] + context_images[:2]
             
@@ -281,12 +295,12 @@ def fetch_youtube_videos(channel_url, category):
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
-                    
+                    img_list = [img, img, img] 
                     videos.append({
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={vid_id}",
                         "summary": clean_youtube_description(entry.get('description', '')),
-                        "images": [img, img, img],
+                        "images": img_list,
                         "source": source,
                         "category": category,
                         "published": pub_ts,
@@ -297,7 +311,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v13.1.0...")
+    print("Startar SPECULA Generator v14.0.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -355,7 +369,7 @@ def generate_site():
     with open("robots.txt", "w", encoding="utf-8") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
 
-    print("Klar!")
+    print("Klar! Allt genererat.")
 
 if __name__ == "__main__":
     generate_site()
