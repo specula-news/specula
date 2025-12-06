@@ -22,7 +22,7 @@ except AttributeError:
 MAX_ARTICLES_PER_SOURCE = 50
 MAX_DAYS_OLD = 5
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 6  # Lite längre tid för att hinna hämta bilder
+TIMEOUT_SECONDS = 6
 
 SITE_URL = "https://specula-news.netlify.app"
 
@@ -90,6 +90,63 @@ RSS_SOURCES = [
 ]
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
+
+# --- STATIC POOL (RESERV) ---
+STATIC_POOL = [
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
+    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
+    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
+    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80",
+    "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&q=80",
+    "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?w=800&q=80",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
+    "https://images.unsplash.com/photo-1501854140884-074cf272492b?w=800&q=80",
+    "https://images.unsplash.com/photo-1518005052351-53b29640dd26?w=800&q=80",
+    "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?w=800&q=80",
+    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
+    "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&q=80",
+    "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?w=800&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    "https://images.unsplash.com/photo-1526304640152-d29241528c7d?w=800&q=80",
+    "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?w=800&q=80",
+    "https://images.unsplash.com/photo-1504384308090-c54be3855833?w=800&q=80",
+    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80",
+    "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
+    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80",
+    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
+    "https://images.unsplash.com/photo-1620882352329-a41764645229?w=800&q=80",
+    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
+    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    "https://images.unsplash.com/photo-1543286386-2e659306cd6c?w=800&q=80",
+    "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80",
+    "https://images.unsplash.com/photo-1521791136064-7986608178d4?w=800&q=80",
+    "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=800&q=80",
+    "https://images.unsplash.com/photo-1611974765270-ca1258634369?w=800&q=80",
+    "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80",
+    "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?w=800&q=80",
+    "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?w=800&q=80",
+    "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80",
+    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80",
+    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?w=800&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+    "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80",
+    "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?w=800&q=80",
+    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80",
+    "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?w=800&q=80",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
+]
 
 # --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
@@ -243,7 +300,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v14.2.0...")
+    print("Startar SPECULA Generator v15.0.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -292,12 +349,30 @@ def generate_site():
 
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
+    
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
+    # --- MANIFEST GENERATION ---
+    manifest_content = {
+        "name": "SPECULA News",
+        "short_name": "SPECULA",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#050505",
+        "theme_color": "#00f0ff",
+        "icons": [
+            {"src": "icon.png", "sizes": "192x192", "type": "image/png"},
+            {"src": "icon.png", "sizes": "512x512", "type": "image/png"}
+        ]
+    }
+    with open("manifest.json", "w", encoding="utf-8") as f:
+        json.dump(manifest_content, f)
+
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     with open("sitemap.xml", "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
+    
     with open("robots.txt", "w", encoding="utf-8") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
 
