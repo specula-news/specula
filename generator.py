@@ -91,6 +91,7 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
+
 # --- STATIC POOL ---
 STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
@@ -228,11 +229,14 @@ def get_images_by_context(title, category):
     return selected_images[:3]
 
 def get_article_images(entry, category, article_url, source_name):
+    # Unblock all sources (we want to try scraping them)
     context_images = get_images_by_context(entry.title, category)
     real_img = None
     
+    # 1. Scraping (Best quality)
     real_img = fetch_og_image(article_url)
     
+    # 2. RSS fallback
     if not real_img:
         try:
             if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -384,3 +388,4 @@ def generate_site():
 
 if __name__ == "__main__":
     generate_site()
+
