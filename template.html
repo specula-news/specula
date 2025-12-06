@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction. Real-time updates from global sources.">
+    <meta name="keywords" content="News Aggregator, AI News, Tech News, Geopolitics, Electric Vehicles, Science News, Construction News, Specula">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://specula-news.netlify.app/">
+    
+    <!-- PWA SETTINGS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,7 +33,6 @@
         .logo-wrapper { display: flex; flex-direction: column; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; }
-        /* FIX: Removed 'invert(1)' to keep original colors */
         .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s; }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         .logo span { color: var(--accent); }
@@ -128,23 +131,17 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                <!-- V15.5.0 -->
+                <!-- V15.6.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.5.0 - Final Polish</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.6.0 - Content Segregation</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Logo Fix:</strong> Disabled CSS inversion on the logo. It now always displays in its original colors, regardless of theme.<br>
-                        • <strong>Toggle Logic:</strong> The theme button now correctly updates its text to '☾ DARK MODE' or '☀ LIGHT MODE' when clicked.<br>
+                        • <strong>Strict Filtering:</strong> Changed the filtering logic completely. The 'YouTube News' tab now ONLY shows videos. All other tabs (All News, Tech, Geopolitics, etc.) now ONLY show text articles. No more mixing.<br>
                     </div>
                 </li>
-                 <!-- V15.4.0 -->
+                 <!-- V15.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.4.0</strong><br>
-                    Mobile UI Fix.
-                </li>
-                <!-- V15.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.2.0</strong><br>
-                    Full App Support (PWA).
+                    <strong>Version 15.5.0</strong><br>
+                    Final Polish (Logo & Toggle).
                 </li>
             </ul>
         </div>
@@ -158,7 +155,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 15.5.0</div>
+                    <div class="version-btn" id="versionBtn">Version 15.6.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -236,10 +233,9 @@
             });
             renderApp(); 
             
-            const themeBtn = document.getElementById('themeBtn');
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
-                themeBtn.innerText = '☾ DARK MODE';
+                document.getElementById('themeBtn').innerText = '☾ DARK MODE';
             }
         }
 
@@ -270,11 +266,20 @@
 
         function getFilteredArticles() {
             return state.articles.filter(art => {
-                let matchesCat = false;
-                if (state.category === 'all') matchesCat = !art.is_video; 
-                else if (state.category === 'video') matchesCat = art.is_video;
-                else matchesCat = art.category === state.category;
+                // 1. Video Tab: Endast videor
+                if (state.category === 'video') {
+                    return art.is_video && (art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search));
+                }
+                
+                // 2. Alla andra tabbar: Endast artiklar (INGA videor)
+                if (art.is_video) return false;
+
+                // 3. Kategori-filtrering
+                let matchesCat = (state.category === 'all') || (art.category === state.category);
+                
+                // 4. Sökning
                 const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
+                
                 return matchesCat && matchesSearch;
             });
         }
