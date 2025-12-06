@@ -5,12 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction. Real-time updates from global sources.">
-    <meta name="keywords" content="News Aggregator, AI News, Tech News, Geopolitics, Electric Vehicles, Science News, Construction News, Specula">
-    <meta name="robots" content="index, follow">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
     <link rel="canonical" href="https://specula-news.netlify.app/">
-    
-    <!-- PWA SETTINGS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,6 +31,7 @@
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; }
         .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s; }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
+        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
         
@@ -50,9 +47,14 @@
         .filter-btn[onclick="setCategory('video')"] { border-color: #ff0040; color: #ff0040; }
         .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; }
 
+        /* GAMING BUTTON SPECIAL STYLE */
+        .filter-btn[onclick="setCategory('gaming')"] { border-color: #9d00ff; color: #9d00ff; }
+        .filter-btn[onclick="setCategory('gaming')"]:hover,
+        .filter-btn[onclick="setCategory('gaming')"].active { background: #9d00ff; color: white; box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); }
+
+
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
 
-        /* MOBILE FIX */
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
             .header-top { flex-wrap: wrap; gap: 15px; }
@@ -74,6 +76,7 @@
         
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
         .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%); }
+        
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 0; pointer-events: none; }
         .card-image.active { opacity: 1; z-index: 2; pointer-events: auto; }
         
@@ -131,17 +134,18 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                <!-- V15.6.0 -->
+                <!-- V16.1.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.6.0 - Content Segregation</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 16.1.0 - The Gamer Update</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Strict Filtering:</strong> Changed the filtering logic completely. The 'YouTube News' tab now ONLY shows videos. All other tabs (All News, Tech, Geopolitics, etc.) now ONLY show text articles. No more mixing.<br>
+                        • <strong>New Category:</strong> Added 'Gaming' with 20+ major sources like IGN, GameSpot, and Kotaku.<br>
+                        • <strong>Smart Images:</strong> Updated AI to recognize gaming keywords (PS5, Xbox, Steam) and serve relevant fallback images.<br>
                     </div>
                 </li>
-                 <!-- V15.5.0 -->
+                <!-- V16.0.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 15.5.0</strong><br>
-                    Final Polish (Logo & Toggle).
+                    <strong>Version 16.0.0</strong><br>
+                    Safety First (Robust Parsing).
                 </li>
             </ul>
         </div>
@@ -155,7 +159,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 15.6.0</div>
+                    <div class="version-btn" id="versionBtn">Version 16.1.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -171,6 +175,7 @@
                 <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
                 <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
                 <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
+                <button class="filter-btn" onclick="setCategory('gaming')">Gaming</button>
             </nav>
         </header>
 
@@ -266,18 +271,23 @@
 
         function getFilteredArticles() {
             return state.articles.filter(art => {
-                // 1. Video Tab: Endast videor
+                // VIDEO TAB: Only show videos
                 if (state.category === 'video') {
                     return art.is_video && (art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search));
                 }
                 
-                // 2. Alla andra tabbar: Endast artiklar (INGA videor)
+                // OTHER TABS: No videos
                 if (art.is_video) return false;
 
-                // 3. Kategori-filtrering
-                let matchesCat = (state.category === 'all') || (art.category === state.category);
+                // CATEGORY FILTER
+                let matchesCat = false;
+                if (state.category === 'all') {
+                    matchesCat = true; 
+                } else {
+                    matchesCat = (art.category === state.category);
+                }
                 
-                // 4. Sökning
+                // SEARCH
                 const matchesSearch = art.title.toLowerCase().includes(state.search) || art.summary.toLowerCase().includes(state.search);
                 
                 return matchesCat && matchesSearch;
