@@ -91,7 +91,6 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-
 # --- STATIC POOL ---
 STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
@@ -195,20 +194,6 @@ IMAGE_TOPICS = {
     "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80", "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"]
 }
 
-TOPIC_KEYWORDS = {
-    "crisis": ["struggle", "refugee", "crisis", "aid", "humanitarian", "disaster", "famine", "camp", "dead", "chad", "sudan", "gaza"],
-    "war": ["war", "attack", "strike", "missile", "army", "military", "defense", "conflict", "bomb", "blast", "russia", "ukraine"],
-    "police": ["police", "arrest", "crime", "jail", "court", "law", "prison", "investigation", "suspect"],
-    "china": ["china", "chinese", "beijing", "shanghai", "hong kong", "asia", "taiwan"],
-    "usa": ["usa", "us", "america", "trump", "biden", "white house", "congress", "senate"],
-    "market": ["market", "stock", "trade", "economy", "dollar", "bank", "inflation", "price", "share"],
-    "chips": ["chip", "semiconductor", "nvidia", "intel", "processor", "compute", "ai", "hardware"],
-    "oil": ["oil", "gas", "petroleum", "fuel", "pipeline", "barrel", "energy"],
-    "pollution": ["pollution", "haze", "smoke", "epa", "emission", "carbon", "climate"],
-    "solar": ["solar", "wind", "renewable", "climate", "green", "battery", "grid"],
-    "space": ["space", "nasa", "moon", "mars", "rocket", "orbit", "satellite", "star"]
-}
-
 def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
@@ -307,7 +292,7 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v15.4.0 (Mobile UI Clean)...")
+    print("Startar SPECULA Generator v15.5.0...")
     all_articles = []
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
@@ -388,4 +373,3 @@ def generate_site():
 
 if __name__ == "__main__":
     generate_site()
-

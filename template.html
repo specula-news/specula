@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
-    
     <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
     <link rel="canonical" href="https://specula-news.netlify.app/">
     <link rel="manifest" href="manifest.json">
@@ -29,13 +28,12 @@
         .logo-wrapper { display: flex; flex-direction: column; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; }
-        .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)) invert(1); transition: transform 0.4s; }
+        /* FIX: Removed 'invert(1)' to keep original colors */
+        .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s; }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
-        body.light-mode .logo-icon { filter: invert(0); }
         .logo span { color: var(--accent); }
         .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
         
-        /* DESKTOP SEARCH */
         .search-container { flex-grow: 1; max-width: 500px; position: relative; }
         .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 45px 12px 20px; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; }
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
@@ -50,16 +48,12 @@
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
 
-        /* === MOBILE OPTIMIZATION (THE FIX) === */
+        /* MOBILE FIX */
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
             .header-top { flex-wrap: wrap; gap: 15px; }
             .logo-wrapper { flex: 1; }
-            
-            /* Stack Search Bar */
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
-            
-            /* Horizontal Scroll Menu */
             .category-nav { 
                 justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; 
                 width: 100vw; margin-left: -10px; padding: 10px 15px; 
@@ -76,7 +70,6 @@
         
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
         .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%); }
-        
         .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 0; pointer-events: none; }
         .card-image.active { opacity: 1; z-index: 2; pointer-events: auto; }
         
@@ -86,12 +79,9 @@
         .dot.active { background: var(--accent); box-shadow: 0 0 5px var(--accent-glow); }
 
         .news-card:hover .card-image.active { transform: scale(1.05); }
-        
         .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; }
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
-        
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; }
-        
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; }
@@ -137,23 +127,23 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V15.4.0 -->
+                <!-- V15.5.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.4.0 - Mobile UI Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 15.5.0 - Final Polish</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Horizontal Scroll Menu:</strong> Transformed the category buttons into a sleek, swipeable horizontal list on mobile. No more cluttered stacking.<br>
-                        • <strong>Full Width Search:</strong> The search bar now gets its own dedicated row on mobile for better usability.<br>
+                        • <strong>Logo Fix:</strong> Disabled CSS inversion on the logo. It now always displays in its original colors, regardless of theme.<br>
+                        • <strong>Toggle Logic:</strong> The theme button now correctly updates its text to '☾ DARK MODE' or '☀ LIGHT MODE' when clicked.<br>
                     </div>
                 </li>
-                 <!-- V15.2.0 -->
+                 <!-- V15.4.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 15.4.0</strong><br>
+                    Mobile UI Fix.
+                </li>
+                <!-- V15.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong>Version 15.2.0</strong><br>
                     Full App Support (PWA).
-                </li>
-                 <!-- V14.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 14.2.0</strong><br>
-                    Personal Touch & Pagination.
                 </li>
             </ul>
         </div>
@@ -167,7 +157,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 15.4.0</div>
+                    <div class="version-btn" id="versionBtn">Version 15.5.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -244,6 +234,12 @@
                 if (touchEndX > touchStartX + 50) changePage(state.page - 1);
             });
             renderApp(); 
+            
+            // Check storage for theme
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeBtn').innerText = '☾ DARK MODE';
+            }
         }
 
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
@@ -358,7 +354,18 @@
             pagContainer.innerHTML = pHTML;
         }
 
-        document.getElementById('themeBtn').addEventListener('click', () => document.body.classList.toggle('light-mode'));
+        const themeBtn = document.getElementById('themeBtn');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                themeBtn.innerText = '☾ DARK MODE';
+            } else {
+                localStorage.setItem('theme', 'dark');
+                themeBtn.innerText = '☀ LIGHT MODE';
+            }
+        });
+
         const modal = document.getElementById('changelogModal');
         document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
         document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
