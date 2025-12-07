@@ -265,7 +265,6 @@
         
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
         
-        /* CARD CONTENT (Pushes Footer Down) */
         .card-content { 
             padding: 24px; 
             flex-grow: 1; 
@@ -282,31 +281,32 @@
         
         .ai-summary { 
             font-size: 0.9rem; color: var(--text-secondary); 
-            margin-bottom: 20px; line-height: 1.5; 
+            margin-bottom: 0px; line-height: 1.5; 
             border-left: 2px solid var(--border); padding-left: 12px; 
             flex-grow: 1; 
+            padding-bottom: 20px;
         }
         
-        /* --- BOOKMARK BAR (Full Width at Bottom) --- */
+        /* --- UPDATED BOOKMARK BAR --- */
         .bookmark-bar {
             width: 100%;
-            padding: 15px 0;
+            padding: 8px 0; /* Reduced height */
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 12px; /* Gap between text and heart */
             cursor: pointer;
             transition: all 0.2s;
-            background: var(--bg-card); /* Ensure it matches card */
+            background: var(--bg-card);
             color: var(--text-secondary);
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             
-            /* Sits at the bottom of the card, outside padding */
+            /* Rounded corners ONLY at bottom to fit card */
             border-radius: 0 0 16px 16px;
         }
 
@@ -315,14 +315,27 @@
             color: var(--text-primary);
         }
 
-        .bookmark-bar.saved {
-            background: var(--accent);
-            color: #000;
-            border-top-color: var(--accent);
-            box-shadow: 0 -5px 15px var(--accent-glow);
+        /* Heart Icon */
+        .bookmark-bar span {
+            font-size: 1.3rem; /* Larger heart */
+            transition: 0.2s;
+            color: var(--text-secondary);
+            line-height: 1;
         }
 
-        .bookmark-bar span { font-size: 1rem; }
+        /* Active State */
+        .bookmark-bar.saved {
+            background: rgba(255, 255, 255, 0.03); /* Subtle background change */
+            color: var(--text-primary);
+            text-decoration: underline;
+            text-decoration-color: var(--accent); /* Blue underline */
+            text-underline-offset: 4px;
+        }
+
+        .bookmark-bar.saved span {
+            color: #ff4444; /* Red heart */
+            text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+        }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
@@ -403,13 +416,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V18.10.0 -->
+                 <!-- V18.11.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.10.0 - Full Width Bookmark</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.11.0 - Refined Cards</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Full Width Footer:</strong> Bookmark button now spans the entire bottom of the card.<br>
-                        • <strong>Rounded Corners:</strong> Button matches the card's bottom corners perfectly.<br>
-                        • <strong>Formspree:</strong> Suggestion box now works without paid Netlify plan.<br>
+                        • <strong>Flush Footer:</strong> Bookmark bar is now seamlessly attached to the bottom of the card.<br>
+                        • <strong>Visuals:</strong> Red heart and blue underline when saved. Heart moved to left.<br>
+                        • <strong>Compact:</strong> Reduced height of the bookmark bar for a sleeker look.<br>
                     </div>
                 </li>
             </ul>
@@ -453,7 +466,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 18.10.0</div>
+                    <div class="version-btn" id="versionBtn">Version 18.11.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -881,15 +894,16 @@
                             <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News">
                         </div>
                     </a>
+                    
                     <div class="card-content">
                         <div class="card-meta"><div class="source-badge">${art.source}</div><time>${art.time_str}</time></div>
                         <h2 class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></h2>
                         <p class="ai-summary">${art.summary}</p>
-                        
-                        <!-- FULL WIDTH BOOKMARK FOOTER -->
-                        <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
-                            BOOKMARK FOR LATER... <span>♥</span>
-                        </div>
+                    </div>
+
+                    <!-- BOOKMARK BAR (Moved outside card-content to be flush bottom) -->
+                    <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
+                        <span>♥</span> BOOKMARK FOR LATER... 
                     </div>
                 </article>
             `}).join('');
