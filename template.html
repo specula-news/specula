@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction.">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://specula-news.netlify.app/">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
@@ -39,9 +40,19 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
+        /* NAV WRAPPER */
         .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; }
-        .scroll-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); min-width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2rem; z-index: 5; transition: 0.2s; flex-shrink: 0; }
+        
+        /* SCROLL BUTTONS (Hidden by default, shown via JS if needed) */
+        .scroll-btn { 
+            background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); 
+            min-width: 30px; height: 30px; border-radius: 50%; 
+            display: none; /* HIDDEN DEFAULT */
+            justify-content: center; align-items: center; 
+            cursor: pointer; font-size: 1.2rem; z-index: 5; transition: 0.2s; flex-shrink: 0; 
+        }
         .scroll-btn:hover { border-color: var(--accent); color: var(--accent); }
+
         .category-nav { display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0; scrollbar-width: none; -ms-overflow-style: none; white-space: nowrap; width: 100%; }
         .category-nav::-webkit-scrollbar { display: none; }
         
@@ -52,26 +63,35 @@
         .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; border-color: #ff0040; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; border-color: #9d00ff; }
 
-        /* DROPDOWN MENU */
+        /* DROPDOWNS */
         .dropdown-menu {
-            display: none; position: absolute; top: 110%; left: 0; 
+            display: none; position: absolute; top: 120%; left: 0; 
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 10px; z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            min-width: 200px;
-            flex-direction: column; gap: 5px;
+            border-radius: 12px; z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            min-width: 250px;
+            flex-direction: column; overflow: hidden;
+            animation: fadeIn 0.2s ease;
         }
         .dropdown-menu.show { display: flex; }
-        
-        .sub-btn {
-            background: transparent; border: none; color: var(--text-secondary);
-            padding: 8px 12px; text-align: left; cursor: pointer;
-            border-radius: 6px; transition: 0.2s; font-size: 0.85rem; font-weight: 600;
-        }
-        .sub-btn:hover { background: var(--bg-body); color: var(--text-primary); }
-        .sub-btn.active { background: var(--accent); color: #000; }
+        .dropdown-header { padding: 10px 15px; font-size: 0.75rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .checkbox-list { max-height: 300px; overflow-y: auto; padding: 5px; }
+        .checkbox-item { display: flex; align-items: center; padding: 10px 15px; cursor: pointer; transition: 0.2s; border-radius: 6px; color: var(--text-primary); font-size: 0.9rem; }
+        .checkbox-item:hover { background: var(--bg-body); }
+        .checkbox-input { appearance: none; width: 18px; height: 18px; border: 2px solid var(--text-secondary); border-radius: 4px; margin-right: 12px; position: relative; cursor: pointer; transition: 0.2s; }
+        .checkbox-input:checked { background: #9d00ff; border-color: #9d00ff; }
+        .checkbox-input:checked::after { content: '✔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: white; }
+        .dropdown-footer { padding: 10px; border-top: 1px solid var(--border); }
+        .clear-btn { width: 100%; padding: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .clear-btn:hover { border-color: #ff0040; color: #ff0040; }
 
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .sub-nav { display: none; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 15px 0 5px 0; width: 100%; animation: slideDown 0.3s ease forwards; border-top: 1px dashed var(--border); margin-top: 15px; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .sub-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: 0.2s; }
+        #videoSubNav .sub-btn:hover { border-color: #ff0040; color: #ff0040; }
+        #videoSubNav .sub-btn.active { background: #ff0040; color: white; border-color: #ff0040; }
+
+        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
@@ -79,7 +99,7 @@
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
             .category-nav { justify-content: flex-start; }
-            .scroll-btn { display: none; }
+            .scroll-btn { display: none !important; } /* Hide arrows on mobile always */
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -146,19 +166,18 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.1.0 -->
+                 <!-- V17.3.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.1.0 - The Clean Sweep</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.3.0 - Smart Scroll Arrows</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Content Segregation:</strong> Gaming news is now strictly isolated to the Gaming tab. It will never appear in 'All News'.<br>
-                        • <strong>Deduplication Engine:</strong> Implemented advanced text analysis to detect and remove duplicate articles from different sources covering the exact same topic.<br>
-                        • <strong>Dropdown Menus:</strong> Replaced the clunky sub-nav with sleek, floating dropdowns for YouTube and Gaming categories.<br>
+                        • <strong>Adaptive Navigation:</strong> Scroll arrows ('‹' and '›') for the category menu now only appear if the menu is actually overflowing (squeezed).<br>
+                        • <strong>Auto-Hide:</strong> On large screens where all buttons fit, the arrows disappear automatically.<br>
                     </div>
                 </li>
-                <!-- V17.0.0 -->
+                 <!-- V17.2.0 -->
                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 17.0.0</strong><br>
-                    Gaming Hub.
+                    <strong>Version 17.2.0</strong><br>
+                    Multi-Select Gaming & Dropdowns.
                 </li>
             </ul>
         </div>
@@ -172,7 +191,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.1.0</div>
+                    <div class="version-btn" id="versionBtn">Version 17.3.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -182,11 +201,11 @@
             </div>
             
             <div class="nav-wrapper">
-                <button class="scroll-btn left" onclick="scrollNav(-1)">‹</button>
+                <button id="scrollLeftBtn" class="scroll-btn left" onclick="scrollNav(-1)">‹</button>
                 <nav class="category-nav" id="catNav">
                     <button class="filter-btn active" onclick="setCategory('all')">All News</button>
                     
-                    <!-- YOUTUBE DROPDOWN TRIGGER -->
+                    <!-- YOUTUBE -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video')">YOUTUBE NEWS ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
@@ -199,16 +218,22 @@
                         </div>
                     </div>
 
-                    <!-- GAMING DROPDOWN TRIGGER -->
+                    <!-- GAMING -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming')">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
-                            <button class="sub-btn" onclick="setGamingSubCategory('all')">All Games</button>
-                            <button class="sub-btn" onclick="setGamingSubCategory('action')">Action</button>
-                            <button class="sub-btn" onclick="setGamingSubCategory('shooter')">Shooters</button>
-                            <button class="sub-btn" onclick="setGamingSubCategory('rpg')">RPG</button>
-                            <button class="sub-btn" onclick="setGamingSubCategory('strategy')">Strategy</button>
-                            <button class="sub-btn" onclick="setGamingSubCategory('sports')">Sports</button>
+                            <div class="dropdown-header">Filter Genres</div>
+                            <div class="checkbox-list">
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('action')"> Action & Adventure</label>
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('shooter')"> Shooters (FPS/TPS)</label>
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('rpg')"> RPG</label>
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('strategy')"> Strategy & Sim</label>
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('sports')"> Sports & Racing</label>
+                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('upcoming')"> Upcoming & Leaks</label>
+                            </div>
+                            <div class="dropdown-footer">
+                                <button class="clear-btn" onclick="clearGamingFilters()">Clear Filters</button>
+                            </div>
                         </div>
                     </div>
 
@@ -218,7 +243,7 @@
                     <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
                     <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                 </nav>
-                <button class="scroll-btn right" onclick="scrollNav(1)">›</button>
+                <button id="scrollRightBtn" class="scroll-btn right" onclick="scrollNav(1)">›</button>
             </div>
         </header>
 
@@ -239,7 +264,8 @@
     <script>
         const state = { 
             category: 'all', 
-            subCat: 'all', 
+            videoSubCat: 'all',
+            gamingGenres: new Set(),
             search: '', 
             page: 1, 
             itemsPerPage: 45, 
@@ -252,6 +278,25 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
+        
+        // --- SMART ARROWS LOGIC ---
+        function updateNavArrows() {
+            const nav = document.getElementById('catNav');
+            const leftBtn = document.getElementById('scrollLeftBtn');
+            const rightBtn = document.getElementById('scrollRightBtn');
+            
+            // Check if content overflows
+            if (nav.scrollWidth > nav.clientWidth) {
+                leftBtn.style.display = 'flex';
+                rightBtn.style.display = 'flex';
+            } else {
+                leftBtn.style.display = 'none';
+                rightBtn.style.display = 'none';
+            }
+        }
+        
+        // Listen for resize
+        window.addEventListener('resize', updateNavArrows);
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
@@ -294,6 +339,9 @@
             });
             renderApp(); 
             
+            // Initial check for arrows
+            setTimeout(updateNavArrows, 100);
+            
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerText = '☾ DARK MODE';
@@ -307,7 +355,6 @@
             state.page = 1;
             state.subCat = 'all'; 
             
-            // Close dropdowns
             document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
 
             filterBtns.forEach(btn => {
@@ -322,33 +369,43 @@
             renderApp();
         }
 
-        // TOGGLE DROPDOWN
         window.toggleDropdown = function(type) {
-            // Close others
-            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-            
             const menu = document.getElementById(type + 'Dropdown');
-            if (menu) menu.classList.add('show');
-            
-            // Set category immediately when opening dropdown
-            setCategory(type);
+            const wasOpen = menu.classList.contains('show');
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            if (!wasOpen) {
+                menu.classList.add('show');
+                setCategory(type); 
+            }
         }
 
-        // Close dropdown when clicking outside
         window.onclick = function(event) {
-            if (!event.target.matches('.filter-btn')) {
+            if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) {
                 document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             }
         }
 
         window.setVideoSubCategory = function(sub) {
-            state.subCat = sub;
+            state.videoSubCat = sub;
+            state.page = 1;
+            const container = document.getElementById('videoDropdown');
+            container.querySelectorAll('.sub-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(sub)) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderApp();
+        }
+
+        window.toggleGamingGenre = function(genre) {
+            if (state.gamingGenres.has(genre)) state.gamingGenres.delete(genre);
+            else state.gamingGenres.add(genre);
             state.page = 1;
             renderApp();
         }
 
-        window.setGamingSubCategory = function(sub) {
-            state.subCat = sub;
+        window.clearGamingFilters = function() {
+            state.gamingGenres.clear();
+            document.querySelectorAll('.checkbox-input').forEach(cb => cb.checked = false);
             state.page = 1;
             renderApp();
         }
@@ -369,7 +426,8 @@
             'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'],
             'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'],
             'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'],
-            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk']
+            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk'],
+            'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026']
         };
 
         function getFilteredArticles() {
@@ -378,37 +436,39 @@
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
 
-                // 1. ALL NEWS (NO GAMING, NO VIDEO)
                 if (state.category === 'all') {
                     if (art.is_video) return false;
-                    if (art.category === 'gaming') return false; // STRICT FILTER
+                    if (art.category === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
-                // 2. VIDEO TAB
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
-                    if (state.subCat !== 'all' && !art.category.toLowerCase().includes(state.subCat)) return false;
+                    if (state.videoSubCat && state.videoSubCat !== 'all') {
+                        if (!art.category.toLowerCase().includes(state.videoSubCat)) return false;
+                    }
                     return fullText.includes(state.search);
                 }
                 
-                // 3. GAMING TAB
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
                     if (art.is_video) return false; 
-                    if (state.subCat !== 'all') {
-                        const keywords = GENRES[state.subCat];
-                        if (!keywords) return true; 
-                        if (!keywords.some(k => fullText.includes(k))) return false;
+                    if (state.gamingGenres.size > 0) {
+                        let matchFound = false;
+                        for (let genre of state.gamingGenres) {
+                            const keywords = GENRES[genre];
+                            if (keywords && keywords.some(k => fullText.includes(k))) {
+                                matchFound = true;
+                                break;
+                            }
+                        }
+                        if (!matchFound) return false;
                     }
                     return fullText.includes(state.search);
                 }
 
-                // 4. OTHER TABS
                 if (art.is_video) return false;
-                
                 let matchesCat = (art.category === state.category);
-                
                 return matchesCat && fullText.includes(state.search);
             });
         }
