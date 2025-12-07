@@ -49,34 +49,100 @@
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
         header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .header-top { width: 100%; display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 25px; }
-        .logo-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        /* LOGO & THEME SWITCHER */
-        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-        .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s; }
-        .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
-        body.light-mode .logo-icon { filter: invert(0); }
-        
-        /* The Theme Icon */
-        #themeIcon { 
-            color: var(--accent); 
-            cursor: pointer; 
-            font-size: 1.8rem; 
-            transition: 0.3s; 
-            padding: 5px 10px;
-            border-radius: 50%;
-            margin-left: 5px;
-            user-select: none;
-        }
-        #themeIcon:hover { 
-            text-shadow: 0 0 15px var(--accent-glow); 
-            transform: scale(1.1) rotate(15deg);
-            background: rgba(255,255,255,0.05);
+        /* --- HEADER TOP LAYOUT --- */
+        .header-top { 
+            width: 100%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; /* Aligns version bottom */
+            margin-bottom: 25px; 
         }
 
-        .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-top: 5px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
+        /* LOGO GROUP */
+        .logo-group {
+            display: flex;
+            align-items: flex-end; /* Aligns logo text and theme text at bottom */
+            gap: 15px;
+        }
+
+        .logo-link { 
+            text-decoration: none; 
+            color: inherit; 
+            display: flex; 
+            align-items: flex-end; 
+            gap: 15px; 
+        }
+        
+        .logo-icon { 
+            height: 45px; 
+            filter: drop-shadow(0 0 10px var(--accent-glow)); 
+            transition: transform 0.3s;
+        }
+        
+        /* Wiggle Animation only on hover of the icon itself */
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .logo-icon:hover { animation: wiggle 0.5s ease-in-out; }
+        
+        body.light-mode .logo-icon { filter: invert(0); }
+
+        .logo-text { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            letter-spacing: -1px; 
+            text-transform: uppercase; 
+            line-height: 0.8; /* Tight line height for baseline alignment */
+            margin-bottom: -2px; /* Fine tune baseline */
+        }
+
+        /* THEME TOGGLE GROUP */
+        .theme-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            cursor: pointer;
+            margin-bottom: 0px;
+        }
+        
+        .theme-icon { 
+            color: var(--accent); 
+            font-size: 1.5rem; /* Acts as a large period */
+            line-height: 0;
+            transition: 0.3s; 
+        }
+        
+        .theme-text {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+
+        .theme-wrapper:hover .theme-icon { transform: scale(1.2); text-shadow: 0 0 10px var(--accent-glow); }
+        .theme-wrapper:hover .theme-text { color: var(--accent); opacity: 1; }
+
+        /* VERSION (Top Right) */
+        .version-display {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            opacity: 0.5;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .version-display:hover { color: var(--accent); opacity: 1; }
         
         /* --- NAV WRAPPER --- */
         .nav-wrapper { 
@@ -87,6 +153,42 @@
             position: relative; 
             z-index: 50;
         }
+
+        /* --- SEARCH BAR --- */
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 240px;
+            margin-bottom: -2px;
+            z-index: 40; 
+        }
+        
+        .search-input { 
+            width: 100%; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border);
+            border-bottom: none; 
+            color: var(--text-primary); 
+            padding: 8px 35px 8px 15px; 
+            border-radius: 20px 20px 0 0; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 0.85rem; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        
+        .search-container::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; 
+            left: 10px; right: 10px; 
+            height: 6px; 
+            background: var(--nav-bg); 
+            z-index: 60;
+        }
+
+        .search-input:focus { border-color: var(--accent); }
+        .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; z-index: 61;}
 
         /* --- UNIFIED NAV BAR --- */
         .unified-nav { 
@@ -290,14 +392,13 @@
         }
 
         .bookmark-bar:hover {
-            background: var(--bg-card-hover);
+            background: rgba(255,255,255,0.08);
             color: var(--text-primary);
         }
 
-        /* Active State */
         .bookmark-bar.saved {
-            background: var(--accent); /* Blue background */
-            color: #000; /* Black text */
+            background: var(--accent); 
+            color: #000; 
             border-top-color: var(--accent);
             box-shadow: 0 -5px 15px var(--accent-glow);
         }
@@ -309,7 +410,6 @@
             line-height: 1;
         }
 
-        /* Heart RED when saved */
         .bookmark-bar.saved span {
             color: #ff0000; 
         }
@@ -360,9 +460,14 @@
         .desktop-categories { display: contents; }
 
         @media (max-width: 768px) {
-            header { padding: 20px 10px; align-items: stretch; }
-            .header-top { flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
-            .logo-wrapper { flex: 1; align-items: center; } 
+            .header-top { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 15px; 
+            }
+            .logo-wrapper { align-items: center; } 
+            
+            .search-container { width: 100%; max-width: 100%; margin: 5px 0; }
             
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; position: relative; }
@@ -375,6 +480,11 @@
             #topicsDropdown { left: 0; right: auto; }
             #gamingDropdown { left: auto; right: 0; }
             #videoDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
+
+            .version-display {
+                align-self: center; /* Center version on mobile */
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
@@ -392,13 +502,20 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V19.1.0 -->
+                 <!-- V19.3.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.1.0 - Minimal Header</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.3.0 - Detail Polish</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Clean Look:</strong> Removed Search bar and text-based Theme button for a cleaner header.<br>
-                        • <strong>Icon Toggle:</strong> Theme switching is now done via the sun/moon icon next to the logo.<br>
-                        • <strong>Visuals:</strong> Saved bookmarks now show a red heart on a blue background.<br>
+                        • <strong>Theme Dot:</strong> Integrated theme switcher as a period icon in the logo.<br>
+                        • <strong>Wiggle Logic:</strong> Eye logo only wiggles when hovering the image itself.<br>
+                        • <strong>Left Alignment:</strong> Desktop header is strictly left-aligned for a modern magazine feel.<br>
+                    </div>
+                </li>
+                 <!-- V19.2.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.2.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        Refined Header Layout.
                     </div>
                 </li>
             </ul>
@@ -437,17 +554,33 @@
     <div class="container">
         <header>
             <div class="header-top">
+                <!-- LOGO GROUP (LEFT) -->
                 <div class="logo-wrapper">
-                    <a href="#" class="logo-link" onclick="resetHome()">
-                        <img src="icon.png" class="logo-icon" alt="Specula">
-                        <!-- THEME TOGGLE ICON -->
-                        <div class="logo">SPECULA <span id="themeIcon" onclick="toggleTheme(event)">☀</span></div>
-                    </a>
-                    <div class="version-btn" id="versionBtn">Version 19.1.0</div>
+                    <div class="logo-group">
+                        <a href="#" class="logo-link" onclick="resetHome()">
+                            <img src="icon.png" class="logo-icon" alt="Specula">
+                            <div class="logo-text">SPECULA</div>
+                        </a>
+                        <!-- THEME TOGGLE (Dot/Icon + Small Text) -->
+                        <div class="theme-wrapper" onclick="toggleTheme(event)">
+                            <div class="theme-icon" id="themeIcon">☀</div>
+                            <div class="theme-text" id="themeLabel">LIGHT MODE</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- VERSION (RIGHT) -->
+                <div class="version-display" id="versionBtn">Version 19.3.0</div>
             </div>
             
             <div class="nav-wrapper">
+                
+                <!-- SEARCH BAR -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
+                    <span class="search-icon">🔍</span>
+                </div>
+
                 <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
                 <nav class="unified-nav" id="catNav">
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
@@ -516,7 +649,6 @@
 
                 </nav>
                 
-                <!-- READ LATER TOGGLE (Attached) -->
                 <div class="read-later-container">
                     <button class="read-later-btn" id="readLaterBtn" onclick="toggleSavedView()">
                         <span style="font-size:1.2em">♥</span> Read Later
@@ -557,11 +689,13 @@
         
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
+        const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
         const readLaterBtn = document.getElementById('readLaterBtn');
         const themeIcon = document.getElementById('themeIcon');
+        const themeLabel = document.getElementById('themeLabel');
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
@@ -627,12 +761,14 @@
             });
             renderApp(); 
             
-            // Theme check
+            // Check Theme
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 themeIcon.innerText = '☾';
+                themeLabel.innerText = 'DARK MODE';
             } else {
                 themeIcon.innerText = '☀';
+                themeLabel.innerText = 'LIGHT MODE';
             }
         }
 
@@ -641,12 +777,16 @@
             document.body.classList.toggle('light-mode');
             if (document.body.classList.contains('light-mode')) {
                 themeIcon.innerText = '☾';
+                themeLabel.innerText = 'DARK MODE';
                 localStorage.setItem('theme', 'light');
             } else {
                 themeIcon.innerText = '☀';
+                themeLabel.innerText = 'LIGHT MODE';
                 localStorage.setItem('theme', 'dark');
             }
         }
+
+        searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
         function setCategory(cat) {
             state.category = cat; 
