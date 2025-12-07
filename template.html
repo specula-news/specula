@@ -517,7 +517,7 @@
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.6.0 - Mobile Fit</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Mobile Layout Fix:</strong> Adjusted search bar width on mobile to prevent edge cut-off (width: 92%).<br>
+                        • <strong>Mobile Layout Fix:</strong> Adjusted search bar width on mobile to 80% to prevent edge cut-off.<br>
                         • <strong>Functionality Fix:</strong> Repaired the bookmark saving function that was broken in the previous UI update.<br>
                     </div>
                 </li>
@@ -696,14 +696,7 @@
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
-        function loadSaved() {
-            const saved = localStorage.getItem('savedArticles');
-            if (saved) {
-                state.saved = new Set(JSON.parse(saved));
-            }
-        }
-
-        window.toggleSave = function(url, element) {
+        window.toggleBookmark = function(url, element) {
             event.stopPropagation();
             
             // Hantera själva sparandet
@@ -752,8 +745,6 @@
         }
 
         function init() { 
-            loadSaved();
-
             let touchStartX = 0;
             let touchEndX = 0;
             grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
