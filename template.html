@@ -170,6 +170,7 @@
             transition: 0.3s;
         }
         
+        /* FIX: pointer-events: none added to prevent blocking clicks */
         .search-container::after {
             content: '';
             position: absolute;
@@ -178,6 +179,7 @@
             height: 6px; 
             background: var(--nav-bg); 
             z-index: 60;
+            pointer-events: none; 
         }
 
         .search-input:focus { border-color: var(--accent); }
@@ -249,6 +251,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
+        /* FIX: pointer-events: none added to prevent blocking clicks */
         .read-later-btn::before {
             content: '';
             position: absolute;
@@ -257,6 +260,7 @@
             height: 6px; 
             background: var(--nav-bg); 
             z-index: 60; 
+            pointer-events: none;
         }
 
         .read-later-btn:hover { border-color: var(--accent); color: var(--accent); padding-bottom: 10px; }
@@ -544,19 +548,17 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.3.0 -->
+                 <!-- V20.4.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.3.0 - Full Filter Reset</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.4.0 - Critical UI Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Logic Fix:</strong> Completely re-wrote how buttons and filters interact. Switching between "Desktop Buttons" and "Mobile Dropdowns" now strictly clears the previous selection.<br>
-                        • <strong>Safety:</strong> Added code to prevent the site from freezing if a single article has missing data.<br>
-                        • <strong>Logo Fix:</strong> The logo button now correctly resets the page.
+                        • <strong>Unclickable Buttons Fix:</strong> The design lines connecting the search bar were accidentally covering the buttons, making them unclickable. This has been fixed.<br>
                     </div>
                  </li>
-                 <!-- V20.2.0 -->
+                 <!-- V20.3.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.2.0</strong><br>
-                    Case-sensitivity fixes.
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.3.0</strong><br>
+                    Logic and Crash safety.
                 </li>
             </ul>
         </div>
@@ -610,7 +612,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.3.0</div>
+                <div class="version-display" id="versionBtn">Version 20.4.0</div>
             </div>
             
             <div class="nav-wrapper">
