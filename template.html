@@ -265,6 +265,7 @@
         
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
         
+        /* CARD CONTENT (Pushes Footer Down) */
         .card-content { 
             padding: 24px; 
             flex-grow: 1; 
@@ -286,30 +287,31 @@
             flex-grow: 1; 
         }
         
-        /* --- BOOKMARK BAR (Integrated Footer) --- */
+        /* --- BOOKMARK BAR (Full Width at Bottom) --- */
         .bookmark-bar {
-            margin-top: auto; 
+            width: 100%;
+            padding: 15px 0;
             border-top: 1px solid var(--border);
-            padding: 12px 0;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: 0.2s;
-            background: rgba(255,255,255,0.02);
+            transition: all 0.2s;
+            background: var(--bg-card); /* Ensure it matches card */
             color: var(--text-secondary);
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            /* ROUNDED BOTTOM CORNERS TO MATCH CARD */
+            
+            /* Sits at the bottom of the card, outside padding */
             border-radius: 0 0 16px 16px;
         }
 
         .bookmark-bar:hover {
-            background: rgba(255,255,255,0.05);
+            background: var(--bg-card-hover);
             color: var(--text-primary);
         }
 
@@ -401,19 +403,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V18.9.0 -->
+                 <!-- V18.10.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.9.0 - Formspree</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.10.0 - Full Width Bookmark</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Forms:</strong> Integrated Formspree for reliable free email suggestions.<br>
-                        • <strong>Design:</strong> Bookmark bar now has rounded bottom corners to perfectly match the news card.<br>
-                    </div>
-                </li>
-                 <!-- V18.8.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.8.0</strong>
-                    <div style="margin-top:5px; line-height:1.5;">
-                        Added full-width bookmark bar.
+                        • <strong>Full Width Footer:</strong> Bookmark button now spans the entire bottom of the card.<br>
+                        • <strong>Rounded Corners:</strong> Button matches the card's bottom corners perfectly.<br>
+                        • <strong>Formspree:</strong> Suggestion box now works without paid Netlify plan.<br>
                     </div>
                 </li>
             </ul>
@@ -427,7 +423,6 @@
                 <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">Suggestion Box</h2>
                 <button class="close-modal" onclick="closeModal('suggestModal')">&times;</button>
             </div>
-            <!-- FORMSPREE INTEGRATION -->
             <form id="suggestForm" action="https://formspree.io/f/mdkqlnpq" method="POST" onsubmit="handleSuggestSubmit(event)">
                 
                 <div class="form-group">
@@ -458,7 +453,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 18.9.0</div>
+                    <div class="version-btn" id="versionBtn">Version 18.10.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -468,6 +463,13 @@
             </div>
             
             <div class="nav-wrapper">
+                
+                <!-- SEARCH BAR (Attached Top) -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
+                    <span class="search-icon">🔍</span>
+                </div>
+
                 <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
                 <nav class="unified-nav" id="catNav">
                     <!-- DESKTOP ALL NEWS (Static Button) -->
@@ -520,6 +522,7 @@
                                 <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
                             <div class="dropdown-footer">
@@ -780,6 +783,7 @@
             'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'],
             'mmorpg': ['mmo', 'mmorpg', 'world of warcraft', 'wow', 'final fantasy xiv', 'ffxiv', 'guild wars', 'elder scrolls online', 'runescape', 'black desert'],
             'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'],
+            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk'],
             'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026']
         };
 
@@ -951,7 +955,6 @@
             document.getElementById('suggestModal').classList.add('open');
         }
 
-        // UPDATED: Formspree AJAX Logic
         function handleSuggestSubmit(e) {
             e.preventDefault();
             const form = document.getElementById('suggestForm');
