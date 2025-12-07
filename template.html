@@ -55,13 +55,14 @@
             width: 100%; 
             display: flex; 
             justify-content: space-between; 
-            align-items: flex-end; 
+            align-items: flex-end; /* Aligns version bottom */
             margin-bottom: 25px; 
         }
 
+        /* LOGO GROUP */
         .logo-group {
             display: flex;
-            align-items: flex-end;
+            align-items: flex-end; /* Aligns logo text and theme text at bottom */
             gap: 15px;
         }
 
@@ -100,6 +101,7 @@
             margin-bottom: -2px; 
         }
 
+        /* THEME TOGGLE GROUP */
         .theme-wrapper {
             display: flex;
             align-items: baseline;
@@ -129,6 +131,7 @@
         .theme-wrapper:hover .theme-icon { transform: scale(1.2); text-shadow: 0 0 10px var(--accent-glow); }
         .theme-wrapper:hover .theme-text { color: var(--accent); opacity: 1; }
 
+        /* VERSION (Top Right) */
         .version-display {
             font-family: 'Space Grotesk', monospace;
             font-size: 0.75rem;
@@ -140,6 +143,7 @@
         }
         .version-display:hover { color: var(--accent); opacity: 1; }
         
+        /* --- NAV WRAPPER --- */
         .nav-wrapper { 
             display: flex; 
             flex-direction: column; 
@@ -149,6 +153,7 @@
             z-index: 50;
         }
 
+        /* --- SEARCH BAR --- */
         .search-container {
             position: relative;
             width: 100%;
@@ -184,6 +189,7 @@
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; z-index: 61;}
 
+        /* --- UNIFIED NAV BAR --- */
         .unified-nav { 
             display: inline-flex; 
             background: var(--nav-bg); 
@@ -363,10 +369,10 @@
             padding-bottom: 20px;
         }
 
-        /* --- BOOKMARK BAR (CORRECTED) --- */
+        /* --- UPDATED BOOKMARK BAR (FIXED) --- */
         .bookmark-bar {
             width: 100%;
-            padding: 12px 0;
+            padding: 12px 0; 
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
@@ -386,7 +392,7 @@
 
         .bookmark-text {
             position: relative;
-            top: 2px;
+            top: 2px; /* Aligns text perfectly with heart */
         }
 
         .heart-icon {
@@ -396,7 +402,7 @@
             color: var(--text-secondary);
         }
 
-        /* Hover: Blue BG, Black Text */
+        /* Hover State */
         .bookmark-bar:hover {
             background: var(--accent);
             color: #000;
@@ -406,14 +412,13 @@
             color: #000; 
         }
 
-        /* Saved: Red Heart */
+        /* Saved State */
         .bookmark-bar.saved .heart-icon {
             color: #ff0040 !important;
         }
-        
-        /* Saved + Hover: Heart stays red, BG blue, text black */
-        .bookmark-bar.saved:hover .heart-icon {
-            color: #ff0040 !important;
+        .bookmark-bar.saved:not(:hover) {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
         }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
@@ -469,16 +474,7 @@
             }
             .logo-wrapper { align-items: center; } 
             
-            /* MOBILE SEARCH BAR FIX (92% width, centered) */
-            .search-container { 
-                width: 92%; 
-                max-width: 100%; 
-                margin: 5px auto; 
-            }
-            .search-input {
-                font-size: 16px; 
-                padding: 8px 35px 8px 15px;
-            }
+            .search-container { width: 100%; max-width: 100%; margin: 5px 0; }
             
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; position: relative; }
@@ -513,12 +509,11 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V19.6.0 -->
+                 <!-- V19.4.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.6.0 - Mobile Fit</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.4.0 - Bookmark Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Mobile Layout Fix:</strong> Adjusted search bar width on mobile to prevent edge cut-off (width: 92%).<br>
-                        • <strong>Functionality Fix:</strong> Repaired the bookmark saving function that was broken in the previous UI update.<br>
+                        • <strong>Bookmark Design V2:</strong> Red Heart, Blue Hover, Perfect Alignment.<br>
                     </div>
                 </li>
             </ul>
@@ -573,7 +568,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 19.6.0</div>
+                <div class="version-display" id="versionBtn">Version 19.4.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -675,15 +670,21 @@
     </div>
 
     <script>
-        const state = { category: 'all', search: '', page: 1, itemsPerPage: 45, articles: typeof newsData !== 'undefined' ? newsData : [] };
+        const state = { 
+            category: 'all', 
+            videoFilters: new Set(),
+            gamingFilters: new Set(),
+            topicFilters: new Set(), 
+            tempVideoFilters: new Set(),
+            tempGamingFilters: new Set(),
+            tempTopicFilters: new Set(),
+            saved: new Set(), 
+            search: '', 
+            page: 1, 
+            itemsPerPage: 45, 
+            articles: typeof newsData !== 'undefined' ? newsData : [] 
+        };
         
-        // --- LOCAL STORAGE FOR SAVED ITEMS ---
-        state.saved = new Set();
-        try {
-            const loaded = localStorage.getItem('specula_saved');
-            if(loaded) state.saved = new Set(JSON.parse(loaded));
-        } catch(e) {}
-
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
         const searchInput = document.getElementById('searchInput');
@@ -705,8 +706,6 @@
 
         window.toggleSave = function(url, element) {
             event.stopPropagation();
-            
-            // Hantera själva sparandet
             if (state.saved.has(url)) {
                 state.saved.delete(url);
                 element.classList.remove('saved');
@@ -714,9 +713,8 @@
                 state.saved.add(url);
                 element.classList.add('saved');
             }
-            localStorage.setItem('specula_saved', JSON.stringify([...state.saved]));
+            localStorage.setItem('savedArticles', JSON.stringify([...state.saved]));
 
-            // Om vi är i "Saved"-vyn, rendera om för att ta bort artikeln direkt
             if (state.category === 'saved') renderApp();
         }
 
@@ -734,16 +732,6 @@
             const parent = img.parentElement;
             const nextImg = parent.querySelector('.card-image:not([style*="none"])');
             if(nextImg) nextImg.classList.add('active');
-        }
-
-        window.switchImage = function(cardId, imgIndex) {
-            const card = document.getElementById(cardId);
-            const images = card.querySelectorAll('.card-image');
-            const dots = card.querySelectorAll('.dot');
-            images.forEach(img => img.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            if(images[imgIndex]) images[imgIndex].classList.add('active');
-            if(dots[imgIndex]) dots[imgIndex].classList.add('active');
         }
 
         window.stopProp = function(e) {
@@ -1002,8 +990,8 @@
                         <p class="ai-summary">${art.summary}</p>
                     </div>
 
-                    <!-- BOOKMARK BUTTON (FIXED: CLICKABLE) -->
-                    <div class="bookmark-bar ${isSaved}" onclick="toggleBookmark('${art.link}', this)">
+                    <!-- NEW BOOKMARK BUTTON -->
+                    <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', this)">
                         <span class="heart-icon">♥</span>
                         <span class="bookmark-text">BOOKMARK FOR LATER...</span>
                     </div>
