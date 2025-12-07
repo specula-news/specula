@@ -25,7 +25,6 @@ MAX_ARTICLES_PER_SOURCE = 15
 MAX_DAYS_OLD = 4
 MAX_VIDEO_DAYS_OLD = 3
 TIMEOUT_SECONDS = 5
-JSON_FILE = "news.json"
 MAX_WORKERS = 10 
 
 # --- KÄLLOR ---
@@ -124,8 +123,6 @@ TOPIC_KEYWORDS = {
 
 def get_images_by_context(title, category):
     text = title.lower()
-    # Endast en bild behövs nu
-    
     if "gaming" in category.lower():
         pool = IMAGE_TOPICS.get("gaming", IMAGE_TOPICS["general"])
         return [random.choice(pool)]
@@ -156,7 +153,6 @@ def fetch_article_images(url, title, category):
                 if not img.startswith(('http:', 'https:')): img = urljoin(url, img)
                 found_images.append(img)
             
-            # Om vi hittade en bild, sluta leta (vi behöver bara 1)
             if found_images: return found_images
 
             content_area = soup.find('article') or soup.find('main') or soup.body
@@ -170,7 +166,7 @@ def fetch_article_images(url, title, category):
                         bad = ['logo', 'icon', 'avatar', 'pixel', 'tracker', 'ad', 'svg', 'gif']
                         if any(b in lower_src for b in bad): continue
                         found_images.append(src)
-                        break # Hittade en, bryt
+                        break
     except Exception:
         pass
 
@@ -222,7 +218,6 @@ def fetch_youtube_videos(channel_url, category, existing_urls):
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
                     
-                    # Endast 1 bild i listan
                     img_list = [img] 
                     videos.append({
                         "title": entry.get('title'),
@@ -280,14 +275,17 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 def generate_site():
-    print("Startar SPECULA Generator v19.1 (Clean & Fast)...")
+    print("Startar SPECULA Generator v20.0 (Static Generation)...")
     
+    # För statisk generering behöver vi inte nödvändigtvis läsa in gammal JSON
+    # för att spara den, men vi gör det för att inte missa nyheter 
+    # om scriptet körs ofta.
     existing_articles = []
     existing_urls = set()
     
-    if os.path.exists(JSON_FILE):
+    if os.path.exists("news.json"):
         try:
-            with open(JSON_FILE, "r", encoding="utf-8") as f:
+            with open("news.json", "r", encoding="utf-8") as f:
                 existing_articles = json.load(f)
                 current_time = time.time()
                 existing_articles = [
@@ -345,10 +343,26 @@ def generate_site():
     
     print(f"Hittade {len(new_articles)} nya. Totalt: {len(all_content)}")
 
-    with open(JSON_FILE, "w", encoding="utf-8") as f:
-        json.dump(all_content, f, ensure_ascii=False)
+    # 1. Spara JSON (Bra som backup)
+    json_data = json.dumps(all_content, ensure_ascii=False)
+    with open("news.json", "w", encoding="utf-8") as f:
+        f.write(json_data)
 
-    print("Klar! news.json uppdaterad.")
+    # 2. Läs mallen (template.html)
+    if os.path.exists("template.html"):
+        with open("template.html", "r", encoding="utf-8") as f:
+            template = f.read()
+        
+        # 3. Injicera datan i mallen
+        final_html = template.replace("<!-- NEWS_DATA_JSON -->", json_data)
+        
+        # 4. Spara som index.html (Detta är filen Netlify visar)
+        with open("index.html", "w", encoding="utf-8") as f:
+            f.write(final_html)
+        
+        print("Klar! index.html genererad.")
+    else:
+        print("VARNING: template.html saknas. Kan inte generera index.html.")
 
 if __name__ == "__main__":
     generate_site()
