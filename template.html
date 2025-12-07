@@ -49,18 +49,35 @@
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
         header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 20px; }
-        .logo-wrapper { display: flex; flex-direction: column; }
+        .header-top { width: 100%; display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 25px; }
+        .logo-wrapper { display: flex; flex-direction: column; align-items: center; }
+        
+        /* LOGO & THEME SWITCHER */
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
         .logo-icon { height: 50px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.4s; }
         .logo-link:hover .logo-icon { transform: rotate(15deg) scale(1.1); }
         body.light-mode .logo-icon { filter: invert(0); }
-        .logo span { color: var(--accent); }
-        .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-left: 70px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
         
-        .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
+        /* The Theme Icon */
+        #themeIcon { 
+            color: var(--accent); 
+            cursor: pointer; 
+            font-size: 1.8rem; 
+            transition: 0.3s; 
+            padding: 5px 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+            user-select: none;
+        }
+        #themeIcon:hover { 
+            text-shadow: 0 0 15px var(--accent-glow); 
+            transform: scale(1.1) rotate(15deg);
+            background: rgba(255,255,255,0.05);
+        }
 
+        .version-btn { font-size: 0.75rem; color: var(--accent); font-weight: 700; cursor: pointer; margin-top: 5px; opacity: 0.8; font-family: 'Space Grotesk', monospace; border-bottom: 1px dotted var(--accent); }
+        
         /* --- NAV WRAPPER --- */
         .nav-wrapper { 
             display: flex; 
@@ -70,42 +87,6 @@
             position: relative; 
             z-index: 50;
         }
-
-        /* --- SEARCH BAR --- */
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 240px;
-            margin-bottom: -2px;
-            z-index: 40; 
-        }
-        
-        .search-input { 
-            width: 100%; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border);
-            border-bottom: none; 
-            color: var(--text-primary); 
-            padding: 8px 35px 8px 15px; 
-            border-radius: 20px 20px 0 0; 
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.85rem; 
-            outline: none; 
-            transition: 0.3s;
-        }
-        
-        .search-container::after {
-            content: '';
-            position: absolute;
-            bottom: -3px; 
-            left: 10px; right: 10px; 
-            height: 6px; 
-            background: var(--nav-bg); 
-            z-index: 60;
-        }
-
-        .search-input:focus { border-color: var(--accent); }
-        .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; z-index: 61;}
 
         /* --- UNIFIED NAV BAR --- */
         .unified-nav { 
@@ -287,15 +268,15 @@
             padding-bottom: 20px;
         }
         
-        /* --- UPDATED BOOKMARK BAR --- */
+        /* --- BOOKMARK BAR --- */
         .bookmark-bar {
             width: 100%;
-            padding: 8px 0; /* Reduced height */
+            padding: 8px 0; 
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px; /* Gap between text and heart */
+            gap: 12px; 
             cursor: pointer;
             transition: all 0.2s;
             background: var(--bg-card);
@@ -305,8 +286,6 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            
-            /* Rounded corners ONLY at bottom to fit card */
             border-radius: 0 0 16px 16px;
         }
 
@@ -315,26 +294,24 @@
             color: var(--text-primary);
         }
 
-        /* Heart Icon */
+        /* Active State */
+        .bookmark-bar.saved {
+            background: var(--accent); /* Blue background */
+            color: #000; /* Black text */
+            border-top-color: var(--accent);
+            box-shadow: 0 -5px 15px var(--accent-glow);
+        }
+
         .bookmark-bar span {
-            font-size: 1.3rem; /* Larger heart */
+            font-size: 1.3rem;
             transition: 0.2s;
             color: var(--text-secondary);
             line-height: 1;
         }
 
-        /* Active State */
-        .bookmark-bar.saved {
-            background: rgba(255, 255, 255, 0.03); /* Subtle background change */
-            color: var(--text-primary);
-            text-decoration: underline;
-            text-decoration-color: var(--accent); /* Blue underline */
-            text-underline-offset: 4px;
-        }
-
+        /* Heart RED when saved */
         .bookmark-bar.saved span {
-            color: #ff4444; /* Red heart */
-            text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+            color: #ff0000; 
         }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
@@ -384,9 +361,8 @@
 
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
-            .header-top { flex-wrap: wrap; gap: 15px; }
-            .logo-wrapper { flex: 1; }
-            .search-container { width: 100%; max-width: 100%; margin: 5px 0; }
+            .header-top { flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+            .logo-wrapper { flex: 1; align-items: center; } 
             
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; position: relative; }
@@ -416,13 +392,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V18.11.0 -->
+                 <!-- V19.1.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.11.0 - Refined Cards</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.1.0 - Minimal Header</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Flush Footer:</strong> Bookmark bar is now seamlessly attached to the bottom of the card.<br>
-                        • <strong>Visuals:</strong> Red heart and blue underline when saved. Heart moved to left.<br>
-                        • <strong>Compact:</strong> Reduced height of the bookmark bar for a sleeker look.<br>
+                        • <strong>Clean Look:</strong> Removed Search bar and text-based Theme button for a cleaner header.<br>
+                        • <strong>Icon Toggle:</strong> Theme switching is now done via the sun/moon icon next to the logo.<br>
+                        • <strong>Visuals:</strong> Saved bookmarks now show a red heart on a blue background.<br>
                     </div>
                 </li>
             </ul>
@@ -464,31 +440,18 @@
                 <div class="logo-wrapper">
                     <a href="#" class="logo-link" onclick="resetHome()">
                         <img src="icon.png" class="logo-icon" alt="Specula">
-                        <div class="logo">SPECULA <span>.</span></div>
+                        <!-- THEME TOGGLE ICON -->
+                        <div class="logo">SPECULA <span id="themeIcon" onclick="toggleTheme(event)">☀</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 18.11.0</div>
+                    <div class="version-btn" id="versionBtn">Version 19.1.0</div>
                 </div>
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
-                    <span class="search-icon">🔍</span>
-                </div>
-                <button class="theme-switch" id="themeBtn">☀ LIGHT MODE</button>
             </div>
             
             <div class="nav-wrapper">
-                
-                <!-- SEARCH BAR (Attached Top) -->
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
-                    <span class="search-icon">🔍</span>
-                </div>
-
                 <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
                 <nav class="unified-nav" id="catNav">
-                    <!-- DESKTOP ALL NEWS (Static Button) -->
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
                     
-                    <!-- MOBILE ALL NEWS (Dropdown) -->
                     <div class="show-on-mobile" style="display:none;">
                         <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
                         <div id="topicsDropdown" class="dropdown-menu">
@@ -506,7 +469,6 @@
                         </div>
                     </div>
 
-                    <!-- YOUTUBE -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
@@ -525,7 +487,6 @@
                         </div>
                     </div>
 
-                    <!-- GAMING -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
@@ -545,7 +506,6 @@
                         </div>
                     </div>
 
-                    <!-- DESKTOP CATEGORY BUTTONS (Hidden on mobile) -->
                     <div class="desktop-categories">
                         <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics</button>
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
@@ -588,7 +548,7 @@
             tempVideoFilters: new Set(),
             tempGamingFilters: new Set(),
             tempTopicFilters: new Set(),
-            saved: new Set(), // URL strings
+            saved: new Set(), 
             search: '', 
             page: 1, 
             itemsPerPage: 45, 
@@ -597,15 +557,14 @@
         
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
-        const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
         const readLaterBtn = document.getElementById('readLaterBtn');
+        const themeIcon = document.getElementById('themeIcon');
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
-        // Load saved articles from local storage
         function loadSaved() {
             const saved = localStorage.getItem('savedArticles');
             if (saved) {
@@ -625,20 +584,18 @@
             }
             localStorage.setItem('savedArticles', JSON.stringify([...state.saved]));
             
-            // Re-render the specific button visual state
             const btn = event.target.closest('.bookmark-bar');
             if(btn) {
                 if (state.saved.has(url)) btn.classList.add('saved');
                 else btn.classList.remove('saved');
             }
 
-            // If we are in 'saved' view, refresh to remove the card
             if (state.category === 'saved') renderApp();
         }
 
         window.toggleSavedView = function() {
             if (state.category === 'saved') {
-                setCategory('all'); // Go back
+                setCategory('all'); 
             } else {
                 setCategory('saved');
             }
@@ -670,25 +627,33 @@
             });
             renderApp(); 
             
-            const themeBtn = document.getElementById('themeBtn');
+            // Theme check
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
-                themeBtn.innerText = '☾ DARK MODE';
+                themeIcon.innerText = '☾';
             } else {
-                themeBtn.innerText = '☀ LIGHT MODE';
+                themeIcon.innerText = '☀';
             }
         }
 
-        searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
+        window.toggleTheme = function(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); }
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.innerText = '☾';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.innerText = '☀';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
 
         function setCategory(cat) {
             state.category = cat; 
             state.page = 1;
             
-            // UI Updates
             if (cat === 'saved') {
                 readLaterBtn.classList.add('active');
-                // Deactivate nav buttons visually
                 filterBtns.forEach(btn => btn.classList.remove('active'));
             } else {
                 readLaterBtn.classList.remove('active');
@@ -796,7 +761,6 @@
             'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'],
             'mmorpg': ['mmo', 'mmorpg', 'world of warcraft', 'wow', 'final fantasy xiv', 'ffxiv', 'guild wars', 'elder scrolls online', 'runescape', 'black desert'],
             'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'],
-            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk'],
             'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026']
         };
 
@@ -806,20 +770,17 @@
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
 
-                // 0. SAVED VIEW
                 if (state.category === 'saved') {
                     if (!state.saved.has(art.link)) return false;
                     return fullText.includes(state.search);
                 }
 
-                // 1. ALL NEWS (Default)
                 if (state.category === 'all') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
-                // 2. YOUTUBE NEWS
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
                     if (state.videoFilters.size > 0) {
@@ -832,7 +793,6 @@
                     return fullText.includes(state.search);
                 }
                 
-                // 3. GAMING
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
                     if (art.is_video) return false; 
@@ -847,7 +807,6 @@
                     return fullText.includes(state.search);
                 }
 
-                // 4. MOBILE TOPICS
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false;
@@ -857,7 +816,6 @@
                     return fullText.includes(state.search);
                 }
 
-                // 5. SPECIFIC CATEGORIES
                 if (art.is_video) return false;
                 let matchesCat = (art.category === state.category);
                 return matchesCat && fullText.includes(state.search);
@@ -901,7 +859,7 @@
                         <p class="ai-summary">${art.summary}</p>
                     </div>
 
-                    <!-- BOOKMARK BAR (Moved outside card-content to be flush bottom) -->
+                    <!-- BOOKMARK BAR -->
                     <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
                         <span>♥</span> BOOKMARK FOR LATER... 
                     </div>
@@ -945,18 +903,6 @@
             renderApp();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        const themeBtn = document.getElementById('themeBtn');
-        themeBtn.onclick = () => {
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                themeBtn.innerText = '☾ DARK MODE';
-                localStorage.setItem('theme', 'light');
-            } else {
-                themeBtn.innerText = '☀ LIGHT MODE';
-                localStorage.setItem('theme', 'dark');
-            }
-        };
 
         const modal = document.getElementById('changelogModal');
         document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
