@@ -251,7 +251,7 @@
             transition: transform 0.3s; 
             animation: fadeIn 0.5s; 
             position: relative;
-            height: 100%; /* Ensures full height */
+            height: 100%; 
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
@@ -286,11 +286,11 @@
             flex-grow: 1; 
         }
         
-        /* --- REDESIGNED BOOKMARK BAR --- */
+        /* --- BOOKMARK BAR (Integrated Footer) --- */
         .bookmark-bar {
-            margin-top: auto; /* Push to bottom */
+            margin-top: auto; 
             border-top: 1px solid var(--border);
-            padding: 10px 0;
+            padding: 12px 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -304,6 +304,8 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            /* ROUNDED BOTTOM CORNERS TO MATCH CARD */
+            border-radius: 0 0 16px 16px;
         }
 
         .bookmark-bar:hover {
@@ -399,20 +401,19 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V18.8.0 -->
+                 <!-- V18.9.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.8.0 - Forms & Cards</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.9.0 - Formspree</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Forms:</strong> Fixed submission logic for suggestions.<br>
-                        • <strong>Card UI:</strong> Redesigned Bookmark button to be a full-width clean bar at the bottom.<br>
-                        • <strong>Grid:</strong> Equal height cards for perfect alignment.<br>
+                        • <strong>Forms:</strong> Integrated Formspree for reliable free email suggestions.<br>
+                        • <strong>Design:</strong> Bookmark bar now has rounded bottom corners to perfectly match the news card.<br>
                     </div>
                 </li>
-                 <!-- V18.7.0 -->
+                 <!-- V18.8.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.7.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.8.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        Search bar mobile fixes.
+                        Added full-width bookmark bar.
                     </div>
                 </li>
             </ul>
@@ -426,8 +427,8 @@
                 <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">Suggestion Box</h2>
                 <button class="close-modal" onclick="closeModal('suggestModal')">&times;</button>
             </div>
-            <form name="suggestions" method="POST" data-netlify="true" onsubmit="handleSuggestSubmit(event)">
-                <input type="hidden" name="form-name" value="suggestions">
+            <!-- FORMSPREE INTEGRATION -->
+            <form id="suggestForm" action="https://formspree.io/f/mdkqlnpq" method="POST" onsubmit="handleSuggestSubmit(event)">
                 
                 <div class="form-group">
                     <label class="form-label">Name (Optional)</label>
@@ -457,19 +458,16 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 18.8.0</div>
+                    <div class="version-btn" id="versionBtn">Version 18.9.0</div>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
+                    <span class="search-icon">🔍</span>
                 </div>
                 <button class="theme-switch" id="themeBtn">☀ LIGHT MODE</button>
             </div>
             
             <div class="nav-wrapper">
-                
-                <!-- SEARCH BAR (Attached Top) -->
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
-                    <span class="search-icon">🔍</span>
-                </div>
-
                 <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
                 <nav class="unified-nav" id="catNav">
                     <!-- DESKTOP ALL NEWS (Static Button) -->
@@ -611,7 +609,7 @@
             }
             localStorage.setItem('savedArticles', JSON.stringify([...state.saved]));
             
-            // Re-render the specific button visual state or full app if needed
+            // Re-render the specific button visual state
             const btn = event.target.closest('.bookmark-bar');
             if(btn) {
                 if (state.saved.has(url)) btn.classList.add('saved');
@@ -874,6 +872,7 @@
                     <a href="${art.link}" target="_blank" class="img-link">
                         <div class="card-image-wrapper">
                             <div class="cat-tag">${art.category}</div>
+                            
                             ${art.is_video ? '<div class="play-overlay"></div>' : ''}
                             <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News">
                         </div>
@@ -885,7 +884,7 @@
                         
                         <!-- FULL WIDTH BOOKMARK FOOTER -->
                         <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
-                            SAVE FOR LATER <span>♥</span>
+                            BOOKMARK FOR LATER... <span>♥</span>
                         </div>
                     </div>
                 </article>
@@ -952,21 +951,31 @@
             document.getElementById('suggestModal').classList.add('open');
         }
 
+        // UPDATED: Formspree AJAX Logic
         function handleSuggestSubmit(e) {
             e.preventDefault();
-            const form = e.target;
+            const form = document.getElementById('suggestForm');
             const data = new FormData(form);
             
-            fetch("/", {
+            fetch(form.action, {
                 method: "POST",
-                body: data
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
             })
-            .then(() => {
-                alert("Thank you for your suggestion!");
-                closeModal('suggestModal');
-                form.reset();
+            .then(response => {
+                if (response.ok) {
+                    alert("Thank you! Your suggestion has been sent directly to the developer.");
+                    closeModal('suggestModal');
+                    form.reset();
+                } else {
+                    alert("Oops! There was a problem sending your form. Please try again.");
+                }
             })
-            .catch(error => alert("Error sending suggestion. Please try again."));
+            .catch(error => {
+                alert("Error sending suggestion. Please check your connection.");
+            });
         }
 
         window.addEventListener('click', (e) => {
