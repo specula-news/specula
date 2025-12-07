@@ -80,6 +80,7 @@
             transition: transform 0.3s;
         }
         
+        /* Wiggle Animation only on hover of the icon itself */
         @keyframes wiggle {
             0% { transform: rotate(0deg); }
             25% { transform: rotate(-10deg); }
@@ -97,8 +98,8 @@
             font-weight: 700; 
             letter-spacing: -1px; 
             text-transform: uppercase; 
-            line-height: 0.8; 
-            margin-bottom: -2px; 
+            line-height: 0.8; /* Tight line height for baseline alignment */
+            margin-bottom: -2px; /* Fine tune baseline */
         }
 
         /* THEME TOGGLE GROUP */
@@ -112,7 +113,7 @@
         
         .theme-icon { 
             color: var(--accent); 
-            font-size: 1.5rem; 
+            font-size: 1.5rem; /* Acts as a large period */
             line-height: 0;
             transition: 0.3s; 
         }
@@ -369,7 +370,7 @@
             padding-bottom: 20px;
         }
 
-        /* --- UPDATED BOOKMARK BAR (FIXED) --- */
+        /* BOOKMARK BAR */
         .bookmark-bar {
             width: 100%;
             padding: 12px 0; 
@@ -392,7 +393,7 @@
 
         .bookmark-text {
             position: relative;
-            top: 2px; /* Aligns text perfectly with heart */
+            top: 2px;
         }
 
         .heart-icon {
@@ -474,7 +475,16 @@
             }
             .logo-wrapper { align-items: center; } 
             
-            .search-container { width: 100%; max-width: 100%; margin: 5px 0; }
+            /* --- MOBILE SEARCH BAR FIX --- */
+            .search-container { 
+                width: 92%; /* Slightly compressed width */
+                max-width: 100%; 
+                margin: 5px auto; /* Centered */
+            }
+            .search-input {
+                font-size: 16px; /* Prevents zoom */
+                padding: 8px 35px 8px 15px;
+            }
             
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; position: relative; }
@@ -509,12 +519,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V19.4.0 -->
+                 <!-- V19.5.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.4.0 - Bookmark Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.5.0 - Mobile Fit</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Bookmark Design V2:</strong> Red Heart, Blue Hover, Perfect Alignment.<br>
+                        • <strong>Mobile Layout Fix:</strong> Adjusted search bar width on mobile to prevent edge cut-off (width: 92%).<br>
+                        • <strong>Bookmark Design:</strong> Polished bookmark bar alignment and hover states.<br>
                     </div>
+                </li>
+                 <!-- V19.4.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 19.4.0</strong><br>
+                    Bookmark UI Fix.
                 </li>
             </ul>
         </div>
@@ -568,7 +584,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 19.4.0</div>
+                <div class="version-display" id="versionBtn">Version 19.5.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -685,6 +701,13 @@
             articles: typeof newsData !== 'undefined' ? newsData : [] 
         };
         
+        // --- LOCAL STORAGE FOR SAVED ITEMS ---
+        state.saved = new Set();
+        try {
+            const loaded = localStorage.getItem('specula_saved');
+            if(loaded) state.saved = new Set(JSON.parse(loaded));
+        } catch(e) {}
+
         const grid = document.getElementById('newsGrid');
         const pagContainer = document.getElementById('pagination');
         const searchInput = document.getElementById('searchInput');
@@ -713,7 +736,7 @@
                 state.saved.add(url);
                 element.classList.add('saved');
             }
-            localStorage.setItem('savedArticles', JSON.stringify([...state.saved]));
+            localStorage.setItem('specula_saved', JSON.stringify([...state.saved]));
 
             if (state.category === 'saved') renderApp();
         }
@@ -991,7 +1014,7 @@
                     </div>
 
                     <!-- NEW BOOKMARK BUTTON -->
-                    <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', this)">
+                    <div class="bookmark-bar ${isSaved}" onclick="toggleBookmark('${art.link}', this)">
                         <span class="heart-icon">♥</span>
                         <span class="bookmark-text">BOOKMARK FOR LATER...</span>
                     </div>
