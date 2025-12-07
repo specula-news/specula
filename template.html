@@ -18,8 +18,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; --input-bg: #1a1a1a; }
-        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; --input-bg: #f3f4f6; }
+        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; --input-bg: #1a1a1a; --nav-bg: #161616; }
+        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; --input-bg: #f3f4f6; --nav-bg: #e5e7eb; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
@@ -43,14 +43,14 @@
 
         .nav-wrapper { display: flex; justify-content: center; width: 100%; position: relative; }
         
-        /* --- UNIFIED NAV BAR --- */
+        /* --- UNIFIED NAV BAR (One Big Bubble) --- */
         .unified-nav { 
             display: inline-flex; 
-            background: var(--bg-card);
+            background: var(--nav-bg); /* Darker background for the container */
             border: 1px solid var(--border);
             border-radius: 50px;
             padding: 4px;
-            gap: 0px; 
+            gap: 2px; /* Very small gap */
             flex-wrap: wrap;
             justify-content: center;
             overflow: visible !important; 
@@ -63,7 +63,7 @@
             background: transparent; 
             border: none; 
             color: var(--text-secondary); 
-            padding: 8px 14px; 
+            padding: 8px 16px; 
             cursor: pointer; 
             border-radius: 40px; 
             font-family: 'Space Grotesk', sans-serif; 
@@ -86,11 +86,12 @@
         /* --- DROPDOWN STYLING --- */
         .dropdown-menu {
             display: none; position: absolute; top: 125%; 
+            /* Default Centered for Desktop */
             left: 50%; transform: translateX(-50%);
             background: var(--dropdown-bg); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
             box-shadow: 0 15px 50px rgba(0,0,0,0.9);
-            min-width: 220px; 
+            min-width: 200px;
             flex-direction: column; overflow: hidden;
             animation: fadeIn 0.2s ease;
         }
@@ -98,16 +99,18 @@
         
         .dropdown-list { max-height: 350px; overflow-y: auto; padding: 5px; }
         
+        /* Checkbox Item Styling - FIXED SPACING AND ALIGNMENT */
         .check-item { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; cursor: pointer; transition: 0.2s;
+            padding: 8px 12px; /* Reduced padding */
+            cursor: pointer; transition: 0.2s;
             border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
-            margin-bottom: 2px;
-            gap: 15px;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem;
+            margin-bottom: 1px;
+            gap: 10px; /* Reduced gap */
         }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .check-item span { flex-grow: 0 !important; }
+        .check-item span { flex-grow: 1; text-align: left; }
         
         .check-item input { display: none; }
         
@@ -120,17 +123,16 @@
         
         .check-item input:checked + .check-indicator {
             background: var(--accent); border-color: var(--accent);
-            box-shadow: 0 0 8px var(--accent-glow);
+            box-shadow: 0 0 5px var(--accent-glow);
         }
         
-        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
-        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
-
+        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 5px rgba(255,0,64,0.5); }
+        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 5px rgba(157,0,255,0.5); }
         .check-item input:checked ~ span { color: var(--text-primary); }
 
         .dropdown-footer { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 14px; border-top: 1px solid var(--border); 
+            padding: 10px 14px; border-top: 1px solid var(--border); 
             background: rgba(0,0,0,0.2); gap: 10px;
         }
         
@@ -141,15 +143,15 @@
             display: flex; align-items: center; justify-content: center;
         }
         
-        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
+        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.7rem; }
         .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
         
         .btn-ok { 
-            background: var(--accent); color: #000; padding: 6px 20px;
-            border-radius: 50px; font-size: 0.8rem; gap: 5px;
-            box-shadow: 0 0 15px var(--accent-glow);
+            background: var(--accent); color: #000; padding: 5px 18px;
+            border-radius: 50px; font-size: 0.75rem; gap: 4px;
+            box-shadow: 0 0 10px var(--accent-glow);
         }
-        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-glow); }
+        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent-glow); }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
@@ -190,12 +192,34 @@
             .show-on-mobile { display: block !important; position: relative; }
             .desktop-categories { display: none; }
             
+            /* Tighter unified nav on mobile */
             .unified-nav { width: 100%; justify-content: space-between; padding: 2px; }
             .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
             
-            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
-            #topicsDropdown { left: 0; right: auto; }
-            #gamingDropdown { left: auto; right: 0; }
+            /* FIX: MOBILE DROPDOWN ALIGNMENT AND CLIPPING */
+            .dropdown-menu {
+                min-width: 200px;
+                transform: none; /* No translateX on mobile */
+                width: auto;
+            }
+            
+            /* Specific Alignment for Mobile */
+            #topicsDropdown {
+                left: 0;
+                right: auto;
+            }
+            
+            #gamingDropdown {
+                left: auto;
+                right: 0;
+            }
+            
+            #videoDropdown {
+                 /* Center video dropdown on mobile if needed, or align based on button */
+                 left: 50%;
+                 transform: translateX(-50%);
+                 width: 240px;
+            }
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -250,7 +274,10 @@
     </style>
 </head>
 <body>
-    <script>const newsData = <!-- NEWS_DATA_JSON -->;</script>
+    <script>
+        // Init empty (will be fetched)
+        let newsData = [];
+    </script>
 
     <div id="floatPrev" class="floating-nav nav-prev" style="display:none;" onclick="changePage(state.page-1)">‹</div>
     <div id="floatNext" class="floating-nav nav-next" style="display:none;" onclick="changePage(state.page+1)">›</div>
@@ -263,12 +290,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.11.1 -->
+                 <!-- V17.11.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.11.1 - Suggestion Box</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.11.0 - Refined UI</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Suggest Feature:</strong> Replaced 'mailto' with a proper popup form.<br>
-                        • <strong>Feedback:</strong> Suggestions are now sent directly to the developer.<br>
+                        • <strong>One Big Bubble:</strong> Navigation is now a unified segmented control.<br>
+                        • <strong>Pagination:</strong> Fixed next/prev page logic.<br>
+                        • <strong>Mobile Layout:</strong> Fixed clipping and spacing issues in dropdowns.<br>
                     </div>
                 </li>
             </ul>
@@ -313,7 +341,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.11.1</div>
+                    <div class="version-btn" id="versionBtn">Version 17.11.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -423,7 +451,7 @@
             search: '', 
             page: 1, 
             itemsPerPage: 45, 
-            articles: typeof newsData !== 'undefined' ? newsData : [] 
+            articles: [] // Will be loaded
         };
         
         const grid = document.getElementById('newsGrid');
@@ -458,17 +486,38 @@
             e.stopPropagation();
         }
 
-        function init() { 
+        async function init() { 
             let touchStartX = 0;
             let touchEndX = 0;
+            
             grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
             grid.addEventListener('touchend', e => {
                 touchEndX = e.changedTouches[0].screenX;
                 if (touchEndX < touchStartX - 50) changePage(state.page + 1);
                 if (touchEndX > touchStartX + 50) changePage(state.page - 1);
             });
-            renderApp(); 
-            
+
+            // FETCH JSON (The Worker Logic)
+            try {
+                // IMPORTANT: Change fetch url to news.json for production
+                // Using fallback logic if you test locally
+                const response = await fetch('news.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                state.articles = data;
+                newsData = data; 
+                
+                renderApp();
+            } catch (error) {
+                console.error("Fetch failed, using placeholder:", error);
+                if(typeof newsData !== 'undefined' && newsData.length > 0) {
+                     state.articles = newsData;
+                     renderApp();
+                } else {
+                     grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px;">Could not load news. Please try again later.</div>`;
+                }
+            }
+
             const themeBtn = document.getElementById('themeBtn');
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -595,14 +644,12 @@
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
 
-                // 1. ALL NEWS (Default)
                 if (state.category === 'all') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
-                // 2. YOUTUBE NEWS
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
                     if (state.videoFilters.size > 0) {
@@ -615,7 +662,6 @@
                     return fullText.includes(state.search);
                 }
                 
-                // 3. GAMING
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
                     if (art.is_video) return false; 
@@ -630,7 +676,6 @@
                     return fullText.includes(state.search);
                 }
 
-                // 4. MOBILE TOPICS
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false;
@@ -640,7 +685,6 @@
                     return fullText.includes(state.search);
                 }
 
-                // 5. SPECIFIC CATEGORIES
                 if (art.is_video) return false;
                 let matchesCat = (art.category === state.category);
                 return matchesCat && fullText.includes(state.search);
@@ -651,15 +695,19 @@
             const filtered = getFilteredArticles();
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
             
-            if (state.page > totalPages) state.page = 1;
+            // PAGINATION FIX
+            if (state.page > totalPages) state.page = Math.max(1, totalPages);
             if (state.page < 1) state.page = 1;
 
             const start = (state.page - 1) * state.itemsPerPage;
             const end = start + state.itemsPerPage;
             const pageArticles = filtered.slice(start, end);
 
-            floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
-            floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
+            // PAGINATION ARROWS FIX
+            if (floatPrev && floatNext) {
+                floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
+                floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
+            }
 
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgs = art.images || [];
@@ -730,7 +778,7 @@
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
             
             if (newPage < 1) newPage = 1;
-            if (newPage > totalPages) newPage = totalPages;
+            if (newPage > totalPages) newPage = totalPages || 1;
             
             state.page = newPage;
             renderApp();
@@ -761,16 +809,9 @@
         }
 
         function handleSuggestSubmit(e) {
-            // Usually Netlify forms redirect to a success page.
-            // We can let it submit normally or prevent default and show an alert.
-            // For a pure static feel without redirect, standard form submission refreshes the page.
-            // Let's just allow it to submit normally to Netlify's success page for simplicity,
-            // or add an alert before it goes.
             alert("Thank you for your suggestion!");
-            // return true to allow form submission
         }
 
-        // Close on outside click for modals
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay')) {
                 e.target.classList.remove('open');
