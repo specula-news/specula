@@ -40,22 +40,22 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
-        /* NAV WRAPPER */
-        .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; }
+        /* NAV WRAPPER UPDATED FOR VISIBLE DROPDOWNS */
+        .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; justify-content: center; }
         
-        /* SCROLL BUTTONS (Hidden by default, shown via JS if needed) */
-        .scroll-btn { 
-            background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); 
-            min-width: 30px; height: 30px; border-radius: 50%; 
-            display: none; /* HIDDEN DEFAULT */
-            justify-content: center; align-items: center; 
-            cursor: pointer; font-size: 1.2rem; z-index: 5; transition: 0.2s; flex-shrink: 0; 
+        .category-nav { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; /* Allows buttons to wrap so menus aren't cut off */
+            justify-content: center;
+            padding: 5px 0; 
+            width: 100%; 
+            overflow: visible !important; /* Critical for dropdowns to show */
         }
-        .scroll-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        .category-nav { display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0; scrollbar-width: none; -ms-overflow-style: none; white-space: nowrap; width: 100%; }
-        .category-nav::-webkit-scrollbar { display: none; }
         
+        /* Hide arrows since we use wrap now */
+        .scroll-btn { display: none !important; }
+
         .filter-btn { position: relative; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
         .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
@@ -65,7 +65,7 @@
 
         /* DROPDOWNS */
         .dropdown-menu {
-            display: none; position: absolute; top: 120%; left: 0; 
+            display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%);
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
@@ -98,8 +98,6 @@
             .header-top { flex-wrap: wrap; gap: 15px; }
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
-            .category-nav { justify-content: flex-start; }
-            .scroll-btn { display: none !important; } /* Hide arrows on mobile always */
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -166,18 +164,20 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.3.0 -->
+                 <!-- V17.4.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.3.0 - Smart Scroll Arrows</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.4.0 - UI Fixes</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Adaptive Navigation:</strong> Scroll arrows ('‹' and '›') for the category menu now only appear if the menu is actually overflowing (squeezed).<br>
-                        • <strong>Auto-Hide:</strong> On large screens where all buttons fit, the arrows disappear automatically.<br>
+                        • <strong>Menu Fix:</strong> Fixed issue where dropdowns would not appear.<br>
+                        • <strong>Theme Button:</strong> Fixed issue where button text didn't change correctly.<br>
                     </div>
                 </li>
-                 <!-- V17.2.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 17.2.0</strong><br>
-                    Multi-Select Gaming & Dropdowns.
+                 <!-- V17.3.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.3.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        Adaptive Navigation & Smart Arrows.
+                    </div>
                 </li>
             </ul>
         </div>
@@ -191,7 +191,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.3.0</div>
+                    <div class="version-btn" id="versionBtn">Version 17.4.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -201,13 +201,12 @@
             </div>
             
             <div class="nav-wrapper">
-                <button id="scrollLeftBtn" class="scroll-btn left" onclick="scrollNav(-1)">‹</button>
                 <nav class="category-nav" id="catNav">
                     <button class="filter-btn active" onclick="setCategory('all')">All News</button>
                     
                     <!-- YOUTUBE -->
                     <div style="position:relative;">
-                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video')">YOUTUBE NEWS ▼</button>
+                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE NEWS ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
                             <button class="sub-btn" onclick="setVideoSubCategory('all')">All Videos</button>
                             <button class="sub-btn" onclick="setVideoSubCategory('geopolitics')">Geopolitics</button>
@@ -220,7 +219,7 @@
 
                     <!-- GAMING -->
                     <div style="position:relative;">
-                        <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming')">GAMING ▼</button>
+                        <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
                             <div class="dropdown-header">Filter Genres</div>
                             <div class="checkbox-list">
@@ -243,7 +242,6 @@
                     <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
                     <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                 </nav>
-                <button id="scrollRightBtn" class="scroll-btn right" onclick="scrollNav(1)">›</button>
             </div>
         </header>
 
@@ -279,31 +277,7 @@
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
         
-        // --- SMART ARROWS LOGIC ---
-        function updateNavArrows() {
-            const nav = document.getElementById('catNav');
-            const leftBtn = document.getElementById('scrollLeftBtn');
-            const rightBtn = document.getElementById('scrollRightBtn');
-            
-            // Check if content overflows
-            if (nav.scrollWidth > nav.clientWidth) {
-                leftBtn.style.display = 'flex';
-                rightBtn.style.display = 'flex';
-            } else {
-                leftBtn.style.display = 'none';
-                rightBtn.style.display = 'none';
-            }
-        }
-        
-        // Listen for resize
-        window.addEventListener('resize', updateNavArrows);
-
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
-
-        window.scrollNav = function(direction) {
-            const nav = document.getElementById('catNav');
-            nav.scrollBy({ left: direction * 200, behavior: 'smooth' });
-        }
 
         window.handleImageError = function(img) {
             img.classList.remove('active');
@@ -339,12 +313,13 @@
             });
             renderApp(); 
             
-            // Initial check for arrows
-            setTimeout(updateNavArrows, 100);
-            
+            // Check theme
+            const themeBtn = document.getElementById('themeBtn');
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
-                document.getElementById('themeBtn').innerText = '☾ DARK MODE';
+                themeBtn.innerText = '☾ DARK MODE';
+            } else {
+                themeBtn.innerText = '☀ LIGHT MODE';
             }
         }
 
@@ -355,8 +330,8 @@
             state.page = 1;
             state.subCat = 'all'; 
             
-            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-
+            // Note: We do NOT close dropdowns here anymore to allow toggleDropdown to work properly
+            
             filterBtns.forEach(btn => {
                 const btnText = btn.textContent.toLowerCase();
                 const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
@@ -369,16 +344,24 @@
             renderApp();
         }
 
-        window.toggleDropdown = function(type) {
+        // FIXED: Toggle Logic
+        window.toggleDropdown = function(type, event) {
+            if(event) event.stopPropagation(); // Stop click from propagating immediately
+            
             const menu = document.getElementById(type + 'Dropdown');
             const wasOpen = menu.classList.contains('show');
+            
+            // Close all dropdowns first
             document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            
             if (!wasOpen) {
-                menu.classList.add('show');
                 setCategory(type); 
+                // Delay adding show slightly or just add it after setCategory
+                menu.classList.add('show');
             }
         }
 
+        // Close dropdowns when clicking outside
         window.onclick = function(event) {
             if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) {
                 document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
@@ -419,7 +402,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
         }
         
-        function resetHome() { state.search = ''; searchInput.value = ''; setCategory('all'); }
+        function resetHome() { state.search = ''; searchInput.value = ''; setCategory('all'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); }
 
         const GENRES = {
             'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'],
@@ -549,7 +532,19 @@
             pagContainer.innerHTML = pHTML;
         }
 
-        document.getElementById('themeBtn').addEventListener('click', () => document.body.classList.toggle('light-mode'));
+        // FIXED: Theme Button Logic
+        const themeBtn = document.getElementById('themeBtn');
+        themeBtn.onclick = () => {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                themeBtn.innerText = '☾ DARK MODE';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeBtn.innerText = '☀ LIGHT MODE';
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+
         const modal = document.getElementById('changelogModal');
         document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
         document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
