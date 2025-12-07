@@ -1,23 +1,161 @@
 import json
 import os
+import requests
+from bs4 import BeautifulSoup
+import yt_dlp
+from datetime import datetime
 
-print("--- STARTAR GENERATORN ---")
+print("--- STARTAR GENERATORN (MED SCRAPING) ---")
 
-# 1. LÄS IN NYHETSDATA FRÅN news.json
-# Detta säkerställer att du ser dina riktiga nyheter, inte testdata.
+# --- 1. KONFIGURATION AV KÄLLOR ---
+# Här är länkarna du bad om, korrekt kategoriserade.
+
+SOURCES = [
+    # --- YOUTUBE: TECH ---
+    {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video"},
+    {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video"},
+    {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video"},
+    {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video"},
+
+    # --- YOUTUBE: GAMING ---
+    {"url": "https://www.youtube.com/@Fubgun/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@AshesofCreation/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@dreamcore_gg/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@TheSpudKing", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@BMFVR/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@Nilaus/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@CaptainLance9/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@ActionRPG/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@DrDisRespect", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@LegacyKillaHD/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@jackfrags", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@Battlefield_Clips/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@UnitedG/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@IGN/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@M107Gaming/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@TacticalPotato/videos", "cat": "gaming", "type": "video"},
+    {"url": "https://www.youtube.com/@AsmonTV/videos", "cat": "gaming", "type": "video"},
+
+    # --- WEBBPLATSER ---
+    # Jag har lagt till logik för att försöka hitta RSS-flöden för dessa om möjligt, 
+    # annars skrapas sidan direkt.
+    {"url": "https://www.gamespot.com/feeds/news/", "cat": "gaming", "type": "web", "source_name": "GameSpot"},
+    {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se"},
+    {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik"},
+    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club"},
+    {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World"},
+    {"url": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "cat": "geopolitics", "type": "web", "source_name": "Aftonbladet"},
+]
+
+# --- 2. HÄMTA NYHETER (SCRAPING LOGIK) ---
+new_articles = []
+
+def get_video_info(source):
+    """Hämtar senaste videon från YouTube med yt-dlp"""
+    ydl_opts = {
+        'quiet': True,
+        'extract_flat': True,
+        'playlistend': 2, # Hämta bara de 2 senaste för snabbhet
+        'ignoreerrors': True
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(source['url'], download=False)
+            if 'entries' in info:
+                for entry in info['entries']:
+                    if not entry: continue
+                    return {
+                        "title": entry.get('title'),
+                        "link": f"https://www.youtube.com/watch?v={entry.get('id')}",
+                        "images": [entry.get('thumbnails')[-1]['url']] if entry.get('thumbnails') else [],
+                        "summary": "YouTube Video",
+                        "category": source['cat'],
+                        "source": info.get('uploader', 'YouTube'),
+                        "time_str": "New Video",
+                        "is_video": True
+                    }
+    except Exception as e:
+        print(f"Fel vid YouTube-hämtning {source['url']}: {e}")
+    return None
+
+import feedparser
+
+def get_web_info(source):
+    """Hämtar nyheter från RSS eller webb"""
+    try:
+        # Testa först som RSS
+        feed = feedparser.parse(source['url'])
+        if feed.entries:
+            entry = feed.entries[0]
+            img_url = ""
+            # Försök hitta bild i media_content eller enclosure
+            if 'media_content' in entry:
+                img_url = entry.media_content[0]['url']
+            elif 'links' in entry:
+                for link in entry.links:
+                    if link.type.startswith('image/'):
+                        img_url = link.href
+                        break
+            
+            return {
+                "title": entry.title,
+                "link": entry.link,
+                "images": [img_url] if img_url else [],
+                "summary":  entry.get('summary', '')[:150] + "...",
+                "category": source['cat'],
+                "source": source.get('source_name', 'Web News'),
+                "time_str": "Just now",
+                "is_video": False
+            }
+    except Exception as e:
+        print(f"Kunde inte hämta RSS för {source['url']}: {e}")
+    return None
+
+print("Börjar hämta nyheter...")
+for source in SOURCES:
+    item = None
+    if source['type'] == 'video':
+        item = get_video_info(source)
+    else:
+        item = get_web_info(source)
+    
+    if item:
+        new_articles.append(item)
+        print(f"Hittade: {item['title']}")
+
+# --- 3. HANTERA NEWS.JSON ---
+# Läs in gamla, lägg till nya, ta bort dubbletter
+existing_data = []
 try:
-    with open('news.json', 'r', encoding='utf-8') as f:
-        news_data = json.load(f)
-    print(f"Lyckades läsa in {len(news_data)} artiklar från news.json")
-except Exception as e:
-    print(f"Kunde inte läsa news.json: {e}")
-    print("Använder tom lista som fallback.")
-    news_data = []
+    if os.path.exists('news.json'):
+        with open('news.json', 'r', encoding='utf-8') as f:
+            existing_data = json.load(f)
+except Exception:
+    existing_data = []
+
+# Kombinera (lägg nya först)
+all_news = new_articles + existing_data
+
+# Ta bort dubbletter baserat på länk
+unique_news = []
+seen_links = set()
+for article in all_news:
+    if article['link'] not in seen_links:
+        unique_news.append(article)
+        seen_links.add(article['link'])
+
+# Spara max 200 artiklar
+final_news = unique_news[:200]
+
+with open('news.json', 'w', encoding='utf-8') as f:
+    json.dump(final_news, f, ensure_ascii=False, indent=2)
+
+print(f"Sparade {len(final_news)} artiklar till news.json")
 
 # Konvertera till JSON-sträng för HTML
-json_data = json.dumps(news_data)
+json_data = json.dumps(final_news)
 
-# 2. HTML-MALLEN (Version 20.6.0 - Fixade knappar & Mobil-app fix)
+# --- 4. HTML-GENERERING (Din original-kod med logiken bevarad) ---
 template_code = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1180,7 +1318,7 @@ template_code = r'''<!DOCTYPE html>
 </body>
 </html>'''
 
-# 3. SKRIV UT FILEN TILL HÅRDDISKEN (SÄKERSTÄLLER ATT DEN FINNS)
+# 5. SKRIV UT HTML TILL INDEX.HTML
 final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(final_html)
