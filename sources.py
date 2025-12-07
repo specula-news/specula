@@ -29,6 +29,14 @@ SOURCES = [
     {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech"},
     {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber"},
     {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik"},
+    {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se"},
+
+    # --- Tech (YouTube) ---
+    {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video", "source_name": "Linus Tech Tips"},
+    {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video", "source_name": "JayzTwoCents"},
+    {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video", "source_name": "Hardware Unboxed"},
+    {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video", "source_name": "der8auer"},
+    {"url": "https://www.youtube.com/@elithecomputerguy/videos", "cat": "tech", "type": "video", "source_name": "Eli the Computer Guy"},
 
     # ==========================================
     #               EV (ELBILAR / ENERGI)
@@ -41,6 +49,12 @@ SOURCES = [
     {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World"},
     {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club"},
 
+    # --- EV (YouTube) ---
+    {"url": "https://www.youtube.com/@EverythingElectricCARS/videos", "cat": "ev", "type": "video", "source_name": "Everything Electric"},
+    {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija"},
+    {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided"},
+    {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video", "source_name": "Electric Viking"},
+
     # ==========================================
     #               GEOPOLITICS
     # ==========================================
@@ -51,6 +65,24 @@ SOURCES = [
     {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World"},
     {"url": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "cat": "geopolitics", "type": "web", "source_name": "Aftonbladet"},
 
+    # --- Geopolitics (YouTube) ---
+    {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS"},
+    {"url": "https://www.youtube.com/@EUdebates/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates"},
+    {"url": "https://www.youtube.com/@NewChinaTV/videos", "cat": "geopolitics", "type": "video", "source_name": "New China TV"},
+    {"url": "https://www.youtube.com/@GeopoliticalEconomy/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy"},
+    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "geopolitics", "type": "video", "source_name": "Channel NewsAsia"},
+    {"url": "https://www.youtube.com/@ChinaPulse/videos", "cat": "geopolitics", "type": "video", "source_name": "China Pulse"},
+    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN"},
+    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN Europe"},
+    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "geopolitics", "type": "video", "source_name": "CCTV News"},
+    {"url": "https://www.youtube.com/@cgtnamerica/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN America"},
+    {"url": "https://www.youtube.com/@ShanghaiEye/videos", "cat": "geopolitics", "type": "video", "source_name": "ShanghaiEye"},
+    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "geopolitics", "type": "video", "source_name": "Diary of a CEO"},
+    {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris"},
+    {"url": "https://www.youtube.com/@InsideChinaBusiness/videos", "cat": "geopolitics", "type": "video", "source_name": "Inside China Business"},
+    {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary"},
+    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "geopolitics", "type": "video", "source_name": "Asianometry"},
+
     # ==========================================
     #               SCIENCE
     # ==========================================
@@ -60,6 +92,15 @@ SOURCES = [
     {"url": "https://www.newscientist.com/feed/home/", "cat": "science", "type": "web", "source_name": "New Scientist"},
     {"url": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "cat": "science", "type": "web", "source_name": "NASA"},
 
+    # --- Science (YouTube) ---
+    {"url": "https://www.youtube.com/@pbsspacetime/videos", "cat": "science", "type": "video", "source_name": "PBS Space Time"},
+    {"url": "https://www.youtube.com/@SpaceEyeTech/videos", "cat": "science", "type": "video", "source_name": "Space Eye Tech"},
+    {"url": "https://www.youtube.com/@FIIInstitute/videos", "cat": "science", "type": "video", "source_name": "FII Institute"},
+    {"url": "https://www.youtube.com/@PracticalEngineeringChannel/videos", "cat": "science", "type": "video", "source_name": "Practical Engineering"},
+    {"url": "https://www.youtube.com/@smartereveryday/videos", "cat": "science", "type": "video", "source_name": "SmarterEveryDay"},
+    {"url": "https://www.youtube.com/@veritasium/videos", "cat": "science", "type": "video", "source_name": "Veritasium"},
+    {"url": "https://www.youtube.com/@ScienceChannel/videos", "cat": "science", "type": "video", "source_name": "Science Channel"},
+
     # ==========================================
     #             CONSTRUCTION
     # ==========================================
@@ -68,58 +109,8 @@ SOURCES = [
     {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive"},
     {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer"},
 
-    # ==========================================
-    #             ANDRA KÄLLOR från listan
-    # ==========================================
-    # --- Tech (YT) ---
-    {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video"},
-    {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video"},
-    {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video"},
-    {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video"},
-    {"url": "https://www.youtube.com/@elithecomputerguy/videos", "cat": "tech", "type": "video"},
-
-    # --- EV (YT) ---
-    {"url": "https://www.youtube.com/@EverythingElectricCARS/videos", "cat": "ev", "type": "video"},
-    {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video"},
-    {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video"},
-    {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video"},
-
-    # --- Geopolitics (YT) ---
-    {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@EUdebates/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@NewChinaTV/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@GeopoliticalEconomy/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@ChinaPulse/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@cgtnamerica/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@ShanghaiEye/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@InsideChinaBusiness/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video"},
-    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "geopolitics", "type": "video"},
-
-    # --- Science (YT) ---
-    {"url": "https://www.youtube.com/@pbsspacetime/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@SpaceEyeTech/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@FIIInstitute/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@PracticalEngineeringChannel/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@smartereveryday/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@veritasium/videos", "cat": "science", "type": "video"},
-    {"url": "https://www.youtube.com/@ScienceChannel/videos", "cat": "science", "type": "video"},
-
-    # --- Construction (YT) ---
-    {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video"},
-    {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video"},
-    {"url": "https://www.youtube.com/@FreeDocumentaryEngineering/videos", "cat": "construction", "type": "video"},
-
-    # --- Gaming (YT) - från din ursprungliga lista ---
-    # (Inga specifika gaming-kanaler i din ursprungliga lista)
-
-    # --- Andra webbplatser från din lista som inte fanns med ---
-    # tjock.se (Tech)
-    {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se"},
+    # --- Construction (YouTube) ---
+    {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video", "source_name": "Tomorrow's Build"},
+    {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video", "source_name": "The B1M"},
+    {"url": "https://www.youtube.com/@FreeDocumentaryEngineering/videos", "cat": "construction", "type": "video", "source_name": "Free Documentary Engineering"},
 ]
