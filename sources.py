@@ -82,7 +82,6 @@ SOURCES = [
     {"url": "https://www.youtube.com/@EverythingElectricCARS/videos", "cat": "ev", "type": "video"},
     {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video"},
     {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video"},
-    {"url": "https://www.youtube.com/@TheElectricViking/videos", "cat": "ev", "type": "video"},
     {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video"},
 
     # --- Geopolitics (YT) ---
