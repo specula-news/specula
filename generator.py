@@ -275,8 +275,10 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 def generate_site():
-    print("Startar SPECULA Generator v20.0 (Static Generation)...")
+    print("Startar SPECULA Generator v20.1 (Static + PWA)...")
     
+    SITE_URL = "https://specula-news.netlify.app" # Lades till här för referens
+
     # För statisk generering behöver vi inte nödvändigtvis läsa in gammal JSON
     # för att spara den, men vi gör det för att inte missa nyheter 
     # om scriptet körs ofta.
@@ -363,6 +365,57 @@ def generate_site():
         print("Klar! index.html genererad.")
     else:
         print("VARNING: template.html saknas. Kan inte generera index.html.")
+    
+    # --- PWA GENERATION (NYTT) ---
+    # Skapa manifest.json
+    manifest_content = {
+        "name": "SPECULA News",
+        "short_name": "SPECULA",
+        "start_url": "/index.html",
+        "display": "standalone",
+        "background_color": "#050505",
+        "theme_color": "#00f0ff",
+        "scope": "/",
+        "icons": [
+            {
+                "src": "icon.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any maskable"
+            },
+            {
+                "src": "icon.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            }
+        ]
+    }
+    with open("manifest.json", "w", encoding="utf-8") as f:
+        json.dump(manifest_content, f)
+        
+    # Skapa Service Worker
+    sw_content = """
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open('specula-store').then((cache) => cache.addAll([
+      '/',
+      '/index.html',
+      '/icon.png'
+    ]))
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => response || fetch(e.request))
+  );
+});
+"""
+    with open("service-worker.js", "w", encoding="utf-8") as f:
+        f.write(sw_content)
+        
+    print("PWA-filer (manifest, sw) genererade.")
 
 if __name__ == "__main__":
     generate_site()
