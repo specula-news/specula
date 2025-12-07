@@ -43,14 +43,13 @@
 
         .nav-wrapper { display: flex; justify-content: center; width: 100%; position: relative; }
         
-        /* --- UNIFIED NAV BAR (One Big Bubble) --- */
         .unified-nav { 
             display: inline-flex; 
-            background: var(--nav-bg); /* Darker background for the container */
+            background: var(--nav-bg); 
             border: 1px solid var(--border);
             border-radius: 50px;
             padding: 4px;
-            gap: 2px; /* Very small gap */
+            gap: 0px; 
             flex-wrap: wrap;
             justify-content: center;
             overflow: visible !important; 
@@ -63,7 +62,7 @@
             background: transparent; 
             border: none; 
             color: var(--text-secondary); 
-            padding: 8px 16px; 
+            padding: 8px 14px; 
             cursor: pointer; 
             border-radius: 40px; 
             font-family: 'Space Grotesk', sans-serif; 
@@ -76,42 +75,33 @@
         }
 
         .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        
         .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
         .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
 
-        .scroll-btn { display: none !important; }
-
-        /* --- DROPDOWN STYLING --- */
         .dropdown-menu {
             display: none; position: absolute; top: 125%; 
-            /* Default Centered for Desktop */
             left: 50%; transform: translateX(-50%);
             background: var(--dropdown-bg); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
             box-shadow: 0 15px 50px rgba(0,0,0,0.9);
-            min-width: 200px;
+            min-width: 220px;
             flex-direction: column; overflow: hidden;
             animation: fadeIn 0.2s ease;
         }
         .dropdown-menu.show { display: flex; }
-        
         .dropdown-list { max-height: 350px; overflow-y: auto; padding: 5px; }
         
-        /* Checkbox Item Styling - FIXED SPACING AND ALIGNMENT */
         .check-item { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 12px; /* Reduced padding */
-            cursor: pointer; transition: 0.2s;
+            padding: 10px 14px; cursor: pointer; transition: 0.2s;
             border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem;
-            margin-bottom: 1px;
-            gap: 10px; /* Reduced gap */
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
+            margin-bottom: 2px;
+            gap: 15px;
         }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
-        
         .check-item input { display: none; }
         
         .check-indicator {
@@ -123,16 +113,16 @@
         
         .check-item input:checked + .check-indicator {
             background: var(--accent); border-color: var(--accent);
-            box-shadow: 0 0 5px var(--accent-glow);
+            box-shadow: 0 0 8px var(--accent-glow);
         }
         
-        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 5px rgba(255,0,64,0.5); }
-        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 5px rgba(157,0,255,0.5); }
+        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
+        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
         .check-item input:checked ~ span { color: var(--text-primary); }
 
         .dropdown-footer { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 14px; border-top: 1px solid var(--border); 
+            padding: 12px 14px; border-top: 1px solid var(--border); 
             background: rgba(0,0,0,0.2); gap: 10px;
         }
         
@@ -142,20 +132,17 @@
             text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s;
             display: flex; align-items: center; justify-content: center;
         }
-        
-        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.7rem; }
+        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
-        
         .btn-ok { 
-            background: var(--accent); color: #000; padding: 5px 18px;
-            border-radius: 50px; font-size: 0.75rem; gap: 4px;
-            box-shadow: 0 0 10px var(--accent-glow);
+            background: var(--accent); color: #000; padding: 6px 20px;
+            border-radius: 50px; font-size: 0.8rem; gap: 5px;
+            box-shadow: 0 0 15px var(--accent-glow);
         }
-        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent-glow); }
+        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-glow); }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
-        /* --- SUGGESTION FORM STYLES --- */
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; }
         .form-input, .form-textarea {
@@ -177,7 +164,6 @@
         }
         .form-submit-btn:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--accent-glow); }
 
-        /* RESPONSIVE LOGIC */
         .hide-on-mobile { display: inline-block; }
         .show-on-mobile { display: none; }
         .desktop-categories { display: contents; }
@@ -192,63 +178,52 @@
             .show-on-mobile { display: block !important; position: relative; }
             .desktop-categories { display: none; }
             
-            /* Tighter unified nav on mobile */
             .unified-nav { width: 100%; justify-content: space-between; padding: 2px; }
             .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
             
-            /* FIX: MOBILE DROPDOWN ALIGNMENT AND CLIPPING */
-            .dropdown-menu {
-                min-width: 200px;
-                transform: none; /* No translateX on mobile */
-                width: auto;
-            }
-            
-            /* Specific Alignment for Mobile */
-            #topicsDropdown {
-                left: 0;
-                right: auto;
-            }
-            
-            #gamingDropdown {
-                left: auto;
-                right: 0;
-            }
-            
-            #videoDropdown {
-                 /* Center video dropdown on mobile if needed, or align based on button */
-                 left: 50%;
-                 transform: translateX(-50%);
-                 width: 240px;
-            }
+            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
+            #topicsDropdown { left: 0; right: auto; }
+            #gamingDropdown { left: auto; right: 0; }
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
-        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; animation: fadeIn 0.5s; position:relative;}
+        
+        .news-card { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            transition: transform 0.3s; 
+            animation: fadeIn 0.5s; 
+            position:relative;
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
         
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; }
         .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%); }
-        .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 0; pointer-events: none; }
-        .card-image.active { opacity: 1; z-index: 2; pointer-events: auto; }
+        .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 1; }
         
-        .dots-container { position: absolute; bottom: 10px; right: 10px; z-index: 20; display: flex; gap: 8px; }
-        .dot { width: 30px; height: 6px; border-radius: 2px; background: rgba(255,255,255,0.3); cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.5); }
-        .dot:hover { background: rgba(255,255,255,0.8); }
-        .dot.active { background: var(--accent); box-shadow: 0 0 5px var(--accent-glow); }
-
-        .news-card:hover .card-image.active { transform: scale(1.05); }
-        .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; }
+        .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; }
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
-        .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; }
+        
+        .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
+        
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; }
-        .card-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
-        .read-more { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        
+        .ai-summary { 
+            font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5; 
+            border-left: 2px solid var(--border); padding-left: 12px; 
+            padding-bottom: 15px; /* Added padding since footer is gone */
+        }
+        
+        /* Removed .card-footer styles */
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
@@ -290,13 +265,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.11.0 -->
+                 <!-- V18.0.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.11.0 - Refined UI</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.0.0 - Clean & Fast</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>One Big Bubble:</strong> Navigation is now a unified segmented control.<br>
-                        • <strong>Pagination:</strong> Fixed next/prev page logic.<br>
-                        • <strong>Mobile Layout:</strong> Fixed clipping and spacing issues in dropdowns.<br>
+                        • <strong>Backend:</strong> Updated to fetch only 1 image (faster).<br>
+                        • <strong>UI Clean-up:</strong> Removed dots and "Full Story" button for a cleaner card look.<br>
+                        • <strong>Nav:</strong> Unified segmented navigation bar.<br>
                     </div>
                 </li>
             </ul>
@@ -341,7 +316,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.11.0</div>
+                    <div class="version-btn" id="versionBtn">Version 18.0.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -463,23 +438,8 @@
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
-        window.handleImageError = function(img) {
-            img.classList.remove('active');
-            img.style.display = 'none';
-            const parent = img.parentElement;
-            const nextImg = parent.querySelector('.card-image:not([style*="none"])');
-            if(nextImg) nextImg.classList.add('active');
-        }
-
-        window.switchImage = function(cardId, imgIndex) {
-            const card = document.getElementById(cardId);
-            const images = card.querySelectorAll('.card-image');
-            const dots = card.querySelectorAll('.dot');
-            images.forEach(img => img.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            if(images[imgIndex]) images[imgIndex].classList.add('active');
-            if(dots[imgIndex]) dots[imgIndex].classList.add('active');
-        }
+        // REMOVED: handleImageError (no needed since we just use one image)
+        // REMOVED: switchImage (only 1 image now)
 
         window.stopProp = function(e) {
             e.preventDefault();
@@ -499,8 +459,7 @@
 
             // FETCH JSON (The Worker Logic)
             try {
-                // IMPORTANT: Change fetch url to news.json for production
-                // Using fallback logic if you test locally
+                // Using cache busting for news.json
                 const response = await fetch('news.json?t=' + new Date().getTime());
                 const data = await response.json();
                 
@@ -509,7 +468,7 @@
                 
                 renderApp();
             } catch (error) {
-                console.error("Fetch failed, using placeholder:", error);
+                console.error("Fetch failed:", error);
                 if(typeof newsData !== 'undefined' && newsData.length > 0) {
                      state.articles = newsData;
                      renderApp();
@@ -695,7 +654,6 @@
             const filtered = getFilteredArticles();
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
             
-            // PAGINATION FIX
             if (state.page > totalPages) state.page = Math.max(1, totalPages);
             if (state.page < 1) state.page = 1;
 
@@ -703,46 +661,28 @@
             const end = start + state.itemsPerPage;
             const pageArticles = filtered.slice(start, end);
 
-            // PAGINATION ARROWS FIX
             if (floatPrev && floatNext) {
                 floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
                 floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
             }
 
             grid.innerHTML = pageArticles.map((art, index) => {
-                let imgs = art.images || [];
-                if (typeof imgs === 'string') imgs = [imgs, imgs, imgs]; 
+                let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
                 
-                let imgsHtml = '';
-                imgs.forEach((url, i) => {
-                    let active = i === 0 ? 'active' : '';
-                    imgsHtml += `<img src="${url}" class="card-image ${active}" loading="lazy" alt="News" onerror="handleImageError(this)">`;
-                });
-
-                let dotsHtml = '';
-                if(imgs.length > 1) {
-                    imgs.forEach((_, i) => {
-                        let active = i === 0 ? 'active' : '';
-                        dotsHtml += `<div class="dot ${active}" onclick="stopProp(event); switchImage('card-${index}', ${i})"></div>`;
-                    });
-                }
-
                 return `
                 <article class="news-card" id="card-${index}">
                     <a href="${art.link}" target="_blank" class="img-link">
                         <div class="card-image-wrapper">
                             <div class="cat-tag">${art.category}</div>
                             ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                            ${imgsHtml}
+                            <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News">
                             <div class="card-overlay"></div>
-                            <div class="dots-container">${dotsHtml}</div>
                         </div>
                     </a>
                     <div class="card-content">
                         <div class="card-meta"><div class="source-badge">${art.source}</div><time>${art.time_str}</time></div>
                         <h2 class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></h2>
                         <p class="ai-summary">${art.summary}</p>
-                        <div class="card-footer"><a href="${art.link}" target="_blank" class="read-more">FULL STORY &rarr;</a></div>
                     </div>
                 </article>
             `}).join('');

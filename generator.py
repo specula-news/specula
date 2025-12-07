@@ -15,7 +15,6 @@ from yt_dlp import YoutubeDL
 from difflib import SequenceMatcher
 import concurrent.futures
 
-# Tvinga UTF-8 för utskrifter
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except AttributeError:
@@ -27,7 +26,7 @@ MAX_DAYS_OLD = 4
 MAX_VIDEO_DAYS_OLD = 3
 TIMEOUT_SECONDS = 5
 JSON_FILE = "news.json"
-MAX_WORKERS = 10 # Antal samtidiga trådar
+MAX_WORKERS = 10 
 
 # --- KÄLLOR ---
 YOUTUBE_CHANNELS = [
@@ -111,15 +110,6 @@ RSS_SOURCES = [
 
 SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se", "nyteknik.se"]
 
-# --- STATIC POOL ---
-STATIC_POOL = [
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
-    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
-]
-
 # --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
     "gaming": ["https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80", "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80"],
@@ -134,28 +124,19 @@ TOPIC_KEYWORDS = {
 
 def get_images_by_context(title, category):
     text = title.lower()
-    selected_images = []
+    # Endast en bild behövs nu
     
     if "gaming" in category.lower():
         pool = IMAGE_TOPICS.get("gaming", IMAGE_TOPICS["general"])
-        selected_images.extend(random.sample(pool, min(3, len(pool))))
+        return [random.choice(pool)]
     
-    if len(selected_images) < 3:
-        for topic, keywords in TOPIC_KEYWORDS.items():
-            if any(k in text for k in keywords):
-                pool = IMAGE_TOPICS.get(topic, IMAGE_TOPICS["general"])
-                for img in pool:
-                    if img not in selected_images: selected_images.append(img)
-                break
+    for topic, keywords in TOPIC_KEYWORDS.items():
+        if any(k in text for k in keywords):
+            pool = IMAGE_TOPICS.get(topic, IMAGE_TOPICS["general"])
+            return [random.choice(pool)]
     
-    if len(selected_images) < 3:
-        general_pool = list(IMAGE_TOPICS["general"])
-        random.shuffle(general_pool)
-        for img in general_pool:
-            if img not in selected_images: selected_images.append(img)
-            
-    while len(selected_images) < 3: selected_images.append(selected_images[0])
-    return selected_images[:3]
+    general_pool = list(IMAGE_TOPICS["general"])
+    return [random.choice(general_pool)]
 
 def fetch_article_images(url, title, category):
     found_images = []
@@ -164,7 +145,6 @@ def fetch_article_images(url, title, category):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         }
-        # Snabbt anrop med kort timeout
         response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         
         if response.status_code == 200:
@@ -176,11 +156,8 @@ def fetch_article_images(url, title, category):
                 if not img.startswith(('http:', 'https:')): img = urljoin(url, img)
                 found_images.append(img)
             
-            tw_image = soup.find("meta", property="twitter:image")
-            if tw_image and tw_image.get("content"):
-                img = tw_image["content"]
-                if not img.startswith(('http:', 'https:')): img = urljoin(url, img)
-                if img not in found_images: found_images.append(img)
+            # Om vi hittade en bild, sluta leta (vi behöver bara 1)
+            if found_images: return found_images
 
             content_area = soup.find('article') or soup.find('main') or soup.body
             if content_area:
@@ -192,17 +169,15 @@ def fetch_article_images(url, title, category):
                         lower_src = src.lower()
                         bad = ['logo', 'icon', 'avatar', 'pixel', 'tracker', 'ad', 'svg', 'gif']
                         if any(b in lower_src for b in bad): continue
-                        if src not in found_images:
-                            found_images.append(src)
-                            if len(found_images) >= 3: break
+                        found_images.append(src)
+                        break # Hittade en, bryt
     except Exception:
         pass
 
-    context_images = get_images_by_context(title, category)
-    for img in context_images:
-        if img not in found_images: found_images.append(img)
-            
-    return found_images[:3]
+    if found_images:
+        return found_images
+        
+    return get_images_by_context(title, category)
 
 def clean_youtube_description(text):
     if not text: return "Watch video for details."
@@ -246,7 +221,9 @@ def fetch_youtube_videos(channel_url, category, existing_urls):
                     if upload_date:
                         pub_ts = datetime.strptime(upload_date, "%Y%m%d").timestamp()
                     if (time.time() - pub_ts) / 86400 > MAX_VIDEO_DAYS_OLD: continue
-                    img_list = [img, img, img] 
+                    
+                    # Endast 1 bild i listan
+                    img_list = [img] 
                     videos.append({
                         "title": entry.get('title'),
                         "link": link,
@@ -281,7 +258,7 @@ def process_rss_entry(args):
             title = translate_text(title)
             summary = translate_text(summary)
 
-        # Hämta bilder (Tungt jobb, görs nu parallellt)
+        # Hämta 1 bild
         images = fetch_article_images(entry.link, title, category)
 
         return {
@@ -303,9 +280,8 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 def generate_site():
-    print("Startar SPECULA Generator v19.0 (Multi-Threaded)...")
+    print("Startar SPECULA Generator v19.1 (Clean & Fast)...")
     
-    # 1. LÄS IN GAMLA NYHETER
     existing_articles = []
     existing_urls = set()
     
@@ -325,17 +301,14 @@ def generate_site():
 
     new_articles = []
 
-    # 2. YouTube (Snabb, behöver inte trådning lika mycket)
     print("Hämtar YouTube...")
     for url, cat in YOUTUBE_CHANNELS:
         new_articles.extend(fetch_youtube_videos(url, cat, existing_urls))
 
-    # 3. RSS (Långsam - Använder nu ThreadPool!)
-    print("Hämtar RSS-flöden och skrapar bilder (Parallellt)...")
+    print("Hämtar RSS-flöden...")
     rss_tasks = []
     headers = {'User-Agent': 'Mozilla/5.0'}
     
-    # Samla alla RSS-inlägg först
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
@@ -343,10 +316,8 @@ def generate_site():
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                # DEDUPLICATION
                 if entry.link in existing_urls: continue
 
-                # Similar title check
                 title = entry.title
                 is_duplicate_title = False
                 for existing in existing_articles:
@@ -355,24 +326,20 @@ def generate_site():
                         break
                 if is_duplicate_title: continue
 
-                # Lägg till i kön för bearbetning
                 rss_tasks.append((entry, category, source_name, is_swedish))
                 existing_urls.add(entry.link)
         except Exception as e:
             print(f"Feed error {url}: {e}")
 
-    # Kör tunga jobb (bilder/översättning) parallellt
-    print(f"Bearbetar {len(rss_tasks)} nya artiklar med {MAX_WORKERS} trådar...")
+    print(f"Bearbetar {len(rss_tasks)} nya artiklar...")
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         results = list(executor.map(process_rss_entry, rss_tasks))
     
-    # Filtrera bort misslyckade (None)
     for res in results:
         if res:
             new_articles.append(res)
 
-    # 4. SAMMANFOGA OCH SPARA
     all_content = new_articles + existing_articles
     all_content.sort(key=lambda x: x.get('published', 0), reverse=True)
     
@@ -385,4 +352,4 @@ def generate_site():
 
 if __name__ == "__main__":
     generate_site()
-    sys.exit() # Tvinga avslut
+    sys.exit()
