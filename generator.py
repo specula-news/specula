@@ -6,45 +6,46 @@ import feedparser
 from bs4 import BeautifulSoup
 from datetime import datetime
 import time
+import concurrent.futures # För att hämta 10 saker samtidigt
 
 # --- 1. IMPORTERA KÄLLOR FRÅN SOURCES.PY ---
+# Detta gör att koden håller sig ren. Du ändrar länkarna i sources.py istället.
 try:
     from sources import SOURCES
     print(f"--- LADDADE {len(SOURCES)} KÄLLOR FRÅN sources.py ---")
 except ImportError:
-    print("VARNING: Kunde inte hitta sources.py! Inga NYA nyheter kommer hämtas.")
+    print("VARNING: Kunde inte hitta sources.py! Se till att filen finns.")
     SOURCES = []
 
-print("--- STARTAR GENERATORN (MED SMART SCRAPING) ---")
+print(f"--- STARTAR GENERATORN (OPTIMERING: PÅ) ---")
 
-# "Fake" headers för att se ut som en riktig webbläsare (undviker blockering)
+# "Fake" headers för att se ut som en riktig webbläsare
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
     "Referer": "https://www.google.com/"
 }
 
-# --- 2. HJÄLPFUNKTIONER ---
+# --- 2. OPTIMERADE FUNKTIONER ---
 
 def scrape_article_image(url):
     """Går in på hemsidan och letar efter huvudbilden (og:image)"""
     try:
-        # 3 sekunders timeout så vi inte fastnar
         r = requests.get(url, headers=HEADERS, timeout=4)
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             
-            # 1. Leta efter Open Graph image (standard för delning)
+            # Prioritera Open Graph (Facebook/Social media bild)
             og_image = soup.find("meta", property="og:image")
             if og_image and og_image.get("content"):
                 return og_image["content"]
             
-            # 2. Reservplan: Twitter image
+            # Twitter bild
             tw_image = soup.find("meta", name="twitter:image")
             if tw_image and tw_image.get("content"):
                 return tw_image["content"]
                 
-            # 3. Sista utväg: Hitta första bästa <img> tagg som ser stor ut
+            # Första bästa bild
             images = soup.find_all('img')
             for img in images:
                 src = img.get('src')
@@ -55,11 +56,11 @@ def scrape_article_image(url):
     return None
 
 def get_video_info(source):
-    """Hämtar videoinfo och väljer en lagom stor tumnagel (inte 4K)"""
+    """Hämtar videoinfo och väljer en lagom stor tumnagel (SNABB)"""
     ydl_opts = {
         'quiet': True,
-        'extract_flat': True,
-        'playlistend': 2,
+        'extract_flat': True, # Hämtar bara info, laddar inte ner videon
+        'playlistend': 2,     # Bara de 2 senaste
         'ignoreerrors': True
     }
     try:
@@ -69,43 +70,36 @@ def get_video_info(source):
                 for entry in info['entries']:
                     if not entry: continue
                     
-                    # Logik för att välja bild: 
-                    # Vi vill ha 'hqdefault' (480p) eller 'sddefault' (640p).
-                    # 'maxresdefault' är ofta för tung (flera MB).
+                    # Hitta optimal bildstorlek (c:a 640px bred) istället för tung 4K
                     thumbnails = entry.get('thumbnails', [])
                     img_url = ""
                     
                     if thumbnails:
-                        # Hitta en bild som är närmast 640px bred (lagom kvalitet för webben)
-                        # Detta sorterar listan och tar den som är närmast 640px
                         best_thumb = min(thumbnails, key=lambda x: abs(x.get('width', 0) - 640))
                         img_url = best_thumb.get('url')
                     
-                    # Fallback om yt-dlp inte gav thumbnails struktur
                     if not img_url:
                         video_id = entry.get('id')
-                        # Använder hqdefault.jpg som är standard 480x360 (säkert kort)
                         img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
                     return {
                         "title": entry.get('title'),
                         "link": f"https://www.youtube.com/watch?v={entry.get('id')}",
                         "images": [img_url],
-                        "summary": "Watch this video on YouTube.",
+                        "summary": "Click to watch video.",
                         "category": source['cat'],
                         "source": info.get('uploader', 'YouTube'),
                         "time_str": "New Video",
                         "is_video": True
                     }
     except Exception as e:
-        print(f"YouTube-fel ({source['url']}): {e}")
+        # Tyst felhantering för att inte spamma loggen
+        pass
     return None
 
 def get_web_info(source):
     """Hämtar RSS och skrapar fram bild om den saknas"""
     try:
-        # Använd headers även för RSS om möjligt (vissa flöden kräver det)
-        # Vi hämtar rådatan först med requests för att kunna fejka headers
         response = requests.get(source['url'], headers=HEADERS, timeout=10)
         feed = feedparser.parse(response.content)
         
@@ -113,7 +107,7 @@ def get_web_info(source):
             entry = feed.entries[0]
             img_url = ""
             
-            # 1. Kolla om bild finns direkt i RSS (enclosures/media_content)
+            # Försök hitta bild i RSS-datan först
             if 'media_content' in entry:
                 img_url = entry.media_content[0]['url']
             elif 'links' in entry:
@@ -124,13 +118,11 @@ def get_web_info(source):
             elif 'enclosures' in entry and len(entry.enclosures) > 0:
                  img_url = entry.enclosures[0].href
 
-            # 2. Om ingen bild hittades i RSS, gå in på sidan och "skrapa" den
-            # Detta fixar Aftonbladet, SCMP, etc som ofta inte skickar bild i RSS
+            # Om ingen bild hittades, använd vår smarta scraper
             if not img_url:
-                print(f"   -> Saknar bild, skrapar: {entry.title[:30]}...")
                 img_url = scrape_article_image(entry.link)
 
-            # Rensa sammanfattning från HTML-taggar
+            # Städa upp texten
             summary_text = entry.get('summary', '')
             if '<' in summary_text:
                 soup = BeautifulSoup(summary_text, 'html.parser')
@@ -146,31 +138,44 @@ def get_web_info(source):
                 "time_str": "Just Now",
                 "is_video": False
             }
-    except Exception as e:
-        print(f"Webb-fel ({source['url']}): {e}")
+    except Exception:
+        pass
     return None
 
-# --- 3. KÖR LOOPEN ---
-new_articles = []
-print("Börjar hämta nyheter...")
-
-for source in SOURCES:
-    # Liten paus för att vara snäll mot servrarna och inte bli blockad
-    time.sleep(0.5) 
-    
-    item = None
+# Wrapper-funktion för trådhanteraren
+def process_source(source):
     if source['type'] == 'video':
-        item = get_video_info(source)
+        return get_video_info(source)
     else:
-        item = get_web_info(source)
-    
-    if item:
-        new_articles.append(item)
-        print(f"OK: {item['title'][:40]}")
-    else:
-        print(f"FAIL: {source['url']}")
+        return get_web_info(source)
 
-# --- 4. UPPDATERA NEWS.JSON ---
+# --- 3. KÖR PARALLELLT (TURBO MODE) ---
+new_articles = []
+print(f"Startar hämtning av {len(SOURCES)} källor med 10 trådar...")
+
+start_time = time.time()
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    # Skicka alla jobb till poolen
+    future_to_source = {executor.submit(process_source, source): source for source in SOURCES}
+    
+    # Ta emot resultaten allt eftersom de blir klara
+    for future in concurrent.futures.as_completed(future_to_source):
+        source = future_to_source[future]
+        try:
+            data = future.result()
+            if data:
+                new_articles.append(data)
+                print(f"KLAR: {data['title'][:40]}...")
+            else:
+                print(f"INGEN NYHET: {source['url']}")
+        except Exception as exc:
+            print(f"FEL: {source['url']} genererade ett undantag: {exc}")
+
+duration = time.time() - start_time
+print(f"--- HÄMTNING KLAR PÅ {duration:.2f} SEKUNDER ---")
+
+# --- 4. UPPDATERA DATABASEN (NEWS.JSON) ---
 existing_data = []
 try:
     if os.path.exists('news.json'):
@@ -179,38 +184,41 @@ try:
 except Exception:
     existing_data = []
 
-# Lägg nya nyheter först
+# Lägg nya nyheter först i listan
 all_news = new_articles + existing_data
 unique_news = []
 seen_links = set()
 
+# Ta bort dubbletter
 for article in all_news:
-    # Använd länken som unikt ID för att undvika dubbletter
     if article['link'] not in seen_links:
         unique_news.append(article)
         seen_links.add(article['link'])
 
-# Spara max 200 artiklar så filen inte blir för stor
+# Spara max 200 artiklar
 final_news = unique_news[:200]
 
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_news, f, ensure_ascii=False, indent=2)
 
-print(f"Databas uppdaterad. Totalt {len(final_news)} artiklar.")
+print(f"Sparade {len(final_news)} artiklar till news.json.")
 
-# --- 5. BYGG HTML ---
+# --- 5. SKAPA HTML-FILEN ---
 json_data = json.dumps(final_news)
 
 try:
-    # Vi läser in din template.html (se till att den filen finns i repot)
+    # Försök läsa in template.html (den snygga designen)
     with open('template.html', 'r', encoding='utf-8') as f:
         template_code = f.read()
     
+    # Byt ut platshållaren mot riktig data
     final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
     
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print("SUCCESS: index.html har uppdaterats!")
+    print("SUCCESS: index.html har uppdaterats korrekt!")
+
 except Exception as e:
-    print(f"FEL vid HTML-generering: {e}")
+    print(f"KRITISKT FEL: Kunde inte läsa template.html: {e}")
+    print("Se till att 'template.html' finns i din mapp.")
