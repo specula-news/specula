@@ -18,8 +18,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; }
-        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; }
+        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; --input-bg: #1a1a1a; }
+        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; --input-bg: #f3f4f6; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
@@ -41,24 +41,56 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
-        .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; justify-content: center; }
-        .category-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 5px 0; width: 100%; overflow: visible !important; }
-        .scroll-btn { display: none !important; }
-
-        .filter-btn { position: relative; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
-        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); }
-        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .nav-wrapper { display: flex; justify-content: center; width: 100%; position: relative; }
         
-        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; border-color: #ff0040; }
-        .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; border-color: #9d00ff; }
+        /* --- UNIFIED NAV BAR --- */
+        .unified-nav { 
+            display: inline-flex; 
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px;
+            gap: 0px; 
+            flex-wrap: wrap;
+            justify-content: center;
+            overflow: visible !important; 
+            position: relative;
+            z-index: 50;
+        }
+
+        .filter-btn { 
+            position: relative; 
+            background: transparent; 
+            border: none; 
+            color: var(--text-secondary); 
+            padding: 8px 14px; 
+            cursor: pointer; 
+            border-radius: 40px; 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-weight: 600; 
+            transition: all 0.2s; 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        
+        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
+        .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
+
+        .scroll-btn { display: none !important; }
 
         /* --- DROPDOWN STYLING --- */
         .dropdown-menu {
-            display: none; position: absolute; top: 125%; left: 50%; transform: translateX(-50%);
+            display: none; position: absolute; top: 125%; 
+            left: 50%; transform: translateX(-50%);
             background: var(--dropdown-bg); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
             box-shadow: 0 15px 50px rgba(0,0,0,0.9);
-            min-width: 280px; 
+            min-width: 220px; 
             flex-direction: column; overflow: hidden;
             animation: fadeIn 0.2s ease;
         }
@@ -66,25 +98,26 @@
         
         .dropdown-list { max-height: 350px; overflow-y: auto; padding: 5px; }
         
-        /* Checkbox Item Styling */
         .check-item { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 16px; cursor: pointer; transition: 0.2s;
+            padding: 10px 14px; cursor: pointer; transition: 0.2s;
             border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
             margin-bottom: 2px;
+            gap: 15px;
         }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .check-item span { flex-grow: 0 !important; }
         
         .check-item input { display: none; }
         
         .check-indicator {
-            width: 16px; height: 16px; border-radius: 50%;
+            width: 14px; height: 14px; border-radius: 50%;
             border: 2px solid var(--text-secondary);
             position: relative; transition: 0.2s;
+            flex-shrink: 0;
         }
         
-        /* Active State for Checkboxes */
         .check-item input:checked + .check-indicator {
             background: var(--accent); border-color: var(--accent);
             box-shadow: 0 0 8px var(--accent-glow);
@@ -95,10 +128,9 @@
 
         .check-item input:checked ~ span { color: var(--text-primary); }
 
-        /* --- BUTTON STYLES --- */
         .dropdown-footer { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 16px; border-top: 1px solid var(--border); 
+            padding: 12px 14px; border-top: 1px solid var(--border); 
             background: rgba(0,0,0,0.2); gap: 10px;
         }
         
@@ -109,34 +141,44 @@
             display: flex; align-items: center; justify-content: center;
         }
         
-        /* CLEAR BUTTON - RED */
-        .btn-clear { 
-            color: #ff4444; opacity: 0.8; font-size: 0.75rem; 
-        }
+        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
         
-        /* OK BUTTON - ALWAYS BLUE (Site Accent) */
         .btn-ok { 
-            background: var(--accent); 
-            color: #000;
-            padding: 8px 24px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            gap: 6px;
+            background: var(--accent); color: #000; padding: 6px 20px;
+            border-radius: 50px; font-size: 0.8rem; gap: 5px;
             box-shadow: 0 0 15px var(--accent-glow);
         }
-        
-        .btn-ok:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 0 25px var(--accent-glow); 
-        }
+        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-glow); }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
 
+        /* --- SUGGESTION FORM STYLES --- */
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; }
+        .form-input, .form-textarea {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--input-bg);
+            color: var(--text-primary); font-family: 'Inter', sans-serif;
+            font-size: 0.95rem; outline: none; transition: 0.3s;
+        }
+        .form-input:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        
+        .form-submit-btn {
+            width: 100%; padding: 12px; border-radius: 50px;
+            background: var(--accent); color: #000;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+            text-transform: uppercase; border: none; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 0 15px var(--accent-glow);
+            margin-top: 10px;
+        }
+        .form-submit-btn:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--accent-glow); }
+
         /* RESPONSIVE LOGIC */
-        .hide-on-mobile { display: block; }
+        .hide-on-mobile { display: inline-block; }
         .show-on-mobile { display: none; }
-        .desktop-categories { display: flex; gap: 10px; }
+        .desktop-categories { display: contents; }
 
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
@@ -144,10 +186,16 @@
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
             
-            /* Responsive Menu */
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; position: relative; }
             .desktop-categories { display: none; }
+            
+            .unified-nav { width: 100%; justify-content: space-between; padding: 2px; }
+            .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
+            
+            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
+            #topicsDropdown { left: 0; right: auto; }
+            #gamingDropdown { left: auto; right: 0; }
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -192,7 +240,7 @@
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); }
-        .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); }
+        .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); cursor: pointer; }
         .disclaimer-box { max-width: 600px; margin: 10px auto; line-height: 1.5; opacity: 0.8; }
         
         .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 100px; background: transparent; border: none; display: flex; justify-content: center; align-items: center; color: var(--accent); font-size: 3rem; z-index: 100; transition: all 0.3s ease; cursor: pointer; opacity: 0.3; }
@@ -207,29 +255,53 @@
     <div id="floatPrev" class="floating-nav nav-prev" style="display:none;" onclick="changePage(state.page-1)">‹</div>
     <div id="floatNext" class="floating-nav nav-next" style="display:none;" onclick="changePage(state.page+1)">›</div>
 
+    <!-- Changelog Modal -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
                 <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System History</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
+                <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.9.0 -->
+                 <!-- V17.11.1 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.9.0 - Unified Mobile Menu</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.11.1 - Suggestion Box</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Mobile ALL NEWS:</strong> On mobile, 'All News' becomes a powerful dropdown menu containing all topics.<br>
-                        • <strong>Clean Layout:</strong> Desktop shows full categories, Mobile shows sleek dropdowns for All News, YouTube, and Gaming.<br>
-                    </div>
-                </li>
-                 <!-- V17.7.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.7.0</strong>
-                    <div style="margin-top:5px; line-height:1.5;">
-                        Color Contrast & UI Tweaks.
+                        • <strong>Suggest Feature:</strong> Replaced 'mailto' with a proper popup form.<br>
+                        • <strong>Feedback:</strong> Suggestions are now sent directly to the developer.<br>
                     </div>
                 </li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Suggestion Modal -->
+    <div class="modal-overlay" id="suggestModal">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
+                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">Suggestion Box</h2>
+                <button class="close-modal" onclick="closeModal('suggestModal')">&times;</button>
+            </div>
+            <form name="suggestions" method="POST" data-netlify="true" onsubmit="handleSuggestSubmit(event)">
+                <input type="hidden" name="form-name" value="suggestions">
+                
+                <div class="form-group">
+                    <label class="form-label">Name (Optional)</label>
+                    <input type="text" name="name" class="form-input" placeholder="Your name...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Your Email (Optional)</label>
+                    <input type="email" name="email" class="form-input" placeholder="name@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Suggestion</label>
+                    <textarea name="message" class="form-textarea" required placeholder="What should we add or improve?"></textarea>
+                </div>
+
+                <button type="submit" class="form-submit-btn">Send Suggestion</button>
+            </form>
         </div>
     </div>
 
@@ -241,7 +313,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.9.0</div>
+                    <div class="version-btn" id="versionBtn">Version 17.11.1</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -251,7 +323,8 @@
             </div>
             
             <div class="nav-wrapper">
-                <nav class="category-nav" id="catNav">
+                <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
+                <nav class="unified-nav" id="catNav">
                     <!-- DESKTOP ALL NEWS (Static Button) -->
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
                     
@@ -260,11 +333,11 @@
                         <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
                         <div id="topicsDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
-                                <label class="check-item"><span style="flex-grow:1">Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
                             <div class="dropdown-footer">
                                 <button class="footer-btn btn-clear" onclick="clearFilters('topics')">CLEAR</button>
@@ -275,15 +348,15 @@
 
                     <!-- YOUTUBE -->
                     <div style="position:relative;">
-                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE NEWS ▼</button>
+                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
-                                <label class="check-item"><span style="flex-grow:1">Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Tech</span> <input type="checkbox" onchange="updateTempFilter('video', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">EV</span> <input type="checkbox" onchange="updateTempFilter('video', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Science</span> <input type="checkbox" onchange="updateTempFilter('video', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Gaming</span> <input type="checkbox" onchange="updateTempFilter('video', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Construction</span> <input type="checkbox" onchange="updateTempFilter('video', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('video', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('video', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('video', 'science', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('video', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('video', 'construction', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
                             <div class="dropdown-footer">
                                 <button class="footer-btn btn-clear" onclick="clearFilters('video')">CLEAR</button>
@@ -297,12 +370,12 @@
                         <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
-                                <label class="check-item"><span style="flex-grow:1">Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span style="flex-grow:1">Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
                             <div class="dropdown-footer">
                                 <button class="footer-btn btn-clear" onclick="clearFilters('gaming')">CLEAR</button>
@@ -313,10 +386,10 @@
 
                     <!-- DESKTOP CATEGORY BUTTONS (Hidden on mobile) -->
                     <div class="desktop-categories">
-                        <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics & Docu</button>
-                        <button class="filter-btn" onclick="setCategory('tech')">Tech & AI</button>
-                        <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
-                        <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
+                        <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics</button>
+                        <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
+                        <button class="filter-btn" onclick="setCategory('ev')">EV</button>
+                        <button class="filter-btn" onclick="setCategory('science')">Science</button>
                         <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                     </div>
 
@@ -329,7 +402,7 @@
 
         <footer class="site-footer">
             <div class="footer-buttons">
-                <a href="mailto:lolish3k@gmail.com" class="btn-action" style="color:var(--text-primary)">+ Suggest</a>
+                <button onclick="openSuggestModal()" class="btn-action btn-donate" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);">+ Suggest</button>
                 <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
             </div>
             <div class="disclaimer-box">
@@ -341,16 +414,12 @@
     <script>
         const state = { 
             category: 'all', 
-            // active filters
             videoFilters: new Set(),
             gamingFilters: new Set(),
-            topicFilters: new Set(), // Mobile All News
-
-            // temp filters
+            topicFilters: new Set(), 
             tempVideoFilters: new Set(),
             tempGamingFilters: new Set(),
             tempTopicFilters: new Set(),
-            
             search: '', 
             page: 1, 
             itemsPerPage: 45, 
@@ -415,12 +484,10 @@
             state.category = cat; 
             state.page = 1;
             
-            // If switching to standard desktop categories, clear mobile filters
             if (cat !== 'topics' && cat !== 'video' && cat !== 'gaming') {
                 state.topicFilters.clear();
             }
             
-            // Close dropdowns if not opening one
             if(cat !== 'video' && cat !== 'gaming' && cat !== 'topics') {
                  document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             }
@@ -438,8 +505,6 @@
             renderApp();
         }
 
-        // --- DROPDOWN LOGIC ---
-
         window.toggleDropdown = function(type, event) {
             if(event) event.stopPropagation();
             
@@ -449,7 +514,6 @@
             document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             
             if (!wasOpen) {
-                // Sync temp filters
                 if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
                 if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
                 if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
@@ -516,8 +580,6 @@
             }
         }
         
-        // --- FILTERING ---
-
         const GENRES = {
             'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'],
             'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'],
@@ -543,14 +605,10 @@
                 // 2. YOUTUBE NEWS
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
-                    
                     if (state.videoFilters.size > 0) {
                         let matchFound = false;
                         for (let filter of state.videoFilters) {
-                            if (art.category.toLowerCase().includes(filter)) {
-                                matchFound = true;
-                                break;
-                            }
+                            if (art.category.toLowerCase().includes(filter)) { matchFound = true; break; }
                         }
                         if (!matchFound) return false;
                     }
@@ -561,34 +619,28 @@
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
                     if (art.is_video) return false; 
-                    
                     if (state.gamingFilters.size > 0) {
                         let matchFound = false;
                         for (let genre of state.gamingFilters) {
                             const keywords = GENRES[genre];
-                            if (keywords && keywords.some(k => fullText.includes(k))) {
-                                matchFound = true;
-                                break;
-                            }
+                            if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; }
                         }
                         if (!matchFound) return false;
                     }
                     return fullText.includes(state.search);
                 }
 
-                // 4. MOBILE TOPICS (The new functionality)
+                // 4. MOBILE TOPICS
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false;
-
                     if (state.topicFilters.size > 0) {
                         if (!state.topicFilters.has(art.category)) return false;
                     }
-                    
                     return fullText.includes(state.search);
                 }
 
-                // 5. SPECIFIC CATEGORY BUTTONS (Desktop)
+                // 5. SPECIFIC CATEGORIES
                 if (art.is_video) return false;
                 let matchesCat = (art.category === state.category);
                 return matchesCat && fullText.includes(state.search);
@@ -598,7 +650,9 @@
         function renderApp() {
             const filtered = getFilteredArticles();
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            if (state.page > totalPages && totalPages > 0) state.page = 1;
+            
+            if (state.page > totalPages) state.page = 1;
+            if (state.page < 1) state.page = 1;
 
             const start = (state.page - 1) * state.itemsPerPage;
             const end = start + state.itemsPerPage;
@@ -671,6 +725,18 @@
             pagContainer.innerHTML = pHTML;
         }
 
+        function changePage(newPage) {
+            const filtered = getFilteredArticles();
+            const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
+            
+            if (newPage < 1) newPage = 1;
+            if (newPage > totalPages) newPage = totalPages;
+            
+            state.page = newPage;
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         const themeBtn = document.getElementById('themeBtn');
         themeBtn.onclick = () => {
             document.body.classList.toggle('light-mode');
@@ -685,8 +751,31 @@
 
         const modal = document.getElementById('changelogModal');
         document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
-        document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
-        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        function openSuggestModal() {
+            document.getElementById('suggestModal').classList.add('open');
+        }
+
+        function handleSuggestSubmit(e) {
+            // Usually Netlify forms redirect to a success page.
+            // We can let it submit normally or prevent default and show an alert.
+            // For a pure static feel without redirect, standard form submission refreshes the page.
+            // Let's just allow it to submit normally to Netlify's success page for simplicity,
+            // or add an alert before it goes.
+            alert("Thank you for your suggestion!");
+            // return true to allow form submission
+        }
+
+        // Close on outside click for modals
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('open');
+            }
+        });
 
         init();
     </script>
