@@ -548,18 +548,20 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.4.0 -->
+                 <!-- V20.5.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.4.0 - Critical UI Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.0 - Content & UX</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Unclickable Buttons Fix:</strong> The design lines connecting the search bar were accidentally covering the buttons, making them unclickable. This has been fixed.<br>
+                        • <strong>More Content:</strong> Increased feed limit to 10 articles per source.<br>
+                        • <strong>UX Fix:</strong> Disabled auto-scroll swipe on mobile.<br>
+                        • <strong>System:</strong> PWA prompt now disabled on PC/Desktop.
                     </div>
                  </li>
-                 <!-- V20.3.0 -->
+                 <!-- V20.4.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.3.0</strong><br>
-                    Logic and Crash safety.
-                </li>
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.4.0</strong><br>
+                    Critical UI Fix (Buttons).
+                 </li>
             </ul>
         </div>
     </div>
@@ -612,7 +614,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.4.0</div>
+                <div class="version-display" id="versionBtn">Version 20.5.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -755,11 +757,12 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Visa PWA-prompt ENDAST på mobiler och paddor (inte på PC)
-            const isMobileOrTablet = window.matchMedia('(max-width: 1024px)').matches || 
-                                   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            if (!window.matchMedia('(display-mode: standalone)').matches && isMobileOrTablet) {
+            // CHECK IF USER IS ON MOBILE (Simple Regex Check)
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // ONLY show prompt if it's mobile AND standalone mode is not active
+            if (!window.matchMedia('(display-mode: standalone)').matches && isMobile) {
                 setTimeout(() => { pwaToast.classList.add('show'); }, 3000);
             }
         });
@@ -822,7 +825,7 @@
 
         function init() { 
             loadSaved();
-            // Touch swipe har tagits bort för att förhindra oönskad scrollning
+            // REMOVED SWIPE LISTENERS TO PREVENT AUTO-SCROLL ON MOBILE
             renderApp(); 
             
             if (localStorage.getItem('theme') === 'light') {

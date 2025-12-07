@@ -16,6 +16,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py! Inga NYA nyheter kommer hämtas.")
     SOURCES = []
 
+# ÄNDRAT: Uppdaterad loggtext
 print(f"--- STARTAR GENERATORN (HÄMTAR 10 PER KÄLLA) ---")
 
 HEADERS = {
@@ -49,7 +50,7 @@ def get_video_info(source):
     ydl_opts = {
         'quiet': True,
         'extract_flat': True,
-        'playlistend': 10,  # ÖKAD FRÅN 5 TILL 10
+        'playlistend': 10, # ÄNDRAT: HÄMTAR 10 VIDEOR ISTÄLLET FÖR 5
         'ignoreerrors': True
     }
     try:
@@ -90,7 +91,7 @@ def get_web_info(source):
         response = requests.get(source['url'], headers=HEADERS, timeout=10)
         feed = feedparser.parse(response.content)
         
-        # Loopar igenom de 10 första inläggen (ÖKAD FRÅN 5)
+        # ÄNDRAT: Loopar igenom de 10 första inläggen
         for entry in feed.entries[:10]:
             img_url = ""
             if 'media_content' in entry:
@@ -143,9 +144,9 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
     for future in concurrent.futures.as_completed(future_to_source):
         source = future_to_source[future]
         try:
-            data_list = future.result() # Detta är nu en LISTA med artiklar
+            data_list = future.result() 
             if data_list:
-                new_articles.extend(data_list) # Lägg till alla hittade
+                new_articles.extend(data_list)
                 print(f"Hämtade {len(data_list)} st från {source.get('source_name', 'YouTube')}")
         except Exception:
             pass
@@ -173,8 +174,8 @@ for article in all_news:
         unique_news.append(article)
         seen_links.add(article['link'])
 
-# ÖKA GRÄNSEN TILL 400 ARTIKLAR (För att få fler sidor)
-final_news = unique_news[:400]
+# ÄNDRAT: ÖKADE GRÄNSEN TILL 800 ARTIKLAR (För att hantera det ökade inflödet)
+final_news = unique_news[:800]
 
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_news, f, ensure_ascii=False, indent=2)
@@ -185,7 +186,7 @@ print(f"Databas uppdaterad. Totalt {len(final_news)} artiklar.")
 json_data = json.dumps(final_news)
 
 try:
-    with open('template_fixed.html', 'r', encoding='utf-8') as f:
+    with open('template.html', 'r', encoding='utf-8') as f:
         template_code = f.read()
     
     final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
@@ -193,7 +194,7 @@ try:
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print("SUCCESS: index.html har uppdaterats med den nya mallen!")
+    print("SUCCESS: index.html har uppdaterats!")
 
 except Exception as e:
     print(f"KRITISKT FEL: {e}")
