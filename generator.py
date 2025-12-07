@@ -1,4 +1,23 @@
-# --- TEMPLATE.HTML (Version 20.6.0 - Mobile Only Install & Content Fix) ---
+import json
+import os
+
+print("--- STARTAR GENERATORN ---")
+
+# 1. LÄS IN NYHETSDATA FRÅN news.json
+# Detta säkerställer att du ser dina riktiga nyheter, inte testdata.
+try:
+    with open('news.json', 'r', encoding='utf-8') as f:
+        news_data = json.load(f)
+    print(f"Lyckades läsa in {len(news_data)} artiklar från news.json")
+except Exception as e:
+    print(f"Kunde inte läsa news.json: {e}")
+    print("Använder tom lista som fallback.")
+    news_data = []
+
+# Konvertera till JSON-sträng för HTML
+json_data = json.dumps(news_data)
+
+# 2. HTML-MALLEN (Version 20.6.0 - Fixade knappar & Mobil-app fix)
 template_code = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1160,3 +1179,10 @@ template_code = r'''<!DOCTYPE html>
     </script>
 </body>
 </html>'''
+
+# 3. SKRIV UT FILEN TILL HÅRDDISKEN (SÄKERSTÄLLER ATT DEN FINNS)
+final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(final_html)
+
+print("SUCCESS: index.html har uppdaterats till Version 20.6.0!")
