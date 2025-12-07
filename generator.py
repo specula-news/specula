@@ -1,6 +1,6 @@
 import os
 
-# --- TEMPLATE.HTML (Version 20.1.0 - PWA Installer Added) ---
+# --- TEMPLATE.HTML (Version 20.2.0 - Filter Fixes) ---
 template_code = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -547,18 +547,18 @@ template_code = r'''<!DOCTYPE html>
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.1.0 -->
+                 <!-- V20.2.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.1.0 - App Installer</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.2.0 - Critical Filter Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>PWA Install Prompt:</strong> Added a system to detect if the site can be installed as an App. A pop-up will now appear for supported devices (Android/Chrome).<br>
-                        • <strong>System Stability:</strong> Includes previous fixes for bookmarks and filters.<br>
+                        • <strong>Filter Logic Repair:</strong> Fixed a bug where categories (Topics/Geo/Tech) would show blank results due to case-sensitivity issues.<br>
+                        • <strong>Stability:</strong> Improved how filters are reset when switching between Mobile Dropdowns and All News.<br>
                     </div>
-                </li>
-                 <!-- V20.0.0 -->
+                 </li>
+                 <!-- V20.1.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 20.0.0</strong><br>
-                    Logic Repair: Fixed bookmarks and All News reset.
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.1.0</strong><br>
+                    PWA Install Prompt added.
                 </li>
             </ul>
         </div>
@@ -612,7 +612,7 @@ template_code = r'''<!DOCTYPE html>
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.1.0</div>
+                <div class="version-display" id="versionBtn">Version 20.2.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -1018,6 +1018,7 @@ template_code = r'''<!DOCTYPE html>
                 const title = art.title.toLowerCase();
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
+                const artCat = art.category.toLowerCase(); // NORMALIZE CATEGORY TO LOWERCASE
 
                 if (state.category === 'saved') {
                     if (!state.saved.has(art.link)) return false;
@@ -1026,7 +1027,7 @@ template_code = r'''<!DOCTYPE html>
 
                 if (state.category === 'all') {
                     if (art.is_video) return false;
-                    if (art.category === 'gaming') return false; 
+                    if (artCat === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
@@ -1035,7 +1036,7 @@ template_code = r'''<!DOCTYPE html>
                     if (state.videoFilters.size > 0) {
                         let matchFound = false;
                         for (let filter of state.videoFilters) {
-                            if (art.category.toLowerCase().includes(filter)) { matchFound = true; break; }
+                            if (artCat.includes(filter)) { matchFound = true; break; }
                         }
                         if (!matchFound) return false;
                     }
@@ -1043,7 +1044,7 @@ template_code = r'''<!DOCTYPE html>
                 }
                 
                 if (state.category === 'gaming') {
-                    if (art.category !== 'gaming') return false;
+                    if (artCat !== 'gaming') return false;
                     if (art.is_video) return false; 
                     if (state.gamingFilters.size > 0) {
                         let matchFound = false;
@@ -1058,15 +1059,16 @@ template_code = r'''<!DOCTYPE html>
 
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
-                    if (art.category === 'gaming') return false;
+                    if (artCat === 'gaming') return false;
                     if (state.topicFilters.size > 0) {
-                        if (!state.topicFilters.has(art.category)) return false;
+                        // Check exact match in lowercase
+                        if (!state.topicFilters.has(artCat)) return false;
                     }
                     return fullText.includes(state.search);
                 }
 
                 if (art.is_video) return false;
-                let matchesCat = (art.category === state.category);
+                let matchesCat = (artCat === state.category);
                 return matchesCat && fullText.includes(state.search);
             });
         }
