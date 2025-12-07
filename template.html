@@ -22,7 +22,29 @@
         body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; --input-bg: #f3f4f6; --nav-bg: #e5e7eb; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6; 
+            min-height: 100vh; 
+            padding-bottom: 50px; 
+            transition: background 0.3s; 
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* FIXED BACKGROUND (Solves Mobile Jump) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
         
         header { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
@@ -104,7 +126,6 @@
         }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
-        
         .check-item input { display: none; }
         
         .check-indicator {
@@ -186,6 +207,7 @@
             .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
             #topicsDropdown { left: 0; right: auto; }
             #gamingDropdown { left: auto; right: 0; }
+            #videoDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -238,6 +260,7 @@
     <div id="floatPrev" class="floating-nav nav-prev" style="display:none;" onclick="changePage(state.page-1)">‹</div>
     <div id="floatNext" class="floating-nav nav-next" style="display:none;" onclick="changePage(state.page+1)">›</div>
 
+    <!-- Changelog Modal -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
@@ -245,19 +268,26 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.11.0 -->
+                 <!-- V18.1.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.11.0 - Refined UI</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.1.0 - Mobile Fixes</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>One Big Bubble:</strong> Navigation menu is now a single cohesive pill-shaped bar.<br>
-                        • <strong>Pagination Fix:</strong> Page navigation logic has been stabilized.<br>
-                        • <strong>Clean Layout:</strong> Removed dots and "Full Story" button for a cleaner card look.<br>
+                        • <strong>Scroll Fix:</strong> Fixed background jumping on mobile scrolling.<br>
+                        • <strong>Navigation:</strong> Removed swipe gesture to prevent accidental page changes.<br>
+                    </div>
+                </li>
+                 <!-- V18.0.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 18.0.0</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        Backend Optimization & UI Cleanup.
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 
+    <!-- Suggestion Modal -->
     <div class="modal-overlay" id="suggestModal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
@@ -266,18 +296,22 @@
             </div>
             <form name="suggestions" method="POST" data-netlify="true" onsubmit="handleSuggestSubmit(event)">
                 <input type="hidden" name="form-name" value="suggestions">
+                
                 <div class="form-group">
                     <label class="form-label">Name (Optional)</label>
                     <input type="text" name="name" class="form-input" placeholder="Your name...">
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">Your Email (Optional)</label>
                     <input type="email" name="email" class="form-input" placeholder="name@example.com">
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">Suggestion</label>
                     <textarea name="message" class="form-textarea" required placeholder="What should we add or improve?"></textarea>
                 </div>
+
                 <button type="submit" class="form-submit-btn">Send Suggestion</button>
             </form>
         </div>
@@ -291,7 +325,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.11.0</div>
+                    <div class="version-btn" id="versionBtn">Version 18.1.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -301,9 +335,12 @@
             </div>
             
             <div class="nav-wrapper">
+                <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
                 <nav class="unified-nav" id="catNav">
+                    <!-- DESKTOP ALL NEWS (Static Button) -->
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
                     
+                    <!-- MOBILE ALL NEWS (Dropdown) -->
                     <div class="show-on-mobile" style="display:none;">
                         <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
                         <div id="topicsDropdown" class="dropdown-menu">
@@ -321,6 +358,7 @@
                         </div>
                     </div>
 
+                    <!-- YOUTUBE -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
@@ -339,6 +377,7 @@
                         </div>
                     </div>
 
+                    <!-- GAMING -->
                     <div style="position:relative;">
                         <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
@@ -357,6 +396,7 @@
                         </div>
                     </div>
 
+                    <!-- DESKTOP CATEGORY BUTTONS (Hidden on mobile) -->
                     <div class="desktop-categories">
                         <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics</button>
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
@@ -364,6 +404,7 @@
                         <button class="filter-btn" onclick="setCategory('science')">Science</button>
                         <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                     </div>
+
                 </nav>
             </div>
         </header>
@@ -406,20 +447,22 @@
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
+        window.handleImageError = function(img) {
+            img.classList.remove('active');
+            img.style.display = 'none';
+            const parent = img.parentElement;
+            const nextImg = parent.querySelector('.card-image:not([style*="none"])');
+            if(nextImg) nextImg.classList.add('active');
+        }
+
+        // NO SWITCH IMAGE NEEDED
+
         window.stopProp = function(e) {
             e.preventDefault();
             e.stopPropagation();
         }
 
         function init() { 
-            let touchStartX = 0;
-            let touchEndX = 0;
-            grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-            grid.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (touchEndX < touchStartX - 50) changePage(state.page + 1);
-                if (touchEndX > touchStartX + 50) changePage(state.page - 1);
-            });
             renderApp(); 
             
             const themeBtn = document.getElementById('themeBtn');
