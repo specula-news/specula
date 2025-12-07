@@ -1,1188 +1,133 @@
 import json
 import os
+import requests
+import yt_dlp
+import feedparser
+from datetime import datetime
 
-print("--- STARTAR GENERATORN ---")
-
-# 1. LÄS IN NYHETSDATA FRÅN news.json
-# Detta säkerställer att du ser dina riktiga nyheter, inte testdata.
+# --- 1. IMPORTERA KÄLLOR FRÅN SOURCES.PY ---
 try:
-    with open('news.json', 'r', encoding='utf-8') as f:
-        news_data = json.load(f)
-    print(f"Lyckades läsa in {len(news_data)} artiklar från news.json")
+    from sources import SOURCES
+    print(f"--- LADDADE {len(SOURCES)} KÄLLOR FRÅN sources.py ---")
+except ImportError:
+    print("VARNING: Kunde inte hitta sources.py! Inga NYA nyheter kommer hämtas.")
+    SOURCES = []
+
+print("--- STARTAR HÄMTNING AV NYHETER ---")
+
+# --- 2. HÄMTA DATA (SCRAPING) ---
+new_articles = []
+
+def get_video_info(source):
+    """Hämtar senaste videon från YouTube"""
+    ydl_opts = {
+        'quiet': True,
+        'extract_flat': True,
+        'playlistend': 2, 
+        'ignoreerrors': True
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(source['url'], download=False)
+            if 'entries' in info:
+                for entry in info['entries']:
+                    if not entry: continue
+                    return {
+                        "title": entry.get('title'),
+                        "link": f"https://www.youtube.com/watch?v={entry.get('id')}",
+                        "images": [entry.get('thumbnails')[-1]['url']] if entry.get('thumbnails') else [],
+                        "summary": "YouTube Video",
+                        "category": source['cat'],
+                        "source": info.get('uploader', 'YouTube'),
+                        "time_str": "New Video",
+                        "is_video": True
+                    }
+    except Exception as e:
+        print(f"Fel vid YouTube ({source['url']}): {e}")
+    return None
+
+def get_web_info(source):
+    """Hämtar nyheter från Webb/RSS"""
+    try:
+        feed = feedparser.parse(source['url'])
+        if feed.entries:
+            entry = feed.entries[0]
+            img_url = ""
+            if 'media_content' in entry:
+                img_url = entry.media_content[0]['url']
+            elif 'links' in entry:
+                for link in entry.links:
+                    if link.type.startswith('image/'):
+                        img_url = link.href
+                        break
+            
+            return {
+                "title": entry.title,
+                "link": entry.link,
+                "images": [img_url] if img_url else [],
+                "summary":  entry.get('summary', '')[:150] + "...",
+                "category": source['cat'],
+                "source": source.get('source_name', 'Web News'),
+                "time_str": "Just now",
+                "is_video": False
+            }
+    except Exception as e:
+        print(f"Fel vid Webb ({source['url']}): {e}")
+    return None
+
+# Kör loopen genom alla källor
+for source in SOURCES:
+    item = None
+    if source['type'] == 'video':
+        item = get_video_info(source)
+    else:
+        item = get_web_info(source)
+    
+    if item:
+        new_articles.append(item)
+        print(f"Hittade: {item['title']}")
+
+# --- 3. UPPDATERA NEWS.JSON ---
+existing_data = []
+try:
+    if os.path.exists('news.json'):
+        with open('news.json', 'r', encoding='utf-8') as f:
+            existing_data = json.load(f)
+except Exception:
+    existing_data = []
+
+# Lägg nya nyheter först
+all_news = new_articles + existing_data
+unique_news = []
+seen_links = set()
+
+for article in all_news:
+    if article['link'] not in seen_links:
+        unique_news.append(article)
+        seen_links.add(article['link'])
+
+# Spara max 200 artiklar
+final_news = unique_news[:200]
+
+with open('news.json', 'w', encoding='utf-8') as f:
+    json.dump(final_news, f, ensure_ascii=False, indent=2)
+
+print(f"Databas uppdaterad. Totalt {len(final_news)} artiklar.")
+
+# Förbered data för HTML
+json_data = json.dumps(final_news)
+
+# --- 4. BYGG HEMSIDAN (INDEX.HTML) ---
+# Läser in din design från template.html och stoppar in nyheterna
+try:
+    with open('template.html', 'r', encoding='utf-8') as f:
+        template_code = f.read()
+    
+    final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
+    
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(final_html)
+    
+    print("SUCCESS: Hemsidan (index.html) är uppdaterad!")
 except Exception as e:
-    print(f"Kunde inte läsa news.json: {e}")
-    print("Använder tom lista som fallback.")
-    news_data = []
-
-# Konvertera till JSON-sträng för HTML
-json_data = json.dumps(news_data)
-
-# 2. HTML-MALLEN (Version 20.6.0 - Fixade knappar & Mobil-app fix)
-template_code = r'''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SPECULA | Visual Intelligence</title>
-    
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction.">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://specula-news.netlify.app/">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#050505">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon.png">
-    
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; --input-bg: #1a1a1a; --nav-bg: #161616; }
-        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; --input-bg: #f3f4f6; --nav-bg: #e5e7eb; }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        html { overflow-y: scroll; } 
-
-        body { 
-            background-color: var(--bg-body); 
-            color: var(--text-primary); 
-            font-family: 'Inter', sans-serif; 
-            line-height: 1.6; 
-            min-height: 100vh; 
-            padding-bottom: 50px; 
-            transition: background 0.3s; 
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
-        
-        header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        
-        .header-top { 
-            width: 100%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-end; 
-            margin-bottom: 25px; 
-        }
-
-        .logo-group {
-            display: flex;
-            align-items: flex-end;
-            gap: 15px;
-        }
-
-        .logo-link { 
-            text-decoration: none; 
-            color: inherit; 
-            display: flex; 
-            align-items: flex-end; 
-            gap: 15px; 
-        }
-        
-        .logo-icon { 
-            height: 45px; 
-            filter: drop-shadow(0 0 10px var(--accent-glow)); 
-            transition: transform 0.3s;
-        }
-        
-        @keyframes wiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .logo-icon:hover { animation: wiggle 0.5s ease-in-out; }
-        
-        body.light-mode .logo-icon { filter: invert(0); }
-
-        .logo-text { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            line-height: 0.8; 
-            margin-bottom: -2px; 
-        }
-
-        .theme-wrapper {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-            cursor: pointer;
-            margin-bottom: 0px;
-        }
-        
-        .theme-icon { 
-            color: var(--accent); 
-            font-size: 1.5rem; 
-            line-height: 0;
-            transition: 0.3s; 
-        }
-        
-        .theme-text {
-            font-family: 'Space Grotesk', monospace;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.8;
-            transition: 0.2s;
-        }
-
-        .theme-wrapper:hover .theme-icon { transform: scale(1.2); text-shadow: 0 0 10px var(--accent-glow); }
-        .theme-wrapper:hover .theme-text { color: var(--accent); opacity: 1; }
-
-        .version-display {
-            font-family: 'Space Grotesk', monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 700;
-            opacity: 0.5;
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-        .version-display:hover { color: var(--accent); opacity: 1; }
-        
-        .nav-wrapper { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%; 
-            position: relative; 
-            z-index: 50;
-        }
-
-        .search-container {
-            position: relative;
-            width: 100%;
-            max-width: 240px;
-            margin-bottom: -2px;
-            z-index: 40; 
-        }
-        
-        .search-input { 
-            width: 100%; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border);
-            border-bottom: none; 
-            color: var(--text-primary); 
-            padding: 8px 35px 8px 15px; 
-            border-radius: 20px 20px 0 0; 
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.85rem; 
-            outline: none; 
-            transition: 0.3s;
-        }
-        
-        /* FIX: pointer-events: none added to prevent blocking clicks */
-        .search-container::after {
-            content: '';
-            position: absolute;
-            bottom: -3px; 
-            left: 10px; right: 10px; 
-            height: 6px; 
-            background: var(--nav-bg); 
-            z-index: 60;
-            pointer-events: none; 
-        }
-
-        .search-input:focus { border-color: var(--accent); }
-        .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; z-index: 61;}
-
-        .unified-nav { 
-            display: inline-flex; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 4px;
-            gap: 0px; 
-            flex-wrap: wrap;
-            justify-content: center;
-            overflow: visible !important; 
-            position: relative;
-            z-index: 999; /* MAX Z-INDEX TO ENSURE CLICKS */
-        }
-
-        .filter-btn { 
-            position: relative; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-secondary); 
-            padding: 8px 14px; 
-            cursor: pointer; 
-            border-radius: 40px; 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-weight: 600; 
-            transition: all 0.2s; 
-            text-transform: uppercase; 
-            font-size: 0.75rem; 
-            flex-shrink: 0;
-            white-space: nowrap;
-            z-index: 1000; /* FORCE BUTTONS ON TOP */
-        }
-
-        .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
-        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
-        .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
-
-        .scroll-btn { display: none !important; }
-
-        /* --- READ LATER BUTTON --- */
-        .read-later-container { 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            margin-top: -2px; 
-            z-index: 40; 
-        }
-
-        .read-later-btn {
-            position: relative; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border);
-            border-top: none; 
-            color: var(--text-secondary); 
-            padding: 6px 30px; 
-            border-radius: 0 0 20px 20px; 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-weight: 700; 
-            cursor: pointer;
-            display: flex; align-items: center; gap: 6px; 
-            transition: 0.3s;
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        /* FIX: pointer-events: none added to prevent blocking clicks */
-        .read-later-btn::before {
-            content: '';
-            position: absolute;
-            top: -4px; 
-            left: 2px; right: 2px;
-            height: 6px; 
-            background: var(--nav-bg); 
-            z-index: 60; 
-            pointer-events: none;
-        }
-
-        .read-later-btn:hover { border-color: var(--accent); color: var(--accent); padding-bottom: 10px; }
-        
-        .read-later-btn.active { 
-            background: var(--nav-bg); 
-            color: var(--accent); 
-            border-color: var(--accent); 
-            box-shadow: 0 10px 20px var(--accent-glow);
-        }
-
-        /* --- DROPDOWNS --- */
-        .dropdown-menu {
-            display: none; position: absolute; top: 125%; 
-            left: 50%; transform: translateX(-50%);
-            background: var(--dropdown-bg); border: 1px solid var(--border);
-            border-radius: 12px; z-index: 100;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
-            min-width: 220px;
-            flex-direction: column; overflow: hidden;
-            animation: fadeIn 0.2s ease;
-        }
-        .dropdown-menu.show { display: flex; }
-        .dropdown-list { max-height: 350px; overflow-y: auto; padding: 5px; }
-        
-        .check-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; cursor: pointer; transition: 0.2s;
-            border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
-            margin-bottom: 2px;
-            gap: 15px;
-        }
-        .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .check-item span { flex-grow: 1; text-align: left; }
-        .check-item input { display: none; }
-        
-        .check-indicator {
-            width: 14px; height: 14px; border-radius: 50%;
-            border: 2px solid var(--text-secondary);
-            position: relative; transition: 0.2s;
-            flex-shrink: 0;
-        }
-        .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-        
-        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
-        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
-        .check-item input:checked ~ span { color: var(--text-primary); }
-
-        .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
-        .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
-        .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
-        .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
-        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-glow); }
-
-        /* --- CARD STYLES --- */
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
-        
-        .news-card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            transition: transform 0.3s; 
-            animation: fadeIn 0.5s; 
-            position: relative;
-            height: 100%; 
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        
-        .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; flex-shrink: 0; }
-        .card-image-wrapper { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%); }
-        .card-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; position: absolute; top:0; left:0; opacity: 1; }
-        
-        .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; }
-        .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
-        
-        .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
-        
-        .card-content { 
-            padding: 24px; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            background: var(--bg-card); 
-            z-index: 2; 
-        }
-
-        .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
-        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; }
-        .card-title a { text-decoration: none; color: inherit; }
-        .card-title a:hover { color: var(--accent); }
-        
-        .ai-summary { 
-            font-size: 0.9rem; color: var(--text-secondary); 
-            margin-bottom: 0px; line-height: 1.5; 
-            border-left: 2px solid var(--border); padding-left: 12px; 
-            flex-grow: 1; 
-            padding-bottom: 20px;
-        }
-
-        /* --- BOOKMARK BAR --- */
-        .bookmark-bar {
-            width: 100%;
-            padding: 12px 0;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: auto;
-        }
-
-        .bookmark-text {
-            position: relative;
-            top: 2px;
-        }
-
-        .heart-icon {
-            font-size: 1.2rem;
-            line-height: 1;
-            transition: 0.2s;
-            color: var(--text-secondary);
-        }
-
-        /* Hover: Blue BG, Black Text */
-        .bookmark-bar:hover {
-            background: var(--accent);
-            color: #000;
-            box-shadow: 0 -5px 20px var(--accent-glow);
-        }
-        .bookmark-bar:hover .heart-icon {
-            color: #000; 
-        }
-
-        /* Saved: Red Heart */
-        .bookmark-bar.saved .heart-icon {
-            color: #ff0040 !important;
-        }
-        
-        /* Saved state (No Hover) */
-        .bookmark-bar.saved:not(:hover) {
-            color: var(--text-primary);
-            background: rgba(255,255,255,0.05);
-        }
-
-        /* Saved + Hover */
-        .bookmark-bar.saved:hover .heart-icon {
-            color: #ff0040 !important;
-        }
-
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
-        .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
-        .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
-        .modal-overlay.open .modal-card { transform: translateY(0); }
-        .close-modal { float: right; font-size: 2rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; }
-        .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; max-height: 50vh; overflow-y: auto; }
-
-        .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
-        .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); }
-        .btn-donate { background: var(--accent); color: #000; border-color: var(--accent); cursor: pointer; }
-        .disclaimer-box { max-width: 600px; margin: 10px auto; line-height: 1.5; opacity: 0.8; }
-        
-        .floating-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 50px; height: 100px; background: transparent; border: none; display: flex; justify-content: center; align-items: center; color: var(--accent); font-size: 3rem; z-index: 100; transition: all 0.3s ease; cursor: pointer; opacity: 0.3; }
-        .floating-nav:hover { opacity: 1; transform: translateY(-50%) scale(1.2); }
-        .nav-prev { left: -10px; } .nav-next { right: -10px; }
-
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; }
-        .form-input, .form-textarea {
-            width: 100%; padding: 12px; border-radius: 8px;
-            border: 1px solid var(--border); background: var(--input-bg);
-            color: var(--text-primary); font-family: 'Inter', sans-serif;
-            font-size: 0.95rem; outline: none; transition: 0.3s;
-        }
-        .form-input:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-        .form-textarea { resize: vertical; min-height: 100px; }
-        .form-submit-btn {
-            width: 100%; padding: 12px; border-radius: 50px;
-            background: var(--accent); color: #000;
-            font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-            text-transform: uppercase; border: none; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 0 15px var(--accent-glow);
-            margin-top: 10px;
-        }
-        .form-submit-btn:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--accent-glow); }
-
-        .hide-on-mobile { display: inline-block; }
-        .show-on-mobile { display: none; }
-        .desktop-categories { display: contents; }
-
-        /* --- PWA INSTALL PROMPT STYLE --- */
-        .pwa-toast { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); 
-            background: var(--bg-card); border: 1px solid var(--accent); 
-            padding: 15px 25px; border-radius: 50px; 
-            z-index: 9999; display: flex; align-items: center; gap: 15px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            opacity: 0; pointer-events: none; width: 90%; max-width: 420px; 
-        }
-        .pwa-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
-        .pwa-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: var(--text-primary); flex-grow: 1; line-height: 1.2; }
-        .pwa-btn-group { display: flex; gap: 10px; }
-        .pwa-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
-        .pwa-btn.install { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-        .pwa-btn:hover { transform: scale(1.05); }
-
-        @media (max-width: 768px) {
-            .header-top { 
-                flex-direction: column; 
-                align-items: center; 
-                gap: 15px; 
-            }
-            .logo-wrapper { align-items: center; } 
-            
-            /* MOBILE SEARCH BAR FIX (92% width, centered) */
-            .search-container { 
-                width: 92%; 
-                max-width: 100%; 
-                margin: 5px auto; 
-            }
-            .search-input {
-                font-size: 16px; 
-                padding: 8px 35px 8px 15px;
-            }
-            
-            .hide-on-mobile { display: none !important; }
-            .show-on-mobile { display: block !important; position: relative; }
-            .desktop-categories { display: none; }
-            
-            .unified-nav { width: 100%; justify-content: space-between; padding: 2px; }
-            .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
-            
-            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
-            #topicsDropdown { left: 0; right: auto; }
-            #gamingDropdown { left: auto; right: 0; }
-            #videoDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
-
-            .version-display {
-                align-self: center; /* Center version on mobile */
-                margin-top: 5px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <script>const newsData = <!-- NEWS_DATA_JSON -->;</script>
-
-    <div id="floatPrev" class="floating-nav nav-prev" style="display:none;" onclick="changePage(state.page-1)">‹</div>
-    <div id="floatNext" class="floating-nav nav-next" style="display:none;" onclick="changePage(state.page+1)">›</div>
-
-    <!-- PWA INSTALL PROMPT UI -->
-    <div id="pwaToast" class="pwa-toast">
-        <div class="pwa-text">Install SPECULA as an App for the best experience?</div>
-        <div class="pwa-btn-group">
-            <button class="pwa-btn" onclick="dismissInstall()">Later</button>
-            <button class="pwa-btn install" onclick="installApp()">Install</button>
-        </div>
-    </div>
-
-    <!-- Changelog Modal -->
-    <div class="modal-overlay" id="changelogModal">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
-                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">System History</h2>
-                <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
-            </div>
-            <ul class="changelog-list">
-                 <!-- V20.6.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.6.0 - Mobile Only App</strong>
-                    <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>PWA Fix:</strong> The "Install App" prompt now only appears on phones (Android/iOS), not on desktop computers.<br>
-                        • <strong>Data Restoration:</strong> Corrected the issue where articles were disappearing after updates.<br>
-                    </div>
-                 </li>
-                 <!-- V20.5.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.5.0</strong><br>
-                    Fixed unclickable buttons on desktop.
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Suggestion Modal -->
-    <div class="modal-overlay" id="suggestModal">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
-                <h2 style="font-family:'Space Grotesk'; font-size:1.5rem;">Suggestion Box</h2>
-                <button class="close-modal" onclick="closeModal('suggestModal')">&times;</button>
-            </div>
-            <form id="suggestForm" action="https://formspree.io/f/mdkqlnpq" method="POST" onsubmit="handleSuggestSubmit(event)">
-                
-                <div class="form-group">
-                    <label class="form-label">Name (Optional)</label>
-                    <input type="text" name="name" class="form-input" placeholder="Your name...">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Your Email (Optional)</label>
-                    <input type="email" name="email" class="form-input" placeholder="name@example.com">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Suggestion</label>
-                    <textarea name="message" class="form-textarea" required placeholder="What should we add or improve?"></textarea>
-                </div>
-
-                <button type="submit" class="form-submit-btn">Send Suggestion</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="container">
-        <header>
-            <div class="header-top">
-                <!-- LOGO GROUP (LEFT) -->
-                <div class="logo-wrapper">
-                    <div class="logo-group">
-                        <a href="#" class="logo-link" onclick="resetHome()">
-                            <img src="icon.png" class="logo-icon" alt="Specula">
-                            <div class="logo-text">SPECULA</div>
-                        </a>
-                        <!-- THEME TOGGLE (Dot/Icon + Small Text) -->
-                        <div class="theme-wrapper" onclick="toggleTheme(event)">
-                            <div class="theme-icon" id="themeIcon">☀</div>
-                            <div class="theme-text" id="themeLabel">LIGHT MODE</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.6.0</div>
-            </div>
-            
-            <div class="nav-wrapper">
-                
-                <!-- SEARCH BAR -->
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
-                    <span class="search-icon">🔍</span>
-                </div>
-
-                <!-- UNIFIED SINGLE BUBBLE NAVIGATION -->
-                <nav class="unified-nav" id="catNav">
-                    <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
-                    
-                    <div class="show-on-mobile" style="display:none;">
-                        <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
-                        <div id="topicsDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer">
-                                <button class="footer-btn btn-clear" onclick="clearFilters('topics')">CLEAR</button>
-                                <button class="footer-btn btn-ok" onclick="applyFilters('topics')">OK <span style="font-size:1.2em">✓</span></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="position:relative;">
-                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE ▼</button>
-                        <div id="videoDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('video', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('video', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('video', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('video', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('video', 'construction', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer">
-                                <button class="footer-btn btn-clear" onclick="clearFilters('video')">CLEAR</button>
-                                <button class="footer-btn btn-ok" onclick="applyFilters('video')">OK <span style="font-size:1.2em">✓</span></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="position:relative;">
-                        <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
-                        <div id="gamingDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer">
-                                <button class="footer-btn btn-clear" onclick="clearFilters('gaming')">CLEAR</button>
-                                <button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK <span style="font-size:1.2em">✓</span></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="desktop-categories">
-                        <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics</button>
-                        <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
-                        <button class="filter-btn" onclick="setCategory('ev')">EV</button>
-                        <button class="filter-btn" onclick="setCategory('science')">Science</button>
-                        <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
-                    </div>
-
-                </nav>
-                
-                <div class="read-later-container">
-                    <button class="read-later-btn" id="readLaterBtn" onclick="toggleSavedView()">
-                        <span style="font-size:1.2em">♥</span> Read Later
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <div class="news-grid" id="newsGrid"></div>
-        <div class="pagination" id="pagination"></div>
-
-        <footer class="site-footer">
-            <div class="footer-buttons">
-                <button onclick="openSuggestModal()" class="btn-action btn-donate" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);">+ Suggest</button>
-                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
-            </div>
-            <div class="disclaimer-box">
-                SPECULA is primarily built to save my own time, aggregating topics I personally follow. I update it according to my preferences, but if you have a great idea, feel free to use the Suggest button. You should never feel obligated to donate, but if you do, I am incredibly grateful—it gives my ego a massive boost knowing someone else appreciates my work!
-            </div>
-        </footer>
-    </div>
-
-    <script>
-        const state = { 
-            category: 'all', 
-            videoFilters: new Set(),
-            gamingFilters: new Set(),
-            topicFilters: new Set(), 
-            tempVideoFilters: new Set(),
-            tempGamingFilters: new Set(),
-            tempTopicFilters: new Set(),
-            saved: new Set(), 
-            search: '', 
-            page: 1, 
-            itemsPerPage: 45, 
-            articles: typeof newsData !== 'undefined' ? newsData : [] 
-        };
-        
-        // --- LOCAL STORAGE FOR SAVED ITEMS ---
-        state.saved = new Set();
-        try {
-            const loaded = localStorage.getItem('specula_saved');
-            if(loaded) state.saved = new Set(JSON.parse(loaded));
-        } catch(e) {}
-
-        const grid = document.getElementById('newsGrid');
-        const pagContainer = document.getElementById('pagination');
-        const searchInput = document.getElementById('searchInput');
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const floatPrev = document.getElementById('floatPrev');
-        const floatNext = document.getElementById('floatNext');
-        const readLaterBtn = document.getElementById('readLaterBtn');
-        const themeIcon = document.getElementById('themeIcon');
-        const themeLabel = document.getElementById('themeLabel');
-        
-        // --- PWA LOGIC START ---
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
-
-        let deferredPrompt;
-        const pwaToast = document.getElementById('pwaToast');
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Check if mobile (Android/iPhone/iPad)
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            
-            if (isMobile && !window.matchMedia('(display-mode: standalone)').matches) {
-                setTimeout(() => { pwaToast.classList.add('show'); }, 3000);
-            }
-        });
-
-        window.installApp = async () => {
-            if (deferredPrompt) {
-                pwaToast.classList.remove('show');
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-            }
-        };
-
-        window.dismissInstall = () => { pwaToast.classList.remove('show'); };
-        // --- PWA LOGIC END ---
-
-        function loadSaved() {
-            const saved = localStorage.getItem('savedArticles');
-            if (saved) state.saved = new Set(JSON.parse(saved));
-        }
-
-        window.toggleSave = function(url, event) {
-            if (event && event.stopPropagation) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            if (state.saved.has(url)) { state.saved.delete(url); } else { state.saved.add(url); }
-            localStorage.setItem('specula_saved', JSON.stringify([...state.saved]));
-            
-            if (state.category === 'saved') {
-                renderApp();
-            } else {
-                if (event && event.currentTarget) {
-                    const btn = event.currentTarget;
-                    if (state.saved.has(url)) btn.classList.add('saved');
-                    else btn.classList.remove('saved');
-                } else {
-                    renderApp(); 
-                }
-            }
-        }
-
-        window.toggleSavedView = function() {
-            if (state.category === 'saved') { setCategory('all'); } else { setCategory('saved'); }
-        }
-
-        window.resetHome = function(event) {
-            if(event) event.preventDefault();
-            setCategory('all');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.handleImageError = function(img) {
-            img.classList.remove('active');
-            img.style.display = 'none';
-            const parent = img.parentElement;
-            const nextImg = parent.querySelector('.card-image:not([style*="none"])');
-            if(nextImg) nextImg.classList.add('active');
-        }
-
-        function init() { 
-            loadSaved();
-            let touchStartX = 0;
-            let touchEndX = 0;
-            grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-            grid.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (touchEndX < touchStartX - 50) changePage(state.page + 1);
-                if (touchEndX > touchStartX + 50) changePage(state.page - 1);
-            });
-            renderApp(); 
-            
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-                themeIcon.innerText = '☾';
-                themeLabel.innerText = 'DARK MODE';
-            } else {
-                themeIcon.innerText = '☀';
-                themeLabel.innerText = 'LIGHT MODE';
-            }
-        }
-
-        window.toggleTheme = function(e) {
-            if(e) { e.preventDefault(); e.stopPropagation(); }
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                themeIcon.innerText = '☾';
-                themeLabel.innerText = 'DARK MODE';
-                localStorage.setItem('theme', 'light');
-            } else {
-                themeIcon.innerText = '☀';
-                themeLabel.innerText = 'LIGHT MODE';
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
-
-        // --- CORE CATEGORY LOGIC REPAIR ---
-        function setCategory(cat) {
-            state.category = cat; 
-            state.page = 1;
-            state.search = '';
-            searchInput.value = '';
-
-            // Clean other modes when switching
-            if (cat !== 'video') state.videoFilters.clear();
-            if (cat !== 'gaming') state.gamingFilters.clear();
-            if (cat !== 'topics') state.topicFilters.clear();
-
-            // Clear checkboxes in temporary sets too
-            if (cat === 'all') {
-                state.tempVideoFilters.clear();
-                state.tempGamingFilters.clear();
-                state.tempTopicFilters.clear();
-            }
-
-            // UI Updates
-            if (cat === 'saved') {
-                readLaterBtn.classList.add('active');
-                filterBtns.forEach(btn => btn.classList.remove('active'));
-            } else {
-                readLaterBtn.classList.remove('active');
-                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-
-                filterBtns.forEach(btn => {
-                    const btnText = btn.textContent.toLowerCase();
-                    const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
-                    btn.classList.remove('active');
-                    
-                    if (cat === 'video' && btnText.includes('youtube')) btn.classList.add('active');
-                    else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
-                    else if (cat === 'topics' && btnText.includes('all news') && btn.id === 'topicsBtn') btn.classList.add('active');
-                    else if (cat !== 'video' && cat !== 'gaming' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('youtube') && btn.id !== 'topicsBtn') btn.classList.add('active');
-                });
-            }
-            renderApp();
-        }
-
-        window.toggleDropdown = function(type, event) {
-            if(event) event.stopPropagation();
-            const menu = document.getElementById(type + 'Dropdown');
-            const wasOpen = menu.classList.contains('show');
-            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-            
-            if (!wasOpen) {
-                if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
-                if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
-                if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
-                updateCheckboxUI(type);
-                menu.classList.add('show');
-            }
-        }
-
-        window.updateTempFilter = function(type, value, isChecked) {
-            let tempSet;
-            if (type === 'video') tempSet = state.tempVideoFilters;
-            else if (type === 'gaming') tempSet = state.tempGamingFilters;
-            else if (type === 'topics') tempSet = state.tempTopicFilters;
-            if (isChecked) tempSet.add(value); else tempSet.delete(value);
-        }
-        
-        function updateCheckboxUI(type) {
-            const container = document.getElementById(type + 'Dropdown');
-            if(!container) return; 
-            let tempSet;
-            if (type === 'video') tempSet = state.tempVideoFilters;
-            else if (type === 'gaming') tempSet = state.tempGamingFilters;
-            else if (type === 'topics') tempSet = state.tempTopicFilters;
-
-            const inputs = container.querySelectorAll('input[type="checkbox"]');
-            inputs.forEach(input => {
-                const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); 
-                if(valMatch && valMatch[1]) {
-                    const val = valMatch[1].replace(/'/g, "");
-                    input.checked = tempSet.has(val);
-                }
-            });
-        }
-
-        window.applyFilters = function(type) {
-            if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
-            else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
-            else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
-            document.getElementById(type + 'Dropdown').classList.remove('show');
-            setCategory(type); 
-        }
-
-        window.clearFilters = function(type) {
-            if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
-            else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
-            else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
-            updateCheckboxUI(type);
-            document.getElementById(type + 'Dropdown').classList.remove('show');
-            setCategory(type === 'topics' ? 'all' : type);
-        }
-
-        window.onclick = function(event) {
-            if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) {
-                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-            }
-        }
-        
-        const GENRES = {
-            'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'],
-            'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'],
-            'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'],
-            'mmorpg': ['mmo', 'mmorpg', 'world of warcraft', 'wow', 'final fantasy xiv', 'ffxiv', 'guild wars', 'elder scrolls online', 'runescape', 'black desert'],
-            'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'],
-            'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026']
-        };
-
-        function getFilteredArticles() {
-            return state.articles.filter(art => {
-                // SAFETY: Ensure category exists and is a string
-                const artCat = (art.category || '').trim().toLowerCase();
-                const title = (art.title || '').toLowerCase();
-                const summary = (art.summary || '').toLowerCase();
-                const fullText = title + " " + summary;
-
-                if (state.category === 'saved') {
-                    if (!state.saved.has(art.link)) return false;
-                    return fullText.includes(state.search);
-                }
-
-                if (state.category === 'all') {
-                    if (art.is_video) return false;
-                    if (artCat === 'gaming') return false; 
-                    return fullText.includes(state.search);
-                }
-
-                if (state.category === 'video') {
-                    if (!art.is_video) return false;
-                    if (state.videoFilters.size > 0) {
-                        let matchFound = false;
-                        for (let filter of state.videoFilters) {
-                            if (artCat.includes(filter)) { matchFound = true; break; }
-                        }
-                        if (!matchFound) return false;
-                    }
-                    return fullText.includes(state.search);
-                }
-                
-                if (state.category === 'gaming') {
-                    if (artCat !== 'gaming') return false;
-                    if (art.is_video) return false; 
-                    if (state.gamingFilters.size > 0) {
-                        let matchFound = false;
-                        for (let genre of state.gamingFilters) {
-                            const keywords = GENRES[genre];
-                            if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; }
-                        }
-                        if (!matchFound) return false;
-                    }
-                    return fullText.includes(state.search);
-                }
-
-                if (state.category === 'topics') {
-                    if (art.is_video) return false;
-                    if (artCat === 'gaming') return false;
-                    if (state.topicFilters.size > 0) {
-                        if (!state.topicFilters.has(artCat)) return false;
-                    }
-                    return fullText.includes(state.search);
-                }
-
-                // FALLBACK for specific categories (Geopolitics/Tech/EV/Science/Construction)
-                if (art.is_video) return false;
-                let matchesCat = (artCat === state.category);
-                return matchesCat && fullText.includes(state.search);
-            });
-        }
-
-        function renderApp() {
-            const filtered = getFilteredArticles();
-            const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            
-            if (state.page > totalPages) state.page = Math.max(1, totalPages);
-            if (state.page < 1) state.page = 1;
-
-            const start = (state.page - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
-            const pageArticles = filtered.slice(start, end);
-
-            if (floatPrev && floatNext) {
-                floatPrev.style.display = state.page > 1 ? 'flex' : 'none';
-                floatNext.style.display = state.page < totalPages ? 'flex' : 'none';
-            }
-
-            grid.innerHTML = pageArticles.map((art, index) => {
-                let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
-                const isSaved = state.saved.has(art.link) ? 'saved' : '';
-                
-                return `
-                <article class="news-card" id="card-${index}">
-                    <a href="${art.link}" target="_blank" class="img-link">
-                        <div class="card-image-wrapper">
-                            <div class="cat-tag">${art.category}</div>
-                            
-                            ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                            <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News" onerror="handleImageError(this)">
-                        </div>
-                    </a>
-                    
-                    <div class="card-content">
-                        <div class="card-meta"><div class="source-badge">${art.source}</div><time>${art.time_str}</time></div>
-                        <h2 class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></h2>
-                        <p class="ai-summary">${art.summary}</p>
-                    </div>
-
-                    <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
-                        <span class="heart-icon">♥</span>
-                        <span class="bookmark-text">BOOKMARK FOR LATER...</span>
-                    </div>
-                </article>
-            `}).join('');
-
-            if (pageArticles.length === 0) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; opacity:0.6;">No articles found.</div>`;
-            
-            let pHTML = '';
-            if (totalPages > 1) {
-                if(state.page > 1) {
-                    pHTML += `<button class="page-btn" onclick="changePage(1)">First</button>`;
-                    pHTML += `<button class="page-btn" onclick="changePage(${state.page-1})">«</button>`;
-                }
-                
-                const BLOCK_SIZE = 6;
-                let currentBlock = Math.floor((state.page - 1) / BLOCK_SIZE);
-                let startPage = currentBlock * BLOCK_SIZE + 1;
-                let endPage = Math.min(startPage + BLOCK_SIZE - 1, totalPages);
-                
-                for (let i = startPage; i <= endPage; i++) {
-                    let active = i === state.page ? 'active' : '';
-                    pHTML += `<button class="page-btn ${active}" onclick="changePage(${i})">${i}</button>`;
-                }
-                
-                if(state.page < totalPages) {
-                    pHTML += `<button class="page-btn" onclick="changePage(${state.page+1})">»</button>`;
-                }
-            }
-            pagContainer.innerHTML = pHTML;
-        }
-
-        function changePage(newPage) {
-            const filtered = getFilteredArticles();
-            const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            
-            if (newPage < 1) newPage = 1;
-            if (newPage > totalPages) newPage = totalPages || 1;
-            
-            state.page = newPage;
-            renderApp();
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
-        }
-
-        const modal = document.getElementById('changelogModal');
-        document.getElementById('versionBtn').onclick = () => modal.classList.add('open');
-        
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('open');
-        }
-
-        function openSuggestModal() {
-            document.getElementById('suggestModal').classList.add('open');
-        }
-
-        function handleSuggestSubmit(e) {
-            e.preventDefault();
-            const form = document.getElementById('suggestForm');
-            const data = new FormData(form);
-            
-            fetch(form.action, {
-                method: "POST",
-                body: data,
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert("Thank you! Your suggestion has been sent directly to the developer.");
-                    closeModal('suggestModal');
-                    form.reset();
-                } else {
-                    alert("Oops! There was a problem sending your form. Please try again.");
-                }
-            })
-            .catch(error => { alert("Error sending suggestion. Please check your connection."); });
-        }
-
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                e.target.classList.remove('open');
-            }
-        });
-
-        init();
-    </script>
-</body>
-</html>'''
-
-# 3. SKRIV UT FILEN TILL HÅRDDISKEN (SÄKERSTÄLLER ATT DEN FINNS)
-final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(final_html)
-
-print("SUCCESS: index.html har uppdaterats till Version 20.6.0!")
+    print(f"FEL vid skapandet av HTML: {e}")
