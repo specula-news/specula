@@ -18,8 +18,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; }
-        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; }
+        :root { --bg-body: #050505; --bg-card: #121212; --bg-card-hover: #1a1a1a; --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.15); --border: #27272a; --dropdown-bg: #161616; }
+        body.light-mode { --bg-body: #f0f2f5; --bg-card: #ffffff; --bg-card-hover: #ffffff; --text-primary: #111827; --text-secondary: #4b5563; --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.1); --border: #e5e7eb; --dropdown-bg: #ffffff; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); background-attachment: fixed; padding-bottom: 50px; transition: background 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
@@ -40,20 +41,8 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
-        /* NAV WRAPPER UPDATED FOR VISIBLE DROPDOWNS */
         .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; justify-content: center; }
-        
-        .category-nav { 
-            display: flex; 
-            gap: 10px; 
-            flex-wrap: wrap; /* Allows buttons to wrap so menus aren't cut off */
-            justify-content: center;
-            padding: 5px 0; 
-            width: 100%; 
-            overflow: visible !important; /* Critical for dropdowns to show */
-        }
-        
-        /* Hide arrows since we use wrap now */
+        .category-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 5px 0; width: 100%; overflow: visible !important; }
         .scroll-btn { display: none !important; }
 
         .filter-btn { position: relative; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
@@ -63,41 +52,101 @@
         .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; border-color: #ff0040; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; border-color: #9d00ff; }
 
-        /* DROPDOWNS */
+        /* --- DROPDOWN STYLING --- */
         .dropdown-menu {
-            display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%);
-            background: var(--bg-card); border: 1px solid var(--border);
+            display: none; position: absolute; top: 125%; left: 50%; transform: translateX(-50%);
+            background: var(--dropdown-bg); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            min-width: 250px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+            min-width: 280px; 
             flex-direction: column; overflow: hidden;
             animation: fadeIn 0.2s ease;
         }
         .dropdown-menu.show { display: flex; }
-        .dropdown-header { padding: 10px 15px; font-size: 0.75rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .checkbox-list { max-height: 300px; overflow-y: auto; padding: 5px; }
-        .checkbox-item { display: flex; align-items: center; padding: 10px 15px; cursor: pointer; transition: 0.2s; border-radius: 6px; color: var(--text-primary); font-size: 0.9rem; }
-        .checkbox-item:hover { background: var(--bg-body); }
-        .checkbox-input { appearance: none; width: 18px; height: 18px; border: 2px solid var(--text-secondary); border-radius: 4px; margin-right: 12px; position: relative; cursor: pointer; transition: 0.2s; }
-        .checkbox-input:checked { background: #9d00ff; border-color: #9d00ff; }
-        .checkbox-input:checked::after { content: '✔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; color: white; }
-        .dropdown-footer { padding: 10px; border-top: 1px solid var(--border); }
-        .clear-btn { width: 100%; padding: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
-        .clear-btn:hover { border-color: #ff0040; color: #ff0040; }
+        
+        .dropdown-list { max-height: 350px; overflow-y: auto; padding: 5px; }
+        
+        /* Checkbox Item Styling */
+        .check-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; cursor: pointer; transition: 0.2s;
+            border-radius: 8px; color: var(--text-secondary); 
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+        .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        
+        .check-item input { display: none; }
+        
+        .check-indicator {
+            width: 16px; height: 16px; border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            position: relative; transition: 0.2s;
+        }
+        
+        /* Active State for Checkboxes */
+        .check-item input:checked + .check-indicator {
+            background: var(--accent); border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+        
+        #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
+        #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
+        /* Topics Dropdown (Mobile) uses default accent (Blue) */
 
-        .sub-nav { display: none; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 15px 0 5px 0; width: 100%; animation: slideDown 0.3s ease forwards; border-top: 1px dashed var(--border); margin-top: 15px; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .sub-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: 0.2s; }
-        #videoSubNav .sub-btn:hover { border-color: #ff0040; color: #ff0040; }
-        #videoSubNav .sub-btn.active { background: #ff0040; color: white; border-color: #ff0040; }
+        .check-item input:checked ~ span { color: var(--text-primary); }
+
+        /* --- BUTTON STYLES --- */
+        .dropdown-footer { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 16px; border-top: 1px solid var(--border); 
+            background: rgba(0,0,0,0.2); gap: 10px;
+        }
+        
+        .footer-btn {
+            background: none; border: none; cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* CLEAR BUTTON - RED */
+        .btn-clear { 
+            color: #ff4444; opacity: 0.8; font-size: 0.75rem; 
+        }
+        .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
+        
+        /* OK BUTTON - ALWAYS BLUE (Site Accent) */
+        .btn-ok { 
+            background: var(--accent); 
+            color: #000;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            gap: 6px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        
+        .btn-ok:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 25px var(--accent-glow); 
+        }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
+
+        /* RESPONSIVE LOGIC FOR MENUS */
+        .desktop-only { display: flex; gap: 10px; }
+        .mobile-only { display: none; }
 
         @media (max-width: 768px) {
             header { padding: 20px 10px; align-items: stretch; }
             .header-top { flex-wrap: wrap; gap: 15px; }
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
+            
+            /* HIDE DESKTOP BUTTONS, SHOW MOBILE DROPDOWN */
+            .desktop-only { display: none; }
+            .mobile-only { display: block; position: relative; }
         }
 
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; }
@@ -164,19 +213,19 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V17.4.0 -->
+                 <!-- V17.8.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.4.0 - UI Fixes</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.8.0 - Mobile Layout</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Menu Fix:</strong> Fixed issue where dropdowns would not appear.<br>
-                        • <strong>Theme Button:</strong> Fixed issue where button text didn't change correctly.<br>
+                        • <strong>Mobile Menu:</strong> Specific category buttons are now grouped into a new "TOPICS" dropdown on mobile to save space.<br>
+                        • <strong>Cleaner Look:</strong> The mobile header now matches the sleek look of desktop with YouTube and Gaming dropdowns.<br>
                     </div>
                 </li>
-                 <!-- V17.3.0 -->
+                 <!-- V17.7.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.3.0</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.7.0</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        Adaptive Navigation & Smart Arrows.
+                        Color Contrast & UI Tweaks.
                     </div>
                 </li>
             </ul>
@@ -191,7 +240,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.4.0</div>
+                    <div class="version-btn" id="versionBtn">Version 17.8.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -208,12 +257,18 @@
                     <div style="position:relative;">
                         <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE NEWS ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
-                            <button class="sub-btn" onclick="setVideoSubCategory('all')">All Videos</button>
-                            <button class="sub-btn" onclick="setVideoSubCategory('geopolitics')">Geopolitics</button>
-                            <button class="sub-btn" onclick="setVideoSubCategory('tech')">Tech</button>
-                            <button class="sub-btn" onclick="setVideoSubCategory('ev')">EV</button>
-                            <button class="sub-btn" onclick="setVideoSubCategory('science')">Science</button>
-                            <button class="sub-btn" onclick="setVideoSubCategory('gaming')">Gaming</button>
+                            <div class="dropdown-list">
+                                <label class="check-item"><span style="flex-grow:1">Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Tech</span> <input type="checkbox" onchange="updateTempFilter('video', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">EV</span> <input type="checkbox" onchange="updateTempFilter('video', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Science</span> <input type="checkbox" onchange="updateTempFilter('video', 'science', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Gaming</span> <input type="checkbox" onchange="updateTempFilter('video', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Construction</span> <input type="checkbox" onchange="updateTempFilter('video', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                            </div>
+                            <div class="dropdown-footer">
+                                <button class="footer-btn btn-clear" onclick="clearFilters('video')">CLEAR</button>
+                                <button class="footer-btn btn-ok" onclick="applyFilters('video')">OK <span style="font-size:1.2em">✓</span></button>
+                            </div>
                         </div>
                     </div>
 
@@ -221,26 +276,48 @@
                     <div style="position:relative;">
                         <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
-                            <div class="dropdown-header">Filter Genres</div>
-                            <div class="checkbox-list">
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('action')"> Action & Adventure</label>
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('shooter')"> Shooters (FPS/TPS)</label>
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('rpg')"> RPG</label>
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('strategy')"> Strategy & Sim</label>
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('sports')"> Sports & Racing</label>
-                                <label class="checkbox-item"><input type="checkbox" class="checkbox-input" onchange="toggleGamingGenre('upcoming')"> Upcoming & Leaks</label>
+                            <div class="dropdown-list">
+                                <label class="check-item"><span style="flex-grow:1">Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
                             <div class="dropdown-footer">
-                                <button class="clear-btn" onclick="clearGamingFilters()">Clear Filters</button>
+                                <button class="footer-btn btn-clear" onclick="clearFilters('gaming')">CLEAR</button>
+                                <button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK <span style="font-size:1.2em">✓</span></button>
                             </div>
                         </div>
                     </div>
 
-                    <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics & Docu</button>
-                    <button class="filter-btn" onclick="setCategory('tech')">Tech & AI</button>
-                    <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
-                    <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
-                    <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
+                    <!-- DESKTOP CATEGORY BUTTONS -->
+                    <div class="desktop-only">
+                        <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics & Docu</button>
+                        <button class="filter-btn" onclick="setCategory('tech')">Tech & AI</button>
+                        <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
+                        <button class="filter-btn" onclick="setCategory('science')">Science & Space</button>
+                        <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
+                    </div>
+
+                    <!-- MOBILE TOPICS DROPDOWN -->
+                    <div class="mobile-only">
+                        <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">TOPICS ▼</button>
+                        <div id="topicsDropdown" class="dropdown-menu">
+                            <div class="dropdown-list">
+                                <label class="check-item"><span style="flex-grow:1">Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span style="flex-grow:1">Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                            </div>
+                            <div class="dropdown-footer">
+                                <button class="footer-btn btn-clear" onclick="clearFilters('topics')">CLEAR</button>
+                                <button class="footer-btn btn-ok" onclick="applyFilters('topics')">OK <span style="font-size:1.2em">✓</span></button>
+                            </div>
+                        </div>
+                    </div>
+
                 </nav>
             </div>
         </header>
@@ -262,8 +339,17 @@
     <script>
         const state = { 
             category: 'all', 
-            videoSubCat: 'all',
-            gamingGenres: new Set(),
+            
+            // active filters
+            videoFilters: new Set(),
+            gamingFilters: new Set(),
+            topicFilters: new Set(), // New for mobile topics
+
+            // temp filters
+            tempVideoFilters: new Set(),
+            tempGamingFilters: new Set(),
+            tempTopicFilters: new Set(),
+            
             search: '', 
             page: 1, 
             itemsPerPage: 45, 
@@ -313,7 +399,6 @@
             });
             renderApp(); 
             
-            // Check theme
             const themeBtn = document.getElementById('themeBtn');
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -328,10 +413,18 @@
         function setCategory(cat) {
             state.category = cat; 
             state.page = 1;
-            state.subCat = 'all'; 
             
-            // Note: We do NOT close dropdowns here anymore to allow toggleDropdown to work properly
+            // Clear mobile topic filters when using main categories (so we don't get mixed states)
+            if(cat !== 'topics') {
+                state.topicFilters.clear();
+                updateCheckboxUI('topics'); // Visually clear the mobile menu
+            }
             
+            // Close dropdowns if switching to a non-dropdown category
+            if(cat !== 'video' && cat !== 'gaming' && cat !== 'topics') {
+                 document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            }
+
             filterBtns.forEach(btn => {
                 const btnText = btn.textContent.toLowerCase();
                 const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
@@ -339,70 +432,91 @@
                 
                 if (cat === 'video' && btnText.includes('youtube')) btn.classList.add('active');
                 else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
-                else if (cat !== 'video' && cat !== 'gaming' && btnText.includes(catMatch) && !btnText.includes('youtube')) btn.classList.add('active');
+                else if (cat === 'topics' && btnText.includes('topics')) btn.classList.add('active');
+                else if (cat !== 'video' && cat !== 'gaming' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('youtube')) btn.classList.add('active');
             });
             renderApp();
         }
 
-        // FIXED: Toggle Logic
+        // --- UNIFIED DROPDOWN LOGIC ---
+
         window.toggleDropdown = function(type, event) {
-            if(event) event.stopPropagation(); // Stop click from propagating immediately
+            if(event) event.stopPropagation();
             
             const menu = document.getElementById(type + 'Dropdown');
             const wasOpen = menu.classList.contains('show');
             
-            // Close all dropdowns first
             document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             
             if (!wasOpen) {
-                setCategory(type); 
-                // Delay adding show slightly or just add it after setCategory
+                // Sync temp filters
+                if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
+                if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
+                if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
+                
+                updateCheckboxUI(type);
+                
                 menu.classList.add('show');
+                setCategory(type); 
             }
         }
 
-        // Close dropdowns when clicking outside
+        window.updateTempFilter = function(type, value, isChecked) {
+            let tempSet;
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters;
+
+            if (isChecked) tempSet.add(value);
+            else tempSet.delete(value);
+        }
+        
+        function updateCheckboxUI(type) {
+            const container = document.getElementById(type + 'Dropdown');
+            if(!container) return; // Guard
+
+            let tempSet;
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters || state.topicFilters; // Fallback if temp not init
+
+            const inputs = container.querySelectorAll('input[type="checkbox"]');
+            inputs.forEach(input => {
+                const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); 
+                if(valMatch && valMatch[1]) {
+                    const val = valMatch[1].replace(/'/g, "");
+                    input.checked = tempSet.has(val);
+                }
+            });
+        }
+
+        window.applyFilters = function(type) {
+            if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
+            else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
+            else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
+
+            state.page = 1;
+            document.getElementById(type + 'Dropdown').classList.remove('show');
+            renderApp();
+        }
+
+        window.clearFilters = function(type) {
+            if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
+            
+            updateCheckboxUI(type);
+            state.page = 1;
+            renderApp(); 
+        }
+
         window.onclick = function(event) {
             if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) {
                 document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             }
         }
-
-        window.setVideoSubCategory = function(sub) {
-            state.videoSubCat = sub;
-            state.page = 1;
-            const container = document.getElementById('videoDropdown');
-            container.querySelectorAll('.sub-btn').forEach(btn => {
-                if (btn.textContent.toLowerCase().includes(sub)) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-            renderApp();
-        }
-
-        window.toggleGamingGenre = function(genre) {
-            if (state.gamingGenres.has(genre)) state.gamingGenres.delete(genre);
-            else state.gamingGenres.add(genre);
-            state.page = 1;
-            renderApp();
-        }
-
-        window.clearGamingFilters = function() {
-            state.gamingGenres.clear();
-            document.querySelectorAll('.checkbox-input').forEach(cb => cb.checked = false);
-            state.page = 1;
-            renderApp();
-        }
-
-        function changePage(newPage) { 
-            const filtered = getFilteredArticles();
-            const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
-            if(newPage < 1 || newPage > totalPages) return;
-            state.page = newPage; 
-            renderApp(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
-        }
         
-        function resetHome() { state.search = ''; searchInput.value = ''; setCategory('all'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); }
+        // --- FILTERING ENGINE ---
 
         const GENRES = {
             'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'],
@@ -419,26 +533,38 @@
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
 
+                // 1. ALL NEWS (Default)
                 if (state.category === 'all') {
                     if (art.is_video) return false;
                     if (art.category === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
+                // 2. YOUTUBE NEWS
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
-                    if (state.videoSubCat && state.videoSubCat !== 'all') {
-                        if (!art.category.toLowerCase().includes(state.videoSubCat)) return false;
+                    
+                    if (state.videoFilters.size > 0) {
+                        let matchFound = false;
+                        for (let filter of state.videoFilters) {
+                            if (art.category.toLowerCase().includes(filter)) {
+                                matchFound = true;
+                                break;
+                            }
+                        }
+                        if (!matchFound) return false;
                     }
                     return fullText.includes(state.search);
                 }
                 
+                // 3. GAMING
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
                     if (art.is_video) return false; 
-                    if (state.gamingGenres.size > 0) {
+                    
+                    if (state.gamingFilters.size > 0) {
                         let matchFound = false;
-                        for (let genre of state.gamingGenres) {
+                        for (let genre of state.gamingFilters) {
                             const keywords = GENRES[genre];
                             if (keywords && keywords.some(k => fullText.includes(k))) {
                                 matchFound = true;
@@ -450,6 +576,21 @@
                     return fullText.includes(state.search);
                 }
 
+                // 4. MOBILE TOPICS (The new functionality)
+                if (state.category === 'topics') {
+                    if (art.is_video) return false;
+                    if (art.category === 'gaming') return false;
+
+                    if (state.topicFilters.size > 0) {
+                        // Check if article category is in the selected filters
+                        // Art category is like 'tech', 'science' etc.
+                        if (!state.topicFilters.has(art.category)) return false;
+                    }
+                    
+                    return fullText.includes(state.search);
+                }
+
+                // 5. SPECIFIC CATEGORY BUTTONS (Desktop)
                 if (art.is_video) return false;
                 let matchesCat = (art.category === state.category);
                 return matchesCat && fullText.includes(state.search);
@@ -532,7 +673,6 @@
             pagContainer.innerHTML = pHTML;
         }
 
-        // FIXED: Theme Button Logic
         const themeBtn = document.getElementById('themeBtn');
         themeBtn.onclick = () => {
             document.body.classList.toggle('light-mode');
