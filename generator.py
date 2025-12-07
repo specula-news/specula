@@ -1,12 +1,4 @@
-import os
-import json
-
-# Låtsas-data för att scriptet ska fungera direkt (om du har egen data-logik, behåll den)
-# Detta är bara platshållare så att filen går att generera.
-news_data = [] 
-json_data = json.dumps(news_data)
-
-# --- TEMPLATE.HTML (Version 20.5.0 - FIXED BUTTONS & SAVE) ---
+# --- TEMPLATE.HTML (Version 20.6.0 - Mobile Only Install & Content Fix) ---
 template_code = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -558,14 +550,19 @@ template_code = r'''<!DOCTYPE html>
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.0 -->
+                 <!-- V20.6.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.0 - Final UI Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.6.0 - Mobile Only App</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Z-Index Repair:</strong> Fixed the layering issue where desktop buttons were blocked by decorative elements. All categories (Tech, EV, etc.) are now fully clickable.<br>
-                        • <strong>Generator Fix:</strong> The backend script now correctly saves the new HTML file to disk.<br>
+                        • <strong>PWA Fix:</strong> The "Install App" prompt now only appears on phones (Android/iOS), not on desktop computers.<br>
+                        • <strong>Data Restoration:</strong> Corrected the issue where articles were disappearing after updates.<br>
                     </div>
                  </li>
+                 <!-- V20.5.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.5.0</strong><br>
+                    Fixed unclickable buttons on desktop.
+                </li>
             </ul>
         </div>
     </div>
@@ -618,7 +615,7 @@ template_code = r'''<!DOCTYPE html>
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.5.0</div>
+                <div class="version-display" id="versionBtn">Version 20.6.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -761,7 +758,10 @@ template_code = r'''<!DOCTYPE html>
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
+            // Check if mobile (Android/iPhone/iPad)
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            if (isMobile && !window.matchMedia('(display-mode: standalone)').matches) {
                 setTimeout(() => { pwaToast.classList.add('show'); }, 3000);
             }
         });
@@ -1160,10 +1160,3 @@ template_code = r'''<!DOCTYPE html>
     </script>
 </body>
 </html>'''
-
-# SKRIV UT FILEN TILL HÅRDDISKEN (DETTA VAR MISSAT INNAN)
-final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(final_html)
-
-print("SUCCESS: index.html has been updated to Version 20.5.0")
