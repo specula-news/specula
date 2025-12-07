@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECULA | Visual Intelligence</title>
     
-    <meta name="description" content="SPECULA is an automated AI-powered news aggregator covering Geopolitics, Tech, EV, Science, and Construction.">
-    <meta name="robots" content="index, follow">
+    <meta name="description" content="SPECULA is an automated AI-powered news aggregator.">
     <link rel="canonical" href="https://specula-news.netlify.app/">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,37 +39,37 @@
         .search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
 
-        /* MAIN NAV */
         .nav-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; position: relative; }
         .scroll-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); min-width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2rem; z-index: 5; transition: 0.2s; flex-shrink: 0; }
         .scroll-btn:hover { border-color: var(--accent); color: var(--accent); }
         .category-nav { display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0; scrollbar-width: none; -ms-overflow-style: none; white-space: nowrap; width: 100%; }
         .category-nav::-webkit-scrollbar { display: none; }
-        .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
-        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+        
+        .filter-btn { position: relative; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 20px; cursor: pointer; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.8rem; flex-shrink: 0; }
+        .filter-btn:hover { border-color: var(--accent); color: var(--text-primary); }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         
-        /* CUSTOM BUTTON STYLES */
-        .filter-btn[onclick="setCategory('video')"] { border-color: var(--border); color: var(--text-secondary); }
-        .filter-btn[onclick="setCategory('video')"]:hover, .filter-btn[onclick="setCategory('video')"].active { background: transparent; color: #ff0040; border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.4); }
-        .filter-btn[onclick="setCategory('video')"].active { background: #ff0040; color: white; }
-        
-        .filter-btn[onclick="setCategory('gaming')"] { border-color: var(--border); color: var(--text-secondary); }
-        .filter-btn[onclick="setCategory('gaming')"]:hover, .filter-btn[onclick="setCategory('gaming')"].active { background: transparent; color: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); }
-        .filter-btn[onclick="setCategory('gaming')"].active { background: #9d00ff; color: white; }
+        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; border-color: #ff0040; }
+        .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; border-color: #9d00ff; }
 
-        /* SUB-NAV */
-        .sub-nav { display: none; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 15px 0 5px 0; width: 100%; animation: slideDown 0.3s ease forwards; border-top: 1px dashed var(--border); margin-top: 15px; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .sub-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: 0.2s; }
+        /* DROPDOWN MENU */
+        .dropdown-menu {
+            display: none; position: absolute; top: 110%; left: 0; 
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 10px; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            min-width: 200px;
+            flex-direction: column; gap: 5px;
+        }
+        .dropdown-menu.show { display: flex; }
         
-        /* VIDEO SUB COLORS */
-        #videoSubNav .sub-btn:hover { border-color: #ff0040; color: #ff0040; }
-        #videoSubNav .sub-btn.active { background: #ff0040; color: white; border-color: #ff0040; }
-
-        /* GAMING SUB COLORS */
-        #gamingSubNav .sub-btn:hover { border-color: #9d00ff; color: #9d00ff; }
-        #gamingSubNav .sub-btn.active { background: #9d00ff; color: white; border-color: #9d00ff; }
+        .sub-btn {
+            background: transparent; border: none; color: var(--text-secondary);
+            padding: 8px 12px; text-align: left; cursor: pointer;
+            border-radius: 6px; transition: 0.2s; font-size: 0.85rem; font-weight: 600;
+        }
+        .sub-btn:hover { background: var(--bg-body); color: var(--text-primary); }
+        .sub-btn.active { background: var(--accent); color: #000; }
 
         .theme-switch { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
 
@@ -78,10 +78,7 @@
             .header-top { flex-wrap: wrap; gap: 15px; }
             .logo-wrapper { flex: 1; }
             .search-container { order: 3; width: 100%; max-width: 100%; margin: 5px 0; }
-            .category-nav, .sub-nav { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; width: 100vw; margin-left: -10px; padding: 10px 15px; -webkit-overflow-scrolling: touch; }
-            .category-nav::-webkit-scrollbar, .sub-nav::-webkit-scrollbar { display: none; }
-            .filter-btn, .sub-btn { flex-shrink: 0; }
-            .sub-nav { margin-top: 0; border-top: none; padding-top: 0;}
+            .category-nav { justify-content: flex-start; }
             .scroll-btn { display: none; }
         }
 
@@ -149,19 +146,19 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <ul class="changelog-list">
-                <!-- V17.0.0 -->
-                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.0.0 - The Gaming Center</strong>
+                 <!-- V17.1.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 17.1.0 - The Clean Sweep</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Gaming Hub:</strong> Added a massive new 'Gaming' section with 20+ sources including IGN, GameSpot, and Kotaku.<br>
-                        • <strong>Smart Filters:</strong> Gaming news can be filtered by genre: Action, Shooters, RPG, Strategy, Sports, and Upcoming releases.<br>
-                        • <strong>UI Polish:</strong> Refined button styles. Video and Gaming buttons now only show their signature colors (Red/Purple) when active or hovered, keeping the interface clean.<br>
+                        • <strong>Content Segregation:</strong> Gaming news is now strictly isolated to the Gaming tab. It will never appear in 'All News'.<br>
+                        • <strong>Deduplication Engine:</strong> Implemented advanced text analysis to detect and remove duplicate articles from different sources covering the exact same topic.<br>
+                        • <strong>Dropdown Menus:</strong> Replaced the clunky sub-nav with sleek, floating dropdowns for YouTube and Gaming categories.<br>
                     </div>
                 </li>
-                 <!-- V16.2.0 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
-                    <strong>Version 16.2.0</strong><br>
-                    Video Hub (Sub-menus).
+                <!-- V17.0.0 -->
+                <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong>Version 17.0.0</strong><br>
+                    Gaming Hub.
                 </li>
             </ul>
         </div>
@@ -175,7 +172,7 @@
                         <img src="icon.png" class="logo-icon" alt="Specula">
                         <div class="logo">SPECULA <span>.</span></div>
                     </a>
-                    <div class="version-btn" id="versionBtn">Version 17.0.0</div>
+                    <div class="version-btn" id="versionBtn">Version 17.1.0</div>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search headlines...">
@@ -184,13 +181,37 @@
                 <button class="theme-switch" id="themeBtn">☀ LIGHT MODE</button>
             </div>
             
-            <!-- MAIN NAV WRAPPER -->
             <div class="nav-wrapper">
                 <button class="scroll-btn left" onclick="scrollNav(-1)">‹</button>
                 <nav class="category-nav" id="catNav">
                     <button class="filter-btn active" onclick="setCategory('all')">All News</button>
-                    <button class="filter-btn" onclick="setCategory('video')">YOUTUBE NEWS</button>
-                    <button class="filter-btn" onclick="setCategory('gaming')">GAMING</button>
+                    
+                    <!-- YOUTUBE DROPDOWN TRIGGER -->
+                    <div style="position:relative;">
+                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video')">YOUTUBE NEWS ▼</button>
+                        <div id="videoDropdown" class="dropdown-menu">
+                            <button class="sub-btn" onclick="setVideoSubCategory('all')">All Videos</button>
+                            <button class="sub-btn" onclick="setVideoSubCategory('geopolitics')">Geopolitics</button>
+                            <button class="sub-btn" onclick="setVideoSubCategory('tech')">Tech</button>
+                            <button class="sub-btn" onclick="setVideoSubCategory('ev')">EV</button>
+                            <button class="sub-btn" onclick="setVideoSubCategory('science')">Science</button>
+                            <button class="sub-btn" onclick="setVideoSubCategory('gaming')">Gaming</button>
+                        </div>
+                    </div>
+
+                    <!-- GAMING DROPDOWN TRIGGER -->
+                    <div style="position:relative;">
+                        <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming')">GAMING ▼</button>
+                        <div id="gamingDropdown" class="dropdown-menu">
+                            <button class="sub-btn" onclick="setGamingSubCategory('all')">All Games</button>
+                            <button class="sub-btn" onclick="setGamingSubCategory('action')">Action</button>
+                            <button class="sub-btn" onclick="setGamingSubCategory('shooter')">Shooters</button>
+                            <button class="sub-btn" onclick="setGamingSubCategory('rpg')">RPG</button>
+                            <button class="sub-btn" onclick="setGamingSubCategory('strategy')">Strategy</button>
+                            <button class="sub-btn" onclick="setGamingSubCategory('sports')">Sports</button>
+                        </div>
+                    </div>
+
                     <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics & Docu</button>
                     <button class="filter-btn" onclick="setCategory('tech')">Tech & AI</button>
                     <button class="filter-btn" onclick="setCategory('ev')">EV & Energy</button>
@@ -199,29 +220,6 @@
                 </nav>
                 <button class="scroll-btn right" onclick="scrollNav(1)">›</button>
             </div>
-
-            <!-- VIDEO SUB-NAV -->
-            <div id="videoSubNav" class="sub-nav">
-                <button class="sub-btn active" onclick="setSubCategory('all')">All Videos</button>
-                <button class="sub-btn" onclick="setSubCategory('geopolitics')">Geopolitics</button>
-                <button class="sub-btn" onclick="setSubCategory('tech')">Tech</button>
-                <button class="sub-btn" onclick="setSubCategory('ev')">EV</button>
-                <button class="sub-btn" onclick="setSubCategory('science')">Science</button>
-                <button class="sub-btn" onclick="setSubCategory('gaming')">Gaming</button>
-                <button class="sub-btn" onclick="setSubCategory('construction')">Construction</button>
-            </div>
-
-            <!-- GAMING SUB-NAV (NEW) -->
-            <div id="gamingSubNav" class="sub-nav">
-                <button class="sub-btn active" onclick="setSubCategory('all')">All Games</button>
-                <button class="sub-btn" onclick="setSubCategory('action')">Action & Adv</button>
-                <button class="sub-btn" onclick="setSubCategory('shooter')">Shooters</button>
-                <button class="sub-btn" onclick="setSubCategory('rpg')">RPG</button>
-                <button class="sub-btn" onclick="setSubCategory('strategy')">Strategy</button>
-                <button class="sub-btn" onclick="setSubCategory('sports')">Sports</button>
-                <button class="sub-btn" onclick="setSubCategory('upcoming')">Upcoming & Leaks</button>
-            </div>
-
         </header>
 
         <div class="news-grid" id="newsGrid"></div>
@@ -252,8 +250,6 @@
         const pagContainer = document.getElementById('pagination');
         const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
-        const videoSubNav = document.getElementById('videoSubNav');
-        const gamingSubNav = document.getElementById('gamingSubNav');
         const floatPrev = document.getElementById('floatPrev');
         const floatNext = document.getElementById('floatNext');
 
@@ -309,13 +305,11 @@
         function setCategory(cat) {
             state.category = cat; 
             state.page = 1;
-            state.subCat = 'all'; // Reset sub filter
+            state.subCat = 'all'; 
             
-            // Toggle Sub Menus
-            videoSubNav.style.display = (cat === 'video') ? 'flex' : 'none';
-            gamingSubNav.style.display = (cat === 'gaming') ? 'flex' : 'none';
+            // Close dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
 
-            // Update UI
             filterBtns.forEach(btn => {
                 const btnText = btn.textContent.toLowerCase();
                 const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
@@ -325,27 +319,37 @@
                 else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
                 else if (cat !== 'video' && cat !== 'gaming' && btnText.includes(catMatch) && !btnText.includes('youtube')) btn.classList.add('active');
             });
-            
-            // Reset Sub-buttons UI
-            document.querySelectorAll('.sub-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if(btn.textContent.toLowerCase().includes('all')) btn.classList.add('active');
-            });
-            
             renderApp();
         }
 
-        function setSubCategory(sub) {
+        // TOGGLE DROPDOWN
+        window.toggleDropdown = function(type) {
+            // Close others
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            
+            const menu = document.getElementById(type + 'Dropdown');
+            if (menu) menu.classList.add('show');
+            
+            // Set category immediately when opening dropdown
+            setCategory(type);
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.filter-btn')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            }
+        }
+
+        window.setVideoSubCategory = function(sub) {
             state.subCat = sub;
             state.page = 1;
-            
-            // Update Sub-button UI
-            const activeContainer = state.category === 'video' ? videoSubNav : gamingSubNav;
-            activeContainer.querySelectorAll('.sub-btn').forEach(btn => {
-                if (btn.textContent.toLowerCase().includes(sub)) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-            
+            renderApp();
+        }
+
+        window.setGamingSubCategory = function(sub) {
+            state.subCat = sub;
+            state.page = 1;
             renderApp();
         }
 
@@ -360,14 +364,12 @@
         
         function resetHome() { state.search = ''; searchInput.value = ''; setCategory('all'); }
 
-        // --- GENRE KEYWORDS (FRONTEND FILTERING) ---
         const GENRES = {
             'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'],
             'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'],
             'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'],
             'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'],
-            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk'],
-            'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026']
+            'sports': ['fifa', 'fc', 'nba', 'madden', 'f1', 'racing', 'forza', 'gran turismo', 'skate', 'tony hawk']
         };
 
         function getFilteredArticles() {
@@ -376,31 +378,36 @@
                 const summary = art.summary.toLowerCase();
                 const fullText = title + " " + summary;
 
-                // 1. VIDEO TAB
+                // 1. ALL NEWS (NO GAMING, NO VIDEO)
+                if (state.category === 'all') {
+                    if (art.is_video) return false;
+                    if (art.category === 'gaming') return false; // STRICT FILTER
+                    return fullText.includes(state.search);
+                }
+
+                // 2. VIDEO TAB
                 if (state.category === 'video') {
                     if (!art.is_video) return false;
                     if (state.subCat !== 'all' && !art.category.toLowerCase().includes(state.subCat)) return false;
                     return fullText.includes(state.search);
                 }
                 
-                // 2. GAMING TAB
+                // 3. GAMING TAB
                 if (state.category === 'gaming') {
                     if (art.category !== 'gaming') return false;
-                    if (art.is_video) return false; // No videos in text tab
-
-                    // Sub-category Logic
+                    if (art.is_video) return false; 
                     if (state.subCat !== 'all') {
                         const keywords = GENRES[state.subCat];
-                        if (!keywords) return true; // Should not happen
+                        if (!keywords) return true; 
                         if (!keywords.some(k => fullText.includes(k))) return false;
                     }
                     return fullText.includes(state.search);
                 }
 
-                // 3. OTHER TABS
+                // 4. OTHER TABS
                 if (art.is_video) return false;
                 
-                let matchesCat = (state.category === 'all') ? true : (art.category === state.category);
+                let matchesCat = (art.category === state.category);
                 
                 return matchesCat && fullText.includes(state.search);
             });

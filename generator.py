@@ -12,6 +12,7 @@ import hashlib
 from urllib.parse import urljoin
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
+from difflib import SequenceMatcher # NYHET: För textjämförelse
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -197,13 +198,6 @@ def fetch_og_image(url):
 
 # --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
-    "gaming": [
-        "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", 
-        "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80",
-        "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80",
-        "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80",
-        "https://images.unsplash.com/photo-1605901309584-818e25960b8f?w=800&q=80"
-    ],
     "crisis": ["https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80", "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80", "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"],
     "war": ["https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80", "https://images.unsplash.com/photo-1550614000-4b9519e09eb3?w=800&q=80", "https://images.unsplash.com/photo-1618609204739-9993309a4563?w=800&q=80"],
     "police": ["https://images.unsplash.com/photo-1595150824222-6b9623e80069?w=800&q=80", "https://images.unsplash.com/photo-1455273397940-2777dfb20c93?w=800&q=80", "https://images.unsplash.com/photo-1587329107937-234b3e390c21?w=800&q=80"],
@@ -215,6 +209,7 @@ IMAGE_TOPICS = {
     "pollution": ["https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=800&q=80", "https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80", "https://images.unsplash.com/photo-1464039397811-476f652a343b?w=800&q=80"],
     "solar": ["https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80", "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80", "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80"],
     "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80", "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80"],
+    "gaming": ["https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80", "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80", "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80"],
     "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80", "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"]
 }
 
@@ -237,14 +232,13 @@ def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
     
-    # 1. Check category first for gaming
+    # Check category first
     if "gaming" in category.lower():
         pool = IMAGE_TOPICS.get("gaming", IMAGE_TOPICS["general"])
         shuffled = list(pool)
         random.shuffle(shuffled)
         selected_images.extend(shuffled[:3])
     
-    # 2. Check keywords
     if len(selected_images) < 3:
         for topic, keywords in TOPIC_KEYWORDS.items():
             if any(k in text for k in keywords):
@@ -254,7 +248,6 @@ def get_images_by_context(title, category):
                 selected_images.extend(shuffled[:3])
                 break
     
-    # 3. Fill with general
     if len(selected_images) < 3:
         general_pool = list(IMAGE_TOPICS["general"])
         random.shuffle(general_pool)
@@ -266,14 +259,9 @@ def get_images_by_context(title, category):
     return selected_images[:3]
 
 def get_article_images(entry, category, article_url, source_name):
-    # BANNED_SOURCES removed to allow scraping for everyone
     context_images = get_images_by_context(entry.title, category)
     real_img = None
-    
-    # 1. Scraping
     real_img = fetch_og_image(article_url)
-    
-    # 2. RSS fallback
     if not real_img:
         try:
             if 'media_content' in entry: real_img = entry.media_content[0]['url']
@@ -289,6 +277,9 @@ def get_article_images(entry, category, article_url, source_name):
             return [real_img] + context_images[:2]
             
     return context_images
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 def clean_youtube_description(text):
     if not text: return "Watch video for details."
@@ -344,11 +335,14 @@ def fetch_youtube_videos(channel_url, category):
     return videos
 
 def generate_site():
-    print("Startar SPECULA Generator v17.0.0 (The Gaming Center)...")
+    print("Startar SPECULA Generator v17.1.0 (The Clean Sweep)...")
     all_articles = []
+    
+    # 1. YouTube
     for url, cat in YOUTUBE_CHANNELS:
         all_articles.extend(fetch_youtube_videos(url, cat))
 
+    # 2. RSS
     headers = {'User-Agent': 'Mozilla/5.0'}
     for url, category in RSS_SOURCES:
         try:
@@ -357,7 +351,17 @@ def generate_site():
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                if any(a['title'] == entry.title for a in all_articles): continue
+                # DEDUPLICATION LOGIC
+                title = entry.title
+                # Check for similar titles already in list
+                is_duplicate = False
+                for existing in all_articles:
+                    if similar(title.lower(), existing['title'].lower()) > 0.8:
+                        is_duplicate = True
+                        break
+                
+                if is_duplicate: continue
+
                 pub_ts = time.time()
                 if 'published_parsed' in entry and entry.published_parsed:
                     pub_ts = time.mktime(entry.published_parsed)
@@ -369,8 +373,6 @@ def generate_site():
                 if is_swedish:
                     title = translate_text(entry.title)
                     summary = translate_text(summary)
-                else:
-                    title = entry.title
 
                 images = get_article_images(entry, category, entry.link, source_name)
 
@@ -393,14 +395,12 @@ def generate_site():
 
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
-    
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
     
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
     with open("sitemap.xml", "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
-    
     with open("robots.txt", "w", encoding="utf-8") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
 
