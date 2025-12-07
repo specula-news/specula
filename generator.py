@@ -12,20 +12,22 @@ import hashlib
 from urllib.parse import urljoin
 from deep_translator import GoogleTranslator
 from yt_dlp import YoutubeDL
-from difflib import SequenceMatcher # NYHET: För textjämförelse
+from difflib import SequenceMatcher
+import concurrent.futures
 
+# Tvinga UTF-8 för utskrifter
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except AttributeError:
     pass
 
 # --- KONFIGURATION ---
-MAX_ARTICLES_PER_SOURCE = 50
-MAX_DAYS_OLD = 5
+MAX_ARTICLES_PER_SOURCE = 15
+MAX_DAYS_OLD = 4
 MAX_VIDEO_DAYS_OLD = 3
-TIMEOUT_SECONDS = 6
-
-SITE_URL = "https://specula-news.netlify.app"
+TIMEOUT_SECONDS = 5
+JSON_FILE = "news.json"
+MAX_WORKERS = 10 # Antal samtidiga trådar
 
 # --- KÄLLOR ---
 YOUTUBE_CHANNELS = [
@@ -113,173 +115,94 @@ SWEDISH_SOURCES = ["feber.se", "sweclockers.com", "elektromanija", "dagensps.se"
 STATIC_POOL = [
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
     "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
-    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80",
     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
-    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80",
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80",
     "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
-    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
-    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80",
-    "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&q=80",
-    "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?w=800&q=80",
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
-    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
-    "https://images.unsplash.com/photo-1501854140884-074cf272492b?w=800&q=80",
-    "https://images.unsplash.com/photo-1518005052351-53b29640dd26?w=800&q=80",
-    "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?w=800&q=80",
-    "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
-    "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&q=80",
-    "https://images.unsplash.com/photo-1444723121867-bddbc7113f43?w=800&q=80",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-    "https://images.unsplash.com/photo-1526304640152-d29241528c7d?w=800&q=80",
-    "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?w=800&q=80",
-    "https://images.unsplash.com/photo-1504384308090-c54be3855833?w=800&q=80",
-    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80",
-    "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
-    "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80",
-    "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
-    "https://images.unsplash.com/photo-1620882352329-a41764645229?w=800&q=80",
-    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
-    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
-    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    "https://images.unsplash.com/photo-1543286386-2e659306cd6c?w=800&q=80",
-    "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80",
-    "https://images.unsplash.com/photo-1521791136064-7986608178d4?w=800&q=80",
-    "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=800&q=80",
-    "https://images.unsplash.com/photo-1611974765270-ca1258634369?w=800&q=80",
-    "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80",
-    "https://images.unsplash.com/photo-1529400971008-f566de0e6dfc?w=800&q=80",
-    "https://images.unsplash.com/photo-1535320903710-d9cf11df87b6?w=800&q=80",
-    "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80",
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80",
-    "https://images.unsplash.com/photo-1531297461136-82lw9b283993?w=800&q=80",
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
-    "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80",
-    "https://images.unsplash.com/photo-1590644365607-1c5a38d07399?w=800&q=80",
-    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80",
-    "https://images.unsplash.com/photo-1535732759880-bbd5c7265e3f?w=800&q=80",
-    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
 ]
-
-def get_deterministic_image(title):
-    if not title: return STATIC_POOL[0]
-    hash_object = hashlib.md5(title.encode())
-    hash_int = int(hash_object.hexdigest(), 16)
-    index = hash_int % len(STATIC_POOL)
-    return STATIC_POOL[index]
-
-def fetch_og_image(url):
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Referer': 'https://www.google.com/'
-        }
-        response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            og_image = soup.find("meta", property="og:image")
-            if og_image and og_image.get("content"):
-                img_url = og_image["content"]
-                if img_url and not img_url.startswith(('http:', 'https:')):
-                    img_url = urljoin(url, img_url)
-                return img_url
-            tw_image = soup.find("meta", property="twitter:image")
-            if tw_image and tw_image.get("content"):
-                return tw_image["content"]
-    except Exception:
-        pass
-    return None
 
 # --- SEMANTISK BILD-MOTOR ---
 IMAGE_TOPICS = {
-    "crisis": ["https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800&q=80", "https://images.unsplash.com/photo-1541696280456-4299b9f7c02c?w=800&q=80", "https://images.unsplash.com/photo-1533519396340-a3cb306a4b36?w=800&q=80", "https://images.unsplash.com/photo-1596464522904-9430db72744c?w=800&q=80", "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"],
-    "war": ["https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80", "https://images.unsplash.com/photo-1550614000-4b9519e09eb3?w=800&q=80", "https://images.unsplash.com/photo-1618609204739-9993309a4563?w=800&q=80"],
-    "police": ["https://images.unsplash.com/photo-1595150824222-6b9623e80069?w=800&q=80", "https://images.unsplash.com/photo-1455273397940-2777dfb20c93?w=800&q=80", "https://images.unsplash.com/photo-1587329107937-234b3e390c21?w=800&q=80"],
-    "china": ["https://images.unsplash.com/photo-1547981609-4b6bfe6770b7?w=800&q=80", "https://images.unsplash.com/photo-1504966981333-60a880373d32?w=800&q=80", "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800&q=80", "https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800&q=80"],
-    "usa": ["https://images.unsplash.com/photo-1501229691287-95713437517c?w=800&q=80", "https://images.unsplash.com/photo-1550505393-273a55239e24?w=800&q=80", "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800&q=80"],
-    "market": ["https://images.unsplash.com/photo-1611974765270-ca1258634369?w=800&q=80", "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "https://images.unsplash.com/photo-1565514020176-dbf2277f4942?w=800&q=80"],
-    "chips": ["https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80"],
-    "oil": ["https://images.unsplash.com/photo-1516937941348-c09645f31e88?w=800&q=80", "https://images.unsplash.com/photo-1628522333060-637998ca4448?w=800&q=80", "https://images.unsplash.com/photo-1582555618296-5427d25365b6?w=800&q=80"],
-    "pollution": ["https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=800&q=80", "https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80", "https://images.unsplash.com/photo-1464039397811-476f652a343b?w=800&q=80"],
-    "solar": ["https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80", "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80", "https://images.unsplash.com/photo-1566093097221-8563d80d2d31?w=800&q=80"],
-    "space": ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80", "https://images.unsplash.com/photo-1614728853970-36279f57520b?w=800&q=80"],
-    "gaming": ["https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80", "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80", "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80"],
-    "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80", "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80", "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&q=80"]
+    "gaming": ["https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80", "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800&q=80", "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80"],
+    "general": ["https://images.unsplash.com/photo-1495020686667-45e86d4e6e0d?w=800&q=80", "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80"]
 }
 
 TOPIC_KEYWORDS = {
-    "crisis": ["struggle", "refugee", "crisis", "aid", "humanitarian", "disaster", "famine", "camp", "dead", "chad", "sudan", "gaza"],
-    "war": ["war", "attack", "strike", "missile", "army", "military", "defense", "conflict", "bomb", "blast", "russia", "ukraine"],
-    "police": ["police", "arrest", "crime", "jail", "court", "law", "prison", "investigation", "suspect"],
-    "china": ["china", "chinese", "beijing", "shanghai", "hong kong", "asia", "taiwan"],
-    "usa": ["usa", "us", "america", "trump", "biden", "white house", "congress", "senate"],
-    "market": ["market", "stock", "trade", "economy", "dollar", "bank", "inflation", "price", "share"],
-    "chips": ["chip", "semiconductor", "nvidia", "intel", "processor", "compute", "ai", "hardware"],
-    "oil": ["oil", "gas", "petroleum", "fuel", "pipeline", "barrel", "energy"],
-    "pollution": ["pollution", "haze", "smoke", "epa", "emission", "carbon", "climate"],
-    "solar": ["solar", "wind", "renewable", "climate", "green", "battery", "grid"],
-    "space": ["space", "nasa", "moon", "mars", "rocket", "orbit", "satellite", "star"],
-    "gaming": ["game", "playstation", "xbox", "nintendo", "switch", "steam", "deck", "gta", "call of duty", "fortnite", "minecraft", "zelda", "mario", "esports", "twitch", "ign", "gamespot"]
+    "war": ["war", "military", "conflict", "ukraine", "russia"],
+    "tech": ["ai", "chip", "nvidia", "apple", "google"],
+    "gaming": ["game", "playstation", "xbox", "nintendo", "steam"]
 }
 
 def get_images_by_context(title, category):
     text = title.lower()
     selected_images = []
     
-    # Check category first
     if "gaming" in category.lower():
         pool = IMAGE_TOPICS.get("gaming", IMAGE_TOPICS["general"])
-        shuffled = list(pool)
-        random.shuffle(shuffled)
-        selected_images.extend(shuffled[:3])
+        selected_images.extend(random.sample(pool, min(3, len(pool))))
     
     if len(selected_images) < 3:
         for topic, keywords in TOPIC_KEYWORDS.items():
             if any(k in text for k in keywords):
                 pool = IMAGE_TOPICS.get(topic, IMAGE_TOPICS["general"])
-                shuffled = list(pool)
-                random.shuffle(shuffled)
-                selected_images.extend(shuffled[:3])
+                for img in pool:
+                    if img not in selected_images: selected_images.append(img)
                 break
     
     if len(selected_images) < 3:
         general_pool = list(IMAGE_TOPICS["general"])
         random.shuffle(general_pool)
-        while len(selected_images) < 3 and general_pool:
-            img = general_pool.pop()
+        for img in general_pool:
             if img not in selected_images: selected_images.append(img)
             
     while len(selected_images) < 3: selected_images.append(selected_images[0])
     return selected_images[:3]
 
-def get_article_images(entry, category, article_url, source_name):
-    context_images = get_images_by_context(entry.title, category)
-    real_img = None
-    real_img = fetch_og_image(article_url)
-    if not real_img:
-        try:
-            if 'media_content' in entry: real_img = entry.media_content[0]['url']
-            elif 'media_thumbnail' in entry: real_img = entry.media_thumbnail[0]['url']
-            elif 'links' in entry:
-                for link in entry.links:
-                    if link.type.startswith('image/'): real_img = link.href
-        except: pass
+def fetch_article_images(url, title, category):
+    found_images = []
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        }
+        # Snabbt anrop med kort timeout
+        response = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
         
-    if real_img:
-        bad = ["placeholder", "pixel", "tracker", "icon", "blank"]
-        if not any(b in real_img.lower() for b in bad):
-            return [real_img] + context_images[:2]
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
             
-    return context_images
+            og_image = soup.find("meta", property="og:image")
+            if og_image and og_image.get("content"):
+                img = og_image["content"]
+                if not img.startswith(('http:', 'https:')): img = urljoin(url, img)
+                found_images.append(img)
+            
+            tw_image = soup.find("meta", property="twitter:image")
+            if tw_image and tw_image.get("content"):
+                img = tw_image["content"]
+                if not img.startswith(('http:', 'https:')): img = urljoin(url, img)
+                if img not in found_images: found_images.append(img)
 
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
+            content_area = soup.find('article') or soup.find('main') or soup.body
+            if content_area:
+                imgs = content_area.find_all('img')
+                for img_tag in imgs:
+                    src = img_tag.get('src') or img_tag.get('data-src')
+                    if src:
+                        if not src.startswith(('http:', 'https:')): src = urljoin(url, src)
+                        lower_src = src.lower()
+                        bad = ['logo', 'icon', 'avatar', 'pixel', 'tracker', 'ad', 'svg', 'gif']
+                        if any(b in lower_src for b in bad): continue
+                        if src not in found_images:
+                            found_images.append(src)
+                            if len(found_images) >= 3: break
+    except Exception:
+        pass
+
+    context_images = get_images_by_context(title, category)
+    for img in context_images:
+        if img not in found_images: found_images.append(img)
+            
+    return found_images[:3]
 
 def clean_youtube_description(text):
     if not text: return "Watch video for details."
@@ -302,8 +225,8 @@ def translate_text(text, source_lang='sv'):
     except:
         return text 
 
-def fetch_youtube_videos(channel_url, category):
-    ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'playlistend': 10, 'ignoreerrors': True}
+def fetch_youtube_videos(channel_url, category, existing_urls):
+    ydl_opts = {'quiet': True, 'extract_flat': 'in_playlist', 'playlistend': 5, 'ignoreerrors': True}
     videos = []
     try:
         with YoutubeDL(ydl_opts) as ydl:
@@ -313,6 +236,10 @@ def fetch_youtube_videos(channel_url, category):
                 source = info.get('uploader', 'YouTube')
                 for entry in info['entries']:
                     vid_id = entry.get('id')
+                    link = f"https://www.youtube.com/watch?v={vid_id}"
+                    
+                    if link in existing_urls: continue
+                        
                     img = f"https://i.ytimg.com/vi/{vid_id}/hqdefault.jpg"
                     upload_date = entry.get('upload_date')
                     pub_ts = time.time()
@@ -322,7 +249,7 @@ def fetch_youtube_videos(channel_url, category):
                     img_list = [img, img, img] 
                     videos.append({
                         "title": entry.get('title'),
-                        "link": f"https://www.youtube.com/watch?v={vid_id}",
+                        "link": link,
                         "summary": clean_youtube_description(entry.get('description', '')),
                         "images": img_list,
                         "source": source,
@@ -334,16 +261,81 @@ def fetch_youtube_videos(channel_url, category):
     except Exception: pass
     return videos
 
-def generate_site():
-    print("Startar SPECULA Generator v17.1.0 (The Clean Sweep)...")
-    all_articles = []
-    
-    # 1. YouTube
-    for url, cat in YOUTUBE_CHANNELS:
-        all_articles.extend(fetch_youtube_videos(url, cat))
+# --- ARBETARE FÖR TRÅDNING ---
+def process_rss_entry(args):
+    entry, category, source_name, is_swedish = args
+    try:
+        pub_ts = time.time()
+        if 'published_parsed' in entry and entry.published_parsed:
+            pub_ts = time.mktime(entry.published_parsed)
+        
+        if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD:
+            return None
+        
+        time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
+        summary = clean_summary(entry.summary if 'summary' in entry else "")
+        note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
+        
+        title = entry.title
+        if is_swedish:
+            title = translate_text(title)
+            summary = translate_text(summary)
 
-    # 2. RSS
+        # Hämta bilder (Tungt jobb, görs nu parallellt)
+        images = fetch_article_images(entry.link, title, category)
+
+        return {
+            "title": title,
+            "link": entry.link,
+            "summary": summary + note_html,
+            "images": images,
+            "source": source_name,
+            "category": category,
+            "published": pub_ts,
+            "time_str": time_str,
+            "is_video": False
+        }
+    except Exception as e:
+        print(f"Skipping article due to error: {e}")
+        return None
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+def generate_site():
+    print("Startar SPECULA Generator v19.0 (Multi-Threaded)...")
+    
+    # 1. LÄS IN GAMLA NYHETER
+    existing_articles = []
+    existing_urls = set()
+    
+    if os.path.exists(JSON_FILE):
+        try:
+            with open(JSON_FILE, "r", encoding="utf-8") as f:
+                existing_articles = json.load(f)
+                current_time = time.time()
+                existing_articles = [
+                    a for a in existing_articles 
+                    if (current_time - a.get('published', 0)) / 86400 <= MAX_DAYS_OLD
+                ]
+                for a in existing_articles:
+                    existing_urls.add(a['link'])
+            print(f"Laddade {len(existing_articles)} befintliga artiklar.")
+        except Exception: pass
+
+    new_articles = []
+
+    # 2. YouTube (Snabb, behöver inte trådning lika mycket)
+    print("Hämtar YouTube...")
+    for url, cat in YOUTUBE_CHANNELS:
+        new_articles.extend(fetch_youtube_videos(url, cat, existing_urls))
+
+    # 3. RSS (Långsam - Använder nu ThreadPool!)
+    print("Hämtar RSS-flöden och skrapar bilder (Parallellt)...")
+    rss_tasks = []
     headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    # Samla alla RSS-inlägg först
     for url, category in RSS_SOURCES:
         try:
             feed = feedparser.parse(url, agent=headers['User-Agent'])
@@ -351,60 +343,46 @@ def generate_site():
             is_swedish = any(s in url for s in SWEDISH_SOURCES)
 
             for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
-                # DEDUPLICATION LOGIC
+                # DEDUPLICATION
+                if entry.link in existing_urls: continue
+
+                # Similar title check
                 title = entry.title
-                # Check for similar titles already in list
-                is_duplicate = False
-                for existing in all_articles:
-                    if similar(title.lower(), existing['title'].lower()) > 0.8:
-                        is_duplicate = True
+                is_duplicate_title = False
+                for existing in existing_articles:
+                    if similar(title.lower(), existing['title'].lower()) > 0.85:
+                        is_duplicate_title = True
                         break
-                
-                if is_duplicate: continue
+                if is_duplicate_title: continue
 
-                pub_ts = time.time()
-                if 'published_parsed' in entry and entry.published_parsed:
-                    pub_ts = time.mktime(entry.published_parsed)
-                if (time.time() - pub_ts) / 86400 > MAX_DAYS_OLD: continue
-                time_str = "Just Now" if (time.time() - pub_ts) < 86400 else f"{int((time.time()-pub_ts)/86400)}d Ago"
-                summary = clean_summary(entry.summary if 'summary' in entry else "")
-                note_html = ' <span class="lang-note">(Translated)</span>' if is_swedish else ""
-                
-                if is_swedish:
-                    title = translate_text(entry.title)
-                    summary = translate_text(summary)
-
-                images = get_article_images(entry, category, entry.link, source_name)
-
-                all_articles.append({
-                    "title": title,
-                    "link": entry.link,
-                    "summary": summary + note_html,
-                    "images": images,
-                    "source": source_name,
-                    "category": category,
-                    "published": pub_ts,
-                    "time_str": time_str,
-                    "is_video": False
-                })
+                # Lägg till i kön för bearbetning
+                rss_tasks.append((entry, category, source_name, is_swedish))
+                existing_urls.add(entry.link)
         except Exception as e:
-            print(f"Error {url}: {e}")
+            print(f"Feed error {url}: {e}")
 
-    all_articles.sort(key=lambda x: x.get('published', 0), reverse=True)
-    json_data = json.dumps(all_articles)
-
-    with open("template.html", "r", encoding="utf-8") as f:
-        template = f.read()
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(template.replace("<!-- NEWS_DATA_JSON -->", json_data))
+    # Kör tunga jobb (bilder/översättning) parallellt
+    print(f"Bearbetar {len(rss_tasks)} nya artiklar med {MAX_WORKERS} trådar...")
     
-    now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S+00:00')
-    with open("sitemap.xml", "w") as f:
-        f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{SITE_URL}/index.html</loc><lastmod>{now}</lastmod></url></urlset>')
-    with open("robots.txt", "w", encoding="utf-8") as f:
-        f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        results = list(executor.map(process_rss_entry, rss_tasks))
+    
+    # Filtrera bort misslyckade (None)
+    for res in results:
+        if res:
+            new_articles.append(res)
 
-    print("Klar! Allt genererat.")
+    # 4. SAMMANFOGA OCH SPARA
+    all_content = new_articles + existing_articles
+    all_content.sort(key=lambda x: x.get('published', 0), reverse=True)
+    
+    print(f"Hittade {len(new_articles)} nya. Totalt: {len(all_content)}")
+
+    with open(JSON_FILE, "w", encoding="utf-8") as f:
+        json.dump(all_content, f, ensure_ascii=False)
+
+    print("Klar! news.json uppdaterad.")
 
 if __name__ == "__main__":
     generate_site()
+    sys.exit() # Tvinga avslut
