@@ -16,7 +16,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py! Inga NYA nyheter kommer hämtas.")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (HÄMTAR 5 PER KÄLLA) ---")
+print(f"--- STARTAR GENERATORN (HÄMTAR 10 PER KÄLLA) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -44,12 +44,12 @@ def scrape_article_image(url):
     return None
 
 def get_video_info(source):
-    """Hämtar de 5 senaste videorna från en kanal"""
+    """Hämtar de 10 senaste videorna från en kanal"""
     found_videos = []
     ydl_opts = {
         'quiet': True,
         'extract_flat': True,
-        'playlistend': 5, # HÄMTAR 5 VIDEOR ISTÄLLET FÖR 2
+        'playlistend': 10,  # ÖKAD FRÅN 5 TILL 10
         'ignoreerrors': True
     }
     try:
@@ -84,14 +84,14 @@ def get_video_info(source):
     return found_videos
 
 def get_web_info(source):
-    """Hämtar de 5 senaste artiklarna från RSS"""
+    """Hämtar de 10 senaste artiklarna från RSS"""
     found_articles = []
     try:
         response = requests.get(source['url'], headers=HEADERS, timeout=10)
         feed = feedparser.parse(response.content)
         
-        # Loopar igenom de 5 första inläggen
-        for entry in feed.entries[:5]:
+        # Loopar igenom de 10 första inläggen (ÖKAD FRÅN 5)
+        for entry in feed.entries[:10]:
             img_url = ""
             if 'media_content' in entry:
                 img_url = entry.media_content[0]['url']
@@ -185,7 +185,7 @@ print(f"Databas uppdaterad. Totalt {len(final_news)} artiklar.")
 json_data = json.dumps(final_news)
 
 try:
-    with open('template.html', 'r', encoding='utf-8') as f:
+    with open('template_fixed.html', 'r', encoding='utf-8') as f:
         template_code = f.read()
     
     final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
@@ -193,7 +193,7 @@ try:
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print("SUCCESS: index.html har uppdaterats!")
+    print("SUCCESS: index.html har uppdaterats med den nya mallen!")
 
 except Exception as e:
     print(f"KRITISKT FEL: {e}")

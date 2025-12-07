@@ -755,7 +755,11 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
+            // Visa PWA-prompt ENDAST på mobiler och paddor (inte på PC)
+            const isMobileOrTablet = window.matchMedia('(max-width: 1024px)').matches || 
+                                   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (!window.matchMedia('(display-mode: standalone)').matches && isMobileOrTablet) {
                 setTimeout(() => { pwaToast.classList.add('show'); }, 3000);
             }
         });
@@ -818,14 +822,7 @@
 
         function init() { 
             loadSaved();
-            let touchStartX = 0;
-            let touchEndX = 0;
-            grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-            grid.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (touchEndX < touchStartX - 50) changePage(state.page + 1);
-                if (touchEndX > touchStartX + 50) changePage(state.page - 1);
-            });
+            // Touch swipe har tagits bort för att förhindra oönskad scrollning
             renderApp(); 
             
             if (localStorage.getItem('theme') === 'light') {
