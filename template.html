@@ -50,7 +50,6 @@
         
         header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
         
-        /* --- HEADER TOP LAYOUT --- */
         .header-top { 
             width: 100%; 
             display: flex; 
@@ -363,7 +362,7 @@
             padding-bottom: 20px;
         }
 
-        /* --- BOOKMARK BAR (CORRECTED) --- */
+        /* --- BOOKMARK BAR --- */
         .bookmark-bar {
             width: 100%;
             padding: 12px 0;
@@ -411,7 +410,13 @@
             color: #ff0040 !important;
         }
         
-        /* Saved + Hover: Heart stays red, BG blue, text black */
+        /* Saved state (No Hover) */
+        .bookmark-bar.saved:not(:hover) {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Saved + Hover */
         .bookmark-bar.saved:hover .heart-icon {
             color: #ff0040 !important;
         }
@@ -461,6 +466,23 @@
         .show-on-mobile { display: none; }
         .desktop-categories { display: contents; }
 
+        /* --- PWA INSTALL PROMPT STYLE --- */
+        .pwa-toast { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); 
+            background: var(--bg-card); border: 1px solid var(--accent); 
+            padding: 15px 25px; border-radius: 50px; 
+            z-index: 9999; display: flex; align-items: center; gap: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            opacity: 0; pointer-events: none; width: 90%; max-width: 420px; 
+        }
+        .pwa-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
+        .pwa-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: var(--text-primary); flex-grow: 1; line-height: 1.2; }
+        .pwa-btn-group { display: flex; gap: 10px; }
+        .pwa-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
+        .pwa-btn.install { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .pwa-btn:hover { transform: scale(1.05); }
+
         @media (max-width: 768px) {
             .header-top { 
                 flex-direction: column; 
@@ -469,9 +491,9 @@
             }
             .logo-wrapper { align-items: center; } 
             
-            /* MOBILE SEARCH BAR FIX (80% width, centered) */
+            /* MOBILE SEARCH BAR FIX (92% width, centered) */
             .search-container { 
-                width: 80%; 
+                width: 92%; 
                 max-width: 100%; 
                 margin: 5px auto; 
             }
@@ -505,6 +527,15 @@
     <div id="floatPrev" class="floating-nav nav-prev" style="display:none;" onclick="changePage(state.page-1)">‹</div>
     <div id="floatNext" class="floating-nav nav-next" style="display:none;" onclick="changePage(state.page+1)">›</div>
 
+    <!-- PWA INSTALL PROMPT UI -->
+    <div id="pwaToast" class="pwa-toast">
+        <div class="pwa-text">Install SPECULA as an App for the best experience?</div>
+        <div class="pwa-btn-group">
+            <button class="pwa-btn" onclick="dismissInstall()">Later</button>
+            <button class="pwa-btn install" onclick="installApp()">Install</button>
+        </div>
+    </div>
+
     <!-- Changelog Modal -->
     <div class="modal-overlay" id="changelogModal">
         <div class="modal-card">
@@ -513,13 +544,19 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V19.6.0 -->
+                 <!-- V20.3.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 19.6.0 - Mobile Fit</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.3.0 - Full Filter Reset</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Mobile Layout Fix:</strong> Adjusted search bar width on mobile to 80% to prevent edge cut-off.<br>
-                        • <strong>Functionality Fix:</strong> Repaired the bookmark saving function that was broken in the previous UI update.<br>
+                        • <strong>Logic Fix:</strong> Completely re-wrote how buttons and filters interact. Switching between "Desktop Buttons" and "Mobile Dropdowns" now strictly clears the previous selection.<br>
+                        • <strong>Safety:</strong> Added code to prevent the site from freezing if a single article has missing data.<br>
+                        • <strong>Logo Fix:</strong> The logo button now correctly resets the page.
                     </div>
+                 </li>
+                 <!-- V20.2.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.2.0</strong><br>
+                    Case-sensitivity fixes.
                 </li>
             </ul>
         </div>
@@ -573,7 +610,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 19.6.0</div>
+                <div class="version-display" id="versionBtn">Version 20.3.0</div>
             </div>
             
             <div class="nav-wrapper">
@@ -675,7 +712,20 @@
     </div>
 
     <script>
-        const state = { category: 'all', search: '', page: 1, itemsPerPage: 45, articles: typeof newsData !== 'undefined' ? newsData : [] };
+        const state = { 
+            category: 'all', 
+            videoFilters: new Set(),
+            gamingFilters: new Set(),
+            topicFilters: new Set(), 
+            tempVideoFilters: new Set(),
+            tempGamingFilters: new Set(),
+            tempTopicFilters: new Set(),
+            saved: new Set(), 
+            search: '', 
+            page: 1, 
+            itemsPerPage: 45, 
+            articles: typeof newsData !== 'undefined' ? newsData : [] 
+        };
         
         // --- LOCAL STORAGE FOR SAVED ITEMS ---
         state.saved = new Set();
@@ -694,31 +744,66 @@
         const themeIcon = document.getElementById('themeIcon');
         const themeLabel = document.getElementById('themeLabel');
         
+        // --- PWA LOGIC START ---
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 
-        window.toggleBookmark = function(url, element) {
-            event.stopPropagation();
-            
-            // Hantera själva sparandet
-            if (state.saved.has(url)) {
-                state.saved.delete(url);
-                element.classList.remove('saved');
-            } else {
-                state.saved.add(url);
-                element.classList.add('saved');
+        let deferredPrompt;
+        const pwaToast = document.getElementById('pwaToast');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setTimeout(() => { pwaToast.classList.add('show'); }, 3000);
             }
-            localStorage.setItem('specula_saved', JSON.stringify([...state.saved]));
+        });
 
-            // Om vi är i "Saved"-vyn, rendera om för att ta bort artikeln direkt
-            if (state.category === 'saved') renderApp();
+        window.installApp = async () => {
+            if (deferredPrompt) {
+                pwaToast.classList.remove('show');
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            }
+        };
+
+        window.dismissInstall = () => { pwaToast.classList.remove('show'); };
+        // --- PWA LOGIC END ---
+
+        function loadSaved() {
+            const saved = localStorage.getItem('savedArticles');
+            if (saved) state.saved = new Set(JSON.parse(saved));
+        }
+
+        window.toggleSave = function(url, event) {
+            if (event && event.stopPropagation) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (state.saved.has(url)) { state.saved.delete(url); } else { state.saved.add(url); }
+            localStorage.setItem('specula_saved', JSON.stringify([...state.saved]));
+            
+            if (state.category === 'saved') {
+                renderApp();
+            } else {
+                if (event && event.currentTarget) {
+                    const btn = event.currentTarget;
+                    if (state.saved.has(url)) btn.classList.add('saved');
+                    else btn.classList.remove('saved');
+                } else {
+                    renderApp(); 
+                }
+            }
         }
 
         window.toggleSavedView = function() {
-            if (state.category === 'saved') {
-                setCategory('all'); 
-            } else {
-                setCategory('saved');
-            }
+            if (state.category === 'saved') { setCategory('all'); } else { setCategory('saved'); }
+        }
+
+        window.resetHome = function(event) {
+            if(event) event.preventDefault();
+            setCategory('all');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         window.handleImageError = function(img) {
@@ -729,22 +814,8 @@
             if(nextImg) nextImg.classList.add('active');
         }
 
-        window.switchImage = function(cardId, imgIndex) {
-            const card = document.getElementById(cardId);
-            const images = card.querySelectorAll('.card-image');
-            const dots = card.querySelectorAll('.dot');
-            images.forEach(img => img.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            if(images[imgIndex]) images[imgIndex].classList.add('active');
-            if(dots[imgIndex]) dots[imgIndex].classList.add('active');
-        }
-
-        window.stopProp = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
         function init() { 
+            loadSaved();
             let touchStartX = 0;
             let touchEndX = 0;
             grid.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
@@ -755,7 +826,6 @@
             });
             renderApp(); 
             
-            // Check Theme
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 themeIcon.innerText = '☾';
@@ -782,23 +852,32 @@
 
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
+        // --- CORE CATEGORY LOGIC REPAIR ---
         function setCategory(cat) {
             state.category = cat; 
             state.page = 1;
-            
+            state.search = '';
+            searchInput.value = '';
+
+            // Clean other modes when switching
+            if (cat !== 'video') state.videoFilters.clear();
+            if (cat !== 'gaming') state.gamingFilters.clear();
+            if (cat !== 'topics') state.topicFilters.clear();
+
+            // Clear checkboxes in temporary sets too
+            if (cat === 'all') {
+                state.tempVideoFilters.clear();
+                state.tempGamingFilters.clear();
+                state.tempTopicFilters.clear();
+            }
+
+            // UI Updates
             if (cat === 'saved') {
                 readLaterBtn.classList.add('active');
                 filterBtns.forEach(btn => btn.classList.remove('active'));
             } else {
                 readLaterBtn.classList.remove('active');
-                
-                if (cat !== 'topics' && cat !== 'video' && cat !== 'gaming') {
-                    state.topicFilters.clear();
-                }
-                
-                if(cat !== 'video' && cat !== 'gaming' && cat !== 'topics') {
-                     document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-                }
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
 
                 filterBtns.forEach(btn => {
                     const btnText = btn.textContent.toLowerCase();
@@ -816,21 +895,16 @@
 
         window.toggleDropdown = function(type, event) {
             if(event) event.stopPropagation();
-            
             const menu = document.getElementById(type + 'Dropdown');
             const wasOpen = menu.classList.contains('show');
-            
             document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
             
             if (!wasOpen) {
                 if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
                 if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
                 if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
-                
                 updateCheckboxUI(type);
-                
                 menu.classList.add('show');
-                setCategory(type); 
             }
         }
 
@@ -839,15 +913,12 @@
             if (type === 'video') tempSet = state.tempVideoFilters;
             else if (type === 'gaming') tempSet = state.tempGamingFilters;
             else if (type === 'topics') tempSet = state.tempTopicFilters;
-
-            if (isChecked) tempSet.add(value);
-            else tempSet.delete(value);
+            if (isChecked) tempSet.add(value); else tempSet.delete(value);
         }
         
         function updateCheckboxUI(type) {
             const container = document.getElementById(type + 'Dropdown');
             if(!container) return; 
-
             let tempSet;
             if (type === 'video') tempSet = state.tempVideoFilters;
             else if (type === 'gaming') tempSet = state.tempGamingFilters;
@@ -867,20 +938,17 @@
             if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
             else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
             else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
-
-            state.page = 1;
             document.getElementById(type + 'Dropdown').classList.remove('show');
-            renderApp();
+            setCategory(type); 
         }
 
         window.clearFilters = function(type) {
             if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
             else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
             else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
-            
             updateCheckboxUI(type);
-            state.page = 1;
-            renderApp(); 
+            document.getElementById(type + 'Dropdown').classList.remove('show');
+            setCategory(type === 'topics' ? 'all' : type);
         }
 
         window.onclick = function(event) {
@@ -900,8 +968,10 @@
 
         function getFilteredArticles() {
             return state.articles.filter(art => {
-                const title = art.title.toLowerCase();
-                const summary = art.summary.toLowerCase();
+                // SAFETY: Ensure category exists and is a string
+                const artCat = (art.category || '').trim().toLowerCase();
+                const title = (art.title || '').toLowerCase();
+                const summary = (art.summary || '').toLowerCase();
                 const fullText = title + " " + summary;
 
                 if (state.category === 'saved') {
@@ -911,7 +981,7 @@
 
                 if (state.category === 'all') {
                     if (art.is_video) return false;
-                    if (art.category === 'gaming') return false; 
+                    if (artCat === 'gaming') return false; 
                     return fullText.includes(state.search);
                 }
 
@@ -920,7 +990,7 @@
                     if (state.videoFilters.size > 0) {
                         let matchFound = false;
                         for (let filter of state.videoFilters) {
-                            if (art.category.toLowerCase().includes(filter)) { matchFound = true; break; }
+                            if (artCat.includes(filter)) { matchFound = true; break; }
                         }
                         if (!matchFound) return false;
                     }
@@ -928,7 +998,7 @@
                 }
                 
                 if (state.category === 'gaming') {
-                    if (art.category !== 'gaming') return false;
+                    if (artCat !== 'gaming') return false;
                     if (art.is_video) return false; 
                     if (state.gamingFilters.size > 0) {
                         let matchFound = false;
@@ -943,15 +1013,16 @@
 
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
-                    if (art.category === 'gaming') return false;
+                    if (artCat === 'gaming') return false;
                     if (state.topicFilters.size > 0) {
-                        if (!state.topicFilters.has(art.category)) return false;
+                        if (!state.topicFilters.has(artCat)) return false;
                     }
                     return fullText.includes(state.search);
                 }
 
+                // FALLBACK for specific categories (Geopolitics/Tech/EV/Science/Construction)
                 if (art.is_video) return false;
-                let matchesCat = (art.category === state.category);
+                let matchesCat = (artCat === state.category);
                 return matchesCat && fullText.includes(state.search);
             });
         }
@@ -983,7 +1054,7 @@
                             <div class="cat-tag">${art.category}</div>
                             
                             ${art.is_video ? '<div class="play-overlay"></div>' : ''}
-                            <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News">
+                            <img src="${imgUrl}" class="card-image active" loading="lazy" alt="News" onerror="handleImageError(this)">
                         </div>
                     </a>
                     
@@ -993,8 +1064,7 @@
                         <p class="ai-summary">${art.summary}</p>
                     </div>
 
-                    <!-- BOOKMARK BUTTON (FIXED: CLICKABLE) -->
-                    <div class="bookmark-bar ${isSaved}" onclick="toggleBookmark('${art.link}', this)">
+                    <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">
                         <span class="heart-icon">♥</span>
                         <span class="bookmark-text">BOOKMARK FOR LATER...</span>
                     </div>
@@ -1058,9 +1128,7 @@
             fetch(form.action, {
                 method: "POST",
                 body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             })
             .then(response => {
                 if (response.ok) {
@@ -1071,9 +1139,7 @@
                     alert("Oops! There was a problem sending your form. Please try again.");
                 }
             })
-            .catch(error => {
-                alert("Error sending suggestion. Please check your connection.");
-            });
+            .catch(error => { alert("Error sending suggestion. Please check your connection."); });
         }
 
         window.addEventListener('click', (e) => {
