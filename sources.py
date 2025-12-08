@@ -26,7 +26,7 @@ SOURCES = [
     {"url": "https://www.theverge.com/rss/index.xml", "cat": "tech", "type": "web", "source_name": "The Verge"},
     {"url": "https://techcrunch.com/feed/", "cat": "tech", "type": "web", "source_name": "TechCrunch"},
     {"url": "https://feeds.arstechnica.com/arstechnica/index", "cat": "tech", "type": "web", "source_name": "Ars Technica"},
-    {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech"},
+    {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech (Blog)"},
     {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber"},
     {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik"},
     {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se"},
@@ -35,20 +35,24 @@ SOURCES = [
     {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video", "source_name": "Hardware Unboxed"},
     {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video", "source_name": "der8auer"},
     {"url": "https://www.youtube.com/@elithecomputerguy/videos", "cat": "tech", "type": "video", "source_name": "Eli the Computer Guy"},
+    {"url": "https://www.youtube.com/@AnastasiInTech/videos", "cat": "tech", "type": "video", "source_name": "Anastasi In Tech"},
 
     # ==========================================
-    #               EV (ELBILAR / ENERGI)
+    #               EV / ENERGY
     # ==========================================
     {"url": "https://insideevs.com/rss/articles/all/", "cat": "ev", "type": "web", "source_name": "InsideEVs"},
     {"url": "https://electrek.co/feed/", "cat": "ev", "type": "web", "source_name": "Electrek"},
     {"url": "https://cleantechnica.com/feed/", "cat": "ev", "type": "web", "source_name": "CleanTechnica"},
     {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice"},
     {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World"},
-    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club"},
+    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden"},
     {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija"},
     {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided"},
     {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video", "source_name": "Electric Viking"},
     {"url": "https://www.youtube.com/@Tesla/videos", "cat": "ev", "type": "video", "source_name": "Tesla"},
+    {"url": "https://www.youtube.com/@tonyseba/videos", "cat": "ev", "type": "video", "source_name": "Tony Seba"},
+    {"url": "https://www.youtube.com/@futurenvesting/videos", "cat": "ev", "type": "video", "source_name": "Future Investing"},
+    {"url": "https://www.youtube.com/@bussmagasinet1/videos", "cat": "ev", "type": "video", "source_name": "Bussmagasinet"},
 
     # ==========================================
     #               GEOPOLITICS
@@ -64,11 +68,35 @@ SOURCES = [
     {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN Europe"},
     {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "geopolitics", "type": "video", "source_name": "CCTV News"},
     {"url": "https://www.youtube.com/@cgtnamerica/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN America"},
-    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "geopolitics", "type": "video", "source_name": "Diary of a CEO"},
     {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris"},
     {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary"},
     {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "geopolitics", "type": "video", "source_name": "Asianometry"},
     {"url": "https://www.youtube.com/@BBCNews/videos", "cat": "geopolitics", "type": "video", "source_name": "BBC News"},
+    # Added Geopolitics Sources
+    {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "geopolitics", "type": "video", "source_name": "China View TV"},
+    {"url": "https://www.youtube.com/@aljazeeraenglish/videos", "cat": "geopolitics", "type": "video", "source_name": "Al Jazeera English"},
+    {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "geopolitics", "type": "video", "source_name": "ShanghaiEye"},
+    {"url": "https://www.youtube.com/@France24_en/videos", "cat": "geopolitics", "type": "video", "source_name": "France 24 English"},
+    {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "geopolitics", "type": "video", "source_name": "Inside China Business"},
+    {"url": "https://www.youtube.com/@SouthChinaMorningPost/videos", "cat": "geopolitics", "type": "video", "source_name": "South China Morning Post"},
+    {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates"},
+    {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova"},
+    {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show"},
+    {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy"},
+    {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society"},
+    {"url": "https://www.youtube.com/@热点新闻66/videos", "cat": "geopolitics", "type": "video", "source_name": "Hot News 66"},
+
+    # ==========================================
+    #           ECONOMY / BUSINESS (NEW)
+    # ==========================================
+    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "economy", "type": "video", "source_name": "Diary of a CEO"},
+    {"url": "https://www.youtube.com/@MeetKevin/videos", "cat": "economy", "type": "video", "source_name": "Meet Kevin"},
+    {"url": "https://www.youtube.com/@FII_INSTITUTE/videos", "cat": "economy", "type": "video", "source_name": "FII Institute"},
+    {"url": "https://www.youtube.com/@JosephCarlsonShow/videos", "cat": "economy", "type": "video", "source_name": "Joseph Carlson"},
+    {"url": "https://www.youtube.com/@NordnetSverige/videos", "cat": "economy", "type": "video", "source_name": "Nordnet Sverige"},
+    {"url": "https://www.youtube.com/@BeatTheDenominator/videos", "cat": "economy", "type": "video", "source_name": "Beat The Denominator"},
+    {"url": "https://www.youtube.com/@qatareconomicforum430/videos", "cat": "economy", "type": "video", "source_name": "Qatar Economic Forum"},
+    {"url": "https://www.youtube.com/@TomBilyeu/videos", "cat": "economy", "type": "video", "source_name": "Tom Bilyeu"},
 
     # ==========================================
     #               SCIENCE
@@ -92,4 +120,5 @@ SOURCES = [
     {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer"},
     {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video", "source_name": "Tomorrow's Build"},
     {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video", "source_name": "The B1M"},
+    {"url": "https://www.youtube.com/@FD_Engineering/videos", "cat": "construction", "type": "video", "source_name": "Free Documentary Engineering"},
 ]
