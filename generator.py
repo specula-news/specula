@@ -29,7 +29,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (ANTI-BLUR EDITION) ---")
+print(f"--- STARTAR GENERATORN (SAFE MODE: AFTONBLADET FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -64,23 +64,28 @@ def get_width_from_url(url):
 
 def clean_image_url(url):
     """
-    Magisk funktion som fixar suddiga bilder genom att manipulera URL:en.
+    Försiktig städning av URL:er.
     """
     if not url: return None
     
-    # 1. PHYS.ORG / SCIENCE X FIX
-    # De använder cdn-länkar som innehåller /tmb/ (thumbnail).
-    # Vi byter ut /tmb/ mot /800/ för att få en stor bild.
+    # 1. PHYS.ORG / SCIENCE X (Där tumnaglar heter /tmb/)
     if 'scx' in url or 'phys.org' in url or 'b-cdn.net' in url:
         if '/tmb/' in url:
             return url.replace('/tmb/', '/800/')
     
-    # 2. WORDPRESS / JETPACK FIX (Electrek, 9to5Mac etc)
-    # Tar bort ?w=300 och andra resize-parametrar för att få originalet
-    if '?' in url:
-        # Om det finns en bredd-parameter, ta bort hela query-strängen
-        if 'w=' in url or 'resize=' in url or 'width=' in url:
-            return url.split('?')[0]
+    # 2. AFTONBLADET (Kräver parametrar, får inte ta bort dem!)
+    if 'aftonbladet-cdn' in url:
+        # Öka kvalitet och storlek istället för att ta bort
+        url = re.sub(r'w=\d+', 'w=1200', url)
+        url = re.sub(r'h=\d+', 'h=800', url) # Sätt rimlig höjd
+        url = re.sub(r'q=\d+', 'q=80', url)  # Öka JPEG-kvalitet
+        return url
+
+    # 3. WORDPRESS / JETPACK (Electrek, 9to5, etc)
+    # Här kan vi ofta ta bort query-strängen ELLER ändra w=
+    if 'wp.com' in url or 'electrek' in url or '9to5' in url:
+        if 'w=' in url:
+            return re.sub(r'w=\d+', 'w=1600', url)
             
     return url
 
@@ -143,7 +148,7 @@ def scrape_article_image(url):
             tw = soup.find("meta", name="twitter:image")
             if tw and tw.get("content"): return urljoin(url, tw["content"])
 
-            # 3. DOM-analys (Hitta största bilden)
+            # 3. DOM-analys
             largest = find_largest_image_on_page(soup, url)
             if largest: return largest
     except: pass
@@ -198,8 +203,6 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- BILDHANTERING MED CLEANUP ---
-            
             # 1. Media Content
             if 'media_content' in entry:
                 try:
@@ -214,7 +217,7 @@ def get_web_info(source):
                     if enc.type.startswith('image/'):
                         img_url = enc.href; break
             
-            # 3. HTML i Description (Ofta här Phys.org har bilden om inte i media_content)
+            # 3. HTML Description
             if not img_url:
                 content = entry.get('content', [{'value': ''}])[0]['value'] or entry.get('description', '') or entry.get('summary', '')
                 if content and '<img' in content:
@@ -230,15 +233,14 @@ def get_web_info(source):
             if not img_url and 'media_thumbnail' in entry:
                 img_url = entry.media_thumbnail[0]['url']
 
-            # --- SKRAPA VID BEHOV ---
+            # SKRAPA VID BEHOV
             force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers'])
             
-            # OBS: Vi skrapar INTE Phys.org på GitHub (403 risk), vi förlitar oss på clean_image_url
             if (not img_url and 'phys.org' not in source['url']) or force_scrape:
                 scraped = scrape_article_image(entry.link)
                 if scraped: img_url = scraped
 
-            # --- VIKTIGT: Rensa URL för att få HD ---
+            # CLEAN URL (Fixar Phys.org och Electrek, men sparar Aftonbladet)
             img_url = clean_image_url(img_url)
 
             summary = entry.get('summary', '') or entry.get('description', '')
