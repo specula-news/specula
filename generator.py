@@ -18,6 +18,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 20
+MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
 
@@ -29,7 +30,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (SEPARERAD LOGIK PER SAJT) ---")
+print(f"--- STARTAR GENERATORN (SEPARATED LOGIC STRATEGY) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -37,7 +38,7 @@ HEADERS = {
     "Referer": "https://www.google.com/"
 }
 
-# --- 2. HJÄLPFUNKTIONER (DATUM & VIDEO) ---
+# --- 2. HJÄLPFUNKTIONER ---
 
 def parse_date_to_timestamp(entry):
     try:
@@ -55,141 +56,111 @@ def is_too_old(timestamp):
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
-def get_video_info(source):
-    found_videos = []
-    ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': MAX_ARTICLES_DEFAULT, 'ignoreerrors': True}
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(source['url'], download=False)
-            if 'entries' in info:
-                for entry in info['entries']:
-                    if not entry: continue
-                    timestamp = time.time()
-                    upload_date = entry.get('upload_date')
-                    if upload_date:
-                        try:
-                            dt = datetime.strptime(upload_date, "%Y%m%d")
-                            timestamp = dt.timestamp()
-                        except: pass
-                    
-                    if is_too_old(timestamp): continue
-                    video_id = entry.get('id')
-                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" # Safe bet
-
-                    found_videos.append({
-                        "title": entry.get('title'),
-                        "link": f"https://www.youtube.com/watch?v={entry.get('id')}",
-                        "images": [img_url],
-                        "summary": "Watch this video on YouTube.",
-                        "category": source['cat'],
-                        "source": source.get('source_name', 'YouTube'),
-                        "time_str": "Recent",
-                        "timestamp": timestamp,
-                        "is_video": True
-                    })
-    except: pass
-    return found_videos
-
-# --- 3. SPECIFIKA BILD-STRATEGIER ---
-
 def get_session():
     s = requests.Session()
     s.headers.update(HEADERS)
     return s
 
+def clean_image_url_generic(url):
+    """Generell städning för Wordpress/Jetpack (Electrek etc), men rör EJ Aftonbladet/Phys."""
+    if not url: return None
+    
+    # RÖR INTE AFTONBLADET (Signaturen pajar)
+    if 'aftonbladet' in url:
+        return url
+        
+    # RÖR INTE PHYS.ORG (Hanteras i sin strategi)
+    if 'phys.org' in url or 'scx' in url:
+        return url
+
+    # WORDPRESS / ELECTREK: Maxa storlek
+    if 'wp.com' in url or 'electrek' in url or '9to5' in url:
+        if 'w=' in url:
+            return re.sub(r'w=\d+', 'w=1600', url)
+            
+    return url
+
+# --- 3. BILDSTRATEGIER ---
+
 def strategy_phys_org(entry):
     """
-    STRATEGI: Lita på RSS, gå ALDRIG in på sajten (blockrisk).
-    Byt ut /tmb/ mot /800/ i URL.
+    STRATEGI 1: PHYS.ORG / SCIENCE X
+    Gå inte in på sidan (block-risk). Hacka RSS-bilden.
     """
     img_url = None
-    # 1. Hitta bild i RSS
     if 'media_thumbnail' in entry: img_url = entry.media_thumbnail[0]['url']
     elif 'media_content' in entry: img_url = entry.media_content[0]['url']
-    elif 'enclosures' in entry:
-        for enc in entry.enclosures:
-            if enc.type.startswith('image/'): img_url = enc.href; break
     
-    # 2. Hacka URLen
     if img_url:
         if '/tmb/' in img_url: return img_url.replace('/tmb/', '/800/')
         if 'thumbnails' in img_url: return img_url.replace('thumbnails', '800')
-    
     return img_url
 
-def strategy_aftonbladet(entry_url):
+def strategy_aftonbladet(link):
     """
-    STRATEGI: Gå in på sajten. Hitta signerad länk via Regex/JSON.
-    Justera parametrar men behåll signaturen.
+    STRATEGI 2: AFTONBLADET
+    Hitta den signerade länken i källkoden via Regex eller JSON-LD.
+    RÖR INTE parametrarna.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(entry_url, timeout=8, verify=False)
+        r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
         
-        # Metod A: Regex (Oftast bäst för CDN-länkar)
+        # Metod A: Regex (Mest pålitlig för CDN-länkar)
+        # Letar efter: https://images.aftonbladet-cdn.se/... följt av parametrar
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
-        best_match = None
-        
         if matches:
-            best_match = matches[0].replace('&amp;', '&')
-        
-        # Metod B: JSON-LD (Om regex missar)
-        if not best_match:
-            soup = BeautifulSoup(r.content, 'html.parser')
-            scripts = soup.find_all('script', type='application/ld+json')
-            for script in scripts:
-                try:
-                    data = json.loads(script.string)
-                    if isinstance(data, list): data = data[0]
-                    if 'image' in data:
-                        img = data['image']
-                        if isinstance(img, list): best_match = img[0]
-                        elif isinstance(img, dict): best_match = img.get('url')
-                        elif isinstance(img, str): best_match = img
-                        if best_match: break
-                except: pass
+            # Ta den första som ser ut att vara en artikelbild (oftast w=800 eller liknande i koden)
+            return matches[0].replace('&amp;', '&')
 
-        if best_match:
-            # Optimera parametrar
-            if 'w=' in best_match: best_match = re.sub(r'w=\d+', 'w=1200', best_match)
-            else: best_match += '&w=1200'
-            if 'q=' in best_match: best_match = re.sub(r'q=\d+', 'q=80', best_match)
-            else: best_match += '&q=80'
-            return best_match
-
+        # Metod B: JSON-LD
+        soup = BeautifulSoup(r.content, 'html.parser')
+        scripts = soup.find_all('script', type='application/ld+json')
+        for script in scripts:
+            try:
+                data = json.loads(script.string)
+                if isinstance(data, list): data = data[0]
+                if 'image' in data:
+                    img = data['image']
+                    if isinstance(img, list): return img[0]
+                    if isinstance(img, dict): return img.get('url')
+                    if isinstance(img, str): return img
+            except: pass
     except: pass
     return None
 
-def strategy_deep_scrape(entry_url):
+def strategy_deep_scrape(link):
     """
-    STRATEGI: Gå in på sajten. Analysera DOM/Srcset.
-    Rensa URL helt från parametrar (Wordpress/Electrek).
+    STRATEGI 3: DAGENS PS / ELECTREK / FEBER
+    Gå in på sidan. Analysera DOM för att hitta största bilden.
+    Prioritera OpenGraph.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(entry_url, timeout=8, verify=False)
+        r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
         
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        # 1. OpenGraph (Oftast bäst för Electrek/Feber)
+        # 1. OpenGraph (Oftast bäst för Dagens PS / Electrek)
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
-            url = urljoin(entry_url, og["content"])
-            return url.split('?')[0] # Rensa ?w=...
+            return urljoin(link, og["content"])
 
-        # 2. Hitta största bilden i DOM (Fallback)
-        # Detta behövs om OG-bilden saknas
+        # 2. Hitta största bilden i 'figure' eller 'img'
+        # Dagens PS har ofta bilder i <figure class="wp-block-post-featured-image">
         best_img = None
         max_w = 0
         
-        for img in soup.find_all('img'):
+        images = soup.select('figure img, .entry-content img, article img, img')
+        
+        for img in images:
             candidates = []
             if img.get('src'): candidates.append(img.get('src'))
             if img.get('data-src'): candidates.append(img.get('data-src'))
             
-            # Srcset analys
+            # Kolla srcset
             srcset = img.get('srcset') or img.get('data-srcset')
             if srcset:
                 for p in srcset.split(','):
@@ -198,9 +169,9 @@ def strategy_deep_scrape(entry_url):
 
             for c in candidates:
                 if not c or 'base64' in c: continue
-                full = urljoin(entry_url, c)
+                full = urljoin(link, c)
                 
-                # Ge poäng
+                # Poängsättning
                 score = 0
                 if 'w=' in full: 
                     try: score = int(re.search(r'w=(\d+)', full).group(1))
@@ -208,8 +179,11 @@ def strategy_deep_scrape(entry_url):
                 elif img.get('width'):
                     try: score = int(img['width'])
                     except: pass
-                elif 'feat' in str(img.attrs) or 'hero' in str(img.attrs):
-                    score = 800 # Gissning
+                
+                # Ge bonus till featured image classes
+                parent_cls = str(img.parent.get('class', []))
+                if 'featured' in parent_cls or 'hero' in parent_cls:
+                    score += 500
                 
                 if any(x in full.lower() for x in ['logo', 'icon', 'avatar']): score = 0
                 
@@ -217,15 +191,14 @@ def strategy_deep_scrape(entry_url):
                     max_w = score
                     best_img = full
 
-        if best_img:
-            return best_img.split('?')[0] # Rensa ?w=...
-
+        return best_img
     except: pass
     return None
 
 def strategy_default(entry):
     """
-    STRATEGI: Försök RSS. Om tomt -> Skrapa OG tag.
+    STRATEGI 4: ÖVRIGA
+    Försök med RSS. Om tomt -> snabb skrapning av OG-tagg.
     """
     # 1. RSS
     img_url = None
@@ -236,7 +209,7 @@ def strategy_default(entry):
         for enc in entry.enclosures:
             if enc.type.startswith('image/'): img_url = enc.href; break
     
-    # 2. Om ingen bild, skrapa lätt
+    # 2. Skrapa OG om tomt
     if not img_url:
         try:
             r = get_session().get(entry.link, timeout=5, verify=False)
@@ -247,36 +220,38 @@ def strategy_default(entry):
         
     return img_url
 
-# --- 4. HUVUDLOGIK FÖR ATT VÄLJA STRATEGI ---
+# --- 4. HUVUDLOGIK (ROUTING) ---
 
 def get_image_for_article(entry, source_url):
-    """Väljer rätt strategi baserat på domän."""
+    """Väljer strategi baserat på URL."""
     
-    # 1. PHYS.ORG / SCIENCE X
+    # 1. Phys.org
     if 'phys.org' in source_url or 'techxplore' in source_url:
         return strategy_phys_org(entry)
     
-    # 2. AFTONBLADET
+    # 2. Aftonbladet
     if 'aftonbladet' in source_url:
         return strategy_aftonbladet(entry.link)
     
-    # 3. DEEP SCRAPE (Electrek, Dagens PS, Feber, NASA)
-    # Dessa kräver att vi går in på sidan och analyserar/rensar URL
-    deep_scrape_domains = ['electrek', 'dagensps', 'feber', 'nasa.gov', 'sweclockers']
-    if any(d in source_url for d in deep_scrape_domains):
-        return strategy_deep_scrape(entry.link)
+    # 3. Deep Scrape (Dagens PS, Electrek, Feber, NASA)
+    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers']
+    if any(d in source_url for d in deep_list):
+        url = strategy_deep_scrape(entry.link)
+        # Fallback till RSS om skrapning misslyckas
+        if not url: return strategy_default(entry)
+        return url
         
-    # 4. DEFAULT
+    # 4. Default
     return strategy_default(entry)
 
 def get_web_info(source):
     found_articles = []
-    
-    # Begränsa antalet artiklar
     limit = MAX_ARTICLES_DEFAULT
+    
+    # Specialregel för Aftonbladet: Max 3
     if 'aftonbladet' in source['url']:
-        limit = 3 # Endast 3 från Aftonbladet
-        
+        limit = MAX_ARTICLES_AFTONBLADET
+
     try:
         resp = get_session().get(source['url'], timeout=10, verify=False)
         feed = feedparser.parse(resp.content)
@@ -285,8 +260,11 @@ def get_web_info(source):
             timestamp = parse_date_to_timestamp(entry)
             if is_too_old(timestamp): continue
 
-            # --- HÄMTA BILD MED RÄTT STRATEGI ---
+            # HÄMTA BILD VIA ROUTING
             img_url = get_image_for_article(entry, source['url'])
+            
+            # STÄDA URL (Men rör inte Aftonbladet/Phys)
+            img_url = clean_image_url_generic(img_url)
 
             summary = entry.get('summary', '') or entry.get('description', '')
             if '<' in summary:
@@ -305,6 +283,9 @@ def get_web_info(source):
             })
     except: pass
     return found_articles
+
+def get_video_info(source):
+    return get_video_info(source) # (Använder funktionen definierad högst upp)
 
 def process_source(source):
     if source['type'] == 'video': return get_video_info(source)
