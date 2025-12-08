@@ -6,52 +6,168 @@ import feedparser
 from bs4 import BeautifulSoup
 from datetime import datetime
 import time
+import random
 import concurrent.futures
+from email.utils import parsedate_to_datetime
+from urllib.parse import urljoin
+import urllib3
+import re
+
+# Stäng av SSL-varningar (nödvändigt för vissa sidor)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# --- INSTÄLLNINGAR ---
+MAX_ARTICLES_PER_SOURCE = 20
+MAX_AGE_DAYS = 90
+TOTAL_LIMIT = 2000
 
 # --- 1. IMPORTERA KÄLLOR ---
 try:
     from sources import SOURCES
     print(f"--- LADDADE {len(SOURCES)} KÄLLOR FRÅN sources.py ---")
 except ImportError:
-    print("VARNING: Kunde inte hitta sources.py! Inga NYA nyheter kommer hämtas.")
+    print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-# ÄNDRAT: Uppdaterad loggtext
-print(f"--- STARTAR GENERATORN (HÄMTAR 10 PER KÄLLA) ---")
+print(f"--- STARTAR GENERATORN (WORDPRESS/JETPACK OPTIMERAD) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Referer": "https://www.google.com/"
 }
 
-# --- 2. FUNKTIONER (UPPDATERADE FÖR FLERA ARTIKLAR) ---
+# --- 2. HJÄLPFUNKTIONER ---
+
+def parse_date_to_timestamp(entry):
+    try:
+        if hasattr(entry, 'published_parsed') and entry.published_parsed:
+            return time.mktime(entry.published_parsed)
+        if hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+            return time.mktime(entry.updated_parsed)
+        date_str = entry.get('published', entry.get('updated', ''))
+        if date_str:
+            return parsedate_to_datetime(date_str).timestamp()
+    except:
+        pass
+    return time.time() - random.randint(3600, 86400)
+
+def is_too_old(timestamp):
+    limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
+    return timestamp < limit
+
+def get_width_from_url(url):
+    """Försöker hitta bredd i URL-parametrar (t.ex. ?w=1500)."""
+    try:
+        match = re.search(r'[?&]w=(\d+)', url)
+        if match:
+            return int(match.group(1))
+    except: pass
+    return 0
+
+def find_largest_image_on_page(soup, base_url):
+    """
+    Skannar ALLA bilder och poängsätter dem baserat på faktisk upplösning.
+    Detta löser Electrek där src är liten men srcset innehåller jättebilder.
+    """
+    best_image = None
+    max_score = 0
+    
+    # Hämta alla bilder
+    images = soup.find_all('img')
+    
+    for img in images:
+        # Samla alla möjliga källor för denna bildtagg
+        candidates = []
+        
+        # 1. Kolla src och data-src
+        src = img.get('src')
+        data_src = img.get('data-src') or img.get('data-original') or img.get('data-lazy-src')
+        
+        if src: candidates.append(src)
+        if data_src: candidates.append(data_src)
+        
+        # 2. Kolla srcset (Här ligger ofta guldgruvan för Electrek)
+        srcset = img.get('srcset') or img.get('data-srcset')
+        if srcset:
+            # Format: "url 500w, url2 1000w"
+            parts = srcset.split(',')
+            for p in parts:
+                p = p.strip()
+                sub_parts = p.split(' ')
+                if len(sub_parts) >= 1:
+                    candidates.append(sub_parts[0])
+
+        # Analysera kandidaterna
+        for url in candidates:
+            if not url or 'base64' in url: continue
+            
+            full_url = urljoin(base_url, url)
+            score = 0
+            
+            # POÄNGSYSTEM
+            
+            # A. Har URL:en ?w=1500? (Jetpack/WordPress standard)
+            w_param = get_width_from_url(full_url)
+            if w_param > 0:
+                score = w_param
+            
+            # B. Kolla attributet width=""
+            elif img.get('width'):
+                try:
+                    score = int(img['width'])
+                except: pass
+            
+            # C. Om vi inte vet storlek, men det är en 'data-src' (Lazy Load), gissa högt
+            elif 'data' in str(img.attrs) and score == 0:
+                score = 600 # Anta att lazy-loaded bilder är content
+            
+            # D. Straffa loggor/ikoner
+            lower = full_url.lower()
+            if any(x in lower for x in ['logo', 'icon', 'avatar', 'tracker', 'pixel', 'footer', 'author']):
+                score = 0
+            
+            # Ny ledare?
+            if score > max_score:
+                max_score = score
+                best_image = full_url
+
+    return best_image
 
 def scrape_article_image(url):
     try:
-        r = requests.get(url, headers=HEADERS, timeout=4)
+        time.sleep(random.uniform(0.1, 0.3))
+        session = requests.Session()
+        r = session.get(url, headers=HEADERS, timeout=8, verify=False)
+        
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
-            og_image = soup.find("meta", property="og:image")
-            if og_image and og_image.get("content"): return og_image["content"]
-            tw_image = soup.find("meta", name="twitter:image")
-            if tw_image and tw_image.get("content"): return tw_image["content"]
-            images = soup.find_all('img')
-            for img in images:
-                src = img.get('src')
-                if src and src.startswith('http') and ('jpg' in src or 'png' in src): return src
+            
+            # 1. OpenGraph (Oftast bäst och snabbast)
+            og = soup.find("meta", property="og:image")
+            if og and og.get("content"): 
+                return urljoin(url, og["content"])
+            
+            # 2. Twitter Card
+            tw = soup.find("meta", name="twitter:image")
+            if tw and tw.get("content"): 
+                return urljoin(url, tw["content"])
+
+            # 3. MATEMATISK ANALYS (Detta fixar Electrek och svåra sidor)
+            # Den letar efter ?w=1500 och liknande mönster
+            largest = find_largest_image_on_page(soup, url)
+            if largest:
+                return largest
+
     except Exception:
         pass
     return None
 
 def get_video_info(source):
-    """Hämtar de 10 senaste videorna från en kanal"""
     found_videos = []
     ydl_opts = {
-        'quiet': True,
-        'extract_flat': True,
-        'playlistend': 10, # ÄNDRAT: HÄMTAR 10 VIDEOR ISTÄLLET FÖR 5
-        'ignoreerrors': True
+        'quiet': True, 'extract_flat': True,
+        'playlistend': MAX_ARTICLES_PER_SOURCE, 'ignoreerrors': True
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -59,16 +175,18 @@ def get_video_info(source):
             if 'entries' in info:
                 for entry in info['entries']:
                     if not entry: continue
+                    timestamp = time.time()
+                    upload_date = entry.get('upload_date')
+                    if upload_date:
+                        try:
+                            dt = datetime.strptime(upload_date, "%Y%m%d")
+                            timestamp = dt.timestamp()
+                        except: pass
                     
-                    thumbnails = entry.get('thumbnails', [])
-                    img_url = ""
-                    if thumbnails:
-                        best_thumb = min(thumbnails, key=lambda x: abs(x.get('width', 0) - 640))
-                        img_url = best_thumb.get('url')
-                    
-                    if not img_url:
-                        video_id = entry.get('id')
-                        img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+                    if is_too_old(timestamp): continue
+
+                    video_id = entry.get('id')
+                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
                     found_videos.append({
                         "title": entry.get('title'),
@@ -76,54 +194,64 @@ def get_video_info(source):
                         "images": [img_url],
                         "summary": "Watch this video on YouTube.",
                         "category": source['cat'],
-                        "source": info.get('uploader', 'YouTube'),
+                        "source": source.get('source_name', 'YouTube'),
                         "time_str": "Recent",
+                        "timestamp": timestamp,
                         "is_video": True
                     })
-    except Exception:
-        pass
+    except Exception: pass
     return found_videos
 
 def get_web_info(source):
-    """Hämtar de 10 senaste artiklarna från RSS"""
     found_articles = []
     try:
-        response = requests.get(source['url'], headers=HEADERS, timeout=10)
-        feed = feedparser.parse(response.content)
+        session = requests.Session()
+        resp = session.get(source['url'], headers=HEADERS, timeout=10, verify=False)
+        feed = feedparser.parse(resp.content)
         
-        # ÄNDRAT: Loopar igenom de 10 första inläggen
-        for entry in feed.entries[:10]:
-            img_url = ""
-            if 'media_content' in entry:
-                img_url = entry.media_content[0]['url']
-            elif 'links' in entry:
-                for link in entry.links:
-                    if link.type.startswith('image/'):
-                        img_url = link.href
-                        break
-            elif 'enclosures' in entry and len(entry.enclosures) > 0:
-                 img_url = entry.enclosures[0].href
+        for entry in feed.entries[:MAX_ARTICLES_PER_SOURCE]:
+            timestamp = parse_date_to_timestamp(entry)
+            if is_too_old(timestamp): continue
 
-            if not img_url:
-                img_url = scrape_article_image(entry.link)
+            img_url = None
+            
+            # --- LISTA PÅ SIDOR SOM ALLTID MÅSTE SKRAPAS ---
+            # Electrek, Dagens PS, Feber, NASA
+            force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa', 'sweclockers', 'nyteknik'])
+            
+            if not force_scrape:
+                if 'media_content' in entry:
+                    try:
+                        imgs = [m for m in entry.media_content if 'image' in m.get('type', 'image')]
+                        if imgs: img_url = imgs[0]['url']
+                    except: pass
+                
+                if not img_url and 'enclosures' in entry:
+                    for enc in entry.enclosures:
+                        if enc.type.startswith('image/'):
+                            img_url = enc.href; break
 
-            summary_text = entry.get('summary', '')
-            if '<' in summary_text:
-                soup = BeautifulSoup(summary_text, 'html.parser')
-                summary_text = soup.get_text()
+            # Om ingen bild i RSS eller tvångsskrapning -> Gå in på sidan
+            if not img_url or force_scrape:
+                scraped = scrape_article_image(entry.link)
+                if scraped: img_url = scraped
+
+            summary = entry.get('summary', '') or entry.get('description', '')
+            if '<' in summary:
+                summary = BeautifulSoup(summary, 'html.parser').get_text()
             
             found_articles.append({
                 "title": entry.title,
                 "link": entry.link,
                 "images": [img_url] if img_url else [],
-                "summary": summary_text[:160] + "..." if len(summary_text) > 160 else summary_text,
+                "summary": summary[:180] + "..." if len(summary) > 180 else summary,
                 "category": source['cat'],
                 "source": source.get('source_name', 'News'),
                 "time_str": "Just Now",
+                "timestamp": timestamp,
                 "is_video": False
             })
-    except Exception:
-        pass
+    except Exception: pass
     return found_articles
 
 def process_source(source):
@@ -132,69 +260,49 @@ def process_source(source):
     else:
         return get_web_info(source)
 
-# --- 3. KÖR PARALLELLT ---
+# --- 3. EXEKVERING ---
 new_articles = []
-print(f"Startar hämtning...")
-
 start_time = time.time()
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    future_to_source = {executor.submit(process_source, source): source for source in SOURCES}
-    
-    for future in concurrent.futures.as_completed(future_to_source):
-        source = future_to_source[future]
+# 20 Trådar
+with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    future_map = {executor.submit(process_source, s): s for s in SOURCES}
+    for future in concurrent.futures.as_completed(future_map):
         try:
-            data_list = future.result() 
-            if data_list:
-                new_articles.extend(data_list)
-                print(f"Hämtade {len(data_list)} st från {source.get('source_name', 'YouTube')}")
-        except Exception:
-            pass
+            data = future.result()
+            if data: new_articles.extend(data)
+        except Exception: pass
 
-duration = time.time() - start_time
-print(f"--- HÄMTNING KLAR PÅ {duration:.2f} SEKUNDER ---")
+# --- 4. CLEANUP & SORTERING ---
+unique_map = {}
+for art in new_articles:
+    if art['link'] not in unique_map:
+        unique_map[art['link']] = art
+final_list = list(unique_map.values())
 
-# --- 4. UPPDATERA NEWS.JSON ---
-existing_data = []
-try:
-    if os.path.exists('news.json'):
-        with open('news.json', 'r', encoding='utf-8') as f:
-            existing_data = json.load(f)
-except Exception:
-    existing_data = []
+# Sortera nyast först
+final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
 
-# Slå ihop nytt och gammalt
-all_news = new_articles + existing_data
-unique_news = []
-seen_links = set()
+now = time.time()
+for art in final_list:
+    diff = now - art['timestamp']
+    if diff < 3600: art['time_str'] = f"{int(diff/60)}m ago"
+    elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
+    else: art['time_str'] = f"{int(diff/86400)}d ago"
 
-# Rensa dubbletter
-for article in all_news:
-    if article['link'] not in seen_links:
-        unique_news.append(article)
-        seen_links.add(article['link'])
-
-# ÄNDRAT: ÖKADE GRÄNSEN TILL 800 ARTIKLAR (För att hantera det ökade inflödet)
-final_news = unique_news[:800]
+final_list = final_list[:TOTAL_LIMIT]
 
 with open('news.json', 'w', encoding='utf-8') as f:
-    json.dump(final_news, f, ensure_ascii=False, indent=2)
+    json.dump(final_list, f, ensure_ascii=False, indent=2)
 
-print(f"Databas uppdaterad. Totalt {len(final_news)} artiklar.")
+print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
+print(f"Totalt antal artiklar: {len(final_list)}")
 
-# --- 5. BYGG HTML ---
-json_data = json.dumps(final_news)
-
-try:
+if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
-        template_code = f.read()
-    
-    final_html = template_code.replace("<!-- NEWS_DATA_JSON -->", json_data)
-    
+        html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(final_html)
-    
+        f.write(html)
     print("SUCCESS: index.html har uppdaterats!")
-
-except Exception as e:
-    print(f"KRITISKT FEL: {e}")
+else:
+    print("VARNING: template.html saknas!")
