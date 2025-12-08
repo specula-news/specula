@@ -1,4 +1,4 @@
-# Sources for aggregation site - UPDATED & EXPANDED
+# Sources for aggregation site - OPTIMIZED GOLD MASTER
 
 SOURCES = [
     # ==========================================
@@ -17,8 +17,8 @@ SOURCES = [
     {"url": "https://www.vg247.com/feed", "cat": "gaming", "type": "web", "source_name": "VG247"},
     {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se"},
     {"url": "https://www.ign.com/feeds/all", "cat": "gaming", "type": "web", "source_name": "IGN"},
-    {"url": "https://www.gameinformer.com/rss.xml", "cat": "gaming", "type": "web", "source_name": "Game Informer"},
     {"url": "https://www.polygon.com/rss/index.xml", "cat": "gaming", "type": "web", "source_name": "Polygon"},
+    # YouTube Gaming
     {"url": "https://www.youtube.com/@IGN/videos", "cat": "gaming", "type": "video", "source_name": "IGN YouTube"},
     {"url": "https://www.youtube.com/@gamespot/videos", "cat": "gaming", "type": "video", "source_name": "GameSpot YouTube"},
     {"url": "https://www.youtube.com/@gameranxTV/videos", "cat": "gaming", "type": "video", "source_name": "Gameranx"},
@@ -36,6 +36,7 @@ SOURCES = [
     {"url": "https://www.wired.com/feed/rss", "cat": "tech", "type": "web", "source_name": "WIRED"},
     {"url": "https://www.engadget.com/rss.xml", "cat": "tech", "type": "web", "source_name": "Engadget"},
     {"url": "https://mashable.com/feeds/rss/tech", "cat": "tech", "type": "web", "source_name": "Mashable"},
+    # YouTube Tech
     {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video", "source_name": "Linus Tech Tips"},
     {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video", "source_name": "JayzTwoCents"},
     {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video", "source_name": "Hardware Unboxed"},
@@ -53,6 +54,7 @@ SOURCES = [
     {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice"},
     {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World"},
     {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden"},
+    # YouTube EV
     {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija"},
     {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided"},
     {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video", "source_name": "Electric Viking"},
@@ -74,8 +76,7 @@ SOURCES = [
     {"url": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best", "cat": "geopolitics", "type": "web", "source_name": "Reuters"},
     {"url": "https://apnews.com/hub/ap-top-news.rss", "cat": "geopolitics", "type": "web", "source_name": "AP News"},
     {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU"},
-    
-    # Video Geopolitics
+    # YouTube Geopolitics
     {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS"},
     {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "geopolitics", "type": "video", "source_name": "Channel NewsAsia"},
     {"url": "https://www.youtube.com/@cgtn/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN"},
@@ -120,6 +121,7 @@ SOURCES = [
     {"url": "https://www.newscientist.com/feed/home/", "cat": "science", "type": "web", "source_name": "New Scientist"},
     {"url": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "cat": "science", "type": "web", "source_name": "NASA"},
     {"url": "https://phys.org/rss-feed/", "cat": "science", "type": "web", "source_name": "Phys.org"},
+    # YouTube Science
     {"url": "https://www.youtube.com/@pbsspacetime/videos", "cat": "science", "type": "video", "source_name": "PBS Space Time"},
     {"url": "https://www.youtube.com/@SpaceEyeTech/videos", "cat": "science", "type": "video", "source_name": "Space Eye Tech"},
     {"url": "https://www.youtube.com/@PracticalEngineeringChannel/videos", "cat": "science", "type": "video", "source_name": "Practical Engineering"},
@@ -131,9 +133,11 @@ SOURCES = [
     # ==========================================
     #             CONSTRUCTION
     # ==========================================
-    {"url": "https://www.archdaily.com/feed/", "cat": "construction", "type": "web", "source_name": "ArchDaily"},
+    # FIXAD LÄNK FÖR ARCHDAILY (Kräver /rss, ej /feed/):
+    {"url": "https://www.archdaily.com/rss", "cat": "construction", "type": "web", "source_name": "ArchDaily"},
     {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive"},
     {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer"},
+    # YouTube Construction
     {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video", "source_name": "Tomorrow's Build"},
     {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video", "source_name": "The B1M"},
     {"url": "https://www.youtube.com/@FD_Engineering/videos", "cat": "construction", "type": "video", "source_name": "Free Documentary Engineering"},
