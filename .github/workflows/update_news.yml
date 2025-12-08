@@ -1,0 +1,46 @@
+name: Update News Feed
+
+on:
+  # Run every 4 hours
+  schedule:
+    - cron: '0 */4 * * *'
+  # Allow manual trigger button
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 feedparser yt-dlp urllib3
+
+      - name: Run Generator Script
+        run: python generator.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "NewsBot"
+          git config --global user.email "bot@noreply.github.com"
+          
+          # Check if there are changes to commit
+          if [[ -n $(git status -s) ]]; then
+            git add news.json index.html
+            git commit -m "Auto-update news feed"
+            git push
+          else
+            echo "No changes to commit"
+          fi
