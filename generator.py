@@ -29,11 +29,11 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (PHYS.ORG GITHUB FIX) ---")
+print(f"--- STARTAR GENERATORN (HD-BILDER FRÅN RSS) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Referer": "https://www.google.com/"
 }
 
@@ -48,8 +48,7 @@ def parse_date_to_timestamp(entry):
         date_str = entry.get('published', entry.get('updated', ''))
         if date_str:
             return parsedate_to_datetime(date_str).timestamp()
-    except:
-        pass
+    except: pass
     return time.time() - random.randint(3600, 86400)
 
 def is_too_old(timestamp):
@@ -63,10 +62,25 @@ def get_width_from_url(url):
     except: pass
     return 0
 
+def clean_image_url(url):
+    """Försöker ta bort storleksbegränsningar i URL:en för att få HD-bild."""
+    if not url: return None
+    
+    # Wordpress / Jetpack (t.ex. Electrek, 9to5Mac)
+    if '?w=' in url:
+        # Ändra till w=1200 för HD
+        return re.sub(r'w=\d+', 'w=1200', url)
+    
+    # Phys.org och andra thumbnails
+    # Om URL innehåller 'thumbnails', se om vi kan gissa originalet (ofta riskabelt men värt ett försök om man vet mönstret)
+    # För säkerhets skull, gör inget aggressivt här för Phys.org för att undvika 404, 
+    # men vi rensar vanliga query params som resize.
+    
+    return url
+
 def find_largest_image_on_page(soup, base_url):
     best_image = None
     max_score = 0
-    
     images = soup.find_all('img')
     
     for img in images:
@@ -85,7 +99,6 @@ def find_largest_image_on_page(soup, base_url):
 
         for url in candidates:
             if not url or 'base64' in url: continue
-            
             full_url = urljoin(base_url, url)
             score = 0
             
@@ -106,49 +119,33 @@ def find_largest_image_on_page(soup, base_url):
             if score > max_score:
                 max_score = score
                 best_image = full_url
-
     return best_image
 
 def scrape_article_image(url):
     try:
-        time.sleep(random.uniform(0.1, 0.4))
+        time.sleep(random.uniform(0.1, 0.3))
         session = requests.Session()
         r = session.get(url, headers=HEADERS, timeout=8, verify=False)
-        
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             
             # 1. OpenGraph
             og = soup.find("meta", property="og:image")
-            if og and og.get("content"): 
-                return urljoin(url, og["content"])
+            if og and og.get("content"): return urljoin(url, og["content"])
             
-            # 2. Specifika klasser (Electrek/Feber etc)
-            feat_img = soup.select_one('.feat-image img, .featured-image img, figure.article-img img')
-            if feat_img:
-                src = feat_img.get('src') or feat_img.get('data-src')
-                if src: return urljoin(url, src)
-
-            # 3. Twitter Card
+            # 2. Twitter
             tw = soup.find("meta", name="twitter:image")
-            if tw and tw.get("content"): 
-                return urljoin(url, tw["content"])
+            if tw and tw.get("content"): return urljoin(url, tw["content"])
 
-            # 4. Matematisk analys (Sista utväg)
+            # 3. DOM-analys (Hitta största bilden)
             largest = find_largest_image_on_page(soup, url)
-            if largest:
-                return largest
-
-    except Exception:
-        pass
+            if largest: return largest
+    except: pass
     return None
 
 def get_video_info(source):
     found_videos = []
-    ydl_opts = {
-        'quiet': True, 'extract_flat': True,
-        'playlistend': MAX_ARTICLES_PER_SOURCE, 'ignoreerrors': True
-    }
+    ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': MAX_ARTICLES_PER_SOURCE, 'ignoreerrors': True}
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
@@ -164,9 +161,9 @@ def get_video_info(source):
                         except: pass
                     
                     if is_too_old(timestamp): continue
-
+                    
                     video_id = entry.get('id')
-                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" # hqdefault är säkert och bra nog
 
                     found_videos.append({
                         "title": entry.get('title'),
@@ -179,7 +176,7 @@ def get_video_info(source):
                         "timestamp": timestamp,
                         "is_video": True
                     })
-    except Exception: pass
+    except: pass
     return found_videos
 
 def get_web_info(source):
@@ -195,43 +192,55 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- VIKTIG ÄNDRING ---
-            # Phys.org är borttagen från force_scrape.
-            # Vi försöker hitta bilden i RSS-flödet först för att undvika GitHub-blockering.
-            force_scrape = any(x in source['url'] for x in [
-                'dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'nyteknik'
-            ])
+            # --- PRIORITERINGSORDNING FÖR BÄTTRE BILDER ---
             
-            # 1. Kolla RSS (Säkert för GitHub Actions)
-            if not force_scrape:
-                # Phys.org använder ofta media_thumbnail
-                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
-                    img_url = entry.media_thumbnail[0]['url']
-                
-                # Ibland ligger bilden i media_content
-                elif 'media_content' in entry:
+            # 1. Media Content (Oftast HD)
+            if 'media_content' in entry:
+                try:
+                    # Hitta bilden med störst width attribut
+                    imgs = sorted(entry.media_content, key=lambda x: int(x.get('width', 0)), reverse=True)
+                    # Filtrera så vi bara tar bilder
+                    imgs = [i for i in imgs if 'image' in i.get('type', 'image')]
+                    if imgs: img_url = imgs[0]['url']
+                except: pass
+            
+            # 2. Enclosures (Oftast HD)
+            if not img_url and 'enclosures' in entry:
+                for enc in entry.enclosures:
+                    if enc.type.startswith('image/'):
+                        img_url = enc.href; break
+            
+            # 3. Leta i RSS-beskrivningen (HTML) - Ofta ligger en stor bild här!
+            if not img_url:
+                content = entry.get('content', [{'value': ''}])[0]['value'] or entry.get('description', '') or entry.get('summary', '')
+                if content and '<img' in content:
                     try:
-                        imgs = [m for m in entry.media_content if 'image' in m.get('type', 'image')]
-                        if imgs: img_url = imgs[0]['url']
-                    except: pass
-                
-                # Ibland ligger bilden inbäddad i 'description' (HTML)
-                elif 'description' in entry:
-                    try:
-                        soup_desc = BeautifulSoup(entry.description, 'html.parser')
-                        img = soup_desc.find('img')
-                        if img: img_url = img['src']
+                        soup = BeautifulSoup(content, 'html.parser')
+                        img = soup.find('img')
+                        if img:
+                            src = img.get('src')
+                            # Ignorera små pixels
+                            if src and 'pixel' not in src and 'tracker' not in src:
+                                img_url = src
                     except: pass
 
-                if not img_url and 'enclosures' in entry:
-                    for enc in entry.enclosures:
-                        if enc.type.startswith('image/'):
-                            img_url = enc.href; break
+            # 4. Media Thumbnail (Sista utväg, ofta låg upplösning)
+            if not img_url and 'media_thumbnail' in entry:
+                img_url = entry.media_thumbnail[0]['url']
 
-            # 2. Skrapa om det behövs (Men Phys.org kommer troligen blockera detta på GitHub)
+            # --- SKRAPNINGS-STRATEGI ---
+            # Skrapa BARA om vi måste (blockerade sidor etc) eller om vi saknar bild
+            force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers'])
+            
+            # Phys.org på GitHub: Använd RSS-bilden vi hittade ovan (troligen från steg 3 eller 4).
+            # Om vi skrapar Phys.org på GitHub blir vi blockerade (403), så vi låter bli.
+            
             if (not img_url and 'phys.org' not in source['url']) or force_scrape:
                 scraped = scrape_article_image(entry.link)
                 if scraped: img_url = scraped
+
+            # Rensa URL:en (t.ex. ta bort ?w=300 för att få full storlek)
+            img_url = clean_image_url(img_url)
 
             summary = entry.get('summary', '') or entry.get('description', '')
             if '<' in summary:
@@ -248,14 +257,12 @@ def get_web_info(source):
                 "timestamp": timestamp,
                 "is_video": False
             })
-    except Exception: pass
+    except: pass
     return found_articles
 
 def process_source(source):
-    if source['type'] == 'video':
-        return get_video_info(source)
-    else:
-        return get_web_info(source)
+    if source['type'] == 'video': return get_video_info(source)
+    else: return get_web_info(source)
 
 # --- 3. EXEKVERING ---
 new_articles = []
@@ -267,9 +274,9 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         try:
             data = future.result()
             if data: new_articles.extend(data)
-        except Exception: pass
+        except: pass
 
-# --- 4. CLEANUP & SORTERING ---
+# --- 4. CLEANUP ---
 unique_map = {}
 for art in new_articles:
     if art['link'] not in unique_map:
