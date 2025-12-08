@@ -1,3 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /private/
+
 Sitemap: https://specula-news.netlify.app/sitemap.xml
+
+# Google News bot (om du vill inkludera den)
+User-agent: Googlebot-News
+Allow: /
+
+# All other bots
+Crawl-delay: 1
