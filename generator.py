@@ -13,7 +13,7 @@ from urllib.parse import urljoin
 import urllib3
 import re
 
-# Stänger av SSL-varningar (nödvändigt för vissa sajter som Dagens PS)
+# Stäng av SSL-varningar
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
@@ -29,13 +29,13 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (FINAL STABLE VERSION) ---")
+print(f"--- STARTAR GENERATORN (PHYS.ORG & DAGENS PS FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Referer": "https://www.google.com/",
-    "Accept-Language": "en-US,en;q=0.9"
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.google.com/"
 }
 
 # --- 2. HJÄLPFUNKTIONER ---
@@ -51,7 +51,6 @@ def parse_date_to_timestamp(entry):
             return parsedate_to_datetime(date_str).timestamp()
     except:
         pass
-    # Fallback: Sätt till "idag" minus lite slump
     return time.time() - random.randint(3600, 86400)
 
 def is_too_old(timestamp):
@@ -59,7 +58,6 @@ def is_too_old(timestamp):
     return timestamp < limit
 
 def get_width_from_url(url):
-    """Försöker hitta bredd i URL-parametrar (t.ex. ?w=1500)."""
     try:
         match = re.search(r'[?&]w=(\d+)', url)
         if match: return int(match.group(1))
@@ -67,9 +65,6 @@ def get_width_from_url(url):
     return 0
 
 def find_largest_image_on_page(soup, base_url):
-    """
-    Hittar den troligtvis bästa bilden genom att analysera bredd, srcset och URL-parametrar.
-    """
     best_image = None
     max_score = 0
     
@@ -78,7 +73,6 @@ def find_largest_image_on_page(soup, base_url):
     for img in images:
         candidates = []
         
-        # Samla URL:er från src, data-src och srcset
         src = img.get('src')
         data_src = img.get('data-src') or img.get('data-original')
         if src: candidates.append(src)
@@ -94,22 +88,19 @@ def find_largest_image_on_page(soup, base_url):
         for url in candidates:
             if not url or 'base64' in url: continue
             
-            # Fixa relativa länkar (Viktigt för NASA)
             full_url = urljoin(base_url, url)
             score = 0
             
-            # Poängsystem
             w_param = get_width_from_url(full_url)
             if w_param > 0: score = w_param
             elif img.get('width'):
                 try: score = int(img['width'])
                 except: pass
             elif 'data' in str(img.attrs) and score == 0:
-                score = 600 # Gissa högt på lazy-loadade bilder
+                score = 600
             elif src and score == 0:
                 score = 100
 
-            # Straffa ikoner
             lower = full_url.lower()
             if any(x in lower for x in ['logo', 'icon', 'avatar', 'tracker', 'pixel', 'footer']):
                 score = 0
@@ -122,25 +113,39 @@ def find_largest_image_on_page(soup, base_url):
 
 def scrape_article_image(url):
     try:
-        # verify=False för att hantera Dagens PS SSL-problem
-        time.sleep(random.uniform(0.1, 0.3))
+        time.sleep(random.uniform(0.1, 0.4))
         session = requests.Session()
+        # verify=False är viktigt för vissa sajter som blockerar bots
         r = session.get(url, headers=HEADERS, timeout=8, verify=False)
         
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             
-            # 1. OpenGraph (Säkrast och bäst)
+            # --- METOD 1: OpenGraph ---
             og = soup.find("meta", property="og:image")
             if og and og.get("content"): 
                 return urljoin(url, og["content"])
             
-            # 2. Twitter Card
+            # --- METOD 2: Specifika klasser för Problem-sajter ---
+            
+            # PHYS.ORG FIX: De lägger ofta bilden i figure.article-img
+            phys_img = soup.select_one('figure.article-img img, .article-main-img img, div.article-img img')
+            if phys_img:
+                src = phys_img.get('src') or phys_img.get('data-src')
+                if src: return urljoin(url, src)
+
+            # ELECTREK FIX:
+            feat_img = soup.select_one('.feat-image img, .featured-image img')
+            if feat_img:
+                src = feat_img.get('src') or feat_img.get('data-src')
+                if src: return urljoin(url, src)
+
+            # --- METOD 3: Twitter Card ---
             tw = soup.find("meta", name="twitter:image")
             if tw and tw.get("content"): 
                 return urljoin(url, tw["content"])
 
-            # 3. Matematisk analys (För Electrek/Feber och andra svåra sidor)
+            # --- METOD 4: Matematisk analys (Sista utväg) ---
             largest = find_largest_image_on_page(soup, url)
             if largest:
                 return largest
@@ -172,7 +177,6 @@ def get_video_info(source):
                     if is_too_old(timestamp): continue
 
                     video_id = entry.get('id')
-                    # hqdefault är robust och fungerar alltid
                     img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
                     found_videos.append({
@@ -193,7 +197,6 @@ def get_web_info(source):
     found_articles = []
     try:
         session = requests.Session()
-        # verify=False här också för RSS
         resp = session.get(source['url'], headers=HEADERS, timeout=10, verify=False)
         feed = feedparser.parse(resp.content)
         
@@ -203,8 +206,17 @@ def get_web_info(source):
 
             img_url = None
             
-            # Källor som MÅSTE skrapas för att bli bra
-            force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa', 'sweclockers', 'nyteknik'])
+            # --- Force Scrape List ---
+            # Här lägger vi till phys.org för att tvinga scriptet att gå in på sidan
+            force_scrape = any(x in source['url'] for x in [
+                'dagensps', 
+                'electrek', 
+                'feber', 
+                'nasa.gov', 
+                'phys.org',  # <--- NY: Tvingar Phys.org att skrapas
+                'sweclockers', 
+                'nyteknik'
+            ])
             
             if not force_scrape:
                 if 'media_content' in entry:
@@ -251,7 +263,6 @@ def process_source(source):
 new_articles = []
 start_time = time.time()
 
-# 20 Trådar
 with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
     future_map = {executor.submit(process_source, s): s for s in SOURCES}
     for future in concurrent.futures.as_completed(future_map):
@@ -267,7 +278,6 @@ for art in new_articles:
         unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-# Sortera nyast först
 final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
 
 now = time.time()
