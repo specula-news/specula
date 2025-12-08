@@ -29,11 +29,11 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (HD-BILDER FRÅN RSS) ---")
+print(f"--- STARTAR GENERATORN (ANTI-BLUR EDITION) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Referer": "https://www.google.com/"
 }
 
@@ -63,19 +63,25 @@ def get_width_from_url(url):
     return 0
 
 def clean_image_url(url):
-    """Försöker ta bort storleksbegränsningar i URL:en för att få HD-bild."""
+    """
+    Magisk funktion som fixar suddiga bilder genom att manipulera URL:en.
+    """
     if not url: return None
     
-    # Wordpress / Jetpack (t.ex. Electrek, 9to5Mac)
-    if '?w=' in url:
-        # Ändra till w=1200 för HD
-        return re.sub(r'w=\d+', 'w=1200', url)
+    # 1. PHYS.ORG / SCIENCE X FIX
+    # De använder cdn-länkar som innehåller /tmb/ (thumbnail).
+    # Vi byter ut /tmb/ mot /800/ för att få en stor bild.
+    if 'scx' in url or 'phys.org' in url or 'b-cdn.net' in url:
+        if '/tmb/' in url:
+            return url.replace('/tmb/', '/800/')
     
-    # Phys.org och andra thumbnails
-    # Om URL innehåller 'thumbnails', se om vi kan gissa originalet (ofta riskabelt men värt ett försök om man vet mönstret)
-    # För säkerhets skull, gör inget aggressivt här för Phys.org för att undvika 404, 
-    # men vi rensar vanliga query params som resize.
-    
+    # 2. WORDPRESS / JETPACK FIX (Electrek, 9to5Mac etc)
+    # Tar bort ?w=300 och andra resize-parametrar för att få originalet
+    if '?' in url:
+        # Om det finns en bredd-parameter, ta bort hela query-strängen
+        if 'w=' in url or 'resize=' in url or 'width=' in url:
+            return url.split('?')[0]
+            
     return url
 
 def find_largest_image_on_page(soup, base_url):
@@ -163,7 +169,7 @@ def get_video_info(source):
                     if is_too_old(timestamp): continue
                     
                     video_id = entry.get('id')
-                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" # hqdefault är säkert och bra nog
+                    img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
                     found_videos.append({
                         "title": entry.get('title'),
@@ -192,25 +198,23 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- PRIORITERINGSORDNING FÖR BÄTTRE BILDER ---
+            # --- BILDHANTERING MED CLEANUP ---
             
-            # 1. Media Content (Oftast HD)
+            # 1. Media Content
             if 'media_content' in entry:
                 try:
-                    # Hitta bilden med störst width attribut
                     imgs = sorted(entry.media_content, key=lambda x: int(x.get('width', 0)), reverse=True)
-                    # Filtrera så vi bara tar bilder
                     imgs = [i for i in imgs if 'image' in i.get('type', 'image')]
                     if imgs: img_url = imgs[0]['url']
                 except: pass
             
-            # 2. Enclosures (Oftast HD)
+            # 2. Enclosures
             if not img_url and 'enclosures' in entry:
                 for enc in entry.enclosures:
                     if enc.type.startswith('image/'):
                         img_url = enc.href; break
             
-            # 3. Leta i RSS-beskrivningen (HTML) - Ofta ligger en stor bild här!
+            # 3. HTML i Description (Ofta här Phys.org har bilden om inte i media_content)
             if not img_url:
                 content = entry.get('content', [{'value': ''}])[0]['value'] or entry.get('description', '') or entry.get('summary', '')
                 if content and '<img' in content:
@@ -219,27 +223,22 @@ def get_web_info(source):
                         img = soup.find('img')
                         if img:
                             src = img.get('src')
-                            # Ignorera små pixels
-                            if src and 'pixel' not in src and 'tracker' not in src:
-                                img_url = src
+                            if src and 'pixel' not in src: img_url = src
                     except: pass
 
-            # 4. Media Thumbnail (Sista utväg, ofta låg upplösning)
+            # 4. Media Thumbnail
             if not img_url and 'media_thumbnail' in entry:
                 img_url = entry.media_thumbnail[0]['url']
 
-            # --- SKRAPNINGS-STRATEGI ---
-            # Skrapa BARA om vi måste (blockerade sidor etc) eller om vi saknar bild
+            # --- SKRAPA VID BEHOV ---
             force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers'])
             
-            # Phys.org på GitHub: Använd RSS-bilden vi hittade ovan (troligen från steg 3 eller 4).
-            # Om vi skrapar Phys.org på GitHub blir vi blockerade (403), så vi låter bli.
-            
+            # OBS: Vi skrapar INTE Phys.org på GitHub (403 risk), vi förlitar oss på clean_image_url
             if (not img_url and 'phys.org' not in source['url']) or force_scrape:
                 scraped = scrape_article_image(entry.link)
                 if scraped: img_url = scraped
 
-            # Rensa URL:en (t.ex. ta bort ?w=300 för att få full storlek)
+            # --- VIKTIGT: Rensa URL för att få HD ---
             img_url = clean_image_url(img_url)
 
             summary = entry.get('summary', '') or entry.get('description', '')
