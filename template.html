@@ -646,8 +646,9 @@
                         </div>
                     </div>
 
+                    <!-- UPDATED YOUTUBE BUTTON -->
                     <div style="position:relative;">
-                        <button class="filter-btn" id="videoBtn" onclick="toggleDropdown('video', event)">YOUTUBE ▼</button>
+                        <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">YOUTUBE ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
                                 <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
@@ -664,8 +665,9 @@
                         </div>
                     </div>
 
+                    <!-- UPDATED GAMING BUTTON -->
                     <div style="position:relative;">
-                        <button class="filter-btn" id="gamingBtn" onclick="toggleDropdown('gaming', event)">GAMING ▼</button>
+                        <button class="filter-btn" id="gamingBtn" onclick="handleMenuClick('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
                                 <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
@@ -893,6 +895,19 @@
                 });
             }
             renderApp();
+        }
+
+        // --- NY FUNKTION: Visar allt först, öppnar sen menyn ---
+        window.handleMenuClick = function(cat, event) {
+            // 1. Återställ filter för denna kategori så allt visas
+            if (cat === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            if (cat === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            
+            // 2. Sätt kategorin (detta stänger alla menyer via setCategory logiken)
+            setCategory(cat); 
+            
+            // 3. Öppna specifikt denna meny igen
+            toggleDropdown(cat, event);
         }
 
         window.toggleDropdown = function(type, event) {
