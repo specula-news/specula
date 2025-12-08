@@ -29,7 +29,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (AFTONBLADET JSON-LD FIX) ---")
+print(f"--- STARTAR GENERATORN (AFTONBLADET CDN FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -63,31 +63,52 @@ def get_width_from_url(url):
     return 0
 
 def clean_image_url(url):
-    """ Fixar upplösning på bilderna. """
+    """
+    Städar URL:er men är extremt försiktig med Aftonbladet.
+    """
     if not url: return None
     
-    # 1. PHYS.ORG
+    # 1. AFTONBLADET FIX (Rör inte URLen!)
+    # De använder signerade länkar (&s=...). Ändrar vi w= så bryts länken.
+    if 'aftonbladet-cdn' in url:
+        return url
+
+    # 2. PHYS.ORG
     if 'scx' in url or 'phys.org' in url or 'b-cdn.net' in url:
         if '/tmb/' in url:
             return url.replace('/tmb/', '/800/')
-    
-    # 2. AFTONBLADET (Måste ha parametrar, men vi maxar dem)
-    if 'aftonbladet-cdn' in url:
-        # Ersätt befintliga parametrar med maxade värden
-        if 'w=' in url: url = re.sub(r'w=\d+', 'w=1200', url)
-        else: url += '&w=1200'
-        
-        if 'q=' in url: url = re.sub(r'q=\d+', 'q=80', url)
-        else: url += '&q=80'
-        
-        return url
 
-    # 3. WORDPRESS / ELECTREK
+    # 3. WORDPRESS / ELECTREK (Här kan vi oftast ändra säkert)
     if 'wp.com' in url or 'electrek' in url or '9to5' in url:
         if 'w=' in url:
-            return re.sub(r'w=\d+', 'w=1600', url)
+            # Endast om det inte ser ut att vara en signerad URL
+            if 's=' not in url:
+                return re.sub(r'w=\d+', 'w=1600', url)
             
     return url
+
+def find_aftonbladet_image_via_regex(html_content):
+    """
+    Specialare: Letar efter Aftonbladets bildlänkar direkt i texten
+    eftersom Beautifulsoup ibland missar dem i komplexa strukturer.
+    """
+    try:
+        # Letar efter mönstret: https://images.aftonbladet-cdn.se ... "
+        # Vi tar första bästa träff som ser ut som en bild
+        matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', str(html_content))
+        
+        for match in matches:
+            # Ignorera ikoner/små saker om möjligt, men aftonbladet-cdn är oftast artikelfoton
+            if 'w=' in match:
+                # Kolla bredd om det finns
+                w = get_width_from_url(match)
+                if w > 200: return match.replace('&amp;', '&') # Fixa html entities
+            else:
+                # Ingen bredd angiven, chansa på att den är bra
+                return match.replace('&amp;', '&')
+    except:
+        pass
+    return None
 
 def find_largest_image_on_page(soup, base_url):
     best_image = None
@@ -138,40 +159,33 @@ def scrape_article_image(url):
         session = requests.Session()
         r = session.get(url, headers=HEADERS, timeout=8, verify=False)
         if r.status_code == 200:
+            
+            # --- AFTONBLADET SPECIAL ---
+            if 'aftonbladet.se' in url:
+                # 1. Försök med Regex direkt i källkoden (Mest effektivt för CDN-länkar)
+                ab_img = find_aftonbladet_image_via_regex(r.text)
+                if ab_img: return ab_img
+
             soup = BeautifulSoup(r.content, 'html.parser')
             
-            # --- METOD 1: JSON-LD (Guldstandarden för Aftonbladet) ---
-            # Aftonbladet lägger huvudbilden i en dold JSON-struktur för Google
+            # --- METOD 1: JSON-LD ---
             scripts = soup.find_all('script', type='application/ld+json')
             for script in scripts:
                 try:
                     data = json.loads(script.string)
-                    # Ibland är det en lista
-                    if isinstance(data, list):
-                        data = data[0]
-                    
+                    if isinstance(data, list): data = data[0]
                     if 'image' in data:
                         img_data = data['image']
-                        # Ibland är image en lista av URL:er
-                        if isinstance(img_data, list):
-                            return img_data[0] # Ta första
-                        # Ibland är det ett objekt med url
-                        elif isinstance(img_data, dict) and 'url' in img_data:
-                            return img_data['url']
-                        # Ibland är det bara en sträng
-                        elif isinstance(img_data, str):
-                            return img_data
+                        if isinstance(img_data, list): return img_data[0]
+                        elif isinstance(img_data, dict) and 'url' in img_data: return img_data['url']
+                        elif isinstance(img_data, str): return img_data
                 except: pass
 
             # --- METOD 2: OpenGraph ---
             og = soup.find("meta", property="og:image")
             if og and og.get("content"): return urljoin(url, og["content"])
             
-            # --- METOD 3: Twitter ---
-            tw = soup.find("meta", name="twitter:image")
-            if tw and tw.get("content"): return urljoin(url, tw["content"])
-
-            # --- METOD 4: DOM-analys ---
+            # --- METOD 3: DOM-analys ---
             largest = find_largest_image_on_page(soup, url)
             if largest: return largest
     except: pass
@@ -226,14 +240,11 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- SKRAP-LISTA ---
-            # Lägg till 'aftonbladet' här för att tvinga fram JSON-LD analysen
             force_scrape = any(x in source['url'] for x in [
                 'dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'nyteknik', 'aftonbladet'
             ])
             
             if not force_scrape:
-                # Kolla RSS
                 if 'media_content' in entry:
                     try:
                         imgs = sorted(entry.media_content, key=lambda x: int(x.get('width', 0)), reverse=True)
@@ -257,8 +268,7 @@ def get_web_info(source):
                                 if src and 'pixel' not in src: img_url = src
                         except: pass
 
-            # Om force_scrape är sant, eller om ingen bild hittades
-            # (Undantag för phys.org i molnet)
+            # SKRAPA OM DET BEHÖVS (Aftonbladet triggar alltid detta nu)
             if (not img_url and 'phys.org' not in source['url']) or force_scrape:
                 scraped = scrape_article_image(entry.link)
                 if scraped: img_url = scraped
