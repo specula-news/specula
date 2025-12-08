@@ -29,12 +29,11 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (PHYS.ORG & DAGENS PS FIX) ---")
+print(f"--- STARTAR GENERATORN (PHYS.ORG GITHUB FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
     "Referer": "https://www.google.com/"
 }
 
@@ -72,7 +71,6 @@ def find_largest_image_on_page(soup, base_url):
     
     for img in images:
         candidates = []
-        
         src = img.get('src')
         data_src = img.get('data-src') or img.get('data-original')
         if src: candidates.append(src)
@@ -115,37 +113,28 @@ def scrape_article_image(url):
     try:
         time.sleep(random.uniform(0.1, 0.4))
         session = requests.Session()
-        # verify=False är viktigt för vissa sajter som blockerar bots
         r = session.get(url, headers=HEADERS, timeout=8, verify=False)
         
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             
-            # --- METOD 1: OpenGraph ---
+            # 1. OpenGraph
             og = soup.find("meta", property="og:image")
             if og and og.get("content"): 
                 return urljoin(url, og["content"])
             
-            # --- METOD 2: Specifika klasser för Problem-sajter ---
-            
-            # PHYS.ORG FIX: De lägger ofta bilden i figure.article-img
-            phys_img = soup.select_one('figure.article-img img, .article-main-img img, div.article-img img')
-            if phys_img:
-                src = phys_img.get('src') or phys_img.get('data-src')
-                if src: return urljoin(url, src)
-
-            # ELECTREK FIX:
-            feat_img = soup.select_one('.feat-image img, .featured-image img')
+            # 2. Specifika klasser (Electrek/Feber etc)
+            feat_img = soup.select_one('.feat-image img, .featured-image img, figure.article-img img')
             if feat_img:
                 src = feat_img.get('src') or feat_img.get('data-src')
                 if src: return urljoin(url, src)
 
-            # --- METOD 3: Twitter Card ---
+            # 3. Twitter Card
             tw = soup.find("meta", name="twitter:image")
             if tw and tw.get("content"): 
                 return urljoin(url, tw["content"])
 
-            # --- METOD 4: Matematisk analys (Sista utväg) ---
+            # 4. Matematisk analys (Sista utväg)
             largest = find_largest_image_on_page(soup, url)
             if largest:
                 return largest
@@ -206,32 +195,41 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- Force Scrape List ---
-            # Här lägger vi till phys.org för att tvinga scriptet att gå in på sidan
+            # --- VIKTIG ÄNDRING ---
+            # Phys.org är borttagen från force_scrape.
+            # Vi försöker hitta bilden i RSS-flödet först för att undvika GitHub-blockering.
             force_scrape = any(x in source['url'] for x in [
-                'dagensps', 
-                'electrek', 
-                'feber', 
-                'nasa.gov', 
-                'phys.org',  # <--- NY: Tvingar Phys.org att skrapas
-                'sweclockers', 
-                'nyteknik'
+                'dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'nyteknik'
             ])
             
+            # 1. Kolla RSS (Säkert för GitHub Actions)
             if not force_scrape:
-                if 'media_content' in entry:
+                # Phys.org använder ofta media_thumbnail
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
+                    img_url = entry.media_thumbnail[0]['url']
+                
+                # Ibland ligger bilden i media_content
+                elif 'media_content' in entry:
                     try:
                         imgs = [m for m in entry.media_content if 'image' in m.get('type', 'image')]
                         if imgs: img_url = imgs[0]['url']
                     except: pass
                 
+                # Ibland ligger bilden inbäddad i 'description' (HTML)
+                elif 'description' in entry:
+                    try:
+                        soup_desc = BeautifulSoup(entry.description, 'html.parser')
+                        img = soup_desc.find('img')
+                        if img: img_url = img['src']
+                    except: pass
+
                 if not img_url and 'enclosures' in entry:
                     for enc in entry.enclosures:
                         if enc.type.startswith('image/'):
                             img_url = enc.href; break
 
-            # Om ingen bild i RSS eller tvångsskrapning -> Gå in på sidan
-            if not img_url or force_scrape:
+            # 2. Skrapa om det behövs (Men Phys.org kommer troligen blockera detta på GitHub)
+            if (not img_url and 'phys.org' not in source['url']) or force_scrape:
                 scraped = scrape_article_image(entry.link)
                 if scraped: img_url = scraped
 
