@@ -13,7 +13,7 @@ from urllib.parse import urljoin
 import urllib3
 import re
 
-# Stäng av SSL-varningar (nödvändigt för vissa sidor)
+# Stänger av SSL-varningar (nödvändigt för vissa sajter som Dagens PS)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
@@ -29,12 +29,13 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (WORDPRESS/JETPACK OPTIMERAD) ---")
+print(f"--- STARTAR GENERATORN (FINAL STABLE VERSION) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Referer": "https://www.google.com/"
+    "Referer": "https://www.google.com/",
+    "Accept-Language": "en-US,en;q=0.9"
 }
 
 # --- 2. HJÄLPFUNKTIONER ---
@@ -50,6 +51,7 @@ def parse_date_to_timestamp(entry):
             return parsedate_to_datetime(date_str).timestamp()
     except:
         pass
+    # Fallback: Sätt till "idag" minus lite slump
     return time.time() - random.randint(3600, 86400)
 
 def is_too_old(timestamp):
@@ -60,74 +62,58 @@ def get_width_from_url(url):
     """Försöker hitta bredd i URL-parametrar (t.ex. ?w=1500)."""
     try:
         match = re.search(r'[?&]w=(\d+)', url)
-        if match:
-            return int(match.group(1))
+        if match: return int(match.group(1))
     except: pass
     return 0
 
 def find_largest_image_on_page(soup, base_url):
     """
-    Skannar ALLA bilder och poängsätter dem baserat på faktisk upplösning.
-    Detta löser Electrek där src är liten men srcset innehåller jättebilder.
+    Hittar den troligtvis bästa bilden genom att analysera bredd, srcset och URL-parametrar.
     """
     best_image = None
     max_score = 0
     
-    # Hämta alla bilder
     images = soup.find_all('img')
     
     for img in images:
-        # Samla alla möjliga källor för denna bildtagg
         candidates = []
         
-        # 1. Kolla src och data-src
+        # Samla URL:er från src, data-src och srcset
         src = img.get('src')
-        data_src = img.get('data-src') or img.get('data-original') or img.get('data-lazy-src')
-        
+        data_src = img.get('data-src') or img.get('data-original')
         if src: candidates.append(src)
         if data_src: candidates.append(data_src)
         
-        # 2. Kolla srcset (Här ligger ofta guldgruvan för Electrek)
         srcset = img.get('srcset') or img.get('data-srcset')
         if srcset:
-            # Format: "url 500w, url2 1000w"
             parts = srcset.split(',')
             for p in parts:
-                p = p.strip()
-                sub_parts = p.split(' ')
-                if len(sub_parts) >= 1:
-                    candidates.append(sub_parts[0])
+                p = p.strip().split(' ')[0]
+                if p: candidates.append(p)
 
-        # Analysera kandidaterna
         for url in candidates:
             if not url or 'base64' in url: continue
             
+            # Fixa relativa länkar (Viktigt för NASA)
             full_url = urljoin(base_url, url)
             score = 0
             
-            # POÄNGSYSTEM
-            
-            # A. Har URL:en ?w=1500? (Jetpack/WordPress standard)
+            # Poängsystem
             w_param = get_width_from_url(full_url)
-            if w_param > 0:
-                score = w_param
-            
-            # B. Kolla attributet width=""
+            if w_param > 0: score = w_param
             elif img.get('width'):
-                try:
-                    score = int(img['width'])
+                try: score = int(img['width'])
                 except: pass
-            
-            # C. Om vi inte vet storlek, men det är en 'data-src' (Lazy Load), gissa högt
             elif 'data' in str(img.attrs) and score == 0:
-                score = 600 # Anta att lazy-loaded bilder är content
-            
-            # D. Straffa loggor/ikoner
+                score = 600 # Gissa högt på lazy-loadade bilder
+            elif src and score == 0:
+                score = 100
+
+            # Straffa ikoner
             lower = full_url.lower()
-            if any(x in lower for x in ['logo', 'icon', 'avatar', 'tracker', 'pixel', 'footer', 'author']):
+            if any(x in lower for x in ['logo', 'icon', 'avatar', 'tracker', 'pixel', 'footer']):
                 score = 0
             
-            # Ny ledare?
             if score > max_score:
                 max_score = score
                 best_image = full_url
@@ -136,6 +122,7 @@ def find_largest_image_on_page(soup, base_url):
 
 def scrape_article_image(url):
     try:
+        # verify=False för att hantera Dagens PS SSL-problem
         time.sleep(random.uniform(0.1, 0.3))
         session = requests.Session()
         r = session.get(url, headers=HEADERS, timeout=8, verify=False)
@@ -143,7 +130,7 @@ def scrape_article_image(url):
         if r.status_code == 200:
             soup = BeautifulSoup(r.content, 'html.parser')
             
-            # 1. OpenGraph (Oftast bäst och snabbast)
+            # 1. OpenGraph (Säkrast och bäst)
             og = soup.find("meta", property="og:image")
             if og and og.get("content"): 
                 return urljoin(url, og["content"])
@@ -153,8 +140,7 @@ def scrape_article_image(url):
             if tw and tw.get("content"): 
                 return urljoin(url, tw["content"])
 
-            # 3. MATEMATISK ANALYS (Detta fixar Electrek och svåra sidor)
-            # Den letar efter ?w=1500 och liknande mönster
+            # 3. Matematisk analys (För Electrek/Feber och andra svåra sidor)
             largest = find_largest_image_on_page(soup, url)
             if largest:
                 return largest
@@ -186,6 +172,7 @@ def get_video_info(source):
                     if is_too_old(timestamp): continue
 
                     video_id = entry.get('id')
+                    # hqdefault är robust och fungerar alltid
                     img_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
                     found_videos.append({
@@ -206,6 +193,7 @@ def get_web_info(source):
     found_articles = []
     try:
         session = requests.Session()
+        # verify=False här också för RSS
         resp = session.get(source['url'], headers=HEADERS, timeout=10, verify=False)
         feed = feedparser.parse(resp.content)
         
@@ -215,8 +203,7 @@ def get_web_info(source):
 
             img_url = None
             
-            # --- LISTA PÅ SIDOR SOM ALLTID MÅSTE SKRAPAS ---
-            # Electrek, Dagens PS, Feber, NASA
+            # Källor som MÅSTE skrapas för att bli bra
             force_scrape = any(x in source['url'] for x in ['dagensps', 'electrek', 'feber', 'nasa', 'sweclockers', 'nyteknik'])
             
             if not force_scrape:
