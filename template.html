@@ -24,8 +24,9 @@
         body { background-color: var(--bg-body); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh; padding-bottom: 50px; transition: background 0.3s; position: relative; overflow-x: hidden; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 10% 20%, var(--accent-glow), transparent 20%), radial-gradient(circle at 90% 80%, var(--accent-glow), transparent 20%); z-index: -1; pointer-events: none; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; }
-        header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
-        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+        
+        header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; position: relative; z-index: 1000; }
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
         .logo-group { display: flex; align-items: flex-end; gap: 15px; }
         .logo-link { text-decoration: none; color: inherit; display: flex; align-items: flex-end; gap: 15px; }
         .logo-icon { height: 45px; filter: drop-shadow(0 0 10px var(--accent-glow)); transition: transform 0.3s; }
@@ -40,72 +41,171 @@
         .theme-wrapper:hover .theme-text { color: var(--accent); opacity: 1; }
         .version-display { font-family: 'Space Grotesk', monospace; font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; opacity: 0.5; margin-bottom: 5px; cursor: pointer; }
         .version-display:hover { color: var(--accent); opacity: 1; }
+        
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
-        .search-container { position: relative; width: 100%; max-width: 240px; margin-bottom: -2px; z-index: 40; }
-        .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
-        .search-container::after { content: ''; position: absolute; bottom: -3px; left: 10px; right: 10px; height: 6px; background: var(--nav-bg); z-index: 60; pointer-events: none; }
+        
+        /* --- SEARCH BAR (GLUED TO TOP) --- */
+        .search-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 300px; 
+            margin-bottom: -2px; /* Negative margin to glue it */
+            z-index: 40; /* Behind the nav */
+        }
+        .search-input { 
+            width: 100%; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border); 
+            border-bottom: none; /* No border between search and nav */
+            color: var(--text-primary); 
+            padding: 8px 35px 8px 15px; 
+            border-radius: 20px 20px 0 0; /* Flat bottom */
+            font-family: 'Inter', sans-serif; 
+            font-size: 0.85rem; 
+            outline: none; 
+            transition: 0.3s; 
+        }
+        /* Bridge element to cover the seam */
+        .search-container::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 5px; right: 5px;
+            height: 4px;
+            background: var(--nav-bg);
+            z-index: 45;
+        }
+
         .search-input:focus { border-color: var(--accent); }
-        .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; z-index: 61;}
-        .unified-nav { display: inline-flex; background: var(--nav-bg); border: 1px solid var(--border); border-radius: 50px; padding: 4px; gap: 0px; flex-wrap: wrap; justify-content: center; overflow: visible !important; position: relative; z-index: 50; }
+        .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
+
+        /* --- UNIFIED NAV (MAIN BAR) --- */
+        .unified-nav { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px;
+            gap: 2px; 
+            position: relative;
+            z-index: 50; /* On top of everything */
+            max-width: 100%;
+        }
+
         .filter-btn { position: relative; background: transparent; border: none; color: var(--text-secondary); padding: 8px 14px; cursor: pointer; border-radius: 40px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.75rem; flex-shrink: 0; white-space: nowrap; }
         .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
         .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
         .filter-btn[onclick*="'geopolitics'"].active { background: #00ff88; color: black; }
-        .scroll-btn { display: none !important; }
-        .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
-        .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .read-later-btn::before { content: ''; position: absolute; top: -4px; left: 2px; right: 2px; height: 6px; background: var(--nav-bg); z-index: 60; pointer-events: none; }
-        .read-later-btn:hover { border-color: var(--accent); color: var(--accent); padding-bottom: 10px; }
-        .read-later-btn.active { background: var(--nav-bg); color: var(--accent); border-color: var(--accent); box-shadow: 0 10px 20px var(--accent-glow); }
-        .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: var(--dropdown-bg); border: 1px solid var(--border); border-radius: 12px; z-index: 100; box-shadow: 0 15px 50px rgba(0,0,0,0.9); min-width: 220px; flex-direction: column; overflow: visible; animation: fadeIn 0.2s ease; margin-top: 10px; }
+
+        /* DROPDOWN STYLING */
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: var(--dropdown-bg); border: 1px solid var(--border); border-radius: 12px; z-index: 999; box-shadow: 0 15px 50px rgba(0,0,0,0.9); min-width: 220px; flex-direction: column; overflow: visible; animation: fadeIn 0.2s ease; margin-top: 10px; }
         .dropdown-menu::before { content: ''; position: absolute; top: -15px; left: 0; width: 100%; height: 15px; background: transparent; }
         .dropdown-menu.show { display: flex; }
         .dropdown-list { max-height: 50vh; overflow-y: auto; padding: 5px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-        .dropdown-list::-webkit-scrollbar { width: 5px; }
-        .dropdown-list::-webkit-scrollbar-track { background: transparent; }
-        .dropdown-list::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 10px; }
-        .dropdown-list::-webkit-scrollbar-thumb:hover { background-color: var(--accent); }
-        .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
+        
+        .check-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; cursor: pointer; transition: 0.2s;
+            border-radius: 8px; color: var(--text-secondary); 
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; 
+            text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px;
+        }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
-        .check-item input { display: none; }
-        .check-indicator { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-secondary); position: relative; transition: 0.2s; flex-shrink: 0; }
+        
+        /* HIDE UGLY SQUARES */
+        .check-item input { display: none !important; }
+        
+        /* CIRCLE INDICATOR */
+        .check-indicator { 
+            width: 14px; height: 14px; border-radius: 50%; 
+            border: 2px solid var(--text-secondary); 
+            position: relative; transition: 0.2s; flex-shrink: 0; 
+        }
+
         .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+        .check-item input:checked ~ span { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
+        #videoDropdown .check-item input:checked ~ span { color: #ff0040; text-shadow: 0 0 10px rgba(255,0,64,0.5); }
+
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
+        #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
+
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
-        .check-item input:checked ~ span { color: var(--text-primary); }
+        #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
-        .btn-clear:hover { opacity: 1; text-decoration: underline; color: #ff0000; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
-        .btn-ok:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-glow); }
-        @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
-        
-        .news-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-            gap: 30px; 
-            min-height: 500px;
-            align-items: stretch !important; 
-        }
-        
-        .news-card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            overflow: hidden; 
+
+        /* --- READ LATER (GLUED TO BOTTOM) --- */
+        .read-later-container { 
+            width: 100%; 
             display: flex; 
-            flex-direction: column; 
-            transition: transform 0.3s; 
-            animation: fadeIn 0.5s; 
-            position: relative;
-            height: 100%; 
+            justify-content: center; 
+            margin-top: -2px; /* Negative margin to glue it */
+            z-index: 40; /* Behind nav */
         }
-        
+        .read-later-btn { 
+            position: relative; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border); 
+            border-top: none; /* No border between nav and button */
+            color: var(--text-secondary); 
+            padding: 6px 30px; 
+            border-radius: 0 0 20px 20px; /* Flat top */
+            font-family: 'Space Grotesk', sans-serif; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: 0.3s; 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        }
+        /* Bridge element */
+        .read-later-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 2px; right: 2px;
+            height: 4px;
+            background: var(--nav-bg);
+            z-index: 45;
+        }
+
+        .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
+
+        @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
+
+        /* --- MOBILE SPECIFIC FIXES --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: center; gap: 15px; }
+            .logo-wrapper { align-items: center; } 
+            .unified-nav { flex-wrap: nowrap; width: 100%; justify-content: space-between; padding: 4px; }
+            .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
+            .hide-on-mobile { display: none !important; }
+            .show-on-mobile { display: block !important; }
+            .desktop-categories { display: none; }
+            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
+            #topicsDropdown { left: 0; right: auto; transform: none; }
+            #gamingDropdown { left: auto; right: 0; transform: none; }
+            #videoDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
+            .mobile-hide { display: none !important; }
+        }
+
+        /* GRID FIXES */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; min-height: 500px; align-items: stretch !important; }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; animation: fadeIn 0.5s; position: relative; height: 100%; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .news-card:hover { transform: translateY(-5px); border-color: var(--accent); }
         .img-link { display: block; width: 100%; height: 200px; text-decoration: none; color: inherit; position: relative; flex-shrink: 0; background: #1e1e24; }
@@ -115,48 +215,14 @@
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
         
-        .card-content { 
-            padding: 24px; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            background: var(--bg-card); 
-            z-index: 2; 
-        }
-        
+        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
-        
-        .card-title { 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            margin-bottom: 12px; 
-            color: var(--text-primary); 
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .card-title a { text-decoration: none; color: inherit; }
         .card-title a:hover { color: var(--accent); }
-        
-        .ai-summary { 
-            font-size: 0.9rem; 
-            color: var(--text-secondary); 
-            margin-bottom: 0px; 
-            line-height: 1.5; 
-            border-left: 2px solid var(--border); 
-            padding-left: 12px; 
-            flex-grow: 1; 
-            padding-bottom: 20px;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
+        .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; flex-grow: 1; padding-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
         .translated-note { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; margin-top: 5px; opacity: 0.7; }
+        
         .bookmark-bar { width: 100%; padding: 12px 0; border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s ease-in-out; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; }
         .bookmark-text { position: relative; top: 2px; }
         .heart-icon { font-size: 1.2rem; line-height: 1; transition: 0.2s; color: var(--text-secondary); }
@@ -168,7 +234,7 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
@@ -189,9 +255,6 @@
         .form-textarea { resize: vertical; min-height: 100px; }
         .form-submit-btn { width: 100%; padding: 12px; border-radius: 50px; background: var(--accent); color: #000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px var(--accent-glow); margin-top: 10px; }
         .form-submit-btn:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--accent-glow); }
-        .hide-on-mobile { display: inline-block; }
-        .show-on-mobile { display: none; }
-        .desktop-categories { display: contents; }
         .pwa-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); border: 1px solid var(--accent); padding: 15px 25px; border-radius: 50px; z-index: 9999; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; pointer-events: none; width: 90%; max-width: 420px; }
         .pwa-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
         .pwa-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: var(--text-primary); flex-grow: 1; line-height: 1.2; }
@@ -199,23 +262,6 @@
         .pwa-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; transition: 0.2s; white-space: nowrap; }
         .pwa-btn.install { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
         .pwa-btn:hover { transform: scale(1.05); }
-        @media (max-width: 768px) {
-            .header-top { flex-direction: column; align-items: center; gap: 15px; }
-            .logo-wrapper { align-items: center; } 
-            .search-container { width: 92%; max-width: 100%; margin: 5px auto; }
-            .search-input { font-size: 16px; padding: 8px 35px 8px 15px; }
-            .hide-on-mobile { display: none !important; }
-            .show-on-mobile { display: block !important; position: relative; }
-            .desktop-categories { display: none; }
-            .unified-nav { width: 100%; justify-content: space-between; padding: 2px; }
-            .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
-            .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
-            #topicsDropdown { left: 0; right: auto; }
-            #gamingDropdown { left: auto; right: 0; }
-            #videoDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
-            #geopoliticsDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
-            .version-display { align-self: center; margin-top: 5px; }
-        }
     </style>
 </head>
 <body>
@@ -241,18 +287,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.9 -->
+                 <!-- V20.5.14 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.9 - Text Cutter</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.14 - Visual Integration</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Ghost Article Fix:</strong> Implemented strict text truncating (280 chars) directly in Python to prevent card explosion.<br>
-                        • <strong>Layout Restore:</strong> Removed experimental height forcing to allow natural flow.
+                        • <strong>UI Glue:</strong> Search bar and "Read Later" button are now visually merged with the main navigation bar, creating a unified control center.<br>
+                        • <strong>Clean Look:</strong> Removed double borders and gaps for a seamless aesthetic.
                     </div>
                  </li>
-                 <!-- V20.5.8 -->
+                 <!-- V20.5.13 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.8</strong><br>
-                    Grid Stability & RPG Fix.
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.13</strong><br>
+                    Polished checkboxes and restore classic UI.
                  </li>
             </ul>
         </div>
@@ -283,15 +329,31 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.9</div>
+                <div class="version-display" id="versionBtn">Version 20.5.14</div>
             </div>
             
             <div class="nav-wrapper">
                 <div class="search-container"><input type="text" id="searchInput" class="search-input" placeholder="Search headlines..."><span class="search-icon">🔍</span></div>
 
                 <nav class="unified-nav" id="catNav">
+                    <!-- MOBILE BUTTON: ALL NEWS (Opens Topics Dropdown) -->
+                    <div class="dropdown-wrapper show-on-mobile" style="display:none; position:relative;">
+                         <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
+                         <div id="topicsDropdown" class="dropdown-menu">
+                            <div class="dropdown-list">
+                                <!-- INCLUDES GEOPOLITICS FOR MOBILE -->
+                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                            </div>
+                            <div class="dropdown-footer"><button class="footer-btn btn-clear" onclick="clearFilters('topics')">CLEAR</button><button class="footer-btn btn-ok" onclick="applyFilters('topics')">OK <span style="font-size:1.2em">✓</span></button></div>
+                        </div>
+                    </div>
+
+                    <!-- DESKTOP BUTTON: ALL NEWS (Resets only) -->
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
-                    <div class="show-on-mobile" style="display:none;"><button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button><div id="topicsDropdown" class="dropdown-menu">...</div></div>
 
                     <!-- YOUTUBE -->
                     <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
@@ -327,8 +389,8 @@
                         </div>
                     </div>
 
-                    <!-- GEOPOLITICS -->
-                    <div class="dropdown-wrapper desktop-categories" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
+                    <!-- GEOPOLITICS (HIDDEN ON MOBILE) -->
+                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
                         <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">GEOPOLITICS ▼</button>
                         <div id="geopoliticsDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
@@ -414,7 +476,6 @@
         window.toggleSavedView = function() { if (state.category === 'saved') { setCategory('all'); } else { setCategory('saved'); } }
         window.resetHome = function(event) { if(event) event.preventDefault(); setCategory('all'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         
-        // --- FIX: BÄTTRE FALLBACK FÖR BILDER ---
         window.handleImageError = function(img) {
             img.onerror = null; 
             img.src = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop"; 
