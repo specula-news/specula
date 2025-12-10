@@ -1,4 +1,4 @@
-# Sources for aggregation site - TRANSLATION & GEO-FILTERS ENABLED
+# Sources for aggregation site - EU TAG FIXED
 
 SOURCES = [
     # ==========================================
@@ -15,8 +15,8 @@ SOURCES = [
     {"url": "https://www.gematsu.com/feed", "cat": "gaming", "type": "web", "source_name": "Gematsu", "lang": "en"},
     {"url": "https://gamingbolt.com/feed", "cat": "gaming", "type": "web", "source_name": "GamingBolt", "lang": "en"},
     {"url": "https://www.vg247.com/feed", "cat": "gaming", "type": "web", "source_name": "VG247", "lang": "en"},
-    {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se", "lang": "sv"}, # Swedish
-    {"url": "https://www.ign.com/feeds/all", "cat": "gaming", "type": "web", "source_name": "IGN", "lang": "en"},
+    {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se", "lang": "sv"}, 
+    {"url": "https://feeds.ign.com/ign/news", "cat": "gaming", "type": "web", "source_name": "IGN", "lang": "en"},
     {"url": "https://www.polygon.com/rss/index.xml", "cat": "gaming", "type": "web", "source_name": "Polygon", "lang": "en"},
     # YouTube Gaming
     {"url": "https://www.youtube.com/@IGN/videos", "cat": "gaming", "type": "video", "source_name": "IGN YouTube", "lang": "en"},
@@ -30,9 +30,9 @@ SOURCES = [
     {"url": "https://techcrunch.com/feed/", "cat": "tech", "type": "web", "source_name": "TechCrunch", "lang": "en"},
     {"url": "https://feeds.arstechnica.com/arstechnica/index", "cat": "tech", "type": "web", "source_name": "Ars Technica", "lang": "en"},
     {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech (Blog)", "lang": "en"},
-    {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber", "lang": "sv"}, # Swedish
-    {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik", "lang": "sv"}, # Swedish
-    {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se", "lang": "sv"}, # Swedish
+    {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber", "lang": "sv"},
+    {"url": "https://www.nyteknik.se/rss/nyheter", "cat": "tech", "type": "web", "source_name": "NyTeknik", "lang": "sv"}, 
+    {"url": "https://tjock.se/feed", "cat": "tech", "type": "web", "source_name": "Tjock.se", "lang": "sv"},
     {"url": "https://www.wired.com/feed/rss", "cat": "tech", "type": "web", "source_name": "WIRED", "lang": "en"},
     {"url": "https://www.engadget.com/rss.xml", "cat": "tech", "type": "web", "source_name": "Engadget", "lang": "en"},
     {"url": "https://mashable.com/feeds/rss/tech", "cat": "tech", "type": "web", "source_name": "Mashable", "lang": "en"},
@@ -53,7 +53,7 @@ SOURCES = [
     {"url": "https://cleantechnica.com/feed/", "cat": "ev", "type": "web", "source_name": "CleanTechnica", "lang": "en"},
     {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice", "lang": "en"},
     {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World", "lang": "en"},
-    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden", "lang": "sv"}, # Swedish
+    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden", "lang": "sv"},
     # YouTube EV
     {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija", "lang": "en"},
     {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided", "lang": "en"},
@@ -61,7 +61,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@Tesla/videos", "cat": "ev", "type": "video", "source_name": "Tesla", "lang": "en"},
     {"url": "https://www.youtube.com/@tonyseba/videos", "cat": "ev", "type": "video", "source_name": "Tony Seba", "lang": "en"},
     {"url": "https://www.youtube.com/@futurenvesting/videos", "cat": "ev", "type": "video", "source_name": "Future Investing", "lang": "en"},
-    {"url": "https://www.youtube.com/@bussmagasinet1/videos", "cat": "ev", "type": "video", "source_name": "Bussmagasinet", "lang": "sv"}, # Swedish
+    {"url": "https://www.youtube.com/@bussmagasinet1/videos", "cat": "ev", "type": "video", "source_name": "Bussmagasinet", "lang": "sv"},
     {"url": "https://www.youtube.com/@FullyChargedShow/videos", "cat": "ev", "type": "video", "source_name": "Fully Charged", "lang": "en"},
 
     # ==========================================
@@ -76,8 +76,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "china", "type": "video", "source_name": "CCTV News", "lang": "en"},
     {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "china", "type": "video", "source_name": "New China TV", "lang": "en"},
     {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "china", "type": "video", "source_name": "Inside China Business", "lang": "en"},
-    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "china", "type": "video", "source_name": "Asianometry", "lang": "en"},
-
+    
     # ==========================================
     #           GEOPOLITICS (TAGGED)
     # ==========================================
@@ -90,15 +89,14 @@ SOURCES = [
     
     # USA
     {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World", "lang": "en", "filter_tag": "usa"},
-    {"url": "https://apnews.com/hub/ap-top-news.rss", "cat": "geopolitics", "type": "web", "source_name": "AP News", "lang": "en", "filter_tag": "usa"},
-    {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU", "lang": "en", "filter_tag": "usa"}, # Western centric
+    {"url": "https://apnews.com/hub/ap-top-news/feed", "cat": "geopolitics", "type": "web", "source_name": "AP News", "lang": "en", "filter_tag": "usa"},
+    {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU", "lang": "en", "filter_tag": "usa"},
 
     # GLOBAL
     {"url": "https://www.aljazeera.com/xml/rss/all.xml", "cat": "geopolitics", "type": "web", "source_name": "Al Jazeera", "lang": "en", "filter_tag": "global"},
     {"url": "http://feeds.bbci.co.uk/news/world/rss.xml", "cat": "geopolitics", "type": "web", "source_name": "BBC World", "lang": "en", "filter_tag": "global"},
-    {"url": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best", "cat": "geopolitics", "type": "web", "source_name": "Reuters", "lang": "en", "filter_tag": "global"},
 
-    # INDIA (Video & Web)
+    # INDIA
     {"url": "https://www.youtube.com/@Firstpost/videos", "cat": "geopolitics", "type": "video", "source_name": "Firstpost (India)", "lang": "en", "filter_tag": "india"},
 
     # YOUTUBE GLOBAL/MIXED
@@ -108,10 +106,12 @@ SOURCES = [
     {"url": "https://www.youtube.com/@BBCNews/videos", "cat": "geopolitics", "type": "video", "source_name": "BBC News", "lang": "en", "filter_tag": "global"},
     {"url": "https://www.youtube.com/@aljazeeraenglish/videos", "cat": "geopolitics", "type": "video", "source_name": "Al Jazeera English", "lang": "en", "filter_tag": "global"},
     {"url": "https://www.youtube.com/@France24_en/videos", "cat": "geopolitics", "type": "video", "source_name": "France 24 English", "lang": "en", "filter_tag": "global"},
-    {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates", "lang": "en", "filter_tag": "global"},
+    # FIXAD TAGG HÄR:
+    {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates", "lang": "en", "filter_tag": "eu"},
+    
     {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova", "lang": "en", "filter_tag": "usa"},
     {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show", "lang": "en", "filter_tag": "global"},
-    {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy", "lang": "en", "filter_tag": "china"}, # Ofta kina-vänlig/global
+    {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy", "lang": "en", "filter_tag": "china"},
     {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society", "lang": "en", "filter_tag": "china"},
     {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN", "lang": "en", "filter_tag": "global"},
 
@@ -122,7 +122,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@MeetKevin/videos", "cat": "economy", "type": "video", "source_name": "Meet Kevin", "lang": "en"},
     {"url": "https://www.youtube.com/@FII_INSTITUTE/videos", "cat": "economy", "type": "video", "source_name": "FII Institute", "lang": "en"},
     {"url": "https://www.youtube.com/@JosephCarlsonShow/videos", "cat": "economy", "type": "video", "source_name": "Joseph Carlson", "lang": "en"},
-    {"url": "https://www.youtube.com/@NordnetSverige/videos", "cat": "economy", "type": "video", "source_name": "Nordnet Sverige", "lang": "sv"}, # Swedish
+    {"url": "https://www.youtube.com/@NordnetSverige/videos", "cat": "economy", "type": "video", "source_name": "Nordnet Sverige", "lang": "sv"},
     {"url": "https://www.youtube.com/@BeatTheDenominator/videos", "cat": "economy", "type": "video", "source_name": "Beat The Denominator", "lang": "en"},
     {"url": "https://www.youtube.com/@qatareconomicforum430/videos", "cat": "economy", "type": "video", "source_name": "Qatar Economic Forum", "lang": "en"},
     {"url": "https://www.youtube.com/@TomBilyeu/videos", "cat": "economy", "type": "video", "source_name": "Tom Bilyeu", "lang": "en"},
@@ -131,7 +131,7 @@ SOURCES = [
     #               SCIENCE
     # ==========================================
     {"url": "https://www.space.com/feeds/all", "cat": "science", "type": "web", "source_name": "Space.com", "lang": "en"},
-    {"url": "https://www.scientificamerican.com/feed/home/", "cat": "science", "type": "web", "source_name": "Scientific American", "lang": "en"},
+    {"url": "https://www.scientificamerican.com/feed/home", "cat": "science", "type": "web", "source_name": "Scientific American", "lang": "en"},
     {"url": "https://www.newscientist.com/feed/home/", "cat": "science", "type": "web", "source_name": "New Scientist", "lang": "en"},
     {"url": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "cat": "science", "type": "web", "source_name": "NASA", "lang": "en"},
     {"url": "https://phys.org/rss-feed/", "cat": "science", "type": "web", "source_name": "Phys.org", "lang": "en"},
