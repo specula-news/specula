@@ -44,14 +44,42 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* SEARCH BAR (GLUED) */
-        .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
-        .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
-        .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
+        /* --- SEARCH BAR (GLUED TO TOP) --- */
+        .search-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 300px; 
+            margin-bottom: -2px; /* Pulls it down to touch the nav */
+            z-index: 40; /* Behind nav */
+        }
+        .search-input { 
+            width: 100%; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border); 
+            border-bottom: none; /* Removes double border */
+            color: var(--text-primary); 
+            padding: 8px 35px 8px 15px; 
+            border-radius: 20px 20px 0 0; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 0.85rem; 
+            outline: none; 
+            transition: 0.3s; 
+        }
+        /* Bridge to hide the seam */
+        .search-container::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 5px; right: 5px;
+            height: 4px;
+            background: var(--nav-bg);
+            z-index: 45;
+        }
+
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
 
-        /* UNIFIED NAV */
+        /* --- UNIFIED NAV (MAIN BAR) --- */
         .unified-nav { 
             display: flex; 
             flex-wrap: wrap; 
@@ -62,7 +90,7 @@
             padding: 4px;
             gap: 2px; 
             position: relative;
-            z-index: 50; 
+            z-index: 50; /* Top layer */
             max-width: 100%;
         }
 
@@ -83,27 +111,84 @@
         .dropdown-menu.show { display: flex; }
         .dropdown-list { max-height: 50vh; overflow-y: auto; padding: 5px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
         
-        .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
+        /* CLEAN CHECKBOX STYLE */
+        .check-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; cursor: pointer; transition: 0.2s;
+            border-radius: 8px; color: var(--text-secondary); 
+            font-family: 'Space Grotesk', sans-serif; font-weight: 600; 
+            text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px;
+        }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
+        
+        /* HIDE DEFAULT CHECKBOX */
         .check-item input { display: none !important; }
-        .check-indicator { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-secondary); position: relative; transition: 0.2s; flex-shrink: 0; }
+        
+        /* CIRCLE INDICATOR */
+        .check-indicator { 
+            width: 14px; height: 14px; border-radius: 50%; 
+            border: 2px solid var(--text-secondary); 
+            position: relative; transition: 0.2s; flex-shrink: 0; 
+        }
+
+        /* COLORS & GLOW ON SELECTION */
         .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
         .check-item input:checked ~ span { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
         #videoDropdown .check-item input:checked ~ span { color: #ff0040; text-shadow: 0 0 10px rgba(255,0,64,0.5); }
+
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
+
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
-        .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
-        .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
+        /* --- READ LATER (GLUED TO BOTTOM) --- */
+        .read-later-container { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            margin-top: -2px; /* Pulls it up to touch nav */
+            z-index: 40; /* Behind nav */
+        }
+        .read-later-btn { 
+            position: relative; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--border); 
+            border-top: none; /* No border between nav and button */
+            color: var(--text-secondary); 
+            padding: 6px 30px; 
+            border-radius: 0 0 20px 20px; 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: 0.3s; 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        }
+        /* Bridge to hide the seam */
+        .read-later-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 2px; right: 2px;
+            height: 4px;
+            background: var(--nav-bg);
+            z-index: 45;
+        }
+
         .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
 
         @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
@@ -112,6 +197,8 @@
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
+            
+            /* GRID LAYOUT FOR MOBILE NAV (4 COLUMNS) */
             .unified-nav { 
                 display: grid; 
                 grid-template-columns: 1fr 1fr 1fr 1fr; 
@@ -123,14 +210,19 @@
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.60rem; 
+                /* ÖKAD TEXTSTORLEK FÖR BÄTTRE LÄSBARHET */
+                font-size: 0.75rem; 
             }
+            
+            /* SWAP TEXT TO "GEO" ON MOBILE */
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
 
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
+            
+            /* SHOW GEO ON MOBILE */
             .mobile-hide { display: block !important; }
 
             /* DROPDOWN POSITIONING FIXES FOR MOBILE */
@@ -164,6 +256,7 @@
         .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; }
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
+        
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -182,7 +275,7 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
@@ -235,18 +328,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.17 -->
+                 <!-- V20.5.18 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.17 - Geo Menu Fix</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.18 - Enhanced Mobile UI</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Overflow Fix:</strong> The GEO menu on mobile now opens aligned to the right edge, preventing it from being cut off.<br>
-                        • <strong>Alignment:</strong> Adjusted Gaming dropdown to ensure it stays centered.
+                        • <strong>Text Size:</strong> Increased mobile menu text size for better readability.<br>
+                        • <strong>Clean Button:</strong> "All News" on mobile is now a simple button (no arrow) to save space.
                     </div>
                  </li>
-                 <!-- V20.5.15 -->
+                 <!-- V20.5.17 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.15</strong><br>
-                    Smart label switching ("GEO") & Glued UI.
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.17</strong><br>
+                    Fixed Geo menu overflow on mobile.
                  </li>
             </ul>
         </div>
@@ -277,27 +370,16 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.17</div>
+                <div class="version-display" id="versionBtn">Version 20.5.18</div>
             </div>
             
             <div class="nav-wrapper">
                 <div class="search-container"><input type="text" id="searchInput" class="search-input" placeholder="Search headlines..."><span class="search-icon">🔍</span></div>
 
                 <nav class="unified-nav" id="catNav">
-                    <!-- MOBILE BUTTON: ALL NEWS (Opens Topics Dropdown) -->
-                    <div class="dropdown-wrapper show-on-mobile" style="display:none; position:relative;">
-                         <button class="filter-btn" id="topicsBtn" onclick="toggleDropdown('topics', event)">ALL NEWS ▼</button>
-                         <div id="topicsDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <!-- INCLUDES GEOPOLITICS FOR MOBILE -->
-                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('topics', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('topics', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('topics', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('topics', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('topics', 'construction', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-clear" onclick="clearFilters('topics')">CLEAR</button><button class="footer-btn btn-ok" onclick="applyFilters('topics')">OK <span style="font-size:1.2em">✓</span></button></div>
-                        </div>
+                    <!-- MOBILE BUTTON: ALL NEWS (JUST A RESET BUTTON NOW) -->
+                    <div class="show-on-mobile" style="display:none;">
+                         <button class="filter-btn" onclick="setCategory('all')">ALL NEWS</button>
                     </div>
 
                     <!-- DESKTOP BUTTON: ALL NEWS (Resets only) -->
@@ -488,7 +570,6 @@
                 }
                 if (state.category === 'gaming') { if (artCat !== 'gaming') return false; if (art.is_video) return false; if (state.gamingFilters.size > 0) { let matchFound = false; for (let genre of state.gamingFilters) { const keywords = GENRES[genre]; if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); }
                 
-                // GEOPOLITICS VIDEO FIX
                 if (state.category === 'geopolitics') { 
                     if (artCat !== 'geopolitics' && artCat !== 'china') return false; 
                     if (state.geopoliticsFilters.size > 0) { 
@@ -517,7 +598,6 @@
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';
                 const translated = art.lang_note ? `<div class="translated-note">${art.lang_note}</div>` : '';
                 
-                // EXTRA SÄKERHET: Kontrollera att titel och text inte är tomma
                 const safeTitle = art.title || "No Title Available";
                 const safeSummary = art.summary || "No description available for this article.";
 
