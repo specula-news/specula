@@ -1,4 +1,4 @@
-# Sources for aggregation site - OPTIMIZED GOLD MASTER
+# Sources for aggregation site - CHINA UPDATE
 
 SOURCES = [
     # ==========================================
@@ -65,7 +65,22 @@ SOURCES = [
     {"url": "https://www.youtube.com/@FullyChargedShow/videos", "cat": "ev", "type": "video", "source_name": "Fully Charged"},
 
     # ==========================================
-    #               GEOPOLITICS
+    #             CHINA / ASIA FOCUS
+    # ==========================================
+    # Dessa har nu egen kategori: 'china'
+    {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "china", "type": "video", "source_name": "ShanghaiEye"},
+    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "china", "type": "video", "source_name": "CGTN"},
+    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "china", "type": "video", "source_name": "CGTN Europe"},
+    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "china", "type": "video", "source_name": "CNA (Asia)"},
+    {"url": "https://www.youtube.com/@SouthChinaMorningPost/videos", "cat": "china", "type": "video", "source_name": "South China Morning Post"},
+    {"url": "https://www.youtube.com/@热点新闻66/videos", "cat": "china", "type": "video", "source_name": "China Pulse"},
+    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "china", "type": "video", "source_name": "CCTV News"},
+    {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "china", "type": "video", "source_name": "New China TV"},
+    {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "china", "type": "video", "source_name": "Inside China Business"},
+    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "china", "type": "video", "source_name": "Asianometry"},
+
+    # ==========================================
+    #           GEOPOLITICS (GLOBAL)
     # ==========================================
     {"url": "https://www.scmp.com/rss/91/feed", "cat": "geopolitics", "type": "web", "source_name": "SCMP"},
     {"url": "https://www.aljazeera.com/xml/rss/all.xml", "cat": "geopolitics", "type": "web", "source_name": "Al Jazeera"},
@@ -76,29 +91,19 @@ SOURCES = [
     {"url": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best", "cat": "geopolitics", "type": "web", "source_name": "Reuters"},
     {"url": "https://apnews.com/hub/ap-top-news.rss", "cat": "geopolitics", "type": "web", "source_name": "AP News"},
     {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU"},
-    # YouTube Geopolitics
+    # YouTube Global
+    {"url": "https://www.youtube.com/@Firstpost/videos", "cat": "geopolitics", "type": "video", "source_name": "Firstpost (India)"},
     {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS"},
-    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "geopolitics", "type": "video", "source_name": "Channel NewsAsia"},
-    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN"},
-    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN Europe"},
-    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "geopolitics", "type": "video", "source_name": "CCTV News"},
-    {"url": "https://www.youtube.com/@cgtnamerica/videos", "cat": "geopolitics", "type": "video", "source_name": "CGTN America"},
     {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris"},
     {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary"},
-    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "geopolitics", "type": "video", "source_name": "Asianometry"},
     {"url": "https://www.youtube.com/@BBCNews/videos", "cat": "geopolitics", "type": "video", "source_name": "BBC News"},
-    {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "geopolitics", "type": "video", "source_name": "China View TV"},
     {"url": "https://www.youtube.com/@aljazeeraenglish/videos", "cat": "geopolitics", "type": "video", "source_name": "Al Jazeera English"},
-    {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "geopolitics", "type": "video", "source_name": "ShanghaiEye"},
     {"url": "https://www.youtube.com/@France24_en/videos", "cat": "geopolitics", "type": "video", "source_name": "France 24 English"},
-    {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "geopolitics", "type": "video", "source_name": "Inside China Business"},
-    {"url": "https://www.youtube.com/@SouthChinaMorningPost/videos", "cat": "geopolitics", "type": "video", "source_name": "South China Morning Post"},
     {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates"},
     {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova"},
     {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show"},
     {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy"},
     {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society"},
-    {"url": "https://www.youtube.com/@热点新闻66/videos", "cat": "geopolitics", "type": "video", "source_name": "Hot News 66"},
     {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN"},
 
     # ==========================================
@@ -133,7 +138,6 @@ SOURCES = [
     # ==========================================
     #             CONSTRUCTION
     # ==========================================
-    # FIXAD LÄNK FÖR ARCHDAILY (Kräver /rss, ej /feed/):
     {"url": "https://www.archdaily.com/rss", "cat": "construction", "type": "web", "source_name": "ArchDaily"},
     {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive"},
     {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer"},
