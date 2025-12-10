@@ -44,42 +44,14 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* --- SEARCH BAR (GLUED TO TOP) --- */
-        .search-container { 
-            position: relative; 
-            width: 100%; 
-            max-width: 300px; 
-            margin-bottom: -2px; /* Negative margin to glue it */
-            z-index: 40; /* Behind the nav */
-        }
-        .search-input { 
-            width: 100%; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border); 
-            border-bottom: none; /* No border between search and nav */
-            color: var(--text-primary); 
-            padding: 8px 35px 8px 15px; 
-            border-radius: 20px 20px 0 0; /* Flat bottom */
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.85rem; 
-            outline: none; 
-            transition: 0.3s; 
-        }
-        /* Bridge element to cover the seam */
-        .search-container::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 5px; right: 5px;
-            height: 4px;
-            background: var(--nav-bg);
-            z-index: 45;
-        }
-
+        /* SEARCH BAR (GLUED) */
+        .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
+        .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
+        .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
 
-        /* --- UNIFIED NAV (MAIN BAR) --- */
+        /* UNIFIED NAV */
         .unified-nav { 
             display: flex; 
             flex-wrap: wrap; 
@@ -90,7 +62,7 @@
             padding: 4px;
             gap: 2px; 
             position: relative;
-            z-index: 50; /* On top of everything */
+            z-index: 50; 
             max-width: 100%;
         }
 
@@ -101,88 +73,37 @@
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
         .filter-btn[onclick*="'geopolitics'"].active { background: #00ff88; color: black; }
 
-        /* DROPDOWN STYLING */
+        /* TEXT SWITCHING LOGIC (GEO vs GEOPOLITICS) */
+        .desktop-label { display: inline; }
+        .mobile-label { display: none; }
+
+        /* DROPDOWNS */
         .dropdown-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: var(--dropdown-bg); border: 1px solid var(--border); border-radius: 12px; z-index: 999; box-shadow: 0 15px 50px rgba(0,0,0,0.9); min-width: 220px; flex-direction: column; overflow: visible; animation: fadeIn 0.2s ease; margin-top: 10px; }
         .dropdown-menu::before { content: ''; position: absolute; top: -15px; left: 0; width: 100%; height: 15px; background: transparent; }
         .dropdown-menu.show { display: flex; }
         .dropdown-list { max-height: 50vh; overflow-y: auto; padding: 5px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
         
-        .check-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; cursor: pointer; transition: 0.2s;
-            border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; 
-            text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px;
-        }
+        .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
-        
-        /* HIDE UGLY SQUARES */
         .check-item input { display: none !important; }
-        
-        /* CIRCLE INDICATOR */
-        .check-indicator { 
-            width: 14px; height: 14px; border-radius: 50%; 
-            border: 2px solid var(--text-secondary); 
-            position: relative; transition: 0.2s; flex-shrink: 0; 
-        }
-
+        .check-indicator { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-secondary); position: relative; transition: 0.2s; flex-shrink: 0; }
         .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
         .check-item input:checked ~ span { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
-        
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
         #videoDropdown .check-item input:checked ~ span { color: #ff0040; text-shadow: 0 0 10px rgba(255,0,64,0.5); }
-
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
-
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* --- READ LATER (GLUED TO BOTTOM) --- */
-        .read-later-container { 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            margin-top: -2px; /* Negative margin to glue it */
-            z-index: 40; /* Behind nav */
-        }
-        .read-later-btn { 
-            position: relative; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border); 
-            border-top: none; /* No border between nav and button */
-            color: var(--text-secondary); 
-            padding: 6px 30px; 
-            border-radius: 0 0 20px 20px; /* Flat top */
-            font-family: 'Space Grotesk', sans-serif; 
-            font-weight: 700; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            transition: 0.3s; 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-        }
-        /* Bridge element */
-        .read-later-btn::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 2px; right: 2px;
-            height: 4px;
-            background: var(--nav-bg);
-            z-index: 45;
-        }
-
+        .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
+        .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
 
         @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
@@ -191,16 +112,45 @@
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
-            .unified-nav { flex-wrap: nowrap; width: 100%; justify-content: space-between; padding: 4px; }
-            .filter-btn { flex: 1; text-align: center; padding: 10px 2px; font-size: 0.7rem; }
+            .unified-nav { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr; 
+                width: 100%; 
+                gap: 0;
+                padding: 2px;
+            }
+            .filter-btn { 
+                width: 100%;
+                text-align: center; 
+                padding: 10px 0; 
+                font-size: 0.60rem; 
+            }
+            .desktop-label { display: none !important; }
+            .mobile-label { display: inline !important; }
+
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
+            .mobile-hide { display: block !important; }
+
+            /* DROPDOWN POSITIONING FIXES FOR MOBILE */
             .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
+            
             #topicsDropdown { left: 0; right: auto; transform: none; }
-            #gamingDropdown { left: auto; right: 0; transform: none; }
             #videoDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
-            .mobile-hide { display: none !important; }
+            #gamingDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
+            
+            /* HÄR ÄR FIXEN FÖR GEO-MENYN: */
+            #geopoliticsDropdown { 
+                left: auto !important; /* Släpp vänsterkanten */
+                right: 0 !important;   /* Fäst i högerkanten */
+                transform: none !important; 
+                min-width: 200px;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .desktop-categories-list { display: contents; } 
         }
 
         /* GRID FIXES */
@@ -214,7 +164,6 @@
         .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; }
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
-        
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -222,7 +171,6 @@
         .card-title a:hover { color: var(--accent); }
         .ai-summary { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px; flex-grow: 1; padding-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
         .translated-note { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; margin-top: 5px; opacity: 0.7; }
-        
         .bookmark-bar { width: 100%; padding: 12px 0; border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s ease-in-out; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; }
         .bookmark-text { position: relative; top: 2px; }
         .heart-icon { font-size: 1.2rem; line-height: 1; transition: 0.2s; color: var(--text-secondary); }
@@ -287,18 +235,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.14 -->
+                 <!-- V20.5.17 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.14 - Visual Integration</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.17 - Geo Menu Fix</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>UI Glue:</strong> Search bar and "Read Later" button are now visually merged with the main navigation bar, creating a unified control center.<br>
-                        • <strong>Clean Look:</strong> Removed double borders and gaps for a seamless aesthetic.
+                        • <strong>Overflow Fix:</strong> The GEO menu on mobile now opens aligned to the right edge, preventing it from being cut off.<br>
+                        • <strong>Alignment:</strong> Adjusted Gaming dropdown to ensure it stays centered.
                     </div>
                  </li>
-                 <!-- V20.5.13 -->
+                 <!-- V20.5.15 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.13</strong><br>
-                    Polished checkboxes and restore classic UI.
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.15</strong><br>
+                    Smart label switching ("GEO") & Glued UI.
                  </li>
             </ul>
         </div>
@@ -329,7 +277,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.14</div>
+                <div class="version-display" id="versionBtn">Version 20.5.17</div>
             </div>
             
             <div class="nav-wrapper">
@@ -389,9 +337,12 @@
                         </div>
                     </div>
 
-                    <!-- GEOPOLITICS (HIDDEN ON MOBILE) -->
-                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
-                        <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">GEOPOLITICS ▼</button>
+                    <!-- GEOPOLITICS (NOW VISIBLE ON MOBILE AS 'GEO') -->
+                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative; display:block !important; flex:1;" onmouseleave="closeOnLeave('geopolitics')">
+                        <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">
+                            <span class="desktop-label">GEOPOLITICS ▼</span>
+                            <span class="mobile-label">GEO ▼</span>
+                        </button>
                         <div id="geopoliticsDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
                                 <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label>
@@ -405,7 +356,7 @@
                         </div>
                     </div>
 
-                    <div class="desktop-categories">
+                    <div class="desktop-categories-list" style="display: contents;">
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
                         <button class="filter-btn" onclick="setCategory('science')">Science</button>
