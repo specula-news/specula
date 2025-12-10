@@ -1,5 +1,6 @@
-feedparser
+requests
 yt-dlp
+feedparser
 beautifulsoup4
 deep-translator
-requests
+lxml
