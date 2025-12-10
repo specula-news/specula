@@ -1,4 +1,4 @@
-# Sources for aggregation site - GEOPOLITICAL ECONOMY MOVED TO GLOBAL
+# Sources for aggregation site - ASIANOMETRY MOVED TO GLOBAL
 
 SOURCES = [
     # ==========================================
@@ -31,7 +31,6 @@ SOURCES = [
     {"url": "https://feeds.arstechnica.com/arstechnica/index", "cat": "tech", "type": "web", "source_name": "Ars Technica", "lang": "en"},
     {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech (Blog)", "lang": "en"},
     {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber", "lang": "sv"},
-    # NyTeknik och Tjock.se borttagna pga 404
     {"url": "https://www.wired.com/feed/rss", "cat": "tech", "type": "web", "source_name": "WIRED", "lang": "en"},
     {"url": "https://www.engadget.com/rss.xml", "cat": "tech", "type": "web", "source_name": "Engadget", "lang": "en"},
     {"url": "https://mashable.com/feeds/rss/tech", "cat": "tech", "type": "web", "source_name": "Mashable", "lang": "en"},
@@ -64,7 +63,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@FullyChargedShow/videos", "cat": "ev", "type": "video", "source_name": "Fully Charged", "lang": "en"},
 
     # ==========================================
-    #             CHINA / ASIA FOCUS
+    #             CHINA (EXACT LIST)
     # ==========================================
     {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "china", "type": "video", "source_name": "ShanghaiEye", "lang": "en", "filter_tag": "china"},
     {"url": "https://www.youtube.com/@cgtn/videos", "cat": "china", "type": "video", "source_name": "CGTN", "lang": "en", "filter_tag": "china"},
@@ -75,8 +74,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "china", "type": "video", "source_name": "CCTV News", "lang": "en", "filter_tag": "china"},
     {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "china", "type": "video", "source_name": "New China TV", "lang": "en", "filter_tag": "china"},
     {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "china", "type": "video", "source_name": "Inside China Business", "lang": "en", "filter_tag": "china"},
-    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "china", "type": "video", "source_name": "Asianometry", "lang": "en", "filter_tag": "china"},
-
+    
     # ==========================================
     #           GEOPOLITICS (TAGGED)
     # ==========================================
@@ -89,7 +87,6 @@ SOURCES = [
     
     # USA
     {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World", "lang": "en", "filter_tag": "usa"},
-    # AP News borttaget pga 404
     {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU", "lang": "en", "filter_tag": "usa"},
 
     # GLOBAL
@@ -113,10 +110,13 @@ SOURCES = [
     {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova", "lang": "en", "filter_tag": "usa"},
     {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show", "lang": "en", "filter_tag": "global"},
     
-    # HÄR ÄR ÄNDRINGEN: Flyttad till GLOBAL
+    # GEOPOLITICAL ECONOMY -> GLOBAL
     {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy", "lang": "en", "filter_tag": "global"},
     
-    # FLYTTAD TILL GLOBAL (EJ CHINA)
+    # ASIANOMETRY -> GLOBAL (BORTTAGEN FRÅN CHINA)
+    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "geopolitics", "type": "video", "source_name": "Asianometry", "lang": "en", "filter_tag": "global"},
+    
+    # ASIA SOCIETY -> GLOBAL
     {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society", "lang": "en", "filter_tag": "global"},
     
     {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN", "lang": "en", "filter_tag": "global"},
