@@ -241,6 +241,7 @@
         .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
         .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
+        .filter-btn[onclick*="'geopolitics'"].active { background: #00ff88; color: black; }
 
         .scroll-btn { display: none !important; }
 
@@ -296,22 +297,21 @@
         /* --- DROPDOWNS (FIXED HOVER BRIDGE) --- */
         .dropdown-menu {
             display: none; position: absolute; 
-            top: 100%; /* Ligger precis under knappen */
+            top: 100%; 
             left: 50%; transform: translateX(-50%);
             background: var(--dropdown-bg); border: 1px solid var(--border);
             border-radius: 12px; z-index: 100;
             box-shadow: 0 15px 50px rgba(0,0,0,0.9);
             min-width: 220px;
-            flex-direction: column; overflow: visible; /* Måste vara visible för "bron" */
+            flex-direction: column; overflow: visible; 
             animation: fadeIn 0.2s ease;
-            margin-top: 10px; /* Visuellt mellanrum */
+            margin-top: 10px; 
         }
 
-        /* OSYNLIG BRO SÅ MUSEN KAN GLIDA ÖVER MELLANRUMMET */
         .dropdown-menu::before {
             content: '';
             position: absolute;
-            top: -15px; /* Täcker mellanrummet upp till knappen */
+            top: -15px; 
             left: 0;
             width: 100%;
             height: 15px;
@@ -343,6 +343,8 @@
         
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
+        #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
+        
         .check-item input:checked ~ span { color: var(--text-primary); }
 
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
@@ -356,7 +358,7 @@
         @media (min-width: 769px) {
             .dropdown-wrapper:hover .dropdown-menu {
                 display: flex;
-                animation: none; /* Stoppa blinkande animation vid hover */
+                animation: none; 
                 opacity: 1;
             }
         }
@@ -408,6 +410,14 @@
             border-left: 2px solid var(--border); padding-left: 12px; 
             flex-grow: 1; 
             padding-bottom: 20px;
+        }
+
+        .translated-note {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 5px;
+            opacity: 0.7;
         }
 
         /* --- BOOKMARK BAR --- */
@@ -561,6 +571,7 @@
             #topicsDropdown { left: 0; right: auto; }
             #gamingDropdown { left: auto; right: 0; }
             #videoDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
+            #geopoliticsDropdown { left: 50%; transform: translateX(-50%); width: 240px; }
 
             .version-display {
                 align-self: center; /* Center version on mobile */
@@ -592,19 +603,38 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
+                 <!-- V20.5.1 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00ff88;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.1 - Translation & Filters</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>Auto-Translate:</strong> Swedish articles (Aftonbladet, Feber, etc.) are now automatically translated to English.<br>
+                        • <strong>Geopolitics Menu:</strong> Added new filters for Global, USA, China, India, and Sweden.<br>
+                        • <strong>Source Tags:</strong> News sources are now tagged by region for better filtering.
+                    </div>
+                 </li>
                  <!-- V20.5.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid var(--accent);">
                     <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.0 - Content & UX</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>More Content:</strong> Increased feed limit to 10 articles per source.<br>
-                        • <strong>UX Fix:</strong> Disabled auto-scroll swipe on mobile.<br>
-                        • <strong>System:</strong> PWA prompt now disabled on PC/Desktop.
+                        • <strong>China Focus:</strong> Added specialized China/Asia news category.<br>
+                        • <strong>Hover Menus:</strong> Desktop users can now hover over menu buttons for instant access.<br>
+                        • <strong>UX Fix:</strong> Smoother dropdown handling.
                     </div>
                  </li>
                  <!-- V20.4.0 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
                     <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.4.0</strong><br>
-                    Critical UI Fix (Buttons).
+                    Critical UI Fix (Buttons) and SEO improvements.
+                 </li>
+                 <!-- V20.3.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.3.0</strong><br>
+                    Added ArchDaily and Construction sources. Fixed Cloudflare blocking issues.
+                 </li>
+                 <!-- V20.2.0 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #444;">
+                    <strong style="color:var(--text-secondary); font-size:1.0rem;">Version 20.2.0</strong><br>
+                    Implemented "Deep Scrape" strategy for better image extraction on complex sites.
                  </li>
             </ul>
         </div>
@@ -658,7 +688,7 @@
                 </div>
 
                 <!-- VERSION (RIGHT) -->
-                <div class="version-display" id="versionBtn">Version 20.5.0</div>
+                <div class="version-display" id="versionBtn">Version 20.5.1</div>
             </div>
             
             <div class="nav-wrapper">
@@ -690,7 +720,7 @@
                         </div>
                     </div>
 
-                    <!-- YOUTUBE BUTTON MED HOVER OCH FIXAT MELLANRUM -->
+                    <!-- YOUTUBE BUTTON -->
                     <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
                         <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">YOUTUBE ▼</button>
                         <div id="videoDropdown" class="dropdown-menu">
@@ -710,7 +740,7 @@
                         </div>
                     </div>
 
-                    <!-- GAMING BUTTON MED HOVER OCH FIXAT MELLANRUM -->
+                    <!-- GAMING BUTTON -->
                     <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('gaming')">
                         <button class="filter-btn" id="gamingBtn" onclick="handleMenuClick('gaming', event)">GAMING ▼</button>
                         <div id="gamingDropdown" class="dropdown-menu">
@@ -730,8 +760,26 @@
                         </div>
                     </div>
 
+                    <!-- NY GEOPOLITICS DROPDOWN -->
+                    <div class="dropdown-wrapper desktop-categories" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
+                        <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">GEOPOLITICS ▼</button>
+                        <div id="geopoliticsDropdown" class="dropdown-menu">
+                            <div class="dropdown-list">
+                                <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'usa', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label>
+                            </div>
+                            <div class="dropdown-footer">
+                                <button class="footer-btn btn-clear" onclick="clearFilters('geopolitics')">CLEAR</button>
+                                <button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK <span style="font-size:1.2em">✓</span></button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="desktop-categories">
-                        <button class="filter-btn" onclick="setCategory('geopolitics')">Geopolitics</button>
+                        <!-- Geopolitics är nu en dropdown ovan -->
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
                         <button class="filter-btn" onclick="setCategory('science')">Science</button>
@@ -767,9 +815,11 @@
             category: 'all', 
             videoFilters: new Set(),
             gamingFilters: new Set(),
+            geopoliticsFilters: new Set(), // NYTT
             topicFilters: new Set(), 
             tempVideoFilters: new Set(),
             tempGamingFilters: new Set(),
+            tempGeopoliticsFilters: new Set(), // NYTT
             tempTopicFilters: new Set(),
             saved: new Set(), 
             search: '', 
@@ -872,7 +922,6 @@
 
         function init() { 
             loadSaved();
-            // REMOVED SWIPE LISTENERS TO PREVENT AUTO-SCROLL ON MOBILE
             renderApp(); 
             
             if (localStorage.getItem('theme') === 'light') {
@@ -901,26 +950,24 @@
 
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
 
-        // --- CORE CATEGORY LOGIC REPAIR ---
         function setCategory(cat) {
             state.category = cat; 
             state.page = 1;
             state.search = '';
             searchInput.value = '';
 
-            // Clean other modes when switching
             if (cat !== 'video') state.videoFilters.clear();
             if (cat !== 'gaming') state.gamingFilters.clear();
+            if (cat !== 'geopolitics') state.geopoliticsFilters.clear(); // NYTT
             if (cat !== 'topics') state.topicFilters.clear();
 
-            // Clear checkboxes in temporary sets too
             if (cat === 'all') {
                 state.tempVideoFilters.clear();
                 state.tempGamingFilters.clear();
+                state.tempGeopoliticsFilters.clear(); // NYTT
                 state.tempTopicFilters.clear();
             }
 
-            // UI Updates
             if (cat === 'saved') {
                 readLaterBtn.classList.add('active');
                 filterBtns.forEach(btn => btn.classList.remove('active'));
@@ -935,27 +982,22 @@
                     
                     if (cat === 'video' && btnText.includes('youtube')) btn.classList.add('active');
                     else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
+                    else if (cat === 'geopolitics' && btnText.includes('geopolitics')) btn.classList.add('active'); // NYTT
                     else if (cat === 'topics' && btnText.includes('all news') && btn.id === 'topicsBtn') btn.classList.add('active');
-                    else if (cat !== 'video' && cat !== 'gaming' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('youtube') && btn.id !== 'topicsBtn') btn.classList.add('active');
+                    else if (cat !== 'video' && cat !== 'gaming' && cat !== 'geopolitics' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('youtube') && btn.id !== 'topicsBtn') btn.classList.add('active');
                 });
             }
             renderApp();
         }
 
-        // --- NY FUNKTION: Visar allt först, öppnar sen menyn ---
         window.handleMenuClick = function(cat, event) {
-            // 1. Återställ filter för denna kategori så allt visas
             if (cat === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
             if (cat === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
-            
-            // 2. Sätt kategorin (detta stänger alla menyer via setCategory logiken)
+            if (cat === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); } // NYTT
             setCategory(cat); 
-            
-            // 3. Öppna specifikt denna meny igen
             toggleDropdown(cat, event);
         }
 
-        // Stänger menyn när musen lämnar området (för att fixa hover+klick kombon)
         window.closeOnLeave = function(type) {
             const menu = document.getElementById(type + 'Dropdown');
             if (menu) menu.classList.remove('show');
@@ -970,6 +1012,7 @@
             if (!wasOpen) {
                 if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
                 if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
+                if (type === 'geopolitics') state.tempGeopoliticsFilters = new Set(state.geopoliticsFilters); // NYTT
                 if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
                 updateCheckboxUI(type);
                 menu.classList.add('show');
@@ -980,6 +1023,7 @@
             let tempSet;
             if (type === 'video') tempSet = state.tempVideoFilters;
             else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; // NYTT
             else if (type === 'topics') tempSet = state.tempTopicFilters;
             if (isChecked) tempSet.add(value); else tempSet.delete(value);
         }
@@ -990,6 +1034,7 @@
             let tempSet;
             if (type === 'video') tempSet = state.tempVideoFilters;
             else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; // NYTT
             else if (type === 'topics') tempSet = state.tempTopicFilters;
 
             const inputs = container.querySelectorAll('input[type="checkbox"]');
@@ -1005,6 +1050,7 @@
         window.applyFilters = function(type) {
             if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
             else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
+            else if (type === 'geopolitics') state.geopoliticsFilters = new Set(state.tempGeopoliticsFilters); // NYTT
             else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
             document.getElementById(type + 'Dropdown').classList.remove('show');
             setCategory(type); 
@@ -1013,6 +1059,7 @@
         window.clearFilters = function(type) {
             if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
             else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            else if (type === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); } // NYTT
             else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
             updateCheckboxUI(type);
             document.getElementById(type + 'Dropdown').classList.remove('show');
@@ -1036,8 +1083,8 @@
 
         function getFilteredArticles() {
             return state.articles.filter(art => {
-                // SAFETY: Ensure category exists and is a string
                 const artCat = (art.category || '').trim().toLowerCase();
+                const artTags = (art.filter_tag || '').trim().toLowerCase(); // NYTT: Läs taggar
                 const title = (art.title || '').toLowerCase();
                 const summary = (art.summary || '').toLowerCase();
                 const fullText = title + " " + summary;
@@ -1079,6 +1126,17 @@
                     return fullText.includes(state.search);
                 }
 
+                // NY LOGIK FÖR GEOPOLITICS
+                if (state.category === 'geopolitics') {
+                    if (art.is_video) return false;
+                    if (artCat !== 'geopolitics') return false;
+                    if (state.geopoliticsFilters.size > 0) {
+                        // Kontrollera om artikelns 'filter_tag' finns i våra valda filter
+                        if (!state.geopoliticsFilters.has(artTags)) return false;
+                    }
+                    return fullText.includes(state.search);
+                }
+
                 if (state.category === 'topics') {
                     if (art.is_video) return false;
                     if (artCat === 'gaming') return false;
@@ -1088,7 +1146,6 @@
                     return fullText.includes(state.search);
                 }
 
-                // FALLBACK for specific categories (Geopolitics/Tech/EV/Science/Construction)
                 if (art.is_video) return false;
                 let matchesCat = (artCat === state.category);
                 return matchesCat && fullText.includes(state.search);
@@ -1114,6 +1171,7 @@
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';
+                const translated = art.lang_note ? `<div class="translated-note">${art.lang_note}</div>` : '';
                 
                 return `
                 <article class="news-card" id="card-${index}">
@@ -1130,6 +1188,7 @@
                         <div class="card-meta"><div class="source-badge">${art.source}</div><time>${art.time_str}</time></div>
                         <h2 class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></h2>
                         <p class="ai-summary">${art.summary}</p>
+                        ${translated}
                     </div>
 
                     <div class="bookmark-bar ${isSaved}" onclick="toggleSave('${art.link}', event)">

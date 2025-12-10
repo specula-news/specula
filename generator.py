@@ -13,11 +13,19 @@ from urllib.parse import urljoin
 import urllib3
 import re
 
+# NY IMPORT: Översättning
+try:
+    from deep_translator import GoogleTranslator
+    TRANSLATOR_ACTIVE = True
+except ImportError:
+    print("VARNING: 'deep-translator' saknas. Kör 'pip install deep-translator'.")
+    TRANSLATOR_ACTIVE = False
+
 # Stäng av SSL-varningar
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
-MAX_ARTICLES_DEFAULT = 20
+MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
@@ -30,7 +38,7 @@ except ImportError:
     print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (SEPARATED LOGIC STRATEGY - GOLD MASTER) ---")
+print(f"--- STARTAR GENERATORN (V20.5.1 - Translation & GeoFilters) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -39,6 +47,18 @@ HEADERS = {
 }
 
 # --- 2. HJÄLPFUNKTIONER ---
+
+def translate_text(text, source_lang):
+    """Översätter text till engelska om TRANSLATOR_ACTIVE är True."""
+    if not TRANSLATOR_ACTIVE or not text:
+        return text
+    try:
+        # Begränsa textlängd för att undvika timeouts vid långa texter
+        if len(text) > 4000: text = text[:4000]
+        return GoogleTranslator(source=source_lang, target='en').translate(text)
+    except Exception as e:
+        print(f"Translation Error: {e}")
+        return text
 
 def parse_date_to_timestamp(entry):
     try:
@@ -64,46 +84,34 @@ def get_session():
 def clean_image_url_generic(url):
     """Generell städning för Wordpress/Jetpack (Electrek etc), men rör EJ Aftonbladet/Phys."""
     if not url: return None
-    
-    # RÖR INTE AFTONBLADET (Signaturen pajar)
     if 'aftonbladet' in url: return url
-        
-    # RÖR INTE PHYS.ORG (Hanteras i sin strategi)
     if 'phys.org' in url or 'scx' in url: return url
-
-    # WORDPRESS / ELECTREK: Maxa storlek
     if 'wp.com' in url or 'electrek' in url or '9to5' in url:
         if 'w=' in url:
             return re.sub(r'w=\d+', 'w=1600', url)
-            
     return url
 
 # --- 3. BILDSTRATEGIER ---
 
 def strategy_phys_org(entry):
-    """STRATEGI 1: PHYS.ORG - RSS Rewrite (Undvik blockering)"""
     img_url = None
     if 'media_thumbnail' in entry: img_url = entry.media_thumbnail[0]['url']
     elif 'media_content' in entry: img_url = entry.media_content[0]['url']
     elif 'enclosures' in entry:
         for enc in entry.enclosures:
             if enc.type.startswith('image/'): img_url = enc.href; break
-    
     if img_url:
         if '/tmb/' in img_url: return img_url.replace('/tmb/', '/800/')
         if 'thumbnails' in img_url: return img_url.replace('thumbnails', '800')
     return img_url
 
 def strategy_aftonbladet(link):
-    """STRATEGI 2: AFTONBLADET - Hitta signerad länk"""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
-        
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
         if matches: return matches[0].replace('&amp;', '&')
-
         soup = BeautifulSoup(r.content, 'html.parser')
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
@@ -120,32 +128,25 @@ def strategy_aftonbladet(link):
     return None
 
 def strategy_deep_scrape(link):
-    """STRATEGI 3: DEEP SCRAPE (Dagens PS, Electrek, Feber)"""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
-        
         soup = BeautifulSoup(r.content, 'html.parser')
-        
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return urljoin(link, og["content"])
-
         best_img = None
         max_w = 0
         images = soup.select('figure img, .entry-content img, article img, img')
-        
         for img in images:
             candidates = []
             if img.get('src'): candidates.append(img.get('src'))
             if img.get('data-src'): candidates.append(img.get('data-src'))
-            
             srcset = img.get('srcset') or img.get('data-srcset')
             if srcset:
                 for p in srcset.split(','):
                     parts = p.strip().split(' ')
                     if len(parts) >= 1: candidates.append(parts[0])
-
             for c in candidates:
                 if not c or 'base64' in c: continue
                 full = urljoin(link, c)
@@ -156,11 +157,9 @@ def strategy_deep_scrape(link):
                 elif img.get('width'):
                     try: score = int(img['width'])
                     except: pass
-                
                 parent_cls = str(img.parent.get('class', []))
                 if 'featured' in parent_cls or 'hero' in parent_cls: score += 500
                 if any(x in full.lower() for x in ['logo', 'icon', 'avatar']): score = 0
-                
                 if score > max_w:
                     max_w = score
                     best_img = full
@@ -169,7 +168,6 @@ def strategy_deep_scrape(link):
     return None
 
 def strategy_default(entry):
-    """STRATEGI 4: DEFAULT (RSS + Light Scrape)"""
     img_url = None
     if 'media_content' in entry:
         try: img_url = entry.media_content[0]['url']
@@ -177,7 +175,6 @@ def strategy_default(entry):
     elif 'enclosures' in entry:
         for enc in entry.enclosures:
             if enc.type.startswith('image/'): img_url = enc.href; break
-    
     if not img_url:
         try:
             r = get_session().get(entry.link, timeout=5, verify=False)
@@ -190,19 +187,15 @@ def strategy_default(entry):
 # --- 4. ROUTING LOGIK ---
 
 def get_image_for_article(entry, source_url):
-    # 1. Phys.org
     if 'phys.org' in source_url or 'techxplore' in source_url:
         return strategy_phys_org(entry)
-    # 2. Aftonbladet
     if 'aftonbladet' in source_url:
         return strategy_aftonbladet(entry.link)
-    # 3. Deep Scrape
     deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
         if not url: return strategy_default(entry)
         return url
-    # 4. Default
     return strategy_default(entry)
 
 def get_web_info(source):
@@ -211,9 +204,20 @@ def get_web_info(source):
     if 'aftonbladet' in source['url']: limit = MAX_ARTICLES_AFTONBLADET
 
     try:
-        resp = get_session().get(source['url'], timeout=10, verify=False)
+        # VIP-behandling för ArchDaily
+        if 'archdaily' in source['url']:
+            resp = requests.get(source['url'], headers=HEADERS, timeout=15, verify=True)
+        else:
+            resp = get_session().get(source['url'], timeout=10, verify=False)
+
+        if resp.status_code != 200:
+            print(f"⚠️ VARNING: {source['source_name']} status {resp.status_code}.")
+            return []
+
         feed = feedparser.parse(resp.content)
-        
+        if not feed.entries:
+            print(f"⚠️ TOMT FLÖDE: {source['source_name']}")
+
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             if is_too_old(timestamp): continue
@@ -224,26 +228,36 @@ def get_web_info(source):
             summary = entry.get('summary', '') or entry.get('description', '')
             if '<' in summary:
                 summary = BeautifulSoup(summary, 'html.parser').get_text()
-            
+
+            # --- TRANSLATION LOGIC ---
+            title = entry.title
+            lang_note = ""
+            if source.get('lang') == 'sv':
+                title = translate_text(title, 'sv')
+                summary = translate_text(summary, 'sv')
+                lang_note = " (Translated from Swedish)"
+
             found_articles.append({
-                "title": entry.title,
+                "title": title,
                 "link": entry.link,
                 "images": [img_url] if img_url else [],
-                "summary": summary[:180] + "..." if len(summary) > 180 else summary,
+                "summary": (summary[:180] + "...") if len(summary) > 180 else summary,
                 "category": source['cat'],
+                "filter_tag": source.get('filter_tag', ''), # NYTT: För Geopolitics filter
                 "source": source.get('source_name', 'News'),
+                "lang_note": lang_note, # NYTT: Footer text
                 "time_str": "Just Now",
                 "timestamp": timestamp,
                 "is_video": False
             })
-    except: pass
+    except Exception as e: 
+        print(f"FEL ({source.get('source_name', 'Unknown')}): {e}")
+        pass
     return found_articles
 
 def get_video_info(source):
-    """Hämtar videoinfo via yt-dlp (snabb flat-playlist extraction)."""
     videos = []
     try:
-        # Konfigurera yt-dlp för snabbhet (bara metadata, ingen nedladdning)
         ydl_opts = {
             'quiet': True,
             'ignoreerrors': True,
@@ -254,26 +268,22 @@ def get_video_info(source):
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
+            if not info: return videos
             
-            if 'entries' in info:
-                entries = info['entries']
-            else:
-                entries = [info]
+            entries = info['entries'] if 'entries' in info else [info]
 
             for entry in entries:
                 if not entry: continue
                 
-                # Försök hitta en bra bild
                 img_url = ''
                 thumbnails = entry.get('thumbnails', [])
-                if thumbnails:
-                    img_url = thumbnails[-1].get('url', '')
+                if thumbnails and isinstance(thumbnails, list):
+                    try: img_url = thumbnails[-1].get('url', '')
+                    except: pass
                 
-                # Fallback till standard Youtube-thumbnail URL
                 if not img_url and entry.get('id'):
                     img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
 
-                # Datumhantering
                 ts = time.time()
                 try:
                     if entry.get('upload_date'):
@@ -284,13 +294,25 @@ def get_video_info(source):
 
                 if is_too_old(ts): continue
 
+                # Translate video title/desc if needed (rare, usually English videos)
+                title = entry.get('title', 'Video')
+                summary = entry.get('description', '')[:200] + "..."
+                lang_note = ""
+                
+                if source.get('lang') == 'sv':
+                    title = translate_text(title, 'sv')
+                    summary = translate_text(summary, 'sv')
+                    lang_note = " (Translated from Swedish)"
+
                 videos.append({
-                    "title": entry.get('title', 'Video'),
+                    "title": title,
                     "link": entry.get('url') or entry.get('webpage_url') or f"https://www.youtube.com/watch?v={entry['id']}",
                     "images": [img_url],
-                    "summary": entry.get('description', '')[:200] + "...",
+                    "summary": summary,
                     "category": source.get('cat', 'video'),
+                    "filter_tag": source.get('filter_tag', ''), # NYTT
                     "source": source.get('source_name', 'YouTube'),
+                    "lang_note": lang_note,
                     "time_str": "Just Now",
                     "timestamp": ts,
                     "is_video": True

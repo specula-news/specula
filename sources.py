@@ -1,148 +1,157 @@
-# Sources for aggregation site - CHINA UPDATE
+# Sources for aggregation site - TRANSLATION & GEO-FILTERS ENABLED
 
 SOURCES = [
     # ==========================================
     #               GAMING
     # ==========================================
-    {"url": "https://www.eurogamer.net/feed", "cat": "gaming", "type": "web", "source_name": "Eurogamer"},
-    {"url": "https://www.nintendolife.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Nintendo Life"},
-    {"url": "https://www.pushsquare.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Push Square"},
-    {"url": "https://www.purexbox.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Pure Xbox"},
-    {"url": "https://kotaku.com/rss", "cat": "gaming", "type": "web", "source_name": "Kotaku"},
-    {"url": "https://www.gamespot.com/feeds/news/", "cat": "gaming", "type": "web", "source_name": "GameSpot"},
-    {"url": "https://www.pcgamer.com/rss", "cat": "gaming", "type": "web", "source_name": "PC Gamer"},
-    {"url": "https://www.videogameschronicle.com/feed/", "cat": "gaming", "type": "web", "source_name": "VGC"},
-    {"url": "https://www.gematsu.com/feed", "cat": "gaming", "type": "web", "source_name": "Gematsu"},
-    {"url": "https://gamingbolt.com/feed", "cat": "gaming", "type": "web", "source_name": "GamingBolt"},
-    {"url": "https://www.vg247.com/feed", "cat": "gaming", "type": "web", "source_name": "VG247"},
-    {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se"},
-    {"url": "https://www.ign.com/feeds/all", "cat": "gaming", "type": "web", "source_name": "IGN"},
-    {"url": "https://www.polygon.com/rss/index.xml", "cat": "gaming", "type": "web", "source_name": "Polygon"},
+    {"url": "https://www.eurogamer.net/feed", "cat": "gaming", "type": "web", "source_name": "Eurogamer", "lang": "en"},
+    {"url": "https://www.nintendolife.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Nintendo Life", "lang": "en"},
+    {"url": "https://www.pushsquare.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Push Square", "lang": "en"},
+    {"url": "https://www.purexbox.com/feeds/latest", "cat": "gaming", "type": "web", "source_name": "Pure Xbox", "lang": "en"},
+    {"url": "https://kotaku.com/rss", "cat": "gaming", "type": "web", "source_name": "Kotaku", "lang": "en"},
+    {"url": "https://www.gamespot.com/feeds/news/", "cat": "gaming", "type": "web", "source_name": "GameSpot", "lang": "en"},
+    {"url": "https://www.pcgamer.com/rss", "cat": "gaming", "type": "web", "source_name": "PC Gamer", "lang": "en"},
+    {"url": "https://www.videogameschronicle.com/feed/", "cat": "gaming", "type": "web", "source_name": "VGC", "lang": "en"},
+    {"url": "https://www.gematsu.com/feed", "cat": "gaming", "type": "web", "source_name": "Gematsu", "lang": "en"},
+    {"url": "https://gamingbolt.com/feed", "cat": "gaming", "type": "web", "source_name": "GamingBolt", "lang": "en"},
+    {"url": "https://www.vg247.com/feed", "cat": "gaming", "type": "web", "source_name": "VG247", "lang": "en"},
+    {"url": "https://www.fz.se/feeds/nyheter", "cat": "gaming", "type": "web", "source_name": "FZ.se", "lang": "sv"}, # Swedish
+    {"url": "https://www.ign.com/feeds/all", "cat": "gaming", "type": "web", "source_name": "IGN", "lang": "en"},
+    {"url": "https://www.polygon.com/rss/index.xml", "cat": "gaming", "type": "web", "source_name": "Polygon", "lang": "en"},
     # YouTube Gaming
-    {"url": "https://www.youtube.com/@IGN/videos", "cat": "gaming", "type": "video", "source_name": "IGN YouTube"},
-    {"url": "https://www.youtube.com/@gamespot/videos", "cat": "gaming", "type": "video", "source_name": "GameSpot YouTube"},
-    {"url": "https://www.youtube.com/@gameranxTV/videos", "cat": "gaming", "type": "video", "source_name": "Gameranx"},
+    {"url": "https://www.youtube.com/@IGN/videos", "cat": "gaming", "type": "video", "source_name": "IGN YouTube", "lang": "en"},
+    {"url": "https://www.youtube.com/@gamespot/videos", "cat": "gaming", "type": "video", "source_name": "GameSpot YouTube", "lang": "en"},
+    {"url": "https://www.youtube.com/@gameranxTV/videos", "cat": "gaming", "type": "video", "source_name": "Gameranx", "lang": "en"},
 
     # ==========================================
     #                TECH
     # ==========================================
-    {"url": "https://www.theverge.com/rss/index.xml", "cat": "tech", "type": "web", "source_name": "The Verge"},
-    {"url": "https://techcrunch.com/feed/", "cat": "tech", "type": "web", "source_name": "TechCrunch"},
-    {"url": "https://feeds.arstechnica.com/arstechnica/index", "cat": "tech", "type": "web", "source_name": "Ars Technica"},
-    {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech (Blog)"},
-    {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber"},
-    {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik"},
-    {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se"},
-    {"url": "https://www.wired.com/feed/rss", "cat": "tech", "type": "web", "source_name": "WIRED"},
-    {"url": "https://www.engadget.com/rss.xml", "cat": "tech", "type": "web", "source_name": "Engadget"},
-    {"url": "https://mashable.com/feeds/rss/tech", "cat": "tech", "type": "web", "source_name": "Mashable"},
+    {"url": "https://www.theverge.com/rss/index.xml", "cat": "tech", "type": "web", "source_name": "The Verge", "lang": "en"},
+    {"url": "https://techcrunch.com/feed/", "cat": "tech", "type": "web", "source_name": "TechCrunch", "lang": "en"},
+    {"url": "https://feeds.arstechnica.com/arstechnica/index", "cat": "tech", "type": "web", "source_name": "Ars Technica", "lang": "en"},
+    {"url": "https://anastasiintech.substack.com/feed", "cat": "tech", "type": "web", "source_name": "Anastasi In Tech (Blog)", "lang": "en"},
+    {"url": "https://feber.se/rss/", "cat": "tech", "type": "web", "source_name": "Feber", "lang": "sv"}, # Swedish
+    {"url": "https://www.nyteknik.se/rss", "cat": "tech", "type": "web", "source_name": "NyTeknik", "lang": "sv"}, # Swedish
+    {"url": "https://tjock.se/feed/", "cat": "tech", "type": "web", "source_name": "Tjock.se", "lang": "sv"}, # Swedish
+    {"url": "https://www.wired.com/feed/rss", "cat": "tech", "type": "web", "source_name": "WIRED", "lang": "en"},
+    {"url": "https://www.engadget.com/rss.xml", "cat": "tech", "type": "web", "source_name": "Engadget", "lang": "en"},
+    {"url": "https://mashable.com/feeds/rss/tech", "cat": "tech", "type": "web", "source_name": "Mashable", "lang": "en"},
     # YouTube Tech
-    {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video", "source_name": "Linus Tech Tips"},
-    {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video", "source_name": "JayzTwoCents"},
-    {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video", "source_name": "Hardware Unboxed"},
-    {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video", "source_name": "der8auer"},
-    {"url": "https://www.youtube.com/@elithecomputerguy/videos", "cat": "tech", "type": "video", "source_name": "Eli the Computer Guy"},
-    {"url": "https://www.youtube.com/@AnastasiInTech/videos", "cat": "tech", "type": "video", "source_name": "Anastasi In Tech"},
-    {"url": "https://www.youtube.com/@MKBHD/videos", "cat": "tech", "type": "video", "source_name": "MKBHD"},
+    {"url": "https://www.youtube.com/@LinusTechTips/videos", "cat": "tech", "type": "video", "source_name": "Linus Tech Tips", "lang": "en"},
+    {"url": "https://www.youtube.com/@Jayztwocents/videos", "cat": "tech", "type": "video", "source_name": "JayzTwoCents", "lang": "en"},
+    {"url": "https://www.youtube.com/@Hardwareunboxed/videos", "cat": "tech", "type": "video", "source_name": "Hardware Unboxed", "lang": "en"},
+    {"url": "https://www.youtube.com/@der8auer-en/videos", "cat": "tech", "type": "video", "source_name": "der8auer", "lang": "en"},
+    {"url": "https://www.youtube.com/@elithecomputerguy/videos", "cat": "tech", "type": "video", "source_name": "Eli the Computer Guy", "lang": "en"},
+    {"url": "https://www.youtube.com/@AnastasiInTech/videos", "cat": "tech", "type": "video", "source_name": "Anastasi In Tech", "lang": "en"},
+    {"url": "https://www.youtube.com/@MKBHD/videos", "cat": "tech", "type": "video", "source_name": "MKBHD", "lang": "en"},
 
     # ==========================================
     #               EV / ENERGY
     # ==========================================
-    {"url": "https://insideevs.com/rss/articles/all/", "cat": "ev", "type": "web", "source_name": "InsideEVs"},
-    {"url": "https://electrek.co/feed/", "cat": "ev", "type": "web", "source_name": "Electrek"},
-    {"url": "https://cleantechnica.com/feed/", "cat": "ev", "type": "web", "source_name": "CleanTechnica"},
-    {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice"},
-    {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World"},
-    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden"},
+    {"url": "https://insideevs.com/rss/articles/all/", "cat": "ev", "type": "web", "source_name": "InsideEVs", "lang": "en"},
+    {"url": "https://electrek.co/feed/", "cat": "ev", "type": "web", "source_name": "Electrek", "lang": "en"},
+    {"url": "https://cleantechnica.com/feed/", "cat": "ev", "type": "web", "source_name": "CleanTechnica", "lang": "en"},
+    {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice", "lang": "en"},
+    {"url": "https://www.renewableenergyworld.com/feed/", "cat": "ev", "type": "web", "source_name": "Renewable Energy World", "lang": "en"},
+    {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden", "lang": "sv"}, # Swedish
     # YouTube EV
-    {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija"},
-    {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided"},
-    {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video", "source_name": "Electric Viking"},
-    {"url": "https://www.youtube.com/@Tesla/videos", "cat": "ev", "type": "video", "source_name": "Tesla"},
-    {"url": "https://www.youtube.com/@tonyseba/videos", "cat": "ev", "type": "video", "source_name": "Tony Seba"},
-    {"url": "https://www.youtube.com/@futurenvesting/videos", "cat": "ev", "type": "video", "source_name": "Future Investing"},
-    {"url": "https://www.youtube.com/@bussmagasinet1/videos", "cat": "ev", "type": "video", "source_name": "Bussmagasinet"},
-    {"url": "https://www.youtube.com/@FullyChargedShow/videos", "cat": "ev", "type": "video", "source_name": "Fully Charged"},
+    {"url": "https://www.youtube.com/@ELEKTROmanija/videos", "cat": "ev", "type": "video", "source_name": "ELEKTROmanija", "lang": "en"},
+    {"url": "https://www.youtube.com/@UndecidedMF/videos", "cat": "ev", "type": "video", "source_name": "Undecided", "lang": "en"},
+    {"url": "https://www.youtube.com/@electricviking/videos", "cat": "ev", "type": "video", "source_name": "Electric Viking", "lang": "en"},
+    {"url": "https://www.youtube.com/@Tesla/videos", "cat": "ev", "type": "video", "source_name": "Tesla", "lang": "en"},
+    {"url": "https://www.youtube.com/@tonyseba/videos", "cat": "ev", "type": "video", "source_name": "Tony Seba", "lang": "en"},
+    {"url": "https://www.youtube.com/@futurenvesting/videos", "cat": "ev", "type": "video", "source_name": "Future Investing", "lang": "en"},
+    {"url": "https://www.youtube.com/@bussmagasinet1/videos", "cat": "ev", "type": "video", "source_name": "Bussmagasinet", "lang": "sv"}, # Swedish
+    {"url": "https://www.youtube.com/@FullyChargedShow/videos", "cat": "ev", "type": "video", "source_name": "Fully Charged", "lang": "en"},
 
     # ==========================================
     #             CHINA / ASIA FOCUS
     # ==========================================
-    # Dessa har nu egen kategori: 'china'
-    {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "china", "type": "video", "source_name": "ShanghaiEye"},
-    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "china", "type": "video", "source_name": "CGTN"},
-    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "china", "type": "video", "source_name": "CGTN Europe"},
-    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "china", "type": "video", "source_name": "CNA (Asia)"},
-    {"url": "https://www.youtube.com/@SouthChinaMorningPost/videos", "cat": "china", "type": "video", "source_name": "South China Morning Post"},
-    {"url": "https://www.youtube.com/@热点新闻66/videos", "cat": "china", "type": "video", "source_name": "China Pulse"},
-    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "china", "type": "video", "source_name": "CCTV News"},
-    {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "china", "type": "video", "source_name": "New China TV"},
-    {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "china", "type": "video", "source_name": "Inside China Business"},
-    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "china", "type": "video", "source_name": "Asianometry"},
+    {"url": "https://www.youtube.com/@ShanghaiEyeMagic/videos", "cat": "china", "type": "video", "source_name": "ShanghaiEye", "lang": "en"},
+    {"url": "https://www.youtube.com/@cgtn/videos", "cat": "china", "type": "video", "source_name": "CGTN", "lang": "en"},
+    {"url": "https://www.youtube.com/@CGTNEurope/videos", "cat": "china", "type": "video", "source_name": "CGTN Europe", "lang": "en"},
+    {"url": "https://www.youtube.com/@channelnewsasia/videos", "cat": "china", "type": "video", "source_name": "CNA (Asia)", "lang": "en"},
+    {"url": "https://www.youtube.com/@SouthChinaMorningPost/videos", "cat": "china", "type": "video", "source_name": "South China Morning Post", "lang": "en"},
+    {"url": "https://www.youtube.com/@热点新闻66/videos", "cat": "china", "type": "video", "source_name": "China Pulse", "lang": "en"},
+    {"url": "https://www.youtube.com/@CCTVVideoNewsAgency/videos", "cat": "china", "type": "video", "source_name": "CCTV News", "lang": "en"},
+    {"url": "https://www.youtube.com/@ChinaViewTV/videos", "cat": "china", "type": "video", "source_name": "New China TV", "lang": "en"},
+    {"url": "https://www.youtube.com/@Inside_China_Business/videos", "cat": "china", "type": "video", "source_name": "Inside China Business", "lang": "en"},
+    {"url": "https://www.youtube.com/@Asianometry/videos", "cat": "china", "type": "video", "source_name": "Asianometry", "lang": "en"},
 
     # ==========================================
-    #           GEOPOLITICS (GLOBAL)
+    #           GEOPOLITICS (TAGGED)
     # ==========================================
-    {"url": "https://www.scmp.com/rss/91/feed", "cat": "geopolitics", "type": "web", "source_name": "SCMP"},
-    {"url": "https://www.aljazeera.com/xml/rss/all.xml", "cat": "geopolitics", "type": "web", "source_name": "Al Jazeera"},
-    {"url": "https://www.dagensps.se/feed/", "cat": "geopolitics", "type": "web", "source_name": "Dagens PS"},
-    {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World"},
-    {"url": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "cat": "geopolitics", "type": "web", "source_name": "Aftonbladet"},
-    {"url": "http://feeds.bbci.co.uk/news/world/rss.xml", "cat": "geopolitics", "type": "web", "source_name": "BBC World"},
-    {"url": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best", "cat": "geopolitics", "type": "web", "source_name": "Reuters"},
-    {"url": "https://apnews.com/hub/ap-top-news.rss", "cat": "geopolitics", "type": "web", "source_name": "AP News"},
-    {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU"},
-    # YouTube Global
-    {"url": "https://www.youtube.com/@Firstpost/videos", "cat": "geopolitics", "type": "video", "source_name": "Firstpost (India)"},
-    {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS"},
-    {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris"},
-    {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary"},
-    {"url": "https://www.youtube.com/@BBCNews/videos", "cat": "geopolitics", "type": "video", "source_name": "BBC News"},
-    {"url": "https://www.youtube.com/@aljazeeraenglish/videos", "cat": "geopolitics", "type": "video", "source_name": "Al Jazeera English"},
-    {"url": "https://www.youtube.com/@France24_en/videos", "cat": "geopolitics", "type": "video", "source_name": "France 24 English"},
-    {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates"},
-    {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova"},
-    {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show"},
-    {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy"},
-    {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society"},
-    {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN"},
+    # SWEDEN
+    {"url": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "cat": "geopolitics", "type": "web", "source_name": "Aftonbladet", "lang": "sv", "filter_tag": "sweden"},
+    {"url": "https://www.dagensps.se/feed/", "cat": "geopolitics", "type": "web", "source_name": "Dagens PS", "lang": "sv", "filter_tag": "sweden"},
+    
+    # CHINA
+    {"url": "https://www.scmp.com/rss/91/feed", "cat": "geopolitics", "type": "web", "source_name": "SCMP", "lang": "en", "filter_tag": "china"},
+    
+    # USA
+    {"url": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "cat": "geopolitics", "type": "web", "source_name": "CNBC World", "lang": "en", "filter_tag": "usa"},
+    {"url": "https://apnews.com/hub/ap-top-news.rss", "cat": "geopolitics", "type": "web", "source_name": "AP News", "lang": "en", "filter_tag": "usa"},
+    {"url": "https://www.politico.eu/feed/", "cat": "geopolitics", "type": "web", "source_name": "Politico EU", "lang": "en", "filter_tag": "usa"}, # Western centric
+
+    # GLOBAL
+    {"url": "https://www.aljazeera.com/xml/rss/all.xml", "cat": "geopolitics", "type": "web", "source_name": "Al Jazeera", "lang": "en", "filter_tag": "global"},
+    {"url": "http://feeds.bbci.co.uk/news/world/rss.xml", "cat": "geopolitics", "type": "web", "source_name": "BBC World", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best", "cat": "geopolitics", "type": "web", "source_name": "Reuters", "lang": "en", "filter_tag": "global"},
+
+    # INDIA (Video & Web)
+    {"url": "https://www.youtube.com/@Firstpost/videos", "cat": "geopolitics", "type": "video", "source_name": "Firstpost (India)", "lang": "en", "filter_tag": "india"},
+
+    # YOUTUBE GLOBAL/MIXED
+    {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris", "lang": "en", "filter_tag": "usa"},
+    {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@BBCNews/videos", "cat": "geopolitics", "type": "video", "source_name": "BBC News", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@aljazeeraenglish/videos", "cat": "geopolitics", "type": "video", "source_name": "Al Jazeera English", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@France24_en/videos", "cat": "geopolitics", "type": "video", "source_name": "France 24 English", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@EUdebatesLIVE/videos", "cat": "geopolitics", "type": "video", "source_name": "EU Debates", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@lenapetrova/videos", "cat": "geopolitics", "type": "video", "source_name": "Lena Petrova", "lang": "en", "filter_tag": "usa"},
+    {"url": "https://www.youtube.com/@TheMilitaryShow/videos", "cat": "geopolitics", "type": "video", "source_name": "The Military Show", "lang": "en", "filter_tag": "global"},
+    {"url": "https://www.youtube.com/@GeopoliticalEconomyReport/videos", "cat": "geopolitics", "type": "video", "source_name": "Geopolitical Economy", "lang": "en", "filter_tag": "china"}, # Ofta kina-vänlig/global
+    {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society", "lang": "en", "filter_tag": "china"},
+    {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN", "lang": "en", "filter_tag": "global"},
 
     # ==========================================
     #           ECONOMY / BUSINESS
     # ==========================================
-    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "economy", "type": "video", "source_name": "Diary of a CEO"},
-    {"url": "https://www.youtube.com/@MeetKevin/videos", "cat": "economy", "type": "video", "source_name": "Meet Kevin"},
-    {"url": "https://www.youtube.com/@FII_INSTITUTE/videos", "cat": "economy", "type": "video", "source_name": "FII Institute"},
-    {"url": "https://www.youtube.com/@JosephCarlsonShow/videos", "cat": "economy", "type": "video", "source_name": "Joseph Carlson"},
-    {"url": "https://www.youtube.com/@NordnetSverige/videos", "cat": "economy", "type": "video", "source_name": "Nordnet Sverige"},
-    {"url": "https://www.youtube.com/@BeatTheDenominator/videos", "cat": "economy", "type": "video", "source_name": "Beat The Denominator"},
-    {"url": "https://www.youtube.com/@qatareconomicforum430/videos", "cat": "economy", "type": "video", "source_name": "Qatar Economic Forum"},
-    {"url": "https://www.youtube.com/@TomBilyeu/videos", "cat": "economy", "type": "video", "source_name": "Tom Bilyeu"},
+    {"url": "https://www.youtube.com/@TheDiaryOfACEO/videos", "cat": "economy", "type": "video", "source_name": "Diary of a CEO", "lang": "en"},
+    {"url": "https://www.youtube.com/@MeetKevin/videos", "cat": "economy", "type": "video", "source_name": "Meet Kevin", "lang": "en"},
+    {"url": "https://www.youtube.com/@FII_INSTITUTE/videos", "cat": "economy", "type": "video", "source_name": "FII Institute", "lang": "en"},
+    {"url": "https://www.youtube.com/@JosephCarlsonShow/videos", "cat": "economy", "type": "video", "source_name": "Joseph Carlson", "lang": "en"},
+    {"url": "https://www.youtube.com/@NordnetSverige/videos", "cat": "economy", "type": "video", "source_name": "Nordnet Sverige", "lang": "sv"}, # Swedish
+    {"url": "https://www.youtube.com/@BeatTheDenominator/videos", "cat": "economy", "type": "video", "source_name": "Beat The Denominator", "lang": "en"},
+    {"url": "https://www.youtube.com/@qatareconomicforum430/videos", "cat": "economy", "type": "video", "source_name": "Qatar Economic Forum", "lang": "en"},
+    {"url": "https://www.youtube.com/@TomBilyeu/videos", "cat": "economy", "type": "video", "source_name": "Tom Bilyeu", "lang": "en"},
 
     # ==========================================
     #               SCIENCE
     # ==========================================
-    {"url": "https://www.space.com/feeds/all", "cat": "science", "type": "web", "source_name": "Space.com"},
-    {"url": "https://www.scientificamerican.com/feed/home/", "cat": "science", "type": "web", "source_name": "Scientific American"},
-    {"url": "https://www.newscientist.com/feed/home/", "cat": "science", "type": "web", "source_name": "New Scientist"},
-    {"url": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "cat": "science", "type": "web", "source_name": "NASA"},
-    {"url": "https://phys.org/rss-feed/", "cat": "science", "type": "web", "source_name": "Phys.org"},
+    {"url": "https://www.space.com/feeds/all", "cat": "science", "type": "web", "source_name": "Space.com", "lang": "en"},
+    {"url": "https://www.scientificamerican.com/feed/home/", "cat": "science", "type": "web", "source_name": "Scientific American", "lang": "en"},
+    {"url": "https://www.newscientist.com/feed/home/", "cat": "science", "type": "web", "source_name": "New Scientist", "lang": "en"},
+    {"url": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "cat": "science", "type": "web", "source_name": "NASA", "lang": "en"},
+    {"url": "https://phys.org/rss-feed/", "cat": "science", "type": "web", "source_name": "Phys.org", "lang": "en"},
     # YouTube Science
-    {"url": "https://www.youtube.com/@pbsspacetime/videos", "cat": "science", "type": "video", "source_name": "PBS Space Time"},
-    {"url": "https://www.youtube.com/@SpaceEyeTech/videos", "cat": "science", "type": "video", "source_name": "Space Eye Tech"},
-    {"url": "https://www.youtube.com/@PracticalEngineeringChannel/videos", "cat": "science", "type": "video", "source_name": "Practical Engineering"},
-    {"url": "https://www.youtube.com/@smartereveryday/videos", "cat": "science", "type": "video", "source_name": "SmarterEveryDay"},
-    {"url": "https://www.youtube.com/@veritasium/videos", "cat": "science", "type": "video", "source_name": "Veritasium"},
-    {"url": "https://www.youtube.com/@ScienceChannel/videos", "cat": "science", "type": "video", "source_name": "Science Channel"},
-    {"url": "https://www.youtube.com/@Kurzgesagt/videos", "cat": "science", "type": "video", "source_name": "Kurzgesagt"},
+    {"url": "https://www.youtube.com/@pbsspacetime/videos", "cat": "science", "type": "video", "source_name": "PBS Space Time", "lang": "en"},
+    {"url": "https://www.youtube.com/@SpaceEyeTech/videos", "cat": "science", "type": "video", "source_name": "Space Eye Tech", "lang": "en"},
+    {"url": "https://www.youtube.com/@PracticalEngineeringChannel/videos", "cat": "science", "type": "video", "source_name": "Practical Engineering", "lang": "en"},
+    {"url": "https://www.youtube.com/@smartereveryday/videos", "cat": "science", "type": "video", "source_name": "SmarterEveryDay", "lang": "en"},
+    {"url": "https://www.youtube.com/@veritasium/videos", "cat": "science", "type": "video", "source_name": "Veritasium", "lang": "en"},
+    {"url": "https://www.youtube.com/@ScienceChannel/videos", "cat": "science", "type": "video", "source_name": "Science Channel", "lang": "en"},
+    {"url": "https://www.youtube.com/@Kurzgesagt/videos", "cat": "science", "type": "video", "source_name": "Kurzgesagt", "lang": "en"},
 
     # ==========================================
     #             CONSTRUCTION
     # ==========================================
-    {"url": "https://www.archdaily.com/rss", "cat": "construction", "type": "web", "source_name": "ArchDaily"},
-    {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive"},
-    {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer"},
+    {"url": "https://www.archdaily.com/rss", "cat": "construction", "type": "web", "source_name": "ArchDaily", "lang": "en"},
+    {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive", "lang": "en"},
+    {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer", "lang": "en"},
     # YouTube Construction
-    {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video", "source_name": "Tomorrow's Build"},
-    {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video", "source_name": "The B1M"},
-    {"url": "https://www.youtube.com/@FD_Engineering/videos", "cat": "construction", "type": "video", "source_name": "Free Documentary Engineering"},
+    {"url": "https://www.youtube.com/@TomorrowsBuild/videos", "cat": "construction", "type": "video", "source_name": "Tomorrow's Build", "lang": "en"},
+    {"url": "https://www.youtube.com/@TheB1M/videos", "cat": "construction", "type": "video", "source_name": "The B1M", "lang": "en"},
+    {"url": "https://www.youtube.com/@FD_Engineering/videos", "cat": "construction", "type": "video", "source_name": "Free Documentary Engineering", "lang": "en"},
 ]
