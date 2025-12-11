@@ -25,7 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-MAX_AGE_DAYS = 90
+MAX_AGE_DAYS = 25 # Behåller din 25-dagars regel
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -35,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.37 - FZ & ELECTREK IMAGE FIX) ---")
+print(f"--- STARTAR GENERATORN (V20.5.38 - HYBRID LOGIC) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -80,27 +80,26 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
+# --- BILD-LOGIK (FRÅN DIN ÖNSKADE KOD) ---
+
 def clean_image_url_generic(url):
-    """Städar URLer och tvingar fram högupplöst för Electrek/Wordpress"""
+    """Generell städning och fix för Wordpress/Electrek"""
     if not url: return None
     
-    # Rör inte dessa
+    # RÖR INTE DESSA
     if 'aftonbladet' in url: return url
     if 'phys.org' in url or 'scx' in url: return url
-    if 'fz.se' in url: return url 
+    if 'fz.se' in url: return url
     
-    # FIX FÖR ELECTREK & WORDPRESS-SITES (Tar bort ?w=xxxx)
+    # FIX FÖR ELECTREK & WORDPRESS (Tar bort ?w=xxxx)
     if 'electrek' in url or 'wp.com' in url or '9to5' in url:
-        # Ersätt w=... med w=1600 eller ta bort det helt för original
         if 'w=' in url:
             return re.sub(r'w=\d+', 'w=1600', url)
             
     return url
 
-# --- BILDSTRATEGIER ---
-
 def strategy_fz_se(link):
-    """Hämtar FZ.se bild via OpenGraph för att undvika små thumbnails"""
+    """Hämtar FZ.se bild via OpenGraph"""
     try:
         time.sleep(random.uniform(0.1, 0.2))
         r = get_session().get(link, timeout=10, verify=False)
@@ -110,6 +109,11 @@ def strategy_fz_se(link):
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
             return og["content"]
+        
+        # Fallback
+        img = soup.select_one('figure.image img')
+        if img and img.get('src'):
+            return urljoin(link, img.get('src'))
     except: pass
     return None
 
@@ -146,7 +150,7 @@ def strategy_deep_scrape(link):
         
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        # 1. Kolla Open Graph först (oftast bäst)
+        # 1. Kolla Open Graph först
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): 
             return urljoin(link, og["content"])
@@ -154,11 +158,9 @@ def strategy_deep_scrape(link):
         # 2. Leta efter img-taggar
         images = soup.select('figure img, .entry-content img, article img, img')
         for img in images:
-            # Kolla src och data-src
             src = img.get('src') or img.get('data-src')
             if src and 'http' in src and not 'avatar' in src and not 'logo' in src:
                 return urljoin(link, src)
-                
     except: pass
     return None
 
@@ -189,13 +191,15 @@ def get_image_for_article(entry, source_url):
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     
-    # Sidor som behöver Deep Scrape (Gå in på artikeln)
+    # Sidor som behöver Deep Scrape
     deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
-        if url: return url
+        if url: return url # Returnera bara om vi hittade något, annars fallback
         
     return strategy_default(entry)
+
+# --- WEBB-INFO ---
 
 def get_web_info(source):
     found_articles = []
@@ -216,16 +220,15 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
-            # Om datum saknas, sätt till nu minus lite slump för sortering
+            # Om datum saknas, sätt till nu minus lite slump för sortering (men inte jitter i slutändan)
             if timestamp == 0:
                 timestamp = time.time() - random.randint(100, 3600)
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
-            # Hämta bild med rätt strategi
+            # Hämta bild med din specifika logik
             img_url = get_image_for_article(entry, source['url'])
-            # Städa bild-URL (t.ex. ta bort Electrek-storleksbegränsningar)
             img_url = clean_image_url_generic(img_url)
             
             if not img_url: img_url = DEFAULT_IMAGE
@@ -256,13 +259,15 @@ def get_web_info(source):
     except: pass
     return found_articles
 
+# --- YOUTUBE LOGIK (FAST MODE) ---
+
 def get_video_info(source):
     videos = []
     try:
         ydl_opts = {
             'quiet': True, 
             'ignoreerrors': True, 
-            'extract_flat': True, 
+            'extract_flat': True, # SNABB
             'playlistend': 5, 
             'no_warnings': True,
             'http_headers': HEADERS
@@ -352,18 +357,15 @@ for art in new_articles:
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-for art in final_list:
-    jitter = random.randint(-7200, 7200)
-    art['sort_score'] = art['timestamp'] + jitter
-
-final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
+# INGEN JITTER (STRIKT SORTERING PÅ DATUM)
+final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
 
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
     if diff < 3600:
-        art['time_str'] = f"{int(diff/60)}m ago"
+        art['time_str'] = "Just Now" # Mindre än 1h
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
     elif diff < 604800: 
@@ -372,8 +374,6 @@ for art in final_list:
         art['time_str'] = f"{int(diff/604800)}w ago"
     else:
         art['time_str'] = f"{int(diff/2592000)}mo ago"
-
-    art.pop('sort_score', None)
 
 final_list = final_list[:TOTAL_LIMIT]
 
