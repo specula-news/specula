@@ -97,6 +97,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@Firstpost/videos", "cat": "geopolitics", "type": "video", "source_name": "Firstpost (India)", "lang": "en", "filter_tag": "india"},
 
     # YOUTUBE GLOBAL/MIXED
+    {"url": "https://youtube.com/@brdecode123/videos", "cat": "geopolitics", "type": "video", "source_name": "BR Decode", "lang": "en", "filter_tag": "global"}, 
     {"url": "https://www.youtube.com/@wocomoDOCS/videos", "cat": "geopolitics", "type": "video", "source_name": "wocomoDOCS", "lang": "en", "filter_tag": "global"},
     {"url": "https://www.youtube.com/@johnnyharris/videos", "cat": "geopolitics", "type": "video", "source_name": "Johnny Harris", "lang": "en", "filter_tag": "usa"},
     {"url": "https://www.youtube.com/@DWDocumentary/videos", "cat": "geopolitics", "type": "video", "source_name": "DW Documentary", "lang": "en", "filter_tag": "global"},
