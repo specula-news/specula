@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V2.1 (UTF-8 FIX)</title>
+    <title>SPECULA ADMIN // V2.2 (SMART RSS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -70,7 +70,7 @@
     <input type="hidden" id="ghToken" value=""> 
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V2.1</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V2.2</span></div>
         <div class="actions">
             <button onclick="fetchSources()">↻ Reload</button>
             <button onclick="deployLive()">🚀 Deploy</button>
@@ -92,8 +92,8 @@
 
     <!-- Add Bar -->
     <div class="add-bar">
-        <input type="text" id="urlInput" placeholder="New URL (YouTube/Web)..." style="flex-grow: 2;" onblur="autoCleanUrl()">
-        <input type="text" id="nameInput" placeholder="Name (e.g. IGN)" style="flex-grow: 1;">
+        <input type="text" id="urlInput" placeholder="URL (e.g. www.sweclockers.com)..." style="flex-grow: 2;" oninput="autoSmartFix()">
+        <input type="text" id="nameInput" placeholder="Name (Auto)" style="flex-grow: 1;">
         <button class="actions btn-save" style="border:none; padding:12px 24px; cursor:pointer;" onclick="addSource()">+ ADD</button>
     </div>
 
@@ -101,7 +101,60 @@
 
     <script>
         // ===============================================
-        // 1. CONFIG: MAPPING FOLDERS TO TAGS
+        // 0. SMART RSS DATABASE (Auto-Fixer)
+        // ===============================================
+        const SMART_RSS_MAP = {
+            // SWEDEN
+            "sweclockers": "https://www.sweclockers.com/feeds/nyheter",
+            "fz.se": "https://www.fz.se/feeds/nyheter",
+            "fz": "https://www.fz.se/feeds/nyheter",
+            "nyteknik": "https://www.nyteknik.se/rss",
+            "feber": "https://feber.se/rss/",
+            "aftonbladet": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/",
+            "expressen": "https://feeds.expressen.se/nyheter/",
+            "omni": "https://omni.se/rss/nyheter",
+            "dagensps": "https://www.dagensps.se/feed/",
+            "efn": "https://efn.se/feeds/feed.xml",
+            "elbilen": "https://elbilen.se/feed/",
+            "alltomelbil": "https://alltomelbil.se/feed/",
+            "teslaclubsweden": "https://teslaclubsweden.se/feed/",
+            "byggvarlden": "https://www.byggvarlden.se/feed/",
+            "byggindustrin": "https://www.byggindustrin.se/rss/nyheter",
+
+            // TECH / GLOBAL
+            "theverge": "https://www.theverge.com/rss/index.xml",
+            "wired": "https://www.wired.com/feed/rss",
+            "techcrunch": "https://techcrunch.com/feed/",
+            "engadget": "https://www.engadget.com/rss.xml",
+            "arstechnica": "https://feeds.arstechnica.com/arstechnica/index",
+            "mashable": "https://mashable.com/feeds/rss/tech",
+            "space.com": "https://www.space.com/feeds/all",
+            "nasa": "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+            "electrek": "https://electrek.co/feed/",
+            "insideevs": "https://insideevs.com/rss/articles/all/",
+            "cleantechnica": "https://cleantechnica.com/feed/",
+            "oilprice": "https://oilprice.com/rss/main",
+
+            // GAMING
+            "eurogamer": "https://www.eurogamer.net/feed",
+            "pcgamer": "https://www.pcgamer.com/rss",
+            "kotaku": "https://kotaku.com/rss",
+            "polygon": "https://www.polygon.com/rss/index.xml",
+            "ign": "https://feeds.ign.com/ign/news",
+            "gamespot": "https://www.gamespot.com/feeds/news/",
+
+            // NEWS
+            "bbc": "http://feeds.bbci.co.uk/news/world/rss.xml",
+            "cnn": "http://rss.cnn.com/rss/edition.rss",
+            "aljazeera": "https://www.aljazeera.com/xml/rss/all.xml",
+            "reuters": "https://www.reutersagency.com/feed/",
+            "cnbc": "https://www.cnbc.com/id/100727362/device/rss/rss.html",
+            "scmp": "https://www.scmp.com/rss/91/feed",
+            "politico": "https://www.politico.eu/feed/"
+        };
+
+        // ===============================================
+        // 1. CONFIG
         // ===============================================
         const FOLDER_CONFIG = {
             'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' },
@@ -159,8 +212,6 @@
                 if(!res.ok) throw new Error("Connection Failed");
                 const data = await res.json();
                 currentSha = data.sha;
-                
-                // DECODE CORRECTLY (UTF-8)
                 const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0)));
                 
                 parsePython(text);
@@ -306,15 +357,32 @@
         }
 
         function addSource() {
+            // Auto fix run one last time before adding
+            autoSmartFix();
+            
             const url = document.getElementById('urlInput').value.trim();
             const name = document.getElementById('nameInput').value.trim();
+            
             if(!url) return alert("URL Required");
             const cfg = FOLDER_CONFIG[activeFolder];
+            
+            // Name auto-generation
+            let finalName = name;
+            if(!finalName) {
+                if(url.includes('youtube')) finalName = 'YouTube Channel';
+                else {
+                    try {
+                        const domain = new URL(url).hostname.replace('www.', '').split('.')[0];
+                        finalName = domain.charAt(0).toUpperCase() + domain.slice(1);
+                    } catch(e) { finalName = "New Source"; }
+                }
+            }
+
             const newItem = {
                 "url": url,
                 "cat": cfg.cat,
                 "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'),
-                "source_name": name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'),
+                "source_name": finalName,
                 "lang": "en"
             };
             if(cfg.tag) newItem.filter_tag = cfg.tag;
@@ -336,17 +404,11 @@
             }
             content += "]\n\n" + rawFooter;
 
-            // ==========================================
-            // FIX: UTF-8 ENCODING BEFORE BASE64
-            // ==========================================
             const encoder = new TextEncoder();
             const bytes = encoder.encode(content);
             let binary = '';
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
+            for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
             const encoded = btoa(binary);
-            // ==========================================
 
             const user = document.getElementById('ghUser').value;
             const repo = document.getElementById('ghRepo').value;
@@ -357,7 +419,7 @@
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Admin Dashboard Update (UTF-8 Fix)",
+                        message: "Admin Dashboard Update (V2.2)",
                         content: encoded,
                         sha: currentSha
                     })
@@ -369,10 +431,38 @@
             } catch(e) { alert(e.message); }
         }
 
-        function autoCleanUrl() {
+        // ===============================================
+        // AUTO SMART FIXER LOGIC
+        // ===============================================
+        function autoSmartFix() {
             let u = document.getElementById('urlInput');
-            if(u.value.includes('youtube.com/@') && !u.value.includes('/videos')) {
-                u.value = u.value.replace(/\/$/, "") + '/videos';
+            let val = u.value.toLowerCase().trim();
+
+            // 1. YouTube Fix
+            if(val.includes('youtube.com/@') && !val.includes('/videos')) {
+                u.value = val.replace(/\/$/, "") + '/videos';
+                showToast("YouTube link optimized!");
+                return;
+            }
+
+            // 2. Lookup Database Fix
+            // Check if user input matches any key in SMART_RSS_MAP
+            // We ignore if they already typed 'rss' or 'feed' to avoid breaking valid custom links
+            if(!val.includes('rss') && !val.includes('feed') && !val.includes('.xml')) {
+                for (let key in SMART_RSS_MAP) {
+                    if (val.includes(key)) {
+                        u.value = SMART_RSS_MAP[key];
+                        
+                        // Auto-fill name if empty
+                        let nameInput = document.getElementById('nameInput');
+                        if(!nameInput.value) {
+                             nameInput.value = key.charAt(0).toUpperCase() + key.slice(1);
+                        }
+                        
+                        showToast("Auto-converted to RSS Feed! 🤖");
+                        return;
+                    }
+                }
             }
         }
         
