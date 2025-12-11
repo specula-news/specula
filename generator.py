@@ -38,9 +38,10 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V3.3 - SWECLOCKERS FINAL FIX) ---")
+print(f"--- STARTAR GENERATORN (V3.4 - SWECLOCKERS DIRECT SCRAPE) ---")
 
 # --- FAKE BROWSER HEADERS ---
+# Får scriptet att se ut som Chrome för att inte bli blockerad
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -97,47 +98,56 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    Uppdaterad för att hantera Sweclockers komplexa URL:er med ?l= parametrar.
+    Går in på Sweclockers artikel-sida och hämtar huvudbilden (Hero Image).
+    Prioriterar OpenGraph och JSON-LD som är mest pålitligt för denna sajt.
     """
     try:
-        time.sleep(random.uniform(0.5, 1.5))
-        r = get_session().get(link, timeout=10, verify=False)
-        if r.status_code != 200: return None
-        html_content = r.text
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # 1. Gå in på sidan som en vanlig webbläsare
+        # Slumpmässig paus för att inte stressa deras server
+        time.sleep(random.uniform(0.5, 1.0))
+        session = get_session()
+        r = session.get(link, timeout=10, verify=False)
+        
+        if r.status_code != 200: 
+            return None
+            
+        soup = BeautifulSoup(r.text, 'html.parser')
 
-        # METOD 1: Hitta <source srcset="..."> inuti article-head
-        # Detta är oftast där högupplösta bilder ligger på moderna sajter
+        # METOD 1: Open Graph (Standard för sociala medier)
+        # Detta är oftast den bild du ser när du delar länken på Discord/Facebook
+        og_image = soup.find("meta", property="og:image")
+        if og_image and og_image.get("content"):
+            return og_image["content"]
+
+        # METOD 2: JSON-LD (Datan de skickar till Google)
+        scripts = soup.find_all('script', type='application/ld+json')
+        for script in scripts:
+            try:
+                data = json.loads(script.string)
+                if isinstance(data, list): data = data[0]
+                if 'image' in data:
+                    img_data = data['image']
+                    if isinstance(img_data, dict) and 'url' in img_data:
+                        return img_data['url']
+                    if isinstance(img_data, str):
+                        return img_data
+            except: continue
+
+        # METOD 3: Leta efter den specifika bildrutan i deras HTML
         hero_div = soup.find("div", class_="article-head__media")
         if hero_div:
+            # Leta efter <source> taggar (för webp/hög upplösning)
             sources = hero_div.find_all("source")
             for source in sources:
                 srcset = source.get("srcset", "")
                 if "cdn.sweclockers.com" in srcset:
-                    # srcset kan se ut så här: "url 1x, url 2x". Vi tar den sista (största).
-                    best_url = srcset.split(",")[-1].strip().split(" ")[0]
-                    if best_url.startswith("//"): best_url = "https:" + best_url
-                    return best_url
-
-        # METOD 2: Regex för URL:er med "?l=" (Den typen du länkade)
-        # Vi letar efter: https://cdn.sweclockers.com/artikel/bild/SIFFROR?l=TECKEN
-        pattern = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[a-zA-Z0-9%\-_]+)'
-        matches = re.findall(pattern, html_content)
-        if matches:
-            # Ta den första unika länken vi hittar
-            return matches[0]
-
-        # METOD 3: Regex för "vanliga" bilder (.jpg/.webp) som fallback
-        pattern_old = r'(https://cdn\.sweclockers\.com/artikel/bild/[^"]+\.(?:jpg|webp))'
-        matches_old = re.findall(pattern_old, html_content)
-        for match in matches_old:
-            if "avatar" not in match and "emoticons" not in match:
-                return match
-
-        # METOD 4: OpenGraph (Sista utväg, ibland lågupplöst)
-        og = soup.find("meta", property="og:image")
-        if og and og.get("content"):
-            return og["content"]
+                    # Ta den sista (största) URL:en i listan
+                    return srcset.split(",")[-1].strip().split(" ")[0]
+            
+            # Annars ta vanliga img-taggen
+            img = hero_div.find("img")
+            if img and img.get("src"):
+                return img["src"]
 
     except Exception: pass
     return None
@@ -205,6 +215,8 @@ def strategy_default(entry):
     return img_url
 
 def get_image_for_article(entry, source_url):
+    # KOPPLA KÄLLOR TILL STRATEGIER HÄR
+    
     if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
@@ -244,6 +256,7 @@ def get_web_info(source):
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
+            # Hämta bild med rätt strategi
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
