@@ -150,6 +150,90 @@ SOURCES = [
     {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN", "lang": "en", "filter_tag": "global"},
 ]
 
-URLS_YOUTUBE_TECH = [
-    "https://www.youtube.com/@Jayztwocents/videos",  # Jayztwocents
+URLS_GLOBAL = [
 ]
+
+URLS_TECH = [
+]
+
+URLS_ENERGY = [
+]
+
+URLS_EV = [
+]
+
+URLS_SCIENCE = [
+]
+
+URLS_CONSTRUCTION = [
+]
+
+URLS_VIDEO_GLOBAL = [
+]
+
+URLS_VIDEO_CHINA = [
+]
+
+URLS_VIDEO_USA = [
+]
+
+URLS_VIDEO_INDIA = [
+]
+
+URLS_YOUTUBE_GEO = [
+]
+
+URLS_YOUTUBE_TECH = [
+]
+
+URLS_YOUTUBE_ENERGY = [
+]
+
+URLS_YOUTUBE_EV = [
+]
+
+URLS_YOUTUBE_GAMING = [
+]
+
+URLS_GAMING = [
+]
+
+URLS_GAMING_ACTION = [
+]
+
+URLS_GAMING_SHOOTER = [
+]
+
+URLS_GAMING_RPG = [
+]
+
+URLS_GAMING_MMORPG = [
+]
+
+URLS_GAMING_STRATEGY = [
+]
+
+URLS_GAMING_SPORTS = [
+]
+
+URLS_GAMING_UPCOMING = [
+]
+
+URLS_GEO_GLOBAL = [
+]
+
+URLS_GEO_USA = [
+]
+
+URLS_GEO_CHINA = [
+]
+
+URLS_GEO_EU = [
+]
+
+URLS_GEO_INDIA = [
+]
+
+URLS_GEO_SWEDEN = [
+]
+
