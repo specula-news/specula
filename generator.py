@@ -38,9 +38,9 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V5.0 - CNN/AFTONBLADET/SWEC FIX) ---")
+print(f"--- STARTAR GENERATORN (V5.1 - BRUTE FORCE AFTONBLADET & SWEC) ---")
 
-# --- FAKE BROWSER HEADERS (VIKTIGT FÖR ATT INTE BLI BLOCKAD) ---
+# --- FAKE BROWSER HEADERS ---
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -97,8 +97,7 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    Sweclockers-specifik logik: Letar efter JSON-LD eller Regex på deras CDN.
-    Detta är den logik vi vet fungerar för deras Hero-bilder.
+    Sweclockers: Letar aggressivt efter JSON-LD eller Regex.
     """
     try:
         time.sleep(random.uniform(0.5, 1.0))
@@ -107,13 +106,15 @@ def strategy_sweclockers(link):
         if r.status_code != 200: return None
         html_content = r.text
 
-        # 1. Regex för dynamiska länkar (?l=...)
-        pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)'
+        # 1. Regex för dynamiska länkar (Dina exempel: ?l=...)
+        # Vi letar efter cdn-länken och tar allt fram till nästa citationstecken
+        pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[a-zA-Z0-9%\-_]+)'
         matches = re.findall(pattern_dynamic, html_content)
         if matches:
+            # Ta den längsta (oftast mest komplexa/korrekta)
             return max(matches, key=len).replace("&amp;", "&")
 
-        # 2. JSON-LD
+        # 2. JSON-LD (Strukturerad data för Google)
         soup = BeautifulSoup(html_content, 'html.parser')
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
@@ -125,8 +126,32 @@ def strategy_sweclockers(link):
                     if isinstance(img_data, dict) and 'url' in img_data: return img_data['url']
                     if isinstance(img_data, str): return img_data
             except: continue
-            
+
+        # 3. Fallback: OpenGraph
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"): return og["content"]
+
     except Exception: pass
+    return None
+
+def strategy_aftonbladet(link):
+    """
+    Aftonbladet: Regex Brute Force.
+    Vi letar efter ALLT som ser ut som en bildlänk i källkoden.
+    """
+    try:
+        time.sleep(random.uniform(0.1, 0.3))
+        r = get_session().get(link, timeout=8, verify=False)
+        
+        # Regex: Hitta länkar som börjar med deras bild-CDN
+        # Exempel: https://images.aftonbladet-cdn.se/v2/images/b02c...
+        matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)', r.text)
+        
+        if matches:
+            # Ta den första (oftast huvudbilden)
+            return matches[0]
+            
+    except: pass
     return None
 
 def strategy_fz_se(link):
@@ -154,8 +179,8 @@ def strategy_phys_org(entry):
 
 def strategy_deep_scrape(link):
     """
-    Standard "Deep Scrape". Går in på sidan och hämtar og:image.
-    Detta är det säkraste för Aftonbladet, Dagens PS, CNN etc.
+    Generell "Deep Scrape" för sidor som CNN, Dagens PS, etc.
+    Prioriterar OpenGraph.
     """
     try:
         time.sleep(random.uniform(0.3, 0.7))
@@ -163,12 +188,12 @@ def strategy_deep_scrape(link):
         r = session.get(link, timeout=8, verify=False)
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        # Priority 1: Open Graph Image
+        # 1. Open Graph (Bäst för CNN, Dagens PS)
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): 
             return urljoin(link, og["content"])
             
-        # Priority 2: Twitter Image
+        # 2. Twitter Card
         tw = soup.find("meta", name="twitter:image")
         if tw and tw.get("content"):
             return urljoin(link, tw["content"])
@@ -187,23 +212,21 @@ def strategy_default(entry):
                 img_url = getattr(enc, 'href', '')
                 break
     
-    # Om RSS saknar bild, testa Deep Scrape som fallback
     if not img_url:
         return strategy_deep_scrape(entry.link)
         
     return img_url
 
 def get_image_for_article(entry, source_url):
-    # 1. Specifika logiker som kräver specialbehandling
+    # 1. KOPPLA KÄLLOR TILL RÄTT STRATEGI
     if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
+    if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     
-    # 2. "Deep Scrape" Lista - Sidor som kräver att vi besöker artikeln för att få bra bild
-    # Här lägger vi Aftonbladet, Dagens PS, CNN och andra stora sajter.
+    # 2. Sidor som behöver Deep Scrape (OG Image)
     deep_scrape_sites = [
         'dagensps', 
-        'aftonbladet', 
         'cnn', 
         'electrek', 
         'feber', 
@@ -211,13 +234,13 @@ def get_image_for_article(entry, source_url):
         'indiatimes', 
         'reuters', 
         'cnbc',
-        'nyteknik'
+        'nyteknik',
+        'di.se'
     ]
     
     if any(d in source_url for d in deep_scrape_sites):
         url = strategy_deep_scrape(entry.link)
         if url: return url
-        # Om deep scrape misslyckas, fall tillbaka till default (RSS)
         
     return strategy_default(entry)
 
@@ -243,7 +266,6 @@ def get_web_info(source):
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
-            # Hämta bild
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
