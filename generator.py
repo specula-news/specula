@@ -19,7 +19,7 @@ try:
 except ImportError:
     TRANSLATOR_ACTIVE = False
 
-# Stäng av varningar för osäkra certifikat
+# Stäng av varningar för osecure requests
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
@@ -38,18 +38,29 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V3.1 - SWEC JSON-LD FIX) ---")
+print(f"--- STARTAR GENERATORN (V3.2 - FAKE BROWSER MODE) ---")
 
-HEADERS = {
+# --- FAKE BROWSER HEADERS ---
+# Detta får scriptet att se exakt ut som Chrome på Windows 10
+BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Cache-Control": "max-age=0"
 }
 
 # --- HJÄLPFUNKTIONER ---
 
 def get_session():
     s = requests.Session()
-    s.headers.update(HEADERS)
+    s.headers.update(BROWSER_HEADERS)
     return s
 
 def clean_text(text):
@@ -95,50 +106,52 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    NY STRATEGI: Använder Schema Data (JSON-LD) och Regex Brute Force.
-    Detta kringgår problem med lazy-loading av bilder.
+    STRATEGI: FAKE BROWSER + REGEX BRUTE FORCE
+    Vi letar efter den specifika CDN-strukturen direkt i källkoden.
     """
     try:
-        time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(link, timeout=10, verify=False)
-        if r.status_code != 200: return None
+        # Slumpmässig väntetid för att inte se ut som en robot
+        time.sleep(random.uniform(0.5, 1.5))
+        
+        # Använd session med fulla browser-headers
+        session = get_session()
+        r = session.get(link, timeout=10, verify=False)
+        
+        if r.status_code != 200: 
+            return None
+            
         html_content = r.text
+
+        # REGEX BRUTE FORCE
+        # Sweclockers bilder ligger på cdn.sweclockers.com/artikel/bild/...
+        # Vi letar efter den strängen följt av siffror och eventuella parametrar
+        
+        # Mönster: cdn.sweclockers.com/artikel/bild/ + (siffror) + (eventuella tecken till slut)
+        # Vi filtrerar bort citattecken som avslutar URLen
+        pattern = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+[^"\s\'<>]*)'
+        matches = re.findall(pattern, html_content)
+        
+        if matches:
+            # Gå igenom träffarna och ta den bästa
+            for match in matches:
+                # Filtrera bort små ikoner eller avatarer
+                if "avatar" in match or "emoticons" in match:
+                    continue
+                
+                # Om länken är kodad med &amp;, fixa det
+                clean_link = match.replace("&amp;", "&")
+                
+                # Det här är sannolikt huvudbilden
+                return clean_link
+
+        # Om Regex misslyckas, prova OpenGraph som sista utväg
         soup = BeautifulSoup(html_content, 'html.parser')
-
-        # METOD 1: JSON-LD (Schema.org data) - Detta är mest pålitligt
-        # Sweclockers berättar för Google vilken som är huvudbilden här.
-        scripts = soup.find_all('script', type='application/ld+json')
-        for script in scripts:
-            try:
-                data = json.loads(script.string)
-                # Ofta ligger det under "image" -> "url" eller bara "image"
-                if 'image' in data:
-                    img_data = data['image']
-                    if isinstance(img_data, list): img_data = img_data[0]
-                    
-                    if isinstance(img_data, dict) and 'url' in img_data:
-                        return img_data['url']
-                    if isinstance(img_data, str):
-                        return img_data
-            except: continue
-
-        # METOD 2: Regex Brute Force på CDN
-        # Hitta alla länkar som går till deras bildserver och slutar på jpg/webp
-        # Vi letar efter nyckelord som indikerar en artikelbild (inte avatarer)
-        cdn_matches = re.findall(r'(https://cdn\.sweclockers\.com/artikel/bild/[^"]+\.(?:jpg|webp))', html_content)
-        if cdn_matches:
-            # Ta den första som ser ut att vara stor
-            for match in cdn_matches:
-                if "avatar" not in match and "emoticons" not in match:
-                     return match
-
-        # METOD 3: OpenGraph (Standard fallback)
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
             return og["content"]
 
     except Exception as e:
-        print(f"Swec error: {e}")
+        pass
     return None
 
 def strategy_fz_se(link):
@@ -225,10 +238,13 @@ def get_web_info(source):
     if 'aftonbladet' in source['url']: limit = MAX_ARTICLES_AFTONBLADET
 
     try:
+        # Använd get_session för alla web requests (för att skicka browser headers)
+        session = get_session()
+        
         if 'archdaily' in source['url']:
-            resp = requests.get(source['url'], headers=HEADERS, timeout=15, verify=True)
+            resp = requests.get(source['url'], headers=BROWSER_HEADERS, timeout=15, verify=True)
         else:
-            resp = get_session().get(source['url'], timeout=10, verify=False)
+            resp = session.get(source['url'], timeout=10, verify=False)
 
         if resp.status_code != 200: return []
 
@@ -273,9 +289,10 @@ def get_web_info(source):
 def get_video_info(source):
     videos = []
     try:
+        # Uppdatera headers för yt-dlp också
         ydl_opts = {
             'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 
-            'playlistend': 5, 'no_warnings': True, 'http_headers': HEADERS 
+            'playlistend': 5, 'no_warnings': True, 'http_headers': BROWSER_HEADERS 
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
@@ -350,7 +367,7 @@ for art in new_articles:
 final_list = list(unique_map.values())
 
 # =======================================================
-# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP
+# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP (Blandar källor)
 # =======================================================
 
 # 1. Sortera strikt efter tid först (Nyast först)
@@ -359,19 +376,22 @@ final_list.sort(key=lambda x: x['timestamp'], reverse=True)
 # 2. Separera källor för att undvika klumpar
 mixed_list = []
 last_source = None
-retry_buffer = [] # Artiklar vi hoppar över tillfälligt
 
+# Använd en "while"-loop för att plocka artiklar en och en
 while final_list:
     best_index = -1
     
-    # Försök hitta en artikel bland de 8 översta som INTE har samma källa som förra
-    for i in range(min(len(final_list), 8)):
+    # Sök bland de 6 översta artiklarna för att hitta en med ANNAN källa än den förra
+    # (Vi håller sökfönstret litet (6) för att inte förstöra tidsordningen för mycket)
+    search_window = min(len(final_list), 6)
+    
+    for i in range(search_window):
         art = final_list[i]
         if art['source'] != last_source:
             best_index = i
             break
     
-    # Om vi inte hittar någon unik, ta den första ändå (tidsordning vinner till slut)
+    # Om vi bara hittade samma källa (eller listan är slut), ta den första
     if best_index == -1:
         best_index = 0
         
