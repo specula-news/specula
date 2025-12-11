@@ -25,10 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-
-# HÄR ÄR DIN NYA TIDSGRÄNS:
-MAX_AGE_DAYS = 25 
-
+MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -38,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.33 - 8 VIDEO LIMIT & 25 DAY RULE) ---")
+print(f"--- STARTAR GENERATORN (V20.5.37 - FZ & ELECTREK IMAGE FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -74,7 +71,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False # Om datum saknas, släpp igenom (säkerhet)
+    if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -84,23 +81,35 @@ def get_session():
     return s
 
 def clean_image_url_generic(url):
+    """Städar URLer och tvingar fram högupplöst för Electrek/Wordpress"""
     if not url: return None
+    
+    # Rör inte dessa
     if 'aftonbladet' in url: return url
     if 'phys.org' in url or 'scx' in url: return url
-    if 'fz.se' in url: return url
-    if 'wp.com' in url or 'electrek' in url or '9to5' in url:
-        if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
+    if 'fz.se' in url: return url 
+    
+    # FIX FÖR ELECTREK & WORDPRESS-SITES (Tar bort ?w=xxxx)
+    if 'electrek' in url or 'wp.com' in url or '9to5' in url:
+        # Ersätt w=... med w=1600 eller ta bort det helt för original
+        if 'w=' in url:
+            return re.sub(r'w=\d+', 'w=1600', url)
+            
     return url
 
 # --- BILDSTRATEGIER ---
+
 def strategy_fz_se(link):
+    """Hämtar FZ.se bild via OpenGraph för att undvika små thumbnails"""
     try:
-        time.sleep(random.uniform(0.1, 0.3))
+        time.sleep(random.uniform(0.1, 0.2))
         r = get_session().get(link, timeout=10, verify=False)
         if r.status_code != 200: return None
+        
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"): return og["content"]
+        if og and og.get("content"):
+            return og["content"]
     except: pass
     return None
 
@@ -123,20 +132,33 @@ def strategy_aftonbladet(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
-        if r.status_code != 200: return None
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
         if matches: return matches[0].replace('&amp;', '&')
     except: pass
     return None
 
 def strategy_deep_scrape(link):
+    """Går in på artikeln och letar efter bästa bilden (för Electrek, Indiatimes etc)"""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
+        
         soup = BeautifulSoup(r.content, 'html.parser')
+        
+        # 1. Kolla Open Graph först (oftast bäst)
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"): return urljoin(link, og["content"])
+        if og and og.get("content"): 
+            return urljoin(link, og["content"])
+            
+        # 2. Leta efter img-taggar
+        images = soup.select('figure img, .entry-content img, article img, img')
+        for img in images:
+            # Kolla src och data-src
+            src = img.get('src') or img.get('data-src')
+            if src and 'http' in src and not 'avatar' in src and not 'logo' in src:
+                return urljoin(link, src)
+                
     except: pass
     return None
 
@@ -152,23 +174,27 @@ def strategy_default(entry):
                 img_url = getattr(enc, 'href', '') or enc.get('href', '')
                 break
     if not img_url:
-        try:
-            r = get_session().get(entry.link, timeout=5, verify=False)
-            soup = BeautifulSoup(r.content, 'html.parser')
-            og = soup.find("meta", property="og:image")
-            if og: img_url = og['content']
-        except: pass
+        # Sista utväg: Försök hitta bild i summary
+        summary = entry.get('summary', '')
+        if '<img' in summary:
+            soup = BeautifulSoup(summary, 'html.parser')
+            img = soup.find('img')
+            if img: img_url = img.get('src')
+            
     return img_url
 
 def get_image_for_article(entry, source_url):
+    # SPECIFIKA REGLER
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
+    
+    # Sidor som behöver Deep Scrape (Gå in på artikeln)
     deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
-        if not url: return strategy_default(entry)
-        return url
+        if url: return url
+        
     return strategy_default(entry)
 
 def get_web_info(source):
@@ -190,14 +216,18 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
+            # Om datum saknas, sätt till nu minus lite slump för sortering
             if timestamp == 0:
                 timestamp = time.time() - random.randint(100, 3600)
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
+            # Hämta bild med rätt strategi
             img_url = get_image_for_article(entry, source['url'])
+            # Städa bild-URL (t.ex. ta bort Electrek-storleksbegränsningar)
             img_url = clean_image_url_generic(img_url)
+            
             if not img_url: img_url = DEFAULT_IMAGE
 
             raw_summary = entry.get('summary', '') or entry.get('description', '')
@@ -230,10 +260,10 @@ def get_video_info(source):
     videos = []
     try:
         ydl_opts = {
-            'quiet': True,
-            'ignoreerrors': True,
-            'extract_flat': True, # Vi använder flat för snabbhet
-            'playlistend': 8,     # MAX 8 VIDEOS (2 rader)
+            'quiet': True, 
+            'ignoreerrors': True, 
+            'extract_flat': True, 
+            'playlistend': 5, 
             'no_warnings': True,
             'http_headers': HEADERS
         }
@@ -258,23 +288,18 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    # YT-DLP flat extraction ger ofta upload_date som YYYYMMDD
-                    date_str = entry.get('upload_date')
-                    if date_str and len(date_str) == 8:
+                    date_str = entry.get('upload_date') or entry.get('release_date')
+                    if date_str:
                         ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
-                    elif entry.get('timestamp'): 
+                    elif entry.get('timestamp'):
                         ts = entry['timestamp']
                 except: pass
 
-                # 25-DAGARS REGELN
-                # Om vi har ett datum, kolla om det är för gammalt
-                if ts > 0:
-                    if is_too_old(ts): continue
-                else:
-                    # Om inget datum finns, sätt till nu (men risken är att gamla videos slinker igenom)
-                    # Med 'playlistend: 8' så hämtar vi dock bara de allra nyaste från kanalen,
-                    # så risken att få en 2 år gammal video är minimal.
+                # VISA ALLTID: Om datum saknas, sätt till NU.
+                if ts == 0:
                     ts = time.time()
+
+                if is_too_old(ts): continue
 
                 title = entry.get('title', 'Video')
                 clean_summary = clean_text(entry.get('description', ''))
