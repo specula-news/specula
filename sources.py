@@ -52,7 +52,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
     # --- TOPIC: Tech ---
     {"url":"https://www.sweclockers.com/feeds/nyheter","cat":"tech","type":"web","source_name":"Sweclockers","lang":"en"},
-    {"url":"https://www.nyteknik.se/rss","cat":"tech","type":"web","source_name":"Nyteknik","lang":"en"},
+    {"url":"https://www.nyteknik.se/nyheter/ny-teknik-i-rrs-format/972205","cat":"tech","type":"web","source_name":"Nyteknik","lang":"en"},
     {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
     {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
     {"url":"https://techcrunch.com/feed/","cat":"tech","type":"web","source_name":"TechCrunch","lang":"en"},
