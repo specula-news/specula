@@ -25,7 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-MAX_AGE_DAYS = 25 # Behåller din 25-dagars regel
+MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -35,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.38 - HYBRID LOGIC) ---")
+print(f"--- STARTAR GENERATORN (V20.5.38 - STABLE & STRICT) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -68,10 +68,9 @@ def parse_date_to_timestamp(entry):
         if date_str:
             return parsedate_to_datetime(date_str).timestamp()
     except: pass
-    return 0 
+    return time.time() - random.randint(3600, 86400) # Fallback för webb
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -80,40 +79,26 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- BILD-LOGIK (FRÅN DIN ÖNSKADE KOD) ---
-
 def clean_image_url_generic(url):
-    """Generell städning och fix för Wordpress/Electrek"""
     if not url: return None
-    
-    # RÖR INTE DESSA
     if 'aftonbladet' in url: return url
     if 'phys.org' in url or 'scx' in url: return url
     if 'fz.se' in url: return url
-    
-    # FIX FÖR ELECTREK & WORDPRESS (Tar bort ?w=xxxx)
-    if 'electrek' in url or 'wp.com' in url or '9to5' in url:
-        if 'w=' in url:
-            return re.sub(r'w=\d+', 'w=1600', url)
-            
+    if 'wp.com' in url or 'electrek' in url or '9to5' in url:
+        if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
+# --- BILDSTRATEGIER ---
 def strategy_fz_se(link):
-    """Hämtar FZ.se bild via OpenGraph"""
     try:
-        time.sleep(random.uniform(0.1, 0.2))
+        time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=10, verify=False)
         if r.status_code != 200: return None
-        
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"):
-            return og["content"]
-        
-        # Fallback
+        if og and og.get("content"): return og["content"]
         img = soup.select_one('figure.image img')
-        if img and img.get('src'):
-            return urljoin(link, img.get('src'))
+        if img and img.get('src'): return urljoin(link, img.get('src'))
     except: pass
     return None
 
@@ -136,31 +121,20 @@ def strategy_aftonbladet(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
+        if r.status_code != 200: return None
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
         if matches: return matches[0].replace('&amp;', '&')
     except: pass
     return None
 
 def strategy_deep_scrape(link):
-    """Går in på artikeln och letar efter bästa bilden (för Electrek, Indiatimes etc)"""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
         if r.status_code != 200: return None
-        
         soup = BeautifulSoup(r.content, 'html.parser')
-        
-        # 1. Kolla Open Graph först
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"): 
-            return urljoin(link, og["content"])
-            
-        # 2. Leta efter img-taggar
-        images = soup.select('figure img, .entry-content img, article img, img')
-        for img in images:
-            src = img.get('src') or img.get('data-src')
-            if src and 'http' in src and not 'avatar' in src and not 'logo' in src:
-                return urljoin(link, src)
+        if og and og.get("content"): return urljoin(link, og["content"])
     except: pass
     return None
 
@@ -176,30 +150,24 @@ def strategy_default(entry):
                 img_url = getattr(enc, 'href', '') or enc.get('href', '')
                 break
     if not img_url:
-        # Sista utväg: Försök hitta bild i summary
-        summary = entry.get('summary', '')
-        if '<img' in summary:
-            soup = BeautifulSoup(summary, 'html.parser')
-            img = soup.find('img')
-            if img: img_url = img.get('src')
-            
+        try:
+            r = get_session().get(entry.link, timeout=5, verify=False)
+            soup = BeautifulSoup(r.content, 'html.parser')
+            og = soup.find("meta", property="og:image")
+            if og: img_url = og['content']
+        except: pass
     return img_url
 
 def get_image_for_article(entry, source_url):
-    # SPECIFIKA REGLER
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
-    
-    # Sidor som behöver Deep Scrape
     deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
-        if url: return url # Returnera bara om vi hittade något, annars fallback
-        
+        if not url: return strategy_default(entry)
+        return url
     return strategy_default(entry)
-
-# --- WEBB-INFO ---
 
 def get_web_info(source):
     found_articles = []
@@ -219,35 +187,26 @@ def get_web_info(source):
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
-            
-            # Om datum saknas, sätt till nu minus lite slump för sortering (men inte jitter i slutändan)
-            if timestamp == 0:
-                timestamp = time.time() - random.randint(100, 3600)
-
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
-            # Hämta bild med din specifika logik
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
-            
             if not img_url: img_url = DEFAULT_IMAGE
 
-            raw_summary = entry.get('summary', '') or entry.get('description', '')
-            clean_summary = clean_text(raw_summary)
-
+            summary = clean_text(entry.get('summary', '') or entry.get('description', ''))
             title = entry.title
             lang_note = ""
             if source.get('lang') == 'sv':
                 title = translate_text(title, 'sv')
-                clean_summary = translate_text(clean_summary, 'sv')
+                summary = translate_text(summary, 'sv')
                 lang_note = " (Translated from Swedish)"
 
             found_articles.append({
                 "title": title,
                 "link": entry.link,
                 "images": [img_url],
-                "summary": clean_summary,
+                "summary": summary,
                 "category": source['cat'],
                 "filter_tag": source.get('filter_tag', ''), 
                 "source": source.get('source_name', 'News'),
@@ -259,16 +218,14 @@ def get_web_info(source):
     except: pass
     return found_articles
 
-# --- YOUTUBE LOGIK (FAST MODE) ---
-
 def get_video_info(source):
     videos = []
     try:
         ydl_opts = {
             'quiet': True, 
             'ignoreerrors': True, 
-            'extract_flat': True, # SNABB
-            'playlistend': 5, 
+            'extract_flat': True, 
+            'playlistend': 8, # Hämtar 8 st
             'no_warnings': True,
             'http_headers': HEADERS
         }
@@ -300,26 +257,25 @@ def get_video_info(source):
                         ts = entry['timestamp']
                 except: pass
 
-                # VISA ALLTID: Om datum saknas, sätt till NU.
-                if ts == 0:
-                    ts = time.time()
+                # HÄR ÄR "RÄDDNINGEN" FRÅN DIN FUNGERANDE KOD:
+                if ts == 0: ts = time.time()
 
                 if is_too_old(ts): continue
 
                 title = entry.get('title', 'Video')
-                clean_summary = clean_text(entry.get('description', ''))
-
+                summary = clean_text(entry.get('description', ''))
+                
                 lang_note = ""
                 if source.get('lang') == 'sv':
                     title = translate_text(title, 'sv')
-                    clean_summary = translate_text(clean_summary, 'sv')
+                    summary = translate_text(summary, 'sv')
                     lang_note = " (Translated from Swedish)"
 
                 videos.append({
                     "title": title,
                     "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry['id']}",
                     "images": [img_url],
-                    "summary": clean_summary,
+                    "summary": summary,
                     "category": source.get('cat', 'video'),
                     "filter_tag": source.get('filter_tag', ''),
                     "source": source.get('source_name', 'YouTube'),
@@ -357,7 +313,8 @@ for art in new_articles:
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-# INGEN JITTER (STRIKT SORTERING PÅ DATUM)
+# --- VIKTIG ÄNDRING: STRIKT SORTERING (INGET JITTER) ---
+# Nu sorteras allt strikt efter tid. Nyaste först.
 final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
 
 now = time.time()
@@ -365,7 +322,7 @@ for art in final_list:
     diff = now - art['timestamp']
     
     if diff < 3600:
-        art['time_str'] = "Just Now" # Mindre än 1h
+        art['time_str'] = f"{int(diff/60)}m ago"
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
     elif diff < 604800: 
