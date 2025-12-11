@@ -35,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.38 - STABLE & STRICT) ---")
+print(f"--- STARTAR GENERATORN (V20.5.32 - FORCE SHOW VIDEOS) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -68,9 +68,10 @@ def parse_date_to_timestamp(entry):
         if date_str:
             return parsedate_to_datetime(date_str).timestamp()
     except: pass
-    return time.time() - random.randint(3600, 86400) # Fallback för webb
+    return 0 
 
 def is_too_old(timestamp):
+    if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -97,8 +98,6 @@ def strategy_fz_se(link):
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return og["content"]
-        img = soup.select_one('figure.image img')
-        if img and img.get('src'): return urljoin(link, img.get('src'))
     except: pass
     return None
 
@@ -187,6 +186,11 @@ def get_web_info(source):
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
+            
+            # Fallback till nu om datum saknas
+            if timestamp == 0:
+                timestamp = time.time() - random.randint(100, 3600)
+
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
@@ -194,19 +198,21 @@ def get_web_info(source):
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
 
-            summary = clean_text(entry.get('summary', '') or entry.get('description', ''))
+            raw_summary = entry.get('summary', '') or entry.get('description', '')
+            clean_summary = clean_text(raw_summary)
+
             title = entry.title
             lang_note = ""
             if source.get('lang') == 'sv':
                 title = translate_text(title, 'sv')
-                summary = translate_text(summary, 'sv')
+                clean_summary = translate_text(clean_summary, 'sv')
                 lang_note = " (Translated from Swedish)"
 
             found_articles.append({
                 "title": title,
                 "link": entry.link,
                 "images": [img_url],
-                "summary": summary,
+                "summary": clean_summary,
                 "category": source['cat'],
                 "filter_tag": source.get('filter_tag', ''), 
                 "source": source.get('source_name', 'News'),
@@ -225,9 +231,9 @@ def get_video_info(source):
             'quiet': True, 
             'ignoreerrors': True, 
             'extract_flat': True, 
-            'playlistend': 8, # Hämtar 8 st
+            'playlistend': 5, # Max 5 videos per kanal
             'no_warnings': True,
-            'http_headers': HEADERS
+            'http_headers': HEADERS 
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -257,25 +263,26 @@ def get_video_info(source):
                         ts = entry['timestamp']
                 except: pass
 
-                # HÄR ÄR "RÄDDNINGEN" FRÅN DIN FUNGERANDE KOD:
-                if ts == 0: ts = time.time()
+                # FIX: Om datum saknas, sätt till NU så videon syns!
+                if ts == 0:
+                    ts = time.time()
 
                 if is_too_old(ts): continue
 
                 title = entry.get('title', 'Video')
-                summary = clean_text(entry.get('description', ''))
-                
+                clean_summary = clean_text(entry.get('description', ''))
+
                 lang_note = ""
                 if source.get('lang') == 'sv':
                     title = translate_text(title, 'sv')
-                    summary = translate_text(summary, 'sv')
+                    clean_summary = translate_text(clean_summary, 'sv')
                     lang_note = " (Translated from Swedish)"
 
                 videos.append({
                     "title": title,
-                    "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry['id']}",
+                    "link": entry.get('url') or entry.get('webpage_url') or f"https://www.youtube.com/watch?v={entry['id']}",
                     "images": [img_url],
-                    "summary": summary,
+                    "summary": clean_summary,
                     "category": source.get('cat', 'video'),
                     "filter_tag": source.get('filter_tag', ''),
                     "source": source.get('source_name', 'YouTube'),
@@ -313,16 +320,18 @@ for art in new_articles:
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-# --- VIKTIG ÄNDRING: STRIKT SORTERING (INGET JITTER) ---
-# Nu sorteras allt strikt efter tid. Nyaste först.
-final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
+for art in final_list:
+    jitter = random.randint(-7200, 7200)
+    art['sort_score'] = art['timestamp'] + jitter
+
+final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
 
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
     if diff < 3600:
-        art['time_str'] = f"{int(diff/60)}m ago"
+        art['time_str'] = "Just Now" # Mindre än 1h
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
     elif diff < 604800: 
@@ -331,6 +340,8 @@ for art in final_list:
         art['time_str'] = f"{int(diff/604800)}w ago"
     else:
         art['time_str'] = f"{int(diff/2592000)}mo ago"
+
+    art.pop('sort_score', None)
 
 final_list = final_list[:TOTAL_LIMIT]
 
