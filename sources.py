@@ -2,7 +2,7 @@
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
-    {"url":"https://www.nytimes.com/international/","cat":"geopolitics","type":"web","source_name":"The New York Times","lang":"en","filter_tag":"global"},
+    {"url":"https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","cat":"geopolitics","type":"web","source_name":"The New York Times","lang":"en","filter_tag":"global"},
     {"url":"https://www.reutersagency.com/feed/","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
     {"url":"https://www.theguardian.com/europe","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
     {"url":"https://www.bloomberg.com/europe","cat":"geopolitics","type":"web","source_name":"Bloomberg","lang":"en","filter_tag":"global"},
