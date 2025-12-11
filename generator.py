@@ -21,10 +21,14 @@ except ImportError:
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+# --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-MAX_AGE_DAYS = 90
+
+# HÄR ÄR DIN 10-DAGARS REGEL:
+MAX_AGE_DAYS = 10 
+
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -34,14 +38,12 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.30 - FAKE BROWSER HEADERS) ---")
+print(f"--- STARTAR GENERATORN (V20.5.31 - EXACT DATE OR SKIP) ---")
 
-# Dessa headers används nu både för webbsidor OCH YouTube
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Referer": "https://www.google.com/",
-    "Accept-Language": "en-US,en;q=0.9"
+    "Referer": "https://www.google.com/"
 }
 
 def clean_text(text):
@@ -72,7 +74,9 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False 
+    # Om timestamp är 0 (okänt), kasta bort den för säkerhets skull så vi inte får fel sortering
+    if timestamp == 0: return True 
+    
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -188,9 +192,8 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
-            # Om datum saknas, sätt till nu minus slumpmässig tid (för att inte klumpa ihop)
-            if timestamp == 0:
-                timestamp = time.time() - random.randint(100, 3600)
+            # Om datum saknas helt för en artikel, chansa inte. Hoppa över.
+            if timestamp == 0: continue
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
@@ -228,14 +231,13 @@ def get_web_info(source):
 def get_video_info(source):
     videos = []
     try:
-        # FAKE BROWSER HEADERS - DETTA ÄR NYCKELN FÖR ATT FÅ DATUMET
         ydl_opts = {
             'quiet': True,
             'ignoreerrors': True,
             'extract_flat': True,
-            'playlistend': 10,
+            'playlistend': 5, # ENDAST DE 5 SENASTE
             'no_warnings': True,
-            'http_headers': HEADERS # Använd samma headers som Chrome
+            'http_headers': HEADERS
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -258,18 +260,15 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    # YT-DLP returnerar ofta '20231211' som upload_date
+                    # FÖRSÖK HITTA RIKTIGT DATUM
                     date_str = entry.get('upload_date') or entry.get('release_date')
                     if date_str:
                         ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
-                    elif entry.get('timestamp'): 
-                        ts = entry['timestamp']
                 except: pass
 
-                # FIX: Om inget datum finns, sätt till NU (istället för 30 dagar sedan).
-                # Med 'http_headers' borde vi dock få datumet oftare nu.
-                if ts == 0:
-                    ts = time.time()
+                # VIKTIGT: Om vi inte hittar datumet, HOPPA ÖVER VIDEON.
+                # Vi gissar inte längre "Just Now".
+                if ts == 0: continue
 
                 if is_too_old(ts): continue
 
