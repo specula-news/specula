@@ -120,7 +120,7 @@
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* SPLIT NAV: GRID TOP, GRID BOTTOM */
+            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
             .unified-nav { 
                 display: flex; 
                 flex-direction: column; 
@@ -138,19 +138,28 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
-            /* BOTTOM ROW: 5 BUTTONS GRID (ADDED ENERGY) */
+            /* BOTTOM ROW: FLEXBOX FOR PERFECT CENTERING */
             .nav-bottom-row {
-                display: grid; 
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 EQUAL COLUMNS */
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center;
+                gap: 5px;
                 width: 100%;
-                padding: 5px 0;
+                padding: 8px 0;
             }
 
             .filter-btn { 
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.65rem; 
+                font-size: 0.75rem; 
+            }
+            
+            /* Bottom row buttons specific: Auto width to hug text */
+            .nav-bottom-row .filter-btn {
+                width: auto !important;
+                flex: 1;
+                max-width: 25%;
             }
             
             .desktop-label { display: none !important; }
@@ -251,13 +260,12 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.27 -->
+                 <!-- V20.5.25 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.27 - Energy Sector</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.25 - Perfect Spacing</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Topic:</strong> Added ENERGY as a main category (includes OilPrice, Renewable Energy World).<br>
-                        • <strong>Content Fix:</strong> Moved Military Show & EU Debates to correct Geopolitics sections.<br>
-                        • <strong>Time Fix:</strong> Corrected issue where older videos appeared as "Just Now".
+                        • <strong>Grid Symmetry:</strong> Bottom row on mobile (Tech, EV...) now uses a precise 4-column grid. This fixes the gaps caused by word length differences.<br>
+                        • <strong>Content Fix:</strong> YouTube scraper updated to properly catch and tag video content for MEDIA and TUBERS.
                     </div>
                  </li>
             </ul>
@@ -289,7 +297,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.27</div>
+                <div class="version-display" id="versionBtn">Version 20.5.25</div>
             </div>
             
             <div class="nav-wrapper">
@@ -332,6 +340,7 @@
                                 <div class="dropdown-list">
                                     <label class="check-item"><span>Geo</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'geo', this.checked)"> <div class="check-indicator"></div></label>
                                     <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Energy</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'energy', this.checked)"> <div class="check-indicator"></div></label>
                                     <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'ev', this.checked)"> <div class="check-indicator"></div></label>
                                     <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
                                 </div>
@@ -608,7 +617,8 @@
                 }
                 
                 if (state.category === 'topics') { if (art.is_video) return false; if (artCat === 'gaming') return false; if (state.topicFilters.size > 0) { if (!state.topicFilters.has(artCat)) return false; } return fullText.includes(state.search); }
-                // GENERELL KATEGORIMATCHNING (FÖR TECH, EV, ENERGY ETC)
+                
+                // GENERELL KATEGORIMATCHNING (FÖR TECH, EV, ENERGY, SCIENCE, CONSTRUCTION)
                 if (art.is_video) return false; 
                 let matchesCat = (artCat === state.category); 
                 return matchesCat && fullText.includes(state.search);
