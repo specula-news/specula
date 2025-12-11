@@ -41,13 +41,13 @@ SOURCES = [
     # --- YT: Gaming ---
     {"url":"https://www.youtube.com/@AsmonTV/videos","cat":"youtubers","type":"video","source_name":"AsmonTV","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@gameranxTV/videos","cat":"youtubers","type":"video","source_name":"Gameranx","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@IGN/videos","cat":"youtubers","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@gamespot/videos","cat":"youtubers","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
     # --- GAME: News ---
     {"url":"https://www.eurogamer.net/feed","cat":"gaming","type":"web","source_name":"Eurogamer","lang":"en"},
     {"url":"https://www.pcgamer.com/rss","cat":"gaming","type":"web","source_name":"PC Gamer","lang":"en"},
     {"url":"https://www.fz.se/feeds/nyheter","cat":"gaming","type":"web","source_name":"FZ.se","lang":"sv"},
     # --- GAME: Video ---
+    {"url":"https://www.youtube.com/@gamespot/videos","cat":"gaming","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@IGN/videos","cat":"gaming","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@ewc/videos","cat":"gaming","type":"video","source_name":"Esports World Cup","lang":"en"},
     {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
     # --- TOPIC: Tech ---
