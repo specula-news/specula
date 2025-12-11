@@ -83,6 +83,7 @@
         .dropdown-menu.show { display: flex; }
         .dropdown-list { max-height: 50vh; overflow-y: auto; padding: 5px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
         
+        /* CLEAN CHECKBOXES */
         .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
@@ -99,24 +100,30 @@
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
+        /* READ LATER (GLUED) */
         .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
         .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
 
-        @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
+        @media (min-width: 769px) { 
+            .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } 
+            .desktop-categories-list { display: contents; } 
+            .nav-top-row, .nav-bottom-row { display: contents; }
+        }
 
         /* --- MOBILE SPECIFIC FIXES --- */
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
+            /* SPLIT NAV: GRID TOP, GRID BOTTOM */
             .unified-nav { 
                 display: flex; 
                 flex-direction: column; 
@@ -134,28 +141,19 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
-            /* BOTTOM ROW: FLEXBOX FOR PERFECT CENTERING (FIX) */
+            /* BOTTOM ROW: 4 BUTTONS GRID (FIXED FOR ALIGNMENT) */
             .nav-bottom-row {
-                display: flex !important; /* Forces Flexbox */
-                justify-content: center !important; /* Centers content */
-                align-items: center;
-                gap: 5px; /* Nice gap between buttons */
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 EQUAL COLUMNS */
                 width: 100%;
-                padding: 8px 0;
+                padding: 5px 0;
             }
 
             .filter-btn { 
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.75rem; 
-            }
-            
-            /* Bottom row buttons specific: Auto width to hug text */
-            .nav-bottom-row .filter-btn {
-                width: auto !important;
-                flex: 1; /* Equal space */
-                max-width: 25%; /* Limit width */
+                font-size: 0.65rem; /* Slightly smaller to ensure CONSTRUCTION fits */
             }
             
             .desktop-label { display: none !important; }
@@ -171,11 +169,6 @@
             #youtubersDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
             #gamingDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
             #geopoliticsDropdown { left: auto !important; right: 0 !important; transform: none !important; min-width: 200px; }
-        }
-        
-        @media (min-width: 769px) {
-            .nav-top-row, .nav-bottom-row { display: contents; } 
-            .desktop-categories-list { display: contents; } 
         }
 
         /* GRID FIXES */
@@ -208,7 +201,7 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
@@ -261,18 +254,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.24 -->
+                 <!-- V20.5.25 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.24 - Flex Centering</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.25 - Perfect Spacing</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Center Fix:</strong> Switched bottom mobile nav to Flexbox centering to fix uneven spacing around short words like "EV".<br>
-                        • <strong>All News Filter:</strong> Strict "No Videos" rule applied to the main feed.
+                        • <strong>Grid Symmetry:</strong> Bottom row on mobile (Tech, EV...) now uses a precise 4-column grid. This fixes the gaps caused by word length differences.<br>
+                        • <strong>Content Fix:</strong> YouTube scraper updated to properly catch and tag video content for MEDIA and TUBERS.
                     </div>
-                 </li>
-                 <!-- V20.5.23 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.23</strong><br>
-                    Pure News mode enabled.
                  </li>
             </ul>
         </div>
@@ -303,7 +291,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.24</div>
+                <div class="version-display" id="versionBtn">Version 20.5.25</div>
             </div>
             
             <div class="nav-wrapper">
@@ -390,7 +378,7 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM ROW (FLEX CENTERED FOR MOBILE) -->
+                    <!-- BOTTOM ROW (GRID 4 COLS FOR PERFECT ALIGNMENT) -->
                     <div class="nav-bottom-row desktop-categories-list">
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
@@ -581,7 +569,7 @@
 
                 if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); }
                 if (state.category === 'all') { 
-                    if (art.is_video) return false; // STRICTLY NO VIDEOS IN ALL NEWS
+                    if (art.is_video) return false; 
                     return fullText.includes(state.search); 
                 }
 
@@ -634,7 +622,6 @@
 
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
-                // FALLBACK IF EMPTY
                 if (!imgUrl) imgUrl = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop";
                 
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';

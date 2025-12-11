@@ -1,4 +1,4 @@
-# Sources for aggregation site - FINAL COMPLETE LIST
+# Sources for aggregation site - FINAL COMPLETE LIST (v20.5.20)
 
 SOURCES = [
     # ==========================================
@@ -81,7 +81,7 @@ SOURCES = [
     {"url": "https://cleantechnica.com/feed/", "cat": "ev", "type": "web", "source_name": "CleanTechnica", "lang": "en"},
     {"url": "https://oilprice.com/rss/main", "cat": "ev", "type": "web", "source_name": "OilPrice", "lang": "en"},
     {"url": "https://teslaclubsweden.se/feed/", "cat": "ev", "type": "web", "source_name": "Tesla Club Sweden", "lang": "sv"},
-    # SVENSKA
+    # SVENSKA TILLAGDA
     {"url": "https://alltomelbil.se/feed/", "cat": "ev", "type": "web", "source_name": "Allt om Elbil", "lang": "sv"},
     {"url": "https://elbilen.se/feed/", "cat": "ev", "type": "web", "source_name": "Elbilen.se", "lang": "sv"},
 
@@ -99,7 +99,7 @@ SOURCES = [
     {"url": "https://www.archdaily.com/rss", "cat": "construction", "type": "web", "source_name": "ArchDaily", "lang": "en"},
     {"url": "https://www.constructiondive.com/feeds/news/", "cat": "construction", "type": "web", "source_name": "Construction Dive", "lang": "en"},
     {"url": "https://www.constructionenquirer.com/feed/", "cat": "construction", "type": "web", "source_name": "Construction Enquirer", "lang": "en"},
-    # SVENSKA
+    # SVENSKA TILLAGDA
     {"url": "https://www.byggvarlden.se/feed/", "cat": "construction", "type": "web", "source_name": "Byggvärlden", "lang": "sv"},
     {"url": "https://www.byggindustrin.se/rss/nyheter", "cat": "construction", "type": "web", "source_name": "Byggindustrin", "lang": "sv"},
     

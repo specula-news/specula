@@ -34,7 +34,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.18 - TIME FIX) ---")
+print(f"--- STARTAR GENERATORN (V20.5.25 - CONSTRUCTION & EV FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -268,11 +268,15 @@ def get_video_info(source):
                     "timestamp": ts,
                     "is_video": True
                 })
-    except: pass
+    except Exception as e:
+        print(f"FEL VID VIDEOHÄMTNING ({source.get('source_name')}): {e}")
     return videos
 
+def get_video_info_wrapper(source):
+    return get_video_info(source)
+
 def process_source(source):
-    if source['type'] == 'video': return get_video_info(source)
+    if source['type'] == 'video': return get_video_info_wrapper(source)
     else: return get_web_info(source)
 
 # --- EXEKVERING ---
@@ -302,7 +306,6 @@ final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
-    # FIX FÖR TIDSVISNING:
     if diff < 60: art['time_str'] = "Just Now"
     elif diff < 3600: art['time_str'] = f"{int(diff/60)}m ago"
     elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
