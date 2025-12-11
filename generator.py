@@ -24,7 +24,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
-MAX_ARTICLES_AFTONBLADET = 3
+MAX_ARTICLES_AFTONBLADET = 5  # Ökat lite då vi nu har en bra bildstrategi
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
@@ -38,7 +38,7 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V5.2 - SWECLOCKERS OG PRIORITY) ---")
+print(f"--- STARTAR GENERATORN (V5.3 - AFTONBLADET REGEX FIX) ---")
 
 # --- FAKE BROWSER HEADERS ---
 BROWSER_HEADERS = {
@@ -95,12 +95,30 @@ def clean_image_url_generic(url):
 
 # --- BILDSTRATEGIER ---
 
+def strategy_aftonbladet(link):
+    """
+    LOGIC 9: Aftonbladet Regex.
+    Letar efter länkar till images.aftonbladet-cdn.se i källkoden.
+    """
+    try:
+        time.sleep(random.uniform(0.1, 0.3))
+        r = get_session().get(link, timeout=8, verify=False)
+        
+        # Samma regex som fungerade i ditt test
+        # Letar efter UUID-liknande namn (siffror, bokstäver, bindestreck)
+        pattern = r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)'
+        matches = re.findall(pattern, r.text)
+        
+        if matches:
+            # Returnera den första träffen
+            return matches[0]
+            
+    except Exception: pass
+    return None
+
 def strategy_sweclockers(link):
     """
-    Sweclockers Strategi V5.2:
-    PRIO 1: OpenGraph (Efter ditt testresultat)
-    PRIO 2: Regex för CDN-länkar (Fallback)
-    PRIO 3: JSON-LD (Fallback)
+    Sweclockers: Prio 1 OpenGraph, Prio 2 Regex.
     """
     try:
         time.sleep(random.uniform(0.5, 1.0))
@@ -110,12 +128,12 @@ def strategy_sweclockers(link):
         html_content = r.text
         soup = BeautifulSoup(html_content, 'html.parser')
 
-        # PRIO 1: OPEN GRAPH (Detta fungerade bäst i ditt test)
+        # PRIO 1: OPEN GRAPH
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
             return og["content"]
 
-        # PRIO 2: Regex för dynamiska länkar (?l=...)
+        # PRIO 2: Regex (?l=...)
         pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[a-zA-Z0-9%\-_]+)'
         matches = re.findall(pattern_dynamic, html_content)
         if matches:
@@ -134,18 +152,6 @@ def strategy_sweclockers(link):
             except: continue
 
     except Exception: pass
-    return None
-
-def strategy_aftonbladet(link):
-    """
-    Aftonbladet: Regex Brute Force.
-    """
-    try:
-        time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(link, timeout=8, verify=False)
-        matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)', r.text)
-        if matches: return matches[0]
-    except: pass
     return None
 
 def strategy_fz_se(link):
@@ -218,6 +224,7 @@ def get_image_for_article(entry, source_url):
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     
     # 2. Sidor som behöver Deep Scrape (OG Image)
+    # Aftonbladet borttagen härifrån då den nu har egen strategi ovan
     deep_scrape_sites = [
         'dagensps', 
         'cnn', 
