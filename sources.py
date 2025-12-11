@@ -149,3 +149,7 @@ SOURCES = [
     {"url": "https://www.youtube.com/@asiasociety/videos", "cat": "geopolitics", "type": "video", "source_name": "Asia Society", "lang": "en", "filter_tag": "global"},
     {"url": "https://www.youtube.com/@VisualPolitikEN/videos", "cat": "geopolitics", "type": "video", "source_name": "VisualPolitik EN", "lang": "en", "filter_tag": "global"},
 ]
+
+URLS_YOUTUBE_TECH = [
+    "https://www.youtube.com/@Jayztwocents/videos",  # Jayztwocents
+]
