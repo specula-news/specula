@@ -34,7 +34,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.27 - ENERGY & TIME FIX) ---")
+print(f"--- STARTAR GENERATORN (V20.5.28 - REAL TIME FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -67,9 +67,10 @@ def parse_date_to_timestamp(entry):
         if date_str:
             return parsedate_to_datetime(date_str).timestamp()
     except: pass
-    return time.time() # Fallback till nu, men sorteras oftast bort av is_too_old
+    return 0 
 
 def is_too_old(timestamp):
+    if timestamp == 0: return False # Behåll om datum saknas
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -184,6 +185,11 @@ def get_web_info(source):
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
+            
+            # Om datum saknas, sätt det till 0, men sortera det sist
+            if timestamp == 0:
+                timestamp = time.time() - 604800 # 1 vecka gammalt som default
+
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
@@ -241,16 +247,17 @@ def get_video_info(source):
 
                 ts = 0
                 try:
+                    # FÖRSÖK HITTA RIKTIGT DATUM
                     if entry.get('upload_date'): 
                         ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
                     elif entry.get('timestamp'): 
                         ts = entry['timestamp']
                 except: pass
 
-                # FIX: Om datum saknas, sätt det till 0, men "Just Now" logiken nedan hanterar det
-                # Vi sätter det INTE till "förra veckan" längre.
+                # OM INGET DATUM FINNS, ANVÄND INTE "JUST NU"
+                # Vi sätter det till 2 dagar sedan så det hamnar en bit ner
                 if ts == 0:
-                    ts = time.time() 
+                    ts = time.time() - 172800 
 
                 if is_too_old(ts): continue
 
@@ -315,20 +322,17 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    if diff < 60:
-        art['time_str'] = "Just Now"
-    elif diff < 3600:
+    # HÄR ÄR TIDSFIXEN
+    if diff < 3600: # Mindre än 1 timme
         art['time_str'] = f"{int(diff/60)}m ago"
-    elif diff < 86400: 
+    elif diff < 86400: # Mindre än 24h
         art['time_str'] = f"{int(diff/3600)}h ago"
-    elif diff < 604800: 
+    elif diff < 604800: # Mindre än 7 dagar
         art['time_str'] = f"{int(diff/86400)}d ago"
-    elif diff < 2592000:
+    elif diff < 2592000: # Mindre än 30 dagar
         art['time_str'] = f"{int(diff/604800)}w ago"
-    elif diff < 31536000:
-        art['time_str'] = f"{int(diff/2592000)}mo ago"
     else:
-        art['time_str'] = f"{int(diff/31536000)}y ago"
+        art['time_str'] = f"{int(diff/2592000)}mo ago"
 
     art.pop('sort_score', None)
 

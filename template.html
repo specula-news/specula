@@ -120,7 +120,7 @@
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
+            /* SPLIT NAV: GRID TOP, GRID BOTTOM */
             .unified-nav { 
                 display: flex; 
                 flex-direction: column; 
@@ -138,28 +138,19 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
-            /* BOTTOM ROW: FLEXBOX FOR PERFECT CENTERING */
+            /* BOTTOM ROW: 5 BUTTONS GRID (5 EQUAL COLUMNS) */
             .nav-bottom-row {
-                display: flex !important;
-                justify-content: center !important;
-                align-items: center;
-                gap: 5px;
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* NOW 5 COLS FOR ENERGY */
                 width: 100%;
-                padding: 8px 0;
+                padding: 5px 0;
             }
 
             .filter-btn { 
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.75rem; 
-            }
-            
-            /* Bottom row buttons specific: Auto width to hug text */
-            .nav-bottom-row .filter-btn {
-                width: auto !important;
-                flex: 1;
-                max-width: 25%;
+                font-size: 0.65rem; 
             }
             
             .desktop-label { display: none !important; }
@@ -260,13 +251,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.25 -->
+                 <!-- V20.5.28 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.25 - Perfect Spacing</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.28 - Time Accuracy</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Grid Symmetry:</strong> Bottom row on mobile (Tech, EV...) now uses a precise 4-column grid. This fixes the gaps caused by word length differences.<br>
-                        • <strong>Content Fix:</strong> YouTube scraper updated to properly catch and tag video content for MEDIA and TUBERS.
+                        • <strong>Exact Time:</strong> Fixed the "Just Now" bug. Videos now display accurate upload times (e.g., 14h ago) by calculating from midnight if exact hour is missing.<br>
+                        • <strong>Mobile Menu:</strong> Bottom row updated to 5 columns to fit "Energy" category perfectly.
                     </div>
+                 </li>
+                 <!-- V20.5.27 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.27</strong><br>
+                    Added Energy Category & Content Moves.
                  </li>
             </ul>
         </div>
@@ -297,7 +293,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.25</div>
+                <div class="version-display" id="versionBtn">Version 20.5.28</div>
             </div>
             
             <div class="nav-wrapper">
