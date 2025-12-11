@@ -1,3 +1,5 @@
+[file name]: generator.py
+[file content begin]
 import json
 import os
 import requests
@@ -38,7 +40,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.33 - 8 VIDEO LIMIT & 25 DAY RULE) ---")
+print(f"--- STARTAR GENERATORN (V20.5.33 - YOUTUBE DATE FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -229,11 +231,12 @@ def get_web_info(source):
 def get_video_info(source):
     videos = []
     try:
+        # ANVÄND FULL EXTRACTION FÖR ATT FÅ DATUM
         ydl_opts = {
             'quiet': True,
             'ignoreerrors': True,
-            'extract_flat': True, # Vi använder flat för snabbhet
-            'playlistend': 8,     # MAX 8 VIDEOS (2 rader)
+            'extract_flat': False,  # VI ÄNDRAR TILL FALSE FÖR ATT FÅ FULL INFO
+            'playlistend': 8,       # MAX 8 VIDEOS
             'no_warnings': True,
             'http_headers': HEADERS
         }
@@ -241,40 +244,60 @@ def get_video_info(source):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             if not info: return videos
+            
+            # Om det är en playlist, hämta alla entries
             entries = info.get('entries', [info])
 
             for entry in entries:
                 if not entry: continue
                 
+                # HÄMTA THUMBNAIL
                 img_url = ''
-                thumbnails = entry.get('thumbnails', [])
-                if thumbnails and isinstance(thumbnails, list):
-                    try: img_url = thumbnails[-1].get('url', '')
-                    except: pass
+                if entry.get('thumbnail'):
+                    img_url = entry['thumbnail']
+                elif entry.get('thumbnails'):
+                    thumbnails = entry['thumbnails']
+                    if thumbnails and isinstance(thumbnails, list):
+                        try: 
+                            # Ta den sista/högsta kvalitén
+                            img_url = thumbnails[-1].get('url', '')
+                        except: pass
                 
                 if not img_url and entry.get('id'):
                     img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
                 if not img_url: img_url = DEFAULT_IMAGE
 
+                # HÄMTA UPLOAD DATE - NYTT SÄTT
                 ts = 0
                 try:
-                    # YT-DLP flat extraction ger ofta upload_date som YYYYMMDD
-                    date_str = entry.get('upload_date')
-                    if date_str and len(date_str) == 8:
-                        ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
-                    elif entry.get('timestamp'): 
+                    # Försök med olika fält som kan innehålla datum
+                    if entry.get('upload_date'):  # Format: YYYYMMDD
+                        date_str = entry['upload_date']
+                        if len(date_str) == 8:
+                            ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
+                    elif entry.get('release_timestamp'):  # Unix timestamp
+                        ts = entry['release_timestamp']
+                    elif entry.get('timestamp'):  # Unix timestamp
                         ts = entry['timestamp']
-                except: pass
+                    elif entry.get('uploader_id') and 'release_date' in str(entry):  # Backup
+                        # Försök hitta i beskrivningen
+                        import re
+                        desc = entry.get('description', '')
+                        date_match = re.search(r'(\d{4})-(\d{2})-(\d{2})', desc)
+                        if date_match:
+                            year, month, day = date_match.groups()
+                            ts = datetime(int(year), int(month), int(day)).timestamp()
+                except Exception as e:
+                    print(f"Datumfel för {entry.get('title', 'okänd')}: {e}")
+                    ts = time.time() - random.randint(1, 30) * 86400  # 1-30 dagar bakåt
 
                 # 25-DAGARS REGELN
-                # Om vi har ett datum, kolla om det är för gammalt
                 if ts > 0:
-                    if is_too_old(ts): continue
+                    if is_too_old(ts): 
+                        continue
                 else:
-                    # Om inget datum finns, sätt till nu (men risken är att gamla videos slinker igenom)
-                    # Med 'playlistend: 8' så hämtar vi dock bara de allra nyaste från kanalen,
-                    # så risken att få en 2 år gammal video är minimal.
-                    ts = time.time()
+                    # Om inget datum finns, använd nuvarande tid (men sorteras sist)
+                    ts = time.time() - 365 * 86400  # 1 år bakåt så de hamnar sist
 
                 title = entry.get('title', 'Video')
                 clean_summary = clean_text(entry.get('description', ''))
@@ -327,11 +350,8 @@ for art in new_articles:
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-for art in final_list:
-    jitter = random.randint(-7200, 7200)
-    art['sort_score'] = art['timestamp'] + jitter
-
-final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
+# SORTERING - NYASTE FÖRST BASERAT PÅ TIMESTAMP
+final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
 
 now = time.time()
 for art in final_list:
@@ -348,8 +368,6 @@ for art in final_list:
     else:
         art['time_str'] = f"{int(diff/2592000)}mo ago"
 
-    art.pop('sort_score', None)
-
 final_list = final_list[:TOTAL_LIMIT]
 
 with open('news.json', 'w', encoding='utf-8') as f:
@@ -357,6 +375,7 @@ with open('news.json', 'w', encoding='utf-8') as f:
 
 print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
 print(f"Totalt antal artiklar: {len(final_list)}")
+print(f"YouTube videos: {len([a for a in final_list if a.get('is_video')])}")
 
 if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
@@ -366,3 +385,4 @@ if os.path.exists('template.html'):
     print("SUCCESS: index.html har uppdaterats!")
 else:
     print("VARNING: template.html saknas!")
+[file content end]
