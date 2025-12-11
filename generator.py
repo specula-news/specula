@@ -38,10 +38,9 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V3.4 - SWECLOCKERS DIRECT SCRAPE) ---")
+print(f"--- STARTAR GENERATORN (V4.0 - HYBRID SCRAPER) ---")
 
 # --- FAKE BROWSER HEADERS ---
-# Får scriptet att se ut som Chrome för att inte bli blockerad
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -97,29 +96,16 @@ def clean_image_url_generic(url):
 # --- BILDSTRATEGIER ---
 
 def strategy_sweclockers(link):
-    """
-    Går in på Sweclockers artikel-sida och hämtar huvudbilden (Hero Image).
-    Prioriterar OpenGraph och JSON-LD som är mest pålitligt för denna sajt.
-    """
     try:
-        # 1. Gå in på sidan som en vanlig webbläsare
-        # Slumpmässig paus för att inte stressa deras server
         time.sleep(random.uniform(0.5, 1.0))
         session = get_session()
         r = session.get(link, timeout=10, verify=False)
-        
-        if r.status_code != 200: 
-            return None
-            
+        if r.status_code != 200: return None
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        # METOD 1: Open Graph (Standard för sociala medier)
-        # Detta är oftast den bild du ser när du delar länken på Discord/Facebook
         og_image = soup.find("meta", property="og:image")
-        if og_image and og_image.get("content"):
-            return og_image["content"]
+        if og_image and og_image.get("content"): return og_image["content"]
 
-        # METOD 2: JSON-LD (Datan de skickar till Google)
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
             try:
@@ -127,28 +113,19 @@ def strategy_sweclockers(link):
                 if isinstance(data, list): data = data[0]
                 if 'image' in data:
                     img_data = data['image']
-                    if isinstance(img_data, dict) and 'url' in img_data:
-                        return img_data['url']
-                    if isinstance(img_data, str):
-                        return img_data
+                    if isinstance(img_data, dict) and 'url' in img_data: return img_data['url']
+                    if isinstance(img_data, str): return img_data
             except: continue
 
-        # METOD 3: Leta efter den specifika bildrutan i deras HTML
         hero_div = soup.find("div", class_="article-head__media")
         if hero_div:
-            # Leta efter <source> taggar (för webp/hög upplösning)
             sources = hero_div.find_all("source")
             for source in sources:
                 srcset = source.get("srcset", "")
                 if "cdn.sweclockers.com" in srcset:
-                    # Ta den sista (största) URL:en i listan
                     return srcset.split(",")[-1].strip().split(" ")[0]
-            
-            # Annars ta vanliga img-taggen
             img = hero_div.find("img")
-            if img and img.get("src"):
-                return img["src"]
-
+            if img and img.get("src"): return img["src"]
     except Exception: pass
     return None
 
@@ -156,7 +133,6 @@ def strategy_fz_se(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=10, verify=False)
-        if r.status_code != 200: return None
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return og["content"]
@@ -187,8 +163,8 @@ def strategy_aftonbladet(link):
 
 def strategy_deep_scrape(link):
     try:
-        time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(link, timeout=8, verify=False)
+        time.sleep(random.uniform(0.5, 1.0))
+        r = get_session().get(link, timeout=10, verify=False)
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return urljoin(link, og["content"])
@@ -206,29 +182,95 @@ def strategy_default(entry):
                 img_url = getattr(enc, 'href', '')
                 break
     if not img_url:
-        try:
-            r = get_session().get(entry.link, timeout=5, verify=False)
-            soup = BeautifulSoup(r.content, 'html.parser')
-            og = soup.find("meta", property="og:image")
-            if og: img_url = og['content']
-        except: pass
+        # Om RSS saknar bild, kör deep scrape på artikeln
+        return strategy_deep_scrape(entry.link)
     return img_url
 
 def get_image_for_article(entry, source_url):
-    # KOPPLA KÄLLOR TILL STRATEGIER HÄR
-    
     if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     
-    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'indiatimes']
-    if any(d in source_url for d in deep_list):
-        url = strategy_deep_scrape(entry.link)
-        if not url: return strategy_default(entry)
-        return url
-        
+    # För alla andra, prova Deep Scrape (OG Image) om RSS saknar bild
     return strategy_default(entry)
+
+# --- GENERELL SCRAPER FÖR HEMSIDOR UTAN RSS ---
+
+def scrape_website_fallback(source):
+    """
+    Läser in en vanlig HTML-sida och letar efter nyhetslänkar i h1, h2, h3 taggar.
+    Detta fungerar på t.ex. NyTeknik, Feber, etc om man saknar RSS.
+    """
+    print(f"   -> Scraping HTML directly: {source['url']}")
+    found = []
+    try:
+        session = get_session()
+        r = session.get(source['url'], timeout=15, verify=False)
+        if r.status_code != 200: return []
+        
+        soup = BeautifulSoup(r.text, 'html.parser')
+        base_url = source['url']
+        
+        # Hitta alla rubriker (h1-h4) som innehåller en länk
+        # De flesta nyhetssajter har strukturen <h2><a href="...">Titel</a></h2>
+        headers = soup.find_all(['h1', 'h2', 'h3', 'h4'])
+        
+        seen_links = set()
+        
+        for h in headers:
+            link = h.find('a')
+            if not link or not link.get('href'): continue
+            
+            url = urljoin(base_url, link.get('href'))
+            title = link.get_text().strip()
+            
+            # Filter: Ignorera tomma titlar eller extremt korta
+            if len(title) < 10: continue
+            if url in seen_links: continue
+            
+            seen_links.add(url)
+            
+            # Skapa ett "fake" entry objekt som liknar feedparser
+            class FakeEntry:
+                pass
+            entry = FakeEntry()
+            entry.link = url
+            entry.title = title
+            entry.summary = "" # Vi har ingen summary från startsidan oftast
+            
+            # Hämta bild från själva artikeln
+            img_url = get_image_for_article(entry, base_url)
+            if not img_url: img_url = DEFAULT_IMAGE
+            
+            # Språkhantering
+            lang_note = ""
+            if source.get('lang') == 'sv':
+                title = translate_text(title, 'sv')
+                lang_note = " (Translated)"
+
+            # Datum: Vi vet inte, sätt till NU (minus lite slump)
+            ts = time.time() - random.randint(60, 3600*12) 
+
+            found.append({
+                "title": title,
+                "link": url,
+                "images": [img_url],
+                "summary": "",
+                "category": source['cat'],
+                "filter_tag": source.get('filter_tag', ''), 
+                "source": source.get('source_name', 'Web'),
+                "lang_note": lang_note,
+                "timestamp": ts,
+                "is_video": False
+            })
+            
+            if len(found) >= MAX_ARTICLES_DEFAULT: break
+            
+    except Exception as e:
+        print(f"Scrape error {source['url']}: {e}")
+        
+    return found
 
 # --- INFO HÄMTNING ---
 
@@ -240,23 +282,28 @@ def get_web_info(source):
     try:
         session = get_session()
         
-        if 'archdaily' in source['url']:
-            resp = requests.get(source['url'], headers=BROWSER_HEADERS, timeout=15, verify=True)
-        else:
-            resp = session.get(source['url'], timeout=10, verify=False)
+        # 1. Försök med RSS (Feedparser)
+        # Vi laddar ner innehållet först för att kunna skicka headers
+        resp = session.get(source['url'], timeout=10, verify=False)
+        
+        # Om servern ger felkod, avbryt
+        if resp.status_code != 200:
+            return []
 
-        if resp.status_code != 200: return []
-
+        # Parsa innehållet
         feed = feedparser.parse(resp.content)
-        if not feed.entries: return []
+        
+        # 2. Om RSS är tom -> Kör HYBRID SCRAPER (Vanlig hemsida)
+        if not feed.entries:
+            return scrape_website_fallback(source)
 
+        # Om RSS fungerar, fortsätt som vanligt
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             if timestamp == 0: timestamp = time.time()
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
-            # Hämta bild med rätt strategi
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
@@ -283,7 +330,9 @@ def get_web_info(source):
                 "timestamp": timestamp,
                 "is_video": False
             })
-    except: pass
+    except Exception as e:
+        print(f"Error processing {source['url']}: {e}")
+        
     return found_articles
 
 def get_video_info(source):
@@ -366,7 +415,7 @@ for art in new_articles:
 final_list = list(unique_map.values())
 
 # =======================================================
-# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP
+# SORTERINGSLOGIK
 # =======================================================
 
 final_list.sort(key=lambda x: x['timestamp'], reverse=True)
