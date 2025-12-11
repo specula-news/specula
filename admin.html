@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPECULA ADMIN // V2.1 (UTF-8 FIX)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* HEADER */
+        .top-bar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: rgba(0,0,0,0.95); z-index: 100; }
+        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
+        .brand span { color: var(--accent); }
+        .actions button { background: #111; border: 1px solid #444; color: #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; transition: 0.2s; margin-left: 8px; }
+        .actions button:hover { border-color: #fff; color: #fff; }
+        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
+
+        /* NAVIGATION */
+        .nav-container { display: flex; align-items: center; padding: 0 30px; height: 50px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; }
+        .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; }
+        .nav-item:hover { color: #fff; background: #1a1a1a; }
+        .nav-item.active { color: #000; background: var(--accent); }
+        
+        /* DROPDOWN */
+        .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .nav-item:hover .dropdown { display: flex; }
+        .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
+        .drop-item:hover { background: #222; color: #fff; }
+        .drop-item.selected { color: var(--accent); }
+        .count { font-size: 0.7em; opacity: 0.5; background: #333; padding: 2px 5px; border-radius: 4px; }
+
+        /* MAIN AREA */
+        .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
+        .view-header { font-family: 'Space Grotesk'; font-size: 1.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .view-badge { font-size: 0.8rem; background: #222; padding: 4px 8px; border-radius: 4px; color: #888; font-family: 'Inter'; }
+
+        /* GRID & CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 15px; transition: 0.2s; position: relative; }
+        .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
+        
+        .card-meta { font-size: 0.65rem; color: #555; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; letter-spacing: 0.5px; }
+        .card-name { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 5px; outline: none; }
+        .card-name:focus { border-bottom: 1px solid var(--accent); }
+        .card-url { font-family: monospace; font-size: 0.7rem; color: #666; display: block; word-break: break-all; text-decoration: none; margin-bottom: 15px; }
+        
+        .card-actions { display: flex; gap: 10px; border-top: 1px solid #222; padding-top: 10px; }
+        .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
+        .btn-del { background: transparent; border: 1px solid #333; color: #555; width: 30px; border-radius: 4px; cursor: pointer; }
+        .btn-del:hover { color: #f00; border-color: #f00; }
+
+        /* FOOTER ADD */
+        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; }
+        input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
+        input:focus { border-color: var(--accent); outline: none; }
+
+        /* TOAST */
+        .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--accent); color: var(--accent); padding: 10px 25px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; font-family: 'Space Grotesk'; z-index: 999; }
+        .toast.show { opacity: 1; top: 90px; }
+    </style>
+</head>
+<body>
+
+    <!-- GitHub Settings -->
+    <input type="hidden" id="ghUser" value="specula-news">
+    <input type="hidden" id="ghRepo" value="specula">
+    <input type="hidden" id="ghToken" value=""> 
+
+    <div class="top-bar">
+        <div class="brand">SPECULA <span>// ADMIN V2.1</span></div>
+        <div class="actions">
+            <button onclick="fetchSources()">↻ Reload</button>
+            <button onclick="deployLive()">🚀 Deploy</button>
+            <button class="btn-save" onclick="saveToGitHub()">💾 SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <!-- Nav Bar -->
+    <div class="nav-container" id="navBar"></div>
+
+    <!-- Main View -->
+    <div class="main-view">
+        <div class="view-header">
+            <span id="folderTitle">LOADING...</span>
+            <span class="view-badge" id="countBadge">0</span>
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- Add Bar -->
+    <div class="add-bar">
+        <input type="text" id="urlInput" placeholder="New URL (YouTube/Web)..." style="flex-grow: 2;" onblur="autoCleanUrl()">
+        <input type="text" id="nameInput" placeholder="Name (e.g. IGN)" style="flex-grow: 1;">
+        <button class="actions btn-save" style="border:none; padding:12px 24px; cursor:pointer;" onclick="addSource()">+ ADD</button>
+    </div>
+
+    <div id="toast" class="toast">Action Saved</div>
+
+    <script>
+        // ===============================================
+        // 1. CONFIG: MAPPING FOLDERS TO TAGS
+        // ===============================================
+        const FOLDER_CONFIG = {
+            'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' },
+            'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' },
+            'MEDIA_CHINA':  { label: 'MEDIA: China',  cat: 'geopolitics', type: 'video', tag: 'china' },
+            'MEDIA_USA':    { label: 'MEDIA: USA',    cat: 'geopolitics', type: 'video', tag: 'usa' },
+            'MEDIA_INDIA':  { label: 'MEDIA: India',  cat: 'geopolitics', type: 'video', tag: 'india' },
+            'YT_GEO':    { label: 'YT: Geo',    cat: 'youtubers', type: 'video', tag: 'geo' },
+            'YT_TECH':   { label: 'YT: Tech',   cat: 'youtubers', type: 'video', tag: 'tech' },
+            'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' },
+            'YT_EV':     { label: 'YT: EV',     cat: 'youtubers', type: 'video', tag: 'ev' },
+            'YT_GAME':   { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' },
+            'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null },
+            'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null },
+            'TOPIC_TECH':   { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null },
+            'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null },
+            'TOPIC_EV':     { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null },
+            'TOPIC_SCI':    { label: 'TOPIC: Science', cat: 'science', type: null, tag: null },
+            'TOPIC_CONST':  { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null },
+            'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null },
+            'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' },
+            'GEO_EU':  { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' }
+        };
+
+        const MENU = [
+            { id: 'GLOBAL_WEB', label: 'ALL NEWS' },
+            { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] },
+            { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] },
+            { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] },
+            { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] },
+            { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] }
+        ];
+
+        let sourceData = {}; 
+        let rawHeader = "";
+        let rawFooter = ""; 
+        let currentSha = "";
+        let activeFolder = 'GLOBAL_WEB';
+
+        window.onload = function() {
+            for(let key in FOLDER_CONFIG) sourceData[key] = [];
+            const t = prompt("Enter GitHub Token (ghp_...):");
+            if(t) { document.getElementById('ghToken').value = t; fetchSources(); }
+        };
+
+        async function fetchSources() {
+            const user = document.getElementById('ghUser').value;
+            const repo = document.getElementById('ghRepo').value;
+            const token = document.getElementById('ghToken').value;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if(!res.ok) throw new Error("Connection Failed");
+                const data = await res.json();
+                currentSha = data.sha;
+                
+                // DECODE CORRECTLY (UTF-8)
+                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0)));
+                
+                parsePython(text);
+                renderNav();
+                renderGrid();
+                showToast("Data Loaded");
+            } catch(e) { alert(e.message); }
+        }
+
+        function parsePython(text) {
+            const startIdx = text.indexOf('SOURCES = [');
+            if(startIdx === -1) return alert("Could not find SOURCES = [...]");
+            rawHeader = text.substring(0, startIdx).trim();
+            const footerStart = text.indexOf('URLS_GLOBAL = [');
+            if(footerStart > -1) {
+                rawFooter = text.substring(footerStart).trim();
+                const listContent = text.substring(startIdx, footerStart).trim();
+                parseListContent(listContent);
+            } else {
+                rawFooter = ""; 
+                parseListContent(text.substring(startIdx));
+            }
+        }
+
+        function parseListContent(str) {
+            str = str.replace('SOURCES = [', '').trim();
+            if(str.endsWith(']')) str = str.slice(0, -1).trim();
+            for(let key in FOLDER_CONFIG) sourceData[key] = [];
+            const lines = str.split('\n');
+            lines.forEach(line => {
+                line = line.trim();
+                if(!line.startsWith('{')) return;
+                if(line.endsWith(',')) line = line.slice(0, -1);
+                try {
+                    const item = JSON.parse(line);
+                    const folderId = findFolderId(item);
+                    if(folderId) sourceData[folderId].push(item);
+                } catch(e) {}
+            });
+        }
+
+        function findFolderId(item) {
+            for(let id in FOLDER_CONFIG) {
+                const cfg = FOLDER_CONFIG[id];
+                let match = true;
+                if(cfg.cat && item.cat !== cfg.cat) match = false;
+                if(cfg.type && item.type !== cfg.type) match = false;
+                if(cfg.tag && item.filter_tag !== cfg.tag) match = false;
+                if(match) return id;
+            }
+            return null;
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('navBar');
+            nav.innerHTML = '';
+            MENU.forEach(m => {
+                if(m.subs) {
+                    const div = document.createElement('div');
+                    div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`;
+                    div.innerHTML = `${m.label} ▾`;
+                    const drop = document.createElement('div');
+                    drop.className = 'dropdown';
+                    m.subs.forEach(sid => {
+                        const count = sourceData[sid] ? sourceData[sid].length : 0;
+                        const row = document.createElement('div');
+                        row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`;
+                        row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`;
+                        row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); };
+                        drop.appendChild(row);
+                    });
+                    div.appendChild(drop);
+                    nav.appendChild(div);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`;
+                    div.innerHTML = m.label;
+                    const count = sourceData[m.id] ? sourceData[m.id].length : 0;
+                    div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`;
+                    div.onclick = () => switchFolder(m.id);
+                    nav.appendChild(div);
+                }
+            });
+        }
+
+        function switchFolder(id) {
+            activeFolder = id;
+            renderNav();
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label;
+            const items = sourceData[activeFolder] || [];
+            document.getElementById('countBadge').innerText = items.length;
+            items.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-meta">${item.source_name || 'Unknown'}</div>
+                    <div class="card-name" contenteditable="true" onblur="updateItem(${idx}, 'source_name', this.innerText)">${item.source_name || '-'}</div>
+                    <a href="${item.url}" target="_blank" class="card-url">${item.url}</a>
+                    <div class="card-actions">
+                        <select class="move-select" onchange="moveItem(${idx}, this.value)">
+                            <option value="">Move to...</option>
+                            ${getMoveOptions(activeFolder)}
+                        </select>
+                        <button class="btn-del" onclick="deleteItem(${idx})">×</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getMoveOptions(currentId) {
+            let html = '';
+            for(let id in FOLDER_CONFIG) {
+                if(id !== currentId) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`;
+            }
+            return html;
+        }
+
+        function moveItem(idx, targetId) {
+            if(!targetId) return;
+            const item = sourceData[activeFolder][idx];
+            const targetCfg = FOLDER_CONFIG[targetId];
+            item.cat = targetCfg.cat;
+            if(targetCfg.type) item.type = targetCfg.type;
+            if(targetCfg.tag) item.filter_tag = targetCfg.tag;
+            sourceData[activeFolder].splice(idx, 1);
+            sourceData[targetId].unshift(item);
+            renderGrid(); renderNav(); showToast("Moved");
+        }
+
+        function deleteItem(idx) {
+            if(confirm("Delete source?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); }
+        }
+
+        function updateItem(idx, field, val) {
+            sourceData[activeFolder][idx][field] = val;
+        }
+
+        function addSource() {
+            const url = document.getElementById('urlInput').value.trim();
+            const name = document.getElementById('nameInput').value.trim();
+            if(!url) return alert("URL Required");
+            const cfg = FOLDER_CONFIG[activeFolder];
+            const newItem = {
+                "url": url,
+                "cat": cfg.cat,
+                "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'),
+                "source_name": name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'),
+                "lang": "en"
+            };
+            if(cfg.tag) newItem.filter_tag = cfg.tag;
+            sourceData[activeFolder].unshift(newItem);
+            document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = '';
+            renderGrid(); renderNav(); showToast("Added Source");
+        }
+
+        async function saveToGitHub() {
+            if(!confirm("Overwrite sources.py on GitHub?")) return;
+            let content = rawHeader + "\n\nSOURCES = [\n";
+            for(let id in sourceData) {
+                if(sourceData[id].length > 0) {
+                    content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`;
+                    sourceData[id].forEach(item => {
+                        content += `    ${JSON.stringify(item)},\n`;
+                    });
+                }
+            }
+            content += "]\n\n" + rawFooter;
+
+            // ==========================================
+            // FIX: UTF-8 ENCODING BEFORE BASE64
+            // ==========================================
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(content);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            const encoded = btoa(binary);
+            // ==========================================
+
+            const user = document.getElementById('ghUser').value;
+            const repo = document.getElementById('ghRepo').value;
+            const token = document.getElementById('ghToken').value;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Admin Dashboard Update (UTF-8 Fix)",
+                        content: encoded,
+                        sha: currentSha
+                    })
+                });
+                if(!res.ok) throw new Error("Save Failed");
+                const d = await res.json();
+                currentSha = d.content.sha;
+                showToast("SAVED SUCCESSFULLY!");
+            } catch(e) { alert(e.message); }
+        }
+
+        function autoCleanUrl() {
+            let u = document.getElementById('urlInput');
+            if(u.value.includes('youtube.com/@') && !u.value.includes('/videos')) {
+                u.value = u.value.replace(/\/$/, "") + '/videos';
+            }
+        }
+        
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(()=>t.classList.remove('show'), 2000);
+        }
+
+        async function deployLive() {
+             const user = document.getElementById('ghUser').value;
+            const repo = document.getElementById('ghRepo').value;
+            const token = document.getElementById('ghToken').value;
+            try {
+                await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' },
+                    body: JSON.stringify({ ref: 'main' })
+                });
+                showToast("Deploy Started");
+            } catch(e) { alert("Deploy Error"); }
+        }
+    </script>
+</body>
+</html>
