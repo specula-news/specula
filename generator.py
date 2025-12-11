@@ -1,31 +1,17 @@
 import json
 import os
 import requests
+import yt_dlp
 import feedparser
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
 import random
 import concurrent.futures
 from email.utils import parsedate_to_datetime
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 import urllib3
 import re
-
-# --- INSTÄLLNINGAR ---
-YOUTUBE_API_KEY = "DIN_API_NYCKEL_HÄR" # <--- Jag lägger in din nyckel automatiskt nedan i koden
-CACHE_FILE = "youtube_cache.json"
-CACHE_DURATION_HOURS = 3  # Hur många timmar vi sparar resultatet innan vi hämtar nytt
-
-MAX_ARTICLES_DEFAULT = 10
-MAX_ARTICLES_AFTONBLADET = 3
-TOTAL_LIMIT = 2000
-MAX_AGE_DAYS = 90
-MAX_SUMMARY_LENGTH = 280
-DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
-
-# Din nyckel (Hårdkodad för enkelhetens skull, men dela inte denna fil offentligt)
-API_KEY = "AIzaSyBGNGzJb2b9R1S7ur7x7Xt-d1ze6TfIOFM"
 
 try:
     from deep_translator import GoogleTranslator
@@ -35,38 +21,30 @@ except ImportError:
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+# --- INSTÄLLNINGAR ---
+MAX_ARTICLES_DEFAULT = 10
+MAX_ARTICLES_AFTONBLADET = 3
+TOTAL_LIMIT = 2000
+
+# HÄR ÄR DIN NYA TIDSGRÄNS:
+MAX_AGE_DAYS = 25 
+
+MAX_SUMMARY_LENGTH = 280
+DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
+
 try:
     from sources import SOURCES
     print(f"--- LADDADE {len(SOURCES)} KÄLLOR ---")
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.35 - YOUTUBE API & SMART CACHE) ---")
+print(f"--- STARTAR GENERATORN (V20.5.33 - 8 VIDEO LIMIT & 25 DAY RULE) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Referer": "https://www.google.com/"
 }
-
-# --- CACHE SYSTEM ---
-def load_cache():
-    if os.path.exists(CACHE_FILE):
-        try:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except: return {}
-    return {}
-
-def save_cache(cache_data):
-    try:
-        with open(CACHE_FILE, 'w', encoding='utf-8') as f:
-            json.dump(cache_data, f, indent=2)
-    except: pass
-
-# Global Cache Variable
-DATA_CACHE = load_cache()
-
-# --- HJÄLPFUNKTIONER ---
 
 def clean_text(text):
     if not text: return ""
@@ -96,7 +74,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False 
+    if timestamp == 0: return False # Om datum saknas, släpp igenom (säkerhet)
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -114,146 +92,12 @@ def clean_image_url_generic(url):
         if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
-# --- YOUTUBE API LOGIC (SMART & CHEAP) ---
-
-def get_channel_id_from_handle(handle):
-    """Konverterar @ChannelName till Channel ID via API (Cost: 100)."""
-    # Ta bort @ och URL delar
-    handle_clean = handle.replace("https://www.youtube.com/", "").replace("/videos", "").replace("/", "")
-    
-    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q={handle_clean}&key={API_KEY}"
-    try:
-        r = requests.get(url)
-        data = r.json()
-        if "items" in data and len(data["items"]) > 0:
-            return data["items"][0]["id"]["channelId"]
-    except: pass
-    return None
-
-def get_uploads_playlist_id(channel_id):
-    """Hämtar 'Uploads' spellistan för en kanal (Cost: 1)."""
-    url = f"https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id={channel_id}&key={API_KEY}"
-    try:
-        r = requests.get(url)
-        data = r.json()
-        if "items" in data and len(data["items"]) > 0:
-            return data["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
-    except: pass
-    return None
-
-def get_videos_from_playlist(playlist_id):
-    """Hämtar videos från en spellista (Cost: 1)."""
-    url = f"https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId={playlist_id}&maxResults=8&key={API_KEY}"
-    videos = []
-    try:
-        r = requests.get(url)
-        data = r.json()
-        if "items" in data:
-            for item in data["items"]:
-                snippet = item["snippet"]
-                
-                # Hämta bästa bilden
-                thumbs = snippet.get("thumbnails", {})
-                img_url = thumbs.get("maxres", thumbs.get("high", thumbs.get("medium", {}))).get("url", "")
-                
-                # Hämta tid (ISO 8601)
-                pub_str = snippet.get("publishedAt") # ex: 2025-12-09T10:00:00Z
-                ts = 0
-                if pub_str:
-                    try:
-                        # Parsa ISO format
-                        dt = datetime.strptime(pub_str, "%Y-%m-%dT%H:%M:%SZ")
-                        ts = dt.timestamp()
-                    except: pass
-                
-                videos.append({
-                    "title": snippet["title"],
-                    "link": f"https://www.youtube.com/watch?v={snippet['resourceId']['videoId']}",
-                    "image": img_url,
-                    "summary": snippet.get("description", ""),
-                    "timestamp": ts
-                })
-    except Exception as e:
-        print(f"API Error: {e}")
-    return videos
-
-def get_video_info_api(source):
-    """Huvudfunktion för YouTube via API med Caching."""
-    url = source['url']
-    
-    # 1. KOLLA CACHE
-    cached_data = DATA_CACHE.get(url)
-    if cached_data:
-        last_fetched = cached_data.get("last_fetched", 0)
-        # Om cachen är nyare än X timmar, använd den
-        if (time.time() - last_fetched) < (CACHE_DURATION_HOURS * 3600):
-            # print(f"Using cache for {source['source_name']}")
-            return process_cached_videos(cached_data.get("videos", []), source)
-
-    # 2. HÄMTA NY DATA (Om cache saknas eller är gammal)
-    channel_id = cached_data.get("channel_id") if cached_data else None
-    
-    # Steg A: Hitta Channel ID (Spara detta permanent för att spara pengar)
-    if not channel_id:
-        print(f"Fetching ID for {source['source_name']}...")
-        channel_id = get_channel_id_from_handle(url)
-    
-    if not channel_id:
-        print(f"❌ Kunde inte hitta ID för {source['source_name']}")
-        return []
-
-    # Steg B: Hitta Uploads Playlist ID
-    uploads_id = get_uploads_playlist_id(channel_id)
-    if not uploads_id: return []
-
-    # Steg C: Hämta videor (Billigt!)
-    raw_videos = get_videos_from_playlist(uploads_id)
-    
-    # 3. UPPDATERA CACHE
-    DATA_CACHE[url] = {
-        "last_fetched": time.time(),
-        "channel_id": channel_id, # Vi sparar ID så vi slipper söka nästa gång
-        "videos": raw_videos
-    }
-    save_cache(DATA_CACHE) # Spara till fil direkt
-
-    return process_cached_videos(raw_videos, source)
-
-def process_cached_videos(raw_videos, source):
-    """Omvandlar rå API-data till vårt format."""
-    final_videos = []
-    for vid in raw_videos:
-        if is_too_old(vid['timestamp']): continue
-
-        summary = clean_text(vid['summary'])
-        title = vid['title']
-        lang_note = ""
-
-        # Översättning (om det behövs, men oftast är YT på engelska)
-        if source.get('lang') == 'sv':
-            title = translate_text(title, 'sv')
-            summary = translate_text(summary, 'sv')
-            lang_note = " (Translated)"
-
-        final_videos.append({
-            "title": title,
-            "link": vid['link'],
-            "images": [vid['image']] if vid['image'] else [DEFAULT_IMAGE],
-            "summary": summary,
-            "category": source.get('cat', 'video'),
-            "filter_tag": source.get('filter_tag', ''),
-            "source": source.get('source_name', 'YouTube'),
-            "lang_note": lang_note,
-            "time_str": "", # Räknas ut senare
-            "timestamp": vid['timestamp'],
-            "is_video": True
-        })
-    return final_videos
-
-# --- WEB SCRAPING STRATEGIES (BEHÅLLS) ---
+# --- BILDSTRATEGIER ---
 def strategy_fz_se(link):
     try:
+        time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=10, verify=False)
+        if r.status_code != 200: return None
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return og["content"]
@@ -261,12 +105,25 @@ def strategy_fz_se(link):
     return None
 
 def strategy_phys_org(entry):
-    if 'media_thumbnail' in entry: return entry.media_thumbnail[0]['url'].replace('/tmb/', '/800/')
-    return None
+    img_url = None
+    if 'media_thumbnail' in entry: img_url = entry.media_thumbnail[0]['url']
+    elif 'media_content' in entry: img_url = entry.media_content[0]['url']
+    elif 'enclosures' in entry:
+        for enc in entry.enclosures:
+            type_str = getattr(enc, 'type', '') or enc.get('type', '')
+            if type_str.startswith('image/'):
+                img_url = getattr(enc, 'href', '') or enc.get('href', '')
+                break
+    if img_url:
+        if '/tmb/' in img_url: return img_url.replace('/tmb/', '/800/')
+        if 'thumbnails' in img_url: return img_url.replace('thumbnails', '800')
+    return img_url
 
 def strategy_aftonbladet(link):
     try:
+        time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
+        if r.status_code != 200: return None
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
         if matches: return matches[0].replace('&amp;', '&')
     except: pass
@@ -274,18 +131,34 @@ def strategy_aftonbladet(link):
 
 def strategy_deep_scrape(link):
     try:
+        time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
+        if r.status_code != 200: return None
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
-        if og: return urljoin(link, og["content"])
+        if og and og.get("content"): return urljoin(link, og["content"])
     except: pass
     return None
 
 def strategy_default(entry):
-    if 'media_content' in entry: return entry.media_content[0]['url']
-    for enc in entry.get('enclosures', []):
-        if enc.get('type', '').startswith('image/'): return enc['href']
-    return None
+    img_url = None
+    if 'media_content' in entry:
+        try: img_url = entry.media_content[0]['url']
+        except: pass
+    elif 'enclosures' in entry:
+        for enc in entry.enclosures:
+            type_str = getattr(enc, 'type', '') or enc.get('type', '')
+            if type_str.startswith('image/'):
+                img_url = getattr(enc, 'href', '') or enc.get('href', '')
+                break
+    if not img_url:
+        try:
+            r = get_session().get(entry.link, timeout=5, verify=False)
+            soup = BeautifulSoup(r.content, 'html.parser')
+            og = soup.find("meta", property="og:image")
+            if og: img_url = og['content']
+        except: pass
+    return img_url
 
 def get_image_for_article(entry, source_url):
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
@@ -310,12 +183,16 @@ def get_web_info(source):
             resp = get_session().get(source['url'], timeout=10, verify=False)
 
         if resp.status_code != 200: return []
+
         feed = feedparser.parse(resp.content)
         if not feed.entries: return []
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
-            if timestamp == 0: timestamp = time.time() - random.randint(100, 3600)
+            
+            if timestamp == 0:
+                timestamp = time.time() - random.randint(100, 3600)
+
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
@@ -323,19 +200,21 @@ def get_web_info(source):
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
 
-            summary = clean_text(entry.get('summary', '') or entry.get('description', ''))
+            raw_summary = entry.get('summary', '') or entry.get('description', '')
+            clean_summary = clean_text(raw_summary)
+
             title = entry.title
             lang_note = ""
             if source.get('lang') == 'sv':
                 title = translate_text(title, 'sv')
-                summary = translate_text(summary, 'sv')
+                clean_summary = translate_text(clean_summary, 'sv')
                 lang_note = " (Translated from Swedish)"
 
             found_articles.append({
                 "title": title,
                 "link": entry.link,
                 "images": [img_url],
-                "summary": summary,
+                "summary": clean_summary,
                 "category": source['cat'],
                 "filter_tag": source.get('filter_tag', ''), 
                 "source": source.get('source_name', 'News'),
@@ -347,20 +226,92 @@ def get_web_info(source):
     except: pass
     return found_articles
 
+def get_video_info(source):
+    videos = []
+    try:
+        ydl_opts = {
+            'quiet': True,
+            'ignoreerrors': True,
+            'extract_flat': True, # Vi använder flat för snabbhet
+            'playlistend': 8,     # MAX 8 VIDEOS (2 rader)
+            'no_warnings': True,
+            'http_headers': HEADERS
+        }
+        
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(source['url'], download=False)
+            if not info: return videos
+            entries = info.get('entries', [info])
+
+            for entry in entries:
+                if not entry: continue
+                
+                img_url = ''
+                thumbnails = entry.get('thumbnails', [])
+                if thumbnails and isinstance(thumbnails, list):
+                    try: img_url = thumbnails[-1].get('url', '')
+                    except: pass
+                
+                if not img_url and entry.get('id'):
+                    img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
+                if not img_url: img_url = DEFAULT_IMAGE
+
+                ts = 0
+                try:
+                    # YT-DLP flat extraction ger ofta upload_date som YYYYMMDD
+                    date_str = entry.get('upload_date')
+                    if date_str and len(date_str) == 8:
+                        ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
+                    elif entry.get('timestamp'): 
+                        ts = entry['timestamp']
+                except: pass
+
+                # 25-DAGARS REGELN
+                # Om vi har ett datum, kolla om det är för gammalt
+                if ts > 0:
+                    if is_too_old(ts): continue
+                else:
+                    # Om inget datum finns, sätt till nu (men risken är att gamla videos slinker igenom)
+                    # Med 'playlistend: 8' så hämtar vi dock bara de allra nyaste från kanalen,
+                    # så risken att få en 2 år gammal video är minimal.
+                    ts = time.time()
+
+                title = entry.get('title', 'Video')
+                clean_summary = clean_text(entry.get('description', ''))
+
+                lang_note = ""
+                if source.get('lang') == 'sv':
+                    title = translate_text(title, 'sv')
+                    clean_summary = translate_text(clean_summary, 'sv')
+                    lang_note = " (Translated from Swedish)"
+
+                videos.append({
+                    "title": title,
+                    "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry['id']}",
+                    "images": [img_url],
+                    "summary": clean_summary,
+                    "category": source.get('cat', 'video'),
+                    "filter_tag": source.get('filter_tag', ''),
+                    "source": source.get('source_name', 'YouTube'),
+                    "lang_note": lang_note,
+                    "time_str": "",
+                    "timestamp": ts,
+                    "is_video": True
+                })
+    except Exception as e:
+        print(f"FEL VID VIDEOHÄMTNING ({source.get('source_name')}): {e}")
+    return videos
+
+def get_video_info_wrapper(source):
+    return get_video_info(source)
+
 def process_source(source):
-    # HÄR ÄR SWITCHN: OM VIDEO -> ANVÄND API. ANNARS WEB.
-    if source['type'] == 'video': 
-        return get_video_info_api(source)
-    else: 
-        return get_web_info(source)
+    if source['type'] == 'video': return get_video_info_wrapper(source)
+    else: return get_web_info(source)
 
 # --- EXEKVERING ---
 new_articles = []
 start_time = time.time()
-
-# Vi kör API-anropen sekventiellt (en och en) eller i små batchar för att inte överbelasta om vi inte har cache
-# Men ThreadPool funkar bra för web scraping. För API kan det vara bra att vara varsam första gången.
-# Vi kör på som vanligt, cachen skyddar oss.
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
     future_map = {executor.submit(process_source, s): s for s in SOURCES}
@@ -368,18 +319,16 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         try:
             data = future.result()
             if data: new_articles.extend(data)
-        except Exception as e:
-            print(f"Error processing source: {e}")
+        except: pass
 
 unique_map = {}
 for art in new_articles:
-    if not art['title']: continue
+    if not art['title'] or art['title'] == 'Video': continue
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-# Jitter för webbnyheter (inte lika viktigt för YT nu när vi har exakt tid, men bra för mixen)
 for art in final_list:
-    jitter = random.randint(-300, 300) 
+    jitter = random.randint(-7200, 7200)
     art['sort_score'] = art['timestamp'] + jitter
 
 final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
