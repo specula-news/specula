@@ -35,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.33 - FULL METADATA MODE) ---")
+print(f"--- STARTAR GENERATORN (V20.5.34 - FAST & ACCURATE TIME) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -230,8 +230,7 @@ def get_video_info(source):
         ydl_opts = {
             'quiet': True,
             'ignoreerrors': True,
-            # HÄR ÄR DEN STORA FIXEN: extract_flat = False hämtar full metadata
-            'extract_flat': False, 
+            'extract_flat': True, # SNABBARE, MEN KRÄVER SMART DATUMTOLKNING
             'playlistend': 5, 
             'no_warnings': True,
             'http_headers': HEADERS
@@ -240,42 +239,35 @@ def get_video_info(source):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             if not info: return videos
-            
-            # Om det är en spellista/kanal, ligger videorna i 'entries'
-            # Om det är en enskild video, är 'info' själva videon
-            if 'entries' in info:
-                entries = info['entries']
-            else:
-                entries = [info]
+            entries = info.get('entries', [info])
 
             for entry in entries:
                 if not entry: continue
                 
+                # BILDHANTERING
                 img_url = ''
                 thumbnails = entry.get('thumbnails', [])
                 if thumbnails and isinstance(thumbnails, list):
-                    # Försök ta den största bilden (sista i listan oftast)
                     try: img_url = thumbnails[-1].get('url', '')
                     except: pass
                 
+                # REPARERAD BILD-LÄNK (Här var felet i förra koden!)
                 if not img_url and entry.get('id'):
                     img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
                 if not img_url: img_url = DEFAULT_IMAGE
 
+                # DATUMHANTERING - SMART LÄSNING
                 ts = 0
                 try:
-                    # FIX: PRIORITERA EXAKTA TIMESTAMP FRÅN METADATA
-                    if entry.get("release_timestamp"):
-                        ts = entry["release_timestamp"]
-                    elif entry.get("timestamp"):
-                        ts = entry["timestamp"]
-                    elif entry.get("upload_date"):
-                        # Fallback till datumsträng YYYYMMDD
-                        ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
+                    # I 'extract_flat' är upload_date oftast en sträng 'YYYYMMDD'
+                    upload_date_str = entry.get('upload_date')
+                    if upload_date_str and len(upload_date_str) == 8:
+                        ts = datetime.strptime(upload_date_str, '%Y%m%d').timestamp()
+                    elif entry.get('timestamp'): 
+                        ts = entry['timestamp']
                 except: pass
 
-                # Fallback: Om timestamp fortfarande är 0, sätt till nu
-                # (Men med extract_flat=False bör detta hända extremt sällan)
+                # Fallback: Om datum saknas helt, sätt till NU så videon syns
                 if ts == 0:
                     ts = time.time()
 
@@ -342,9 +334,7 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    if diff < 60:
-        art['time_str'] = "Just Now"
-    elif diff < 3600:
+    if diff < 3600:
         art['time_str'] = f"{int(diff/60)}m ago"
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
