@@ -138,10 +138,10 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
-            /* BOTTOM ROW: 5 BUTTONS GRID (5 EQUAL COLUMNS) */
+            /* BOTTOM ROW: 4 BUTTONS GRID (FIXED FOR ALIGNMENT) */
             .nav-bottom-row {
                 display: grid; 
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* NOW 5 COLS FOR ENERGY */
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 EQUAL COLUMNS FOR ENERGY */
                 width: 100%;
                 padding: 5px 0;
             }
@@ -150,7 +150,7 @@
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.65rem; 
+                font-size: 0.65rem; /* Slightly smaller to fit Energy */
             }
             
             .desktop-label { display: none !important; }
@@ -251,18 +251,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.28 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.28 - Time Accuracy</strong>
+                 <!-- V20.5.32 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #ff4444;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.32 - Forced Visibility</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Exact Time:</strong> Fixed the "Just Now" bug. Videos now display accurate upload times (e.g., 14h ago) by calculating from midnight if exact hour is missing.<br>
-                        • <strong>Mobile Menu:</strong> Bottom row updated to 5 columns to fit "Energy" category perfectly.
+                        • <strong>Show All Videos:</strong> Removed the strict date check. All videos are now shown, even if the date is missing (defaulting to "Just Now" if unknown).<br>
+                        • <strong>5-Column Mobile:</strong> Bottom nav row updated to 5 columns to fit "ENERGY".
                     </div>
-                 </li>
-                 <!-- V20.5.27 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.27</strong><br>
-                    Added Energy Category & Content Moves.
                  </li>
             </ul>
         </div>
@@ -293,7 +288,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.28</div>
+                <div class="version-display" id="versionBtn">Version 20.5.32</div>
             </div>
             
             <div class="nav-wrapper">

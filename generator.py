@@ -25,10 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-
-# HÄR ÄR DIN 10-DAGARS REGEL:
-MAX_AGE_DAYS = 10 
-
+MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -38,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.31 - EXACT DATE OR SKIP) ---")
+print(f"--- STARTAR GENERATORN (V20.5.32 - FORCE SHOW VIDEOS) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -74,9 +71,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    # Om timestamp är 0 (okänt), kasta bort den för säkerhets skull så vi inte får fel sortering
-    if timestamp == 0: return True 
-    
+    if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -192,8 +187,9 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
-            # Om datum saknas helt för en artikel, chansa inte. Hoppa över.
-            if timestamp == 0: continue
+            # Fallback till nu om datum saknas
+            if timestamp == 0:
+                timestamp = time.time() - random.randint(100, 3600)
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
@@ -232,12 +228,12 @@ def get_video_info(source):
     videos = []
     try:
         ydl_opts = {
-            'quiet': True,
-            'ignoreerrors': True,
-            'extract_flat': True,
-            'playlistend': 5, # ENDAST DE 5 SENASTE
+            'quiet': True, 
+            'ignoreerrors': True, 
+            'extract_flat': True, 
+            'playlistend': 5, # Max 5 videos per kanal
             'no_warnings': True,
-            'http_headers': HEADERS
+            'http_headers': HEADERS 
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -260,15 +256,16 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    # FÖRSÖK HITTA RIKTIGT DATUM
                     date_str = entry.get('upload_date') or entry.get('release_date')
                     if date_str:
                         ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
+                    elif entry.get('timestamp'):
+                        ts = entry['timestamp']
                 except: pass
 
-                # VIKTIGT: Om vi inte hittar datumet, HOPPA ÖVER VIDEON.
-                # Vi gissar inte längre "Just Now".
-                if ts == 0: continue
+                # FIX: Om datum saknas, sätt till NU så videon syns!
+                if ts == 0:
+                    ts = time.time()
 
                 if is_too_old(ts): continue
 
@@ -333,7 +330,6 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    # Här räknar vi ut tiden korrekt baserat på det extraherade datumet
     if diff < 3600:
         art['time_str'] = "Just Now" # Mindre än 1h
     elif diff < 86400: 
