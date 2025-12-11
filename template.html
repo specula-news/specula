@@ -44,14 +44,14 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* SEARCH BAR */
+        /* SEARCH BAR (GLUED TO TOP) */
         .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
         .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
         .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
 
-        /* UNIFIED NAV */
+        /* UNIFIED NAV (MAIN BAR) */
         .unified-nav { 
             display: flex; 
             flex-wrap: wrap; 
@@ -69,10 +69,8 @@
         .filter-btn { position: relative; background: transparent; border: none; color: var(--text-secondary); padding: 8px 14px; cursor: pointer; border-radius: 40px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.75rem; flex-shrink: 0; white-space: nowrap; }
         .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
-        
-        /* COLORS FOR BUTTONS */
-        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; } /* MEDIA */
-        .filter-btn[onclick*="'youtubers'"].active { background: #ffaa00; color: black; } /* YOUTUBERS */
+        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
+        .filter-btn[onclick*="'youtubers'"].active { background: #ffaa00; color: black; }
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
         .filter-btn[onclick*="'geopolitics'"].active { background: #00ff88; color: black; }
 
@@ -88,38 +86,25 @@
         .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
-        
-        /* HIDE DEFAULT CHECKBOX */
         .check-item input { display: none !important; }
-        
-        /* CIRCLE INDICATOR */
         .check-indicator { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-secondary); position: relative; transition: 0.2s; flex-shrink: 0; }
-        
-        /* COLORS & GLOW ON SELECTION */
         .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
         .check-item input:checked ~ span { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
         
-        /* MEDIA (RED) */
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
         #videoDropdown .check-item input:checked ~ span { color: #ff0040; text-shadow: 0 0 10px rgba(255,0,64,0.5); }
-
-        /* YOUTUBERS (ORANGE) */
         #youtubersDropdown .check-item input:checked + .check-indicator { background: #ffaa00; border-color: #ffaa00; box-shadow: 0 0 8px rgba(255, 170, 0, 0.5); }
         #youtubersDropdown .check-item input:checked ~ span { color: #ffaa00; text-shadow: 0 0 10px rgba(255, 170, 0, 0.5); }
-
-        /* GAMING (PURPLE) */
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
-
-        /* GEO (GREEN) */
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
+        /* READ LATER (GLUED) */
         .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
         .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
@@ -127,33 +112,50 @@
 
         @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
 
-        /* --- MOBILE SPECIFIC FIXES (5 COLUMNS NOW) --- */
+        /* --- MOBILE SPECIFIC FIXES --- */
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* GRID LAYOUT FOR MOBILE NAV (5 COLUMNS) */
+            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
             .unified-nav { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 EQUAL COLUMNS */
+                display: flex; 
+                flex-direction: column; /* Stack vertically */
                 width: 100%; 
                 gap: 0;
                 padding: 2px;
+                border-radius: 20px;
             }
+
+            /* TOP ROW: 5 BUTTONS GRID */
+            .nav-top-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 columns */
+                width: 100%;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            
+            /* BOTTOM ROW: CENTERED FLEX */
+            .nav-bottom-row {
+                display: flex;
+                justify-content: center; /* CENTER */
+                flex-wrap: wrap;
+                width: 100%;
+                padding: 5px 0;
+            }
+
             .filter-btn { 
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                font-size: 0.55rem; /* SMALLER TEXT TO FIT 5 BUTTONS */
+                font-size: 0.7rem; /* INCREASED SIZE */
             }
             
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
-
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
-            
             .mobile-hide { display: block !important; }
 
             .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
@@ -165,6 +167,7 @@
         }
         
         @media (min-width: 769px) {
+            .nav-top-row, .nav-bottom-row { display: contents; } /* Unwrap for desktop */
             .desktop-categories-list { display: contents; } 
         }
 
@@ -179,7 +182,6 @@
         .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5; pointer-events: none; }
         .play-overlay::after { content: ''; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--accent); margin-left: 4px; }
         .cat-tag { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--accent); z-index: 10; pointer-events: none; }
-        
         .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card); z-index: 2; }
         .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; font-weight: 600; }
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -251,13 +253,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.19 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #ffaa00;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.19 - The Youtubers Update</strong>
+                 <!-- V20.5.20 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.20 - Complete Overhaul</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>New Category:</strong> Added distinct "YOUTUBERS" section for independent analysts/streamers.<br>
-                        • <strong>Media Split:</strong> "MEDIA" now focuses on official news channels (BBC, DW, etc).<br>
-                        • <strong>5-Column Mobile:</strong> Grid layout updated to fit 5 buttons (All, Media, Tubers, Gaming, Geo) on mobile.
+                        • <strong>Stacked Mobile Nav:</strong> Split menu into two rows on mobile. Top: Grid (All, Media, Tubers, Gaming, Geo). Bottom: Centered Flex (Tech, EV, Science, Construction).<br>
+                        • <strong>Content Boost:</strong> Added Swedish EV & Construction sources.<br>
+                        • <strong>Text Visibility:</strong> Increased mobile font size.
                     </div>
                  </li>
             </ul>
@@ -289,97 +291,101 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.19</div>
+                <div class="version-display" id="versionBtn">Version 20.5.20</div>
             </div>
             
             <div class="nav-wrapper">
                 <div class="search-container"><input type="text" id="searchInput" class="search-input" placeholder="Search headlines..."><span class="search-icon">🔍</span></div>
 
                 <nav class="unified-nav" id="catNav">
-                    <!-- MOBILE BUTTON: ALL NEWS -->
-                    <div class="show-on-mobile" style="display:none;">
-                         <button class="filter-btn" onclick="setCategory('all')">ALL NEWS</button>
-                    </div>
+                    
+                    <!-- TOP ROW (GRID 5 COLS ON MOBILE) -->
+                    <div class="nav-top-row">
+                        <!-- NEWS BUTTON -->
+                        <div class="show-on-mobile" style="display:none;">
+                             <button class="filter-btn" onclick="setCategory('all')">NEWS</button>
+                        </div>
+                        <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
 
-                    <!-- DESKTOP BUTTON: ALL NEWS -->
-                    <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
-
-                    <!-- MEDIA (Formerly YOUTUBE) -->
-                    <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
-                        <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">
-                            <span class="desktop-label">MEDIA ▼</span>
-                            <span class="mobile-label">MEDIA ▼</span>
-                        </button>
-                        <div id="videoDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('video', 'global', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('video', 'china', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('video', 'usa', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('video', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                        <!-- MEDIA -->
+                        <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
+                            <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">
+                                <span class="desktop-label">MEDIA ▼</span>
+                                <span class="mobile-label">MEDIA ▼</span>
+                            </button>
+                            <div id="videoDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('video', 'global', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('video', 'china', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('video', 'usa', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('video', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK</button></div>
                             </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK</button></div>
+                        </div>
+
+                        <!-- TUBERS -->
+                        <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('youtubers')">
+                            <button class="filter-btn" id="youtubersBtn" onclick="handleMenuClick('youtubers', event)">
+                                <span class="desktop-label">YOUTUBERS ▼</span>
+                                <span class="mobile-label">TUBERS ▼</span>
+                            </button>
+                            <div id="youtubersDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Geo</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'geo', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('youtubers')">OK</button></div>
+                            </div>
+                        </div>
+
+                        <!-- GAMING -->
+                        <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('gaming')">
+                            <button class="filter-btn" id="gamingBtn" onclick="handleMenuClick('gaming', event)">GAMING ▼</button>
+                            <div id="gamingDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK</button></div>
+                            </div>
+                        </div>
+
+                        <!-- GEO -->
+                        <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative; display:block !important;" onmouseleave="closeOnLeave('geopolitics')">
+                            <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">
+                                <span class="desktop-label">GEOPOLITICS ▼</span>
+                                <span class="mobile-label">GEO ▼</span>
+                            </button>
+                            <div id="geopoliticsDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'usa', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>EU</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'eu', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- YOUTUBERS (NEW) -->
-                    <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('youtubers')">
-                        <button class="filter-btn" id="youtubersBtn" onclick="handleMenuClick('youtubers', event)">
-                            <span class="desktop-label">YOUTUBERS ▼</span>
-                            <span class="mobile-label">TUBERS ▼</span>
-                        </button>
-                        <div id="youtubersDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Geo</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'geo', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('youtubers')">OK</button></div>
-                        </div>
-                    </div>
-
-                    <!-- GAMING -->
-                    <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('gaming')">
-                        <button class="filter-btn" id="gamingBtn" onclick="handleMenuClick('gaming', event)">GAMING ▼</button>
-                        <div id="gamingDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK</button></div>
-                        </div>
-                    </div>
-
-                    <!-- GEOPOLITICS -->
-                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
-                        <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">
-                            <span class="desktop-label">GEOPOLITICS ▼</span>
-                            <span class="mobile-label">GEO ▼</span>
-                        </button>
-                        <div id="geopoliticsDropdown" class="dropdown-menu">
-                            <div class="dropdown-list">
-                                <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'usa', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EU</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'eu', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label>
-                            </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div>
-                        </div>
-                    </div>
-
-                    <div class="desktop-categories-list" style="display: contents;">
+                    <!-- BOTTOM ROW (CENTERED ON MOBILE) -->
+                    <div class="nav-bottom-row desktop-categories-list">
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
                         <button class="filter-btn" onclick="setCategory('science')">Science</button>
                         <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                     </div>
+
                 </nav>
                 <div class="read-later-container"><button class="read-later-btn" id="readLaterBtn" onclick="toggleSavedView()"><span style="font-size:1.2em">♥</span> Read Later</button></div>
             </div>
@@ -401,12 +407,12 @@
         const state = { 
             category: 'all', 
             videoFilters: new Set(),
-            youtubersFilters: new Set(), // NYTT
+            youtubersFilters: new Set(),
             gamingFilters: new Set(),
             geopoliticsFilters: new Set(),
             topicFilters: new Set(), 
             tempVideoFilters: new Set(),
-            tempYoutubersFilters: new Set(), // NYTT
+            tempYoutubersFilters: new Set(),
             tempGamingFilters: new Set(),
             tempGeopoliticsFilters: new Set(),
             tempTopicFilters: new Set(),
@@ -563,16 +569,14 @@
 
                 if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); }
                 if (state.category === 'all') { 
-                    // PÅ startsidan: Visa allt utom rena YouTube-analys videos (youtubers) och gaming-videos om man inte vill ha spam
                     if (artCat === 'youtubers') return false; 
                     if (artCat === 'gaming' && art.is_video) return false; 
                     return fullText.includes(state.search); 
                 }
 
-                // MEDIA (VIDEO BUTTON) - Shows Official News Channels (CNN, BBC, CCTV etc)
                 if (state.category === 'video') { 
                     if (!art.is_video) return false; 
-                    if (artCat === 'youtubers') return false; // Hide independent youtubers
+                    if (artCat === 'youtubers') return false; 
                     if (state.videoFilters.size > 0) { 
                         let matchFound = false; 
                         for (let filter of state.videoFilters) { 
@@ -583,7 +587,6 @@
                     return fullText.includes(state.search); 
                 }
 
-                // YOUTUBERS BUTTON - Shows Independent Analysts (Johnny Harris, etc)
                 if (state.category === 'youtubers') {
                     if (artCat !== 'youtubers') return false;
                     if (state.youtubersFilters.size > 0) {
