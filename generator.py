@@ -38,7 +38,7 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V5.1 - BRUTE FORCE AFTONBLADET & SWEC) ---")
+print(f"--- STARTAR GENERATORN (V5.2 - SWECLOCKERS OG PRIORITY) ---")
 
 # --- FAKE BROWSER HEADERS ---
 BROWSER_HEADERS = {
@@ -97,7 +97,10 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    Sweclockers: Letar aggressivt efter JSON-LD eller Regex.
+    Sweclockers Strategi V5.2:
+    PRIO 1: OpenGraph (Efter ditt testresultat)
+    PRIO 2: Regex för CDN-länkar (Fallback)
+    PRIO 3: JSON-LD (Fallback)
     """
     try:
         time.sleep(random.uniform(0.5, 1.0))
@@ -105,17 +108,20 @@ def strategy_sweclockers(link):
         r = session.get(link, timeout=10, verify=False)
         if r.status_code != 200: return None
         html_content = r.text
+        soup = BeautifulSoup(html_content, 'html.parser')
 
-        # 1. Regex för dynamiska länkar (Dina exempel: ?l=...)
-        # Vi letar efter cdn-länken och tar allt fram till nästa citationstecken
+        # PRIO 1: OPEN GRAPH (Detta fungerade bäst i ditt test)
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"):
+            return og["content"]
+
+        # PRIO 2: Regex för dynamiska länkar (?l=...)
         pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[a-zA-Z0-9%\-_]+)'
         matches = re.findall(pattern_dynamic, html_content)
         if matches:
-            # Ta den längsta (oftast mest komplexa/korrekta)
             return max(matches, key=len).replace("&amp;", "&")
 
-        # 2. JSON-LD (Strukturerad data för Google)
-        soup = BeautifulSoup(html_content, 'html.parser')
+        # PRIO 3: JSON-LD
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
             try:
@@ -127,30 +133,18 @@ def strategy_sweclockers(link):
                     if isinstance(img_data, str): return img_data
             except: continue
 
-        # 3. Fallback: OpenGraph
-        og = soup.find("meta", property="og:image")
-        if og and og.get("content"): return og["content"]
-
     except Exception: pass
     return None
 
 def strategy_aftonbladet(link):
     """
     Aftonbladet: Regex Brute Force.
-    Vi letar efter ALLT som ser ut som en bildlänk i källkoden.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
-        
-        # Regex: Hitta länkar som börjar med deras bild-CDN
-        # Exempel: https://images.aftonbladet-cdn.se/v2/images/b02c...
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)', r.text)
-        
-        if matches:
-            # Ta den första (oftast huvudbilden)
-            return matches[0]
-            
+        if matches: return matches[0]
     except: pass
     return None
 
@@ -179,8 +173,7 @@ def strategy_phys_org(entry):
 
 def strategy_deep_scrape(link):
     """
-    Generell "Deep Scrape" för sidor som CNN, Dagens PS, etc.
-    Prioriterar OpenGraph.
+    Generell "Deep Scrape". Prioriterar OpenGraph.
     """
     try:
         time.sleep(random.uniform(0.3, 0.7))
@@ -188,7 +181,7 @@ def strategy_deep_scrape(link):
         r = session.get(link, timeout=8, verify=False)
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        # 1. Open Graph (Bäst för CNN, Dagens PS)
+        # 1. Open Graph
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): 
             return urljoin(link, og["content"])
@@ -266,6 +259,7 @@ def get_web_info(source):
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
+            # Hämta bild
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
