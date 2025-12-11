@@ -19,6 +19,7 @@ try:
 except ImportError:
     TRANSLATOR_ACTIVE = False
 
+# Stäng av varningar för osecure requests (om verify=False används)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
@@ -29,13 +30,15 @@ MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
+# Ladda källor från sources.py
 try:
     from sources import SOURCES
     print(f"--- LADDADE {len(SOURCES)} KÄLLOR ---")
 except ImportError:
     SOURCES = []
+    print("VARNING: sources.py hittades inte eller är tom.")
 
-print(f"--- STARTAR GENERATORN (V20.5.32 - FORCE SHOW VIDEOS) ---")
+print(f"--- STARTAR GENERATORN (V20.5.33 - SWECLOCKERS FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -43,7 +46,16 @@ HEADERS = {
     "Referer": "https://www.google.com/"
 }
 
+# --- HJÄLPFUNKTIONER ---
+
+def get_session():
+    """Skapar en requests-session med rätt headers."""
+    s = requests.Session()
+    s.headers.update(HEADERS)
+    return s
+
 def clean_text(text):
+    """Rensar HTML och kortar ner texten."""
     if not text: return ""
     text = BeautifulSoup(text, "html.parser").get_text(separator=" ")
     text = " ".join(text.split())
@@ -52,6 +64,7 @@ def clean_text(text):
     return text
 
 def translate_text(text, source_lang):
+    """Översätter text om biblioteket finns."""
     if not TRANSLATOR_ACTIVE or not text: return text
     try:
         if len(text) > 1000: text = text[:1000]
@@ -59,6 +72,7 @@ def translate_text(text, source_lang):
     except Exception: return text
 
 def parse_date_to_timestamp(entry):
+    """Försöker hitta datum i RSS-entry och göra om till timestamp."""
     try:
         if hasattr(entry, 'published_parsed') and entry.published_parsed:
             return time.mktime(entry.published_parsed)
@@ -71,16 +85,13 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
+    """Kollar om artikeln är äldre än MAX_AGE_DAYS."""
     if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
-def get_session():
-    s = requests.Session()
-    s.headers.update(HEADERS)
-    return s
-
 def clean_image_url_generic(url):
+    """Städar upp bild-URLer vid behov."""
     if not url: return None
     if 'aftonbladet' in url: return url
     if 'phys.org' in url or 'scx' in url: return url
@@ -89,7 +100,45 @@ def clean_image_url_generic(url):
         if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
-# --- BILDSTRATEGIER ---
+# --- BILDSTRATEGIER (SCRAPING) ---
+
+def strategy_sweclockers(link):
+    """Specialstrategi för Sweclockers artiklar och tävlingar."""
+    try:
+        time.sleep(random.uniform(0.1, 0.3))
+        r = get_session().get(link, timeout=8, verify=False)
+        if r.status_code != 200: return None
+        soup = BeautifulSoup(r.content, 'html.parser')
+
+        # 1. Försök med Open Graph (Standard)
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"):
+            return og["content"]
+
+        # 2. Specifikt för Sweclockers artiklar (Huvudbilden)
+        head_media = soup.find("div", class_="article-head__media")
+        if head_media:
+            img = head_media.find("img")
+            if img and img.get("src"):
+                src = img["src"]
+                if src.startswith("//"): return "https:" + src
+                return src
+
+        # 3. Fallback: Hitta första riktiga bilden i innehållet
+        content = soup.find("div", class_="article-content") or soup.find("div", id="content")
+        if content:
+            images = content.find_all("img")
+            for img in images:
+                src = img.get("src", "")
+                # Ignorera smileys/emojis och avatarer
+                if "cdn.sweclockers.com" in src and "emoticons" not in src and "avatar" not in src:
+                    if src.startswith("//"): return "https:" + src
+                    if src.startswith("http"): return src
+                    
+    except Exception as e:
+        pass # Tyst felhantering för scraping
+    return None
+
 def strategy_fz_se(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
@@ -158,15 +207,26 @@ def strategy_default(entry):
     return img_url
 
 def get_image_for_article(entry, source_url):
+    """Väljer rätt bildstrategi baserat på URL."""
+    
+    # 1. Sweclockers (Ny Fix)
+    if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
+    
+    # 2. Övriga specifika strategier
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
-    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
+    
+    # 3. Deep scrape lista (Exkludera sweclockers då den har egen nu)
+    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
         if not url: return strategy_default(entry)
         return url
+        
     return strategy_default(entry)
+
+# --- HUVUDFUNKTIONER FÖR HÄMTNING ---
 
 def get_web_info(source):
     found_articles = []
@@ -194,6 +254,7 @@ def get_web_info(source):
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
+            # HÄMTA BILD
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
@@ -251,7 +312,7 @@ def get_video_info(source):
                     except: pass
                 
                 if not img_url and entry.get('id'):
-                    img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
+                    img_url = f"https://i.ytimg.com/vi/{entry['id']}/hqdefault.jpg"
                 if not img_url: img_url = DEFAULT_IMAGE
 
                 ts = 0
@@ -280,7 +341,7 @@ def get_video_info(source):
 
                 videos.append({
                     "title": title,
-                    "link": entry.get('url') or entry.get('webpage_url') or f"https://www.youtube.com/watch?v={entry['id']}",
+                    "link": entry.get('url') or entry.get('webpage_url') or f"https://www.youtube.com/watch?v={entry.get('id')}",
                     "images": [img_url],
                     "summary": clean_summary,
                     "category": source.get('cat', 'video'),
@@ -295,17 +356,16 @@ def get_video_info(source):
         print(f"FEL VID VIDEOHÄMTNING ({source.get('source_name')}): {e}")
     return videos
 
-def get_video_info_wrapper(source):
-    return get_video_info(source)
-
 def process_source(source):
-    if source['type'] == 'video': return get_video_info_wrapper(source)
+    """Wrapper för threading."""
+    if source['type'] == 'video': return get_video_info(source)
     else: return get_web_info(source)
 
 # --- EXEKVERING ---
 new_articles = []
 start_time = time.time()
 
+# Kör multithreading för snabbare hämtning
 with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
     future_map = {executor.submit(process_source, s): s for s in SOURCES}
     for future in concurrent.futures.as_completed(future_map):
@@ -314,18 +374,21 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
             if data: new_articles.extend(data)
         except: pass
 
+# Ta bort dubbletter baserat på URL
 unique_map = {}
 for art in new_articles:
     if not art['title'] or art['title'] == 'Video': continue
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
+# Sortering med lite slumpmässig "jitter" för att blanda källor
 for art in final_list:
-    jitter = random.randint(-7200, 7200)
+    jitter = random.randint(-7200, 7200) # +/- 2 timmar
     art['sort_score'] = art['timestamp'] + jitter
 
 final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
 
+# Skapa läsbara tidssträngar
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
@@ -343,14 +406,17 @@ for art in final_list:
 
     art.pop('sort_score', None)
 
+# Begränsa antalet totala artiklar
 final_list = final_list[:TOTAL_LIMIT]
 
+# Spara JSON
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_list, f, ensure_ascii=False, indent=2)
 
 print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
 print(f"Totalt antal artiklar: {len(final_list)}")
 
+# Generera HTML
 if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
         html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
