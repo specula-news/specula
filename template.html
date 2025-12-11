@@ -44,14 +44,14 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* SEARCH BAR */
+        /* SEARCH BAR (GLUED TO TOP) */
         .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
         .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
         .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
 
-        /* UNIFIED NAV */
+        /* UNIFIED NAV (MAIN BAR) */
         .unified-nav { 
             display: flex; 
             flex-wrap: wrap; 
@@ -99,29 +99,25 @@
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-        
         .dropdown-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); gap: 10px; }
         .footer-btn { background: none; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
+        /* READ LATER (GLUED) */
         .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
         .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
 
-        @media (min-width: 769px) { 
-            .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } 
-            .desktop-categories-list { display: contents; } 
-            .nav-top-row, .nav-bottom-row { display: contents; }
-        }
+        @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
 
         /* --- MOBILE SPECIFIC FIXES --- */
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
+            /* GRID LAYOUT FOR MOBILE NAV (5 COLUMNS) */
             .unified-nav { 
                 display: flex; 
                 flex-direction: column; 
@@ -131,7 +127,6 @@
                 border-radius: 20px;
             }
 
-            /* TOP ROW: 5 BUTTONS GRID */
             .nav-top-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -139,10 +134,9 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
-            /* BOTTOM ROW: FLEXBOX FOR PERFECT SPACING (FIXED) */
             .nav-bottom-row {
-                display: flex;
-                justify-content: space-evenly; /* This ensures equal spacing */
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 EQUAL COLUMNS */
                 width: 100%;
                 padding: 5px 0;
             }
@@ -154,14 +148,9 @@
                 font-size: 0.75rem; 
             }
             
-            /* Specific fix for bottom row buttons width */
-            .nav-bottom-row .filter-btn {
-                width: auto; /* Let text define width in flexbox */
-                padding: 4px 6px;
-            }
-            
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
+
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
@@ -173,6 +162,11 @@
             #youtubersDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
             #gamingDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
             #geopoliticsDropdown { left: auto !important; right: 0 !important; transform: none !important; min-width: 200px; }
+        }
+        
+        @media (min-width: 769px) {
+            .nav-top-row, .nav-bottom-row { display: contents; } 
+            .desktop-categories-list { display: contents; } 
         }
 
         /* GRID FIXES */
@@ -205,7 +199,7 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
@@ -258,17 +252,13 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.22 -->
+                 <!-- V20.5.23 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.22 - Flex Sizing</strong>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.23 - News Purist</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Bottom Row Fixed:</strong> Switched bottom nav row (Tech, EV...) to Flexbox Space-Evenly. Now "EV" and "CONSTRUCTION" share space perfectly without weird gaps.
+                        • <strong>Pure News:</strong> "All News" now strictly displays articles only. No videos will appear in this feed.<br>
+                        • <strong>Grid Polish:</strong> Perfected mobile layout alignment for the 4-column bottom row.
                     </div>
-                 </li>
-                 <!-- V20.5.21 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.21</strong><br>
-                    Mobile Grid Fix.
                  </li>
             </ul>
         </div>
@@ -299,7 +289,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.22</div>
+                <div class="version-display" id="versionBtn">Version 20.5.23</div>
             </div>
             
             <div class="nav-wrapper">
@@ -386,7 +376,7 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM ROW (FLEX CENTERED) -->
+                    <!-- BOTTOM ROW (GRID 4 COLS) -->
                     <div class="nav-bottom-row desktop-categories-list">
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
@@ -577,8 +567,7 @@
 
                 if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); }
                 if (state.category === 'all') { 
-                    if (artCat === 'youtubers') return false; 
-                    if (artCat === 'gaming' && art.is_video) return false; 
+                    if (art.is_video) return false; // STRICTLY NO VIDEOS IN ALL NEWS
                     return fullText.includes(state.search); 
                 }
 
