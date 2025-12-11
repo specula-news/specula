@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V5.0 (LOGIC TESTER)</title>
+    <title>SPECULA ADMIN // V5.2 (DUMP & MENU FIX)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -11,20 +11,106 @@
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* HEADER */
-        .top-bar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: rgba(0,0,0,0.95); z-index: 100; }
+        .top-bar { 
+            height: 70px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 100;
+            flex-shrink: 0;
+        }
         .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
         .brand span { color: var(--accent); }
         
-        .actions { display: flex; align-items: center; gap: 8px; }
-        .actions button { background: #111; border: 1px solid #444; color: #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; transition: 0.2s; font-size: 0.8rem; }
+        .actions { display: flex; align-items: center; gap: 10px; }
+        .actions button { background: #111; border: 1px solid #444; color: #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; transition: 0.2s; font-size: 0.75rem; white-space: nowrap; }
         .actions button:hover { border-color: #fff; color: #fff; }
-        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         
-        /* NAV & GRID */
-        .nav-container { display: flex; align-items: center; padding: 0 30px; height: 50px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; }
-        .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; }
-        .nav-item:hover { color: #fff; background: #1a1a1a; }
-        .nav-item.active { color: #000; background: var(--accent); }
+        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
+        .btn-dump { border-color: #ffaa00 !important; color: #ffaa00 !important; }
+        .btn-dump:hover { background: #ffaa00 !important; color: #000 !important; }
+        .btn-code { border-color: #555 !important; color: #aaa !important; }
+        .btn-code:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+        /* NAVIGATION - FIXED LAYOUT & HOVER BRIDGE */
+        .nav-container { 
+            display: flex; 
+            align-items: center; 
+            padding: 10px 20px; 
+            background: #0a0a0a; 
+            border-bottom: 1px solid var(--border); 
+            gap: 10px; 
+            z-index: 90; 
+            flex-wrap: wrap; 
+            min-height: 50px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        
+        .nav-item { 
+            position: relative; 
+            padding: 8px 12px; 
+            cursor: pointer; 
+            font-family: 'Space Grotesk'; 
+            font-weight: 700; 
+            font-size: 0.8rem; 
+            color: #666; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            border-radius: 4px;
+            white-space: nowrap;
+            background: #111;
+            border: 1px solid transparent;
+        }
+        .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
+        .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
+
+        /* THE INVISIBLE BRIDGE (Fixar problemet med att menyn försvinner) */
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -15px; /* Sträcker sig ner över gapet */
+            width: 100%;
+            height: 20px;
+            background: transparent;
+            z-index: 10;
+        }
+        
+        /* DROPDOWN */
+        .dropdown { 
+            position: absolute; 
+            top: 100%; /* Precis under knappen */
+            left: 0; 
+            background: #111; 
+            border: 1px solid #333; 
+            border-radius: 6px; 
+            padding: 5px; 
+            min-width: 180px; 
+            display: none; 
+            flex-direction: column; 
+            z-index: 200; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            margin-top: 5px; /* Det lilla gapet som::after bryggar över */
+        }
+        
+        /* Visa dropdown när man hovrar över nav-item (inklusive den osynliga bryggan) */
+        .nav-item:hover .dropdown, 
+        .dropdown:hover { 
+            display: flex; 
+        }
+
+        .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
+        .drop-item:hover { background: #222; color: #fff; }
+        .drop-item.selected { color: var(--accent); }
+        .count { font-size: 0.7em; opacity: 0.5; background: #333; padding: 2px 5px; border-radius: 4px; }
+
+        /* MAIN AREA */
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 15px; }
         
@@ -68,15 +154,26 @@
         .editor-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .editor-overlay.open { display: flex; }
         .editor-window { width: 90%; max-width: 1000px; height: 85vh; background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 20px; }
-        .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; }
+        .code-area { 
+            flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); 
+            font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; 
+            white-space: pre-wrap; overflow-y: auto; 
+        }
         
         /* FOOTER ADD */
-        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; }
+        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
 
         /* TOAST */
         .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--accent); color: var(--accent); padding: 10px 25px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; }
         .toast.show { opacity: 1; top: 90px; }
+        
+        .view-header { font-family: 'Space Grotesk'; font-size: 1.5rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .view-badge { font-size: 0.8rem; background: #222; padding: 4px 8px; border-radius: 4px; color: #888; font-family: 'Inter'; }
+        
+        .editor-controls { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-clear { background: #330000; border: 1px solid #550000; color: #ff5555; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-clear:hover { background: #550000; color: #fff; }
     </style>
 </head>
 <body>
@@ -85,11 +182,17 @@
     <input type="hidden" id="ghRepo" value="specula">
     <input type="hidden" id="ghToken" value=""> 
 
+    <!-- HIDDEN FILE INPUT FOR DUMP ZONE -->
+    <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
+
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V5.0</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V5.2</span></div>
         <div class="actions">
-            <button onclick="openEditor('template.html')">📝 HTML</button>
-            <button onclick="openEditor('generator.py')">⚙️ PY</button>
+            <!-- NEW DUMP ZONE BUTTON -->
+            <button class="btn-dump" onclick="document.getElementById('fileDumpInput').click()">📂 DUMP ZONE</button>
+            
+            <button class="btn-code" onclick="openEditor('template.html')">📝 HTML</button>
+            <button class="btn-code" onclick="openEditor('generator.py')">⚙️ PY</button>
             <button onclick="fetchSources()">↻ Reload</button>
             <button onclick="deployLive()">🚀 Deploy</button>
             <button class="btn-save" onclick="saveToGitHub()">💾 SAVE LIST</button>
@@ -134,8 +237,8 @@
                 <button class="btn-mini" onclick="closeEditor()" style="font-size:1rem;">×</button>
             </div>
             <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
-            <div class="editor-controls" style="margin-top:15px; display:flex; justify-content:space-between;">
-                <button class="actions" style="background:#330000; color:#ff5555; border:1px solid #550000;" onclick="clearEditor()">🗑️ CLEAR ALL</button>
+            <div class="editor-controls">
+                <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
                 <div style="display:flex; gap:10px;">
                     <button class="actions" style="background:#333; color:white; border:none;" onclick="closeEditor()">Cancel</button>
                     <button class="actions btn-save" style="border:none;" onclick="saveFileContent()">💾 SAVE TO GITHUB</button>
@@ -154,7 +257,70 @@
 
     <script>
         // ===============================================
-        // LOGIC TESTER (THE NEW FEATURE)
+        // DUMP ZONE LOGIC (FILE UPLOAD)
+        // ===============================================
+        async function handleFileDump(input) {
+            const file = input.files[0];
+            if(!file) return;
+
+            const user = document.getElementById('ghUser').value;
+            const repo = document.getElementById('ghRepo').value;
+            const token = document.getElementById('ghToken').value;
+
+            if(!token) return alert("Missing GitHub Token");
+
+            if(!confirm(`Upload ${file.name} to GitHub root?`)) {
+                input.value = ""; // Reset
+                return;
+            }
+
+            showToast("Reading file...", 5000);
+
+            // 1. Read file as Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            
+            reader.onload = async function() {
+                // Remove the "data:*/*;base64," prefix
+                const contentBase64 = reader.result.split(',')[1];
+                
+                // 2. Check if file exists (to get SHA for overwrite)
+                let sha = null;
+                try {
+                    const checkRes = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if(checkRes.ok) {
+                        const data = await checkRes.json();
+                        sha = data.sha;
+                    }
+                } catch(e) {}
+
+                // 3. Upload (PUT)
+                showToast("Uploading " + file.name + "...");
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: `Dump Zone: Uploaded ${file.name}`,
+                            content: contentBase64,
+                            sha: sha
+                        })
+                    });
+
+                    if(!res.ok) throw new Error("Upload Failed");
+                    showToast("UPLOAD COMPLETE! 📂", 3000);
+                } catch(e) {
+                    alert("Error uploading: " + e.message);
+                }
+                
+                input.value = ""; // Reset input
+            };
+        }
+
+        // ===============================================
+        // LOGIC TESTER
         // ===============================================
         function openTester(url) {
             document.getElementById('testUrlInput').value = url || "";
@@ -174,7 +340,6 @@
             resDiv.innerHTML = '<div style="color:var(--accent); text-align:center; margin-top:50px;">Fetching via Proxy...</div>';
 
             try {
-                // Use AllOrigins Proxy to bypass CORS
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error("Proxy Fetch Failed");
@@ -184,7 +349,6 @@
                 let foundImage = null;
 
                 // --- 1. SWECLOCKERS REGEX ---
-                // Python: r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)'
                 const swecRegex = /(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/g;
                 const swecMatches = html.match(swecRegex);
                 let swecRes = null;
@@ -195,7 +359,6 @@
                 resultsHTML += renderResult("1. Sweclockers Regex (?l=)", swecRes);
 
                 // --- 2. AFTONBLADET REGEX ---
-                // Python: r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)'
                 const abRegex = /(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/g;
                 const abMatches = html.match(abRegex);
                 let abRes = null;
@@ -510,7 +673,7 @@
             const encoded = btoa(binary);
             const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value;
             try {
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V5.0)", content: encoded, sha: currentSha }) });
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V5.2)", content: encoded, sha: currentSha }) });
                 if(!res.ok) throw new Error("Save Failed");
                 const d = await res.json(); currentSha = d.content.sha; showToast("SAVED SUCCESSFULLY!");
             } catch(e) { alert(e.message); }
