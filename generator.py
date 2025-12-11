@@ -9,12 +9,11 @@ import time
 import random
 import concurrent.futures
 from email.utils import parsedate_to_datetime
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 import urllib3
 import re
 import hashlib
 import pickle
-from pathlib import Path
 
 try:
     from deep_translator import GoogleTranslator
@@ -39,19 +38,107 @@ DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&
 CACHE_DIR = ".youtube_cache"
 CACHE_EXPIRE_DAYS = 21  # 3 veckor
 
+# YOUTUBE API NYCKEL
+YOUTUBE_API_KEY = "AIzaSyBGNGzJb2b9R1S7ur7x7Xt-d1ze6TfIOFM"
+
 try:
     from sources import SOURCES
     print(f"--- LADDADE {len(SOURCES)} KÄLLOR ---")
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.35 - FIXED CACHE & DATES) ---")
+print(f"--- STARTAR GENERATORN (V20.5.36 - YOUTUBE API & CACHE) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Referer": "https://www.google.com/"
 }
+
+# --- HJÄLPFUNKTIONER FÖR YOUTUBE ---
+def extract_video_id(url):
+    """Extrahera YouTube video ID från URL"""
+    if not url:
+        return None
+    
+    patterns = [
+        r'(?:youtube\.com\/watch\?v=)([^&]+)',
+        r'(?:youtu\.be\/)([^?]+)',
+        r'(?:youtube\.com\/embed\/)([^\/]+)',
+        r'(?:youtube\.com\/v\/)([^\/]+)'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    
+    return None
+
+def get_youtube_video_details(video_id):
+    """Hämta videoinfo från YouTube API"""
+    if not video_id or not YOUTUBE_API_KEY:
+        return None
+    
+    try:
+        url = f"https://www.googleapis.com/youtube/v3/videos"
+        params = {
+            'part': 'snippet,contentDetails,statistics',
+            'id': video_id,
+            'key': YOUTUBE_API_KEY
+        }
+        
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('items') and len(data['items']) > 0:
+                return data['items'][0]
+    except Exception as e:
+        print(f"⚠ YouTube API error: {e}")
+    
+    return None
+
+def get_channel_videos(channel_id):
+    """Hämta senaste videos från en kanal via YouTube API"""
+    if not channel_id or not YOUTUBE_API_KEY:
+        return []
+    
+    try:
+        url = f"https://www.googleapis.com/youtube/v3/search"
+        params = {
+            'part': 'snippet',
+            'channelId': channel_id,
+            'maxResults': 8,
+            'order': 'date',
+            'type': 'video',
+            'key': YOUTUBE_API_KEY
+        }
+        
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            return response.json().get('items', [])
+    except Exception as e:
+        print(f"⚠ YouTube API search error: {e}")
+    
+    return []
+
+def extract_channel_id(url):
+    """Extrahera channel ID från YouTube URL"""
+    try:
+        if '/@' in url:
+            # För @username länkar
+            username = url.split('/@')[-1].split('/')[0]
+            # Vi behöver konvertera username till channelId via API
+            return None
+        elif '/channel/' in url:
+            return url.split('/channel/')[-1].split('/')[0]
+        elif '/c/' in url:
+            return url.split('/c/')[-1].split('/')[0]
+        elif '/user/' in url:
+            return url.split('/user/')[-1].split('/')[0]
+    except:
+        pass
+    return None
 
 # --- CACHE SYSTEM ---
 def get_cache_key(url):
@@ -70,16 +157,13 @@ def load_from_cache(url):
         # Kolla om cachen är för gammal (3 veckor)
         file_age = time.time() - os.path.getmtime(cache_file)
         if file_age > CACHE_EXPIRE_DAYS * 24 * 3600:
-            print(f"🗑 Cache utgången för: {url.split('/')[-1]}")
             return None
         
         with open(cache_file, 'rb') as f:
             cached_data = pickle.load(f)
         
-        print(f"✓ Cache hit för: {url.split('/')[-1]}")
         return cached_data
-    except Exception as e:
-        print(f"⚠ Fel vid cache-laddning: {e}")
+    except Exception:
         return None
 
 def save_to_cache(url, data):
@@ -93,32 +177,24 @@ def save_to_cache(url, data):
         
         with open(cache_file, 'wb') as f:
             pickle.dump(data, f)
-        
-        print(f"💾 Cache sparad: {url.split('/')[-1]}")
-    except Exception as e:
-        print(f"⚠ Kunde inte spara cache: {e}")
+    except Exception:
+        pass
 
 def clear_old_cache():
     """Rensa gamla cache-filer (äldre än 3 veckor)"""
     try:
         if not os.path.exists(CACHE_DIR):
-            print("ℹ Ingen cache-mapp att rensa")
             return
         
         now = time.time()
-        deleted = 0
         for filename in os.listdir(CACHE_DIR):
             if filename.endswith('.pkl'):
                 cache_file = os.path.join(CACHE_DIR, filename)
                 file_age = now - os.path.getmtime(cache_file)
                 if file_age > CACHE_EXPIRE_DAYS * 24 * 3600:
                     os.remove(cache_file)
-                    deleted += 1
-        
-        if deleted > 0:
-            print(f"🗑 Rensade {deleted} gamla cache-filer (äldre än {CACHE_EXPIRE_DAYS} dagar)")
-    except Exception as e:
-        print(f"⚠ Fel vid cache-rengöring: {e}")
+    except Exception:
+        pass
 
 # Rensa gamla cache vid start
 clear_old_cache()
@@ -152,7 +228,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False # Om datum saknas, släpp igenom (säkerhet)
+    if timestamp == 0: return False
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -170,6 +246,7 @@ def clean_image_url_generic(url):
         if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
+# --- BILDSTRATEGIER ---
 def strategy_fz_se(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
@@ -309,160 +386,188 @@ def get_video_info(source):
     # Försök ladda från cache först
     cached_data = load_from_cache(source['url'])
     if cached_data:
-        # Kontrollera att cachade videos har korrekt datum
-        for video in cached_data:
-            # Om timestamp är 0 eller väldigt ny (0m ago), fixa det
-            if video.get('timestamp', 0) <= 0 or (time.time() - video.get('timestamp', 0)) < 60:
-                video['timestamp'] = time.time() - random.randint(1, 30) * 86400
         return cached_data
     
     try:
-        # ANVÄND FULL EXTRACTION FÖR KORREKT DATUM
-        ydl_opts = {
-            'quiet': True,
-            'ignoreerrors': True,
-            'extract_flat': False,  # FULL extraction för datum
-            'playlistend': 8,       # MAX 8 VIDEOS
-            'no_warnings': True,
-            'http_headers': HEADERS,
-            'skip_download': True,
-            'writeinfojson': False,
-            'writedescription': False,
-            'writethumbnail': False,
-            'no_color': True,
-        }
-        
         print(f"📥 Hämtar YouTube: {source['source_name']}...")
         
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(source['url'], download=False)
-            if not info: 
-                print(f"  ⚠ Ingen info för: {source['source_name']}")
-                return videos
+        # Försök hämta via YouTube API först
+        channel_id = extract_channel_id(source['url'])
+        
+        if channel_id and YOUTUBE_API_KEY:
+            # Hämta via YouTube API
+            api_videos = get_channel_videos(channel_id)
             
-            entries = info.get('entries', [info])
-
-            for idx, entry in enumerate(entries):
-                if not entry: continue
-                
-                # HÄMTA THUMBNAIL
-                img_url = ''
-                if entry.get('thumbnail'):
-                    img_url = entry['thumbnail']
-                elif entry.get('thumbnails'):
-                    thumbnails = entry.get('thumbnails', [])
-                    if thumbnails and isinstance(thumbnails, list) and len(thumbnails) > 0:
-                        # Ta högsta kvalitén (sista)
-                        for thumb in reversed(thumbnails):
-                            if thumb.get('url'):
-                                img_url = thumb['url']
-                                break
-                
-                if not img_url and entry.get('id'):
-                    img_url = f"https://img.youtube.com/vi/{entry['id']}/maxresdefault.jpg"
-                    # Fallback om maxresdefault inte finns
-                    test_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
-                if not img_url: img_url = DEFAULT_IMAGE
-
-                # HÄMTA UPLOAD DATE - KORREKT SÄTT
-                ts = 0
+            for item in api_videos:
                 try:
-                    # Först: upload_date (YYYYMMDD format) - det här är det vi vill ha!
-                    if entry.get('upload_date'):
-                        date_str = str(entry['upload_date'])
-                        if len(date_str) == 8:
-                            # Konvertera YYYYMMDD till timestamp
-                            ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
-                            print(f"  ✓ Datum hittat: {date_str} för {entry.get('title', 'okänd')[:30]}...")
-                        else:
-                            print(f"  ⚠ Konstigt datumformat: {date_str}")
+                    snippet = item.get('snippet', {})
+                    video_id = item.get('id', {}).get('videoId')
                     
-                    # Annars: release_timestamp
-                    elif entry.get('release_timestamp'):
-                        ts = entry['release_timestamp']
-                        print(f"  ✓ Release timestamp hittat för {entry.get('title', 'okänd')[:30]}...")
+                    if not video_id:
+                        continue
                     
-                    # Annars: timestamp
-                    elif entry.get('timestamp'):
-                        ts = entry['timestamp']
+                    # Hämta detaljerad info med publish datum
+                    details = get_youtube_video_details(video_id)
                     
-                    # Annars: Försök hitta i description
-                    elif entry.get('description'):
-                        import re
-                        desc = entry.get('description', '')
-                        # Leta efter datumformat: YYYY-MM-DD, DD/MM/YYYY, etc
-                        date_patterns = [
-                            r'(\d{4})[-/](\d{1,2})[-/](\d{1,2})',  # YYYY-MM-DD
-                            r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})',  # DD-MM-YYYY
-                            r'(\d{1,2})\s+(\w+)\s+(\d{4})',        # DD Month YYYY
-                        ]
-                        
-                        for pattern in date_patterns:
-                            match = re.search(pattern, desc[:500])
-                            if match:
-                                try:
-                                    if len(match.groups()) == 3:
-                                        year, month, day = match.groups()
-                                        if len(year) == 4:
-                                            ts = datetime(int(year), int(month), int(day)).timestamp()
-                                            break
-                                except:
-                                    pass
+                    # Hämta datum - använd publishedAt från API
+                    published_at = snippet.get('publishedAt')
+                    if published_at:
+                        try:
+                            # Konvertera ISO 8601 datum till timestamp
+                            dt = datetime.strptime(published_at, '%Y-%m-%dT%H:%M:%SZ')
+                            ts = dt.timestamp()
+                        except:
+                            ts = time.time()
+                    else:
+                        ts = time.time()
                     
-                    # Om allt misslyckas, använd nuvarande tid minus slumpmässigt
-                    if ts == 0:
-                        # Slumpa mellan 1-7 dagar bakåt
-                        days_back = random.randint(1, 7)
-                        ts = time.time() - (days_back * 86400)
-                        print(f"  ⚠ Ingen datum hittad, använder {days_back} dag(ar) bakåt")
-                        
+                    # Hämta thumbnail
+                    thumbnails = snippet.get('thumbnails', {})
+                    img_url = ''
+                    if thumbnails.get('maxres'):
+                        img_url = thumbnails['maxres']['url']
+                    elif thumbnails.get('standard'):
+                        img_url = thumbnails['standard']['url']
+                    elif thumbnails.get('high'):
+                        img_url = thumbnails['high']['url']
+                    elif thumbnails.get('medium'):
+                        img_url = thumbnails['medium']['url']
+                    else:
+                        img_url = DEFAULT_IMAGE
+                    
+                    title = snippet.get('title', 'Video')
+                    description = snippet.get('description', '')
+                    
+                    if not title or title in ['[Private video]', '[Deleted video]']:
+                        continue
+                    
+                    # 25-dagars regel
+                    if ts > 0 and is_too_old(ts):
+                        continue
+                    
+                    clean_summary = clean_text(description)
+                    
+                    lang_note = ""
+                    if source.get('lang') == 'sv':
+                        title = translate_text(title, 'sv')
+                        clean_summary = translate_text(clean_summary, 'sv')
+                        lang_note = " (Translated from Swedish)"
+                    
+                    videos.append({
+                        "title": title,
+                        "link": f"https://www.youtube.com/watch?v={video_id}",
+                        "images": [img_url],
+                        "summary": clean_summary,
+                        "category": source.get('cat', 'video'),
+                        "filter_tag": source.get('filter_tag', ''),
+                        "source": source.get('source_name', 'YouTube'),
+                        "lang_note": lang_note,
+                        "time_str": "",
+                        "timestamp": ts,
+                        "is_video": True
+                    })
+                    
                 except Exception as e:
-                    print(f"  ⚠ Datumfel: {e}")
-                    # Fallback: 3-14 dagar bakåt
-                    ts = time.time() - random.randint(3, 14) * 86400
-
-                # 25-DAGARS REGELN
-                if ts > 0 and is_too_old(ts):
-                    print(f"  ⏳ Video för gammal: {entry.get('title', 'okänd')[:30]}...")
+                    print(f"  ⚠ Fel vid API video: {e}")
                     continue
+        
+        # Om API inte gav några videos, använd yt-dlp som fallback
+        if not videos:
+            print(f"  ⚠ API gav inga videos, använder yt-dlp...")
+            
+            ydl_opts = {
+                'quiet': True,
+                'ignoreerrors': True,
+                'extract_flat': True,
+                'playlistend': 8,
+                'no_warnings': True,
+                'http_headers': HEADERS,
+            }
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(source['url'], download=False)
+                if not info:
+                    return videos
                 
-                title = entry.get('title', 'Video')
-                if not title or title == 'Video' or title == '[Private video]' or title == '[Deleted video]':
-                    continue
+                entries = info.get('entries', [info])
+
+                for idx, entry in enumerate(entries):
+                    if not entry:
+                        continue
                     
-                clean_summary = clean_text(entry.get('description', ''))
-
-                lang_note = ""
-                if source.get('lang') == 'sv':
-                    title = translate_text(title, 'sv')
-                    clean_summary = translate_text(clean_summary, 'sv')
-                    lang_note = " (Translated from Swedish)"
-
-                video_data = {
-                    "title": title,
-                    "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry.get('id', '')}",
-                    "images": [img_url],
-                    "summary": clean_summary,
-                    "category": source.get('cat', 'video'),
-                    "filter_tag": source.get('filter_tag', ''),
-                    "source": source.get('source_name', 'YouTube'),
-                    "lang_note": lang_note,
-                    "time_str": "",
-                    "timestamp": ts,
-                    "is_video": True
-                }
-                
-                videos.append(video_data)
-                print(f"  ✓ Video {idx+1}: {title[:40]}...")
+                    # Hämta thumbnail
+                    img_url = ''
+                    if entry.get('thumbnail'):
+                        img_url = entry['thumbnail']
+                    elif entry.get('id'):
+                        img_url = f"https://img.youtube.com/vi/{entry['id']}/maxresdefault.jpg"
+                    
+                    if not img_url:
+                        img_url = DEFAULT_IMAGE
+                    
+                    # Hämta datum från yt-dlp
+                    ts = 0
+                    try:
+                        if entry.get('upload_date'):
+                            date_str = str(entry['upload_date'])
+                            if len(date_str) == 8:
+                                ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
+                        elif entry.get('timestamp'):
+                            ts = entry['timestamp']
+                    except:
+                        ts = time.time() - random.randint(1, 7) * 86400
+                    
+                    # Om vi har video ID, försök hämta korrekt datum via API
+                    video_id = entry.get('id')
+                    if video_id and YOUTUBE_API_KEY and (ts == 0 or ts > time.time() - 3600):
+                        details = get_youtube_video_details(video_id)
+                        if details and details.get('snippet', {}).get('publishedAt'):
+                            try:
+                                published_at = details['snippet']['publishedAt']
+                                dt = datetime.strptime(published_at, '%Y-%m-%dT%H:%M:%SZ')
+                                ts = dt.timestamp()
+                            except:
+                                pass
+                    
+                    # 25-dagars regel
+                    if ts > 0 and is_too_old(ts):
+                        continue
+                    
+                    title = entry.get('title', 'Video')
+                    if not title or title in ['Video', '[Private video]', '[Deleted video]']:
+                        continue
+                    
+                    clean_summary = clean_text(entry.get('description', ''))
+                    
+                    lang_note = ""
+                    if source.get('lang') == 'sv':
+                        title = translate_text(title, 'sv')
+                        clean_summary = translate_text(clean_summary, 'sv')
+                        lang_note = " (Translated from Swedish)"
+                    
+                    videos.append({
+                        "title": title,
+                        "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry.get('id', '')}",
+                        "images": [img_url],
+                        "summary": clean_summary,
+                        "category": source.get('cat', 'video'),
+                        "filter_tag": source.get('filter_tag', ''),
+                        "source": source.get('source_name', 'YouTube'),
+                        "lang_note": lang_note,
+                        "time_str": "",
+                        "timestamp": ts,
+                        "is_video": True
+                    })
         
         # Spara till cache om vi hämtat nya data
         if videos:
             save_to_cache(source['url'], videos)
+            print(f"  ✅ {len(videos)} videos hämtade från {source['source_name']}")
+        else:
+            print(f"  ⚠ Inga videos hittades för {source['source_name']}")
             
     except Exception as e:
         print(f"❌ FEL VID VIDEOHÄMTNING ({source.get('source_name')}): {e}")
-        import traceback
-        traceback.print_exc()
     
     return videos
 
@@ -478,25 +583,26 @@ def process_source(source):
 # --- EXEKVERING ---
 new_articles = []
 start_time = time.time()
-video_count = 0
-web_count = 0
 
 print(f"\n--- HÄMTAR FRÅN {len(SOURCES)} KÄLLOR ---")
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
-    future_map = {executor.submit(process_source, s): s for s in SOURCES}
+# Separera video och web källor
+video_sources = [s for s in SOURCES if s['type'] == 'video']
+web_sources = [s for s in SOURCES if s['type'] == 'web']
+
+# Kör alla källor
+all_sources = video_sources + web_sources
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    future_map = {executor.submit(process_source, s): s for s in all_sources}
     for future in concurrent.futures.as_completed(future_map):
         try:
             source = future_map[future]
             data = future.result()
             if data: 
                 new_articles.extend(data)
-                if source['type'] == 'video':
-                    video_count += len(data)
-                    print(f"🎥 {source['source_name']}: {len(data)} videos")
-                else:
-                    web_count += len(data)
-                    print(f"📰 {source['source_name']}: {len(data)} artiklar")
+                source_type = "🎥" if source['type'] == 'video' else "📰"
+                print(f"{source_type} {source['source_name']}: {len(data)}")
         except Exception as e:
             print(f"❌ Fel vid hämtning: {e}")
 
@@ -509,13 +615,7 @@ for art in new_articles:
     
     # Normalisera YouTube-länkar
     if 'youtube.com' in art['link'] or 'youtu.be' in art['link']:
-        # Extrahera video ID för att undvika dubletter med olika parametrar
-        video_id = None
-        if 'youtube.com/watch?v=' in art['link']:
-            video_id = art['link'].split('v=')[1].split('&')[0]
-        elif 'youtu.be/' in art['link']:
-            video_id = art['link'].split('youtu.be/')[1].split('?')[0]
-        
+        video_id = extract_video_id(art['link'])
         if video_id:
             art['link'] = f"https://www.youtube.com/watch?v={video_id}"
     
@@ -534,13 +634,6 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    # Debug output för första 5 videos
-    if art.get('is_video') and len([a for a in final_list if a.get('is_video')]) <= 5:
-        print(f"  Video: {art['title'][:40]}...")
-        print(f"    Timestamp: {art['timestamp']}")
-        print(f"    Diff: {diff} sekunder")
-        print(f"    Upload: {datetime.fromtimestamp(art['timestamp']).strftime('%Y-%m-%d %H:%M:%S')}")
-    
     if diff < 60:
         art['time_str'] = f"Just now"
     elif diff < 3600:
@@ -558,7 +651,7 @@ for art in final_list:
 # Begränsa till TOTAL_LIMIT
 final_list = final_list[:TOTAL_LIMIT]
 
-# Uppdatera räkningar
+# Räkna videos och artiklar
 video_count = len([a for a in final_list if a.get('is_video')])
 web_count = len(final_list) - video_count
 
@@ -571,12 +664,20 @@ print(f"\n{'='*60}")
 print(f"✅ GENERERING KLAR PÅ {time.time()-start_time:.2f} SEK")
 print(f"{'='*60}")
 print(f"📊 STATISTIK:")
-print(f"   • Totalt antal artiklar: {len(final_list)}")
-print(f"   • Webbartiklar: {web_count}")
-print(f"   • YouTube videos: {video_count}")
-print(f"   • Cache-mapp: {CACHE_DIR}/ (sparar i {CACHE_EXPIRE_DAYS} dagar)")
-print(f"   • Senaste video: {next((a['time_str'] for a in final_list if a.get('is_video')), 'Inga videos')}")
+print(f"   • Totalt: {len(final_list)} artiklar")
+print(f"   • Webb: {web_count} artiklar")
+print(f"   • YouTube: {video_count} videos")
+print(f"   • Cache: {CACHE_DIR}/ (3 veckor)")
+print(f"   • YouTube API: {'AKTIVERAD' if YOUTUBE_API_KEY else 'INAKTIV'}")
 print(f"{'='*60}")
+
+# Visa första 5 videos med datum för verifiering
+print(f"\n📅 FÖRSTA 5 YOUTUBE VIDEOR:")
+youtube_videos = [a for a in final_list if a.get('is_video')][:5]
+for i, video in enumerate(youtube_videos, 1):
+    date_str = datetime.fromtimestamp(video['timestamp']).strftime('%Y-%m-%d')
+    print(f"   {i}. {video['title'][:50]}...")
+    print(f"      → {video['time_str']} ({date_str})")
 
 # Generera HTML
 if os.path.exists('template.html'):
@@ -584,6 +685,6 @@ if os.path.exists('template.html'):
         html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✅ index.html har uppdaterats!")
+    print(f"\n✅ index.html har uppdaterats!")
 else:
     print("⚠ VARNING: template.html saknas!")
