@@ -44,42 +44,14 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* --- SEARCH BAR (GLUED TO TOP) --- */
-        .search-container { 
-            position: relative; 
-            width: 100%; 
-            max-width: 300px; 
-            margin-bottom: -2px; /* Pulls it down to touch the nav */
-            z-index: 40; /* Behind nav */
-        }
-        .search-input { 
-            width: 100%; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border); 
-            border-bottom: none; /* Removes double border */
-            color: var(--text-primary); 
-            padding: 8px 35px 8px 15px; 
-            border-radius: 20px 20px 0 0; 
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.85rem; 
-            outline: none; 
-            transition: 0.3s; 
-        }
-        /* Bridge to hide the seam */
-        .search-container::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 5px; right: 5px;
-            height: 4px;
-            background: var(--nav-bg);
-            z-index: 45;
-        }
-
+        /* SEARCH BAR */
+        .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
+        .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
+        .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .search-input:focus { border-color: var(--accent); }
         .search-icon { position: absolute; right: 12px; top: 45%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; font-size: 0.8rem; }
 
-        /* --- UNIFIED NAV (MAIN BAR) --- */
+        /* UNIFIED NAV */
         .unified-nav { 
             display: flex; 
             flex-wrap: wrap; 
@@ -90,18 +62,20 @@
             padding: 4px;
             gap: 2px; 
             position: relative;
-            z-index: 50; /* Top layer */
+            z-index: 50; 
             max-width: 100%;
         }
 
         .filter-btn { position: relative; background: transparent; border: none; color: var(--text-secondary); padding: 8px 14px; cursor: pointer; border-radius: 40px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: all 0.2s; text-transform: uppercase; font-size: 0.75rem; flex-shrink: 0; white-space: nowrap; }
         .filter-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .filter-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
-        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; }
+        
+        /* COLORS FOR BUTTONS */
+        .filter-btn[onclick*="'video'"].active { background: #ff0040; color: white; } /* MEDIA */
+        .filter-btn[onclick*="'youtubers'"].active { background: #ffaa00; color: black; } /* YOUTUBERS */
         .filter-btn[onclick*="'gaming'"].active { background: #9d00ff; color: white; }
         .filter-btn[onclick*="'geopolitics'"].active { background: #00ff88; color: black; }
 
-        /* TEXT SWITCHING LOGIC (GEO vs GEOPOLITICS) */
         .desktop-label { display: inline; }
         .mobile-label { display: none; }
 
@@ -111,14 +85,7 @@
         .dropdown-menu.show { display: flex; }
         .dropdown-list { max-height: 50vh; overflow-y: auto; padding: 5px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
         
-        /* CLEAN CHECKBOX STYLE */
-        .check-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; cursor: pointer; transition: 0.2s;
-            border-radius: 8px; color: var(--text-secondary); 
-            font-family: 'Space Grotesk', sans-serif; font-weight: 600; 
-            text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px;
-        }
+        .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; transition: 0.2s; border-radius: 8px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 2px; gap: 15px; }
         .check-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
         .check-item span { flex-grow: 1; text-align: left; }
         
@@ -126,22 +93,25 @@
         .check-item input { display: none !important; }
         
         /* CIRCLE INDICATOR */
-        .check-indicator { 
-            width: 14px; height: 14px; border-radius: 50%; 
-            border: 2px solid var(--text-secondary); 
-            position: relative; transition: 0.2s; flex-shrink: 0; 
-        }
-
+        .check-indicator { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-secondary); position: relative; transition: 0.2s; flex-shrink: 0; }
+        
         /* COLORS & GLOW ON SELECTION */
         .check-item input:checked + .check-indicator { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
         .check-item input:checked ~ span { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
         
+        /* MEDIA (RED) */
         #videoDropdown .check-item input:checked + .check-indicator { background: #ff0040; border-color: #ff0040; box-shadow: 0 0 8px rgba(255,0,64,0.5); }
         #videoDropdown .check-item input:checked ~ span { color: #ff0040; text-shadow: 0 0 10px rgba(255,0,64,0.5); }
 
+        /* YOUTUBERS (ORANGE) */
+        #youtubersDropdown .check-item input:checked + .check-indicator { background: #ffaa00; border-color: #ffaa00; box-shadow: 0 0 8px rgba(255, 170, 0, 0.5); }
+        #youtubersDropdown .check-item input:checked ~ span { color: #ffaa00; text-shadow: 0 0 10px rgba(255, 170, 0, 0.5); }
+
+        /* GAMING (PURPLE) */
         #gamingDropdown .check-item input:checked + .check-indicator { background: #9d00ff; border-color: #9d00ff; box-shadow: 0 0 8px rgba(157,0,255,0.5); }
         #gamingDropdown .check-item input:checked ~ span { color: #9d00ff; text-shadow: 0 0 10px rgba(157,0,255,0.5); }
 
+        /* GEO (GREEN) */
         #geopoliticsDropdown .check-item input:checked + .check-indicator { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         #geopoliticsDropdown .check-item input:checked ~ span { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
         
@@ -150,58 +120,22 @@
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* --- READ LATER (GLUED TO BOTTOM) --- */
-        .read-later-container { 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            margin-top: -2px; /* Pulls it up to touch nav */
-            z-index: 40; /* Behind nav */
-        }
-        .read-later-btn { 
-            position: relative; 
-            background: var(--nav-bg); 
-            border: 1px solid var(--border); 
-            border-top: none; /* No border between nav and button */
-            color: var(--text-secondary); 
-            padding: 6px 30px; 
-            border-radius: 0 0 20px 20px; 
-            font-family: 'Space Grotesk', sans-serif; 
-            font-weight: 700; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            transition: 0.3s; 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-        }
-        /* Bridge to hide the seam */
-        .read-later-btn::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 2px; right: 2px;
-            height: 4px;
-            background: var(--nav-bg);
-            z-index: 45;
-        }
-
+        .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
+        .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
         .read-later-btn:hover, .read-later-btn.active { border-color: var(--accent); color: var(--accent); background: var(--nav-bg); box-shadow: 0 0 20px var(--accent-glow); }
 
         @media (min-width: 769px) { .dropdown-wrapper:hover .dropdown-menu { display: flex; animation: none; opacity: 1; } }
 
-        /* --- MOBILE SPECIFIC FIXES --- */
+        /* --- MOBILE SPECIFIC FIXES (5 COLUMNS NOW) --- */
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* GRID LAYOUT FOR MOBILE NAV (4 COLUMNS) */
+            /* GRID LAYOUT FOR MOBILE NAV (5 COLUMNS) */
             .unified-nav { 
                 display: grid; 
-                grid-template-columns: 1fr 1fr 1fr 1fr; 
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 EQUAL COLUMNS */
                 width: 100%; 
                 gap: 0;
                 padding: 2px;
@@ -210,11 +144,9 @@
                 width: 100%;
                 text-align: center; 
                 padding: 10px 0; 
-                /* ÖKAD TEXTSTORLEK FÖR BÄTTRE LÄSBARHET */
-                font-size: 0.75rem; 
+                font-size: 0.55rem; /* SMALLER TEXT TO FIT 5 BUTTONS */
             }
             
-            /* SWAP TEXT TO "GEO" ON MOBILE */
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
 
@@ -222,23 +154,14 @@
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
             
-            /* SHOW GEO ON MOBILE */
             .mobile-hide { display: block !important; }
 
-            /* DROPDOWN POSITIONING FIXES FOR MOBILE */
             .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
-            
             #topicsDropdown { left: 0; right: auto; transform: none; }
             #videoDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
+            #youtubersDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
             #gamingDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
-            
-            /* HÄR ÄR FIXEN FÖR GEO-MENYN: */
-            #geopoliticsDropdown { 
-                left: auto !important; /* Släpp vänsterkanten */
-                right: 0 !important;   /* Fäst i högerkanten */
-                transform: none !important; 
-                min-width: 200px;
-            }
+            #geopoliticsDropdown { left: auto !important; right: 0 !important; transform: none !important; min-width: 200px; }
         }
         
         @media (min-width: 769px) {
@@ -275,7 +198,7 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
@@ -328,18 +251,14 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.18 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.18 - Enhanced Mobile UI</strong>
+                 <!-- V20.5.19 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #ffaa00;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.19 - The Youtubers Update</strong>
                     <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Text Size:</strong> Increased mobile menu text size for better readability.<br>
-                        • <strong>Clean Button:</strong> "All News" on mobile is now a simple button (no arrow) to save space.
+                        • <strong>New Category:</strong> Added distinct "YOUTUBERS" section for independent analysts/streamers.<br>
+                        • <strong>Media Split:</strong> "MEDIA" now focuses on official news channels (BBC, DW, etc).<br>
+                        • <strong>5-Column Mobile:</strong> Grid layout updated to fit 5 buttons (All, Media, Tubers, Gaming, Geo) on mobile.
                     </div>
-                 </li>
-                 <!-- V20.5.17 -->
-                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.17</strong><br>
-                    Fixed Geo menu overflow on mobile.
                  </li>
             </ul>
         </div>
@@ -370,35 +289,52 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.18</div>
+                <div class="version-display" id="versionBtn">Version 20.5.19</div>
             </div>
             
             <div class="nav-wrapper">
                 <div class="search-container"><input type="text" id="searchInput" class="search-input" placeholder="Search headlines..."><span class="search-icon">🔍</span></div>
 
                 <nav class="unified-nav" id="catNav">
-                    <!-- MOBILE BUTTON: ALL NEWS (JUST A RESET BUTTON NOW) -->
+                    <!-- MOBILE BUTTON: ALL NEWS -->
                     <div class="show-on-mobile" style="display:none;">
                          <button class="filter-btn" onclick="setCategory('all')">ALL NEWS</button>
                     </div>
 
-                    <!-- DESKTOP BUTTON: ALL NEWS (Resets only) -->
+                    <!-- DESKTOP BUTTON: ALL NEWS -->
                     <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
 
-                    <!-- YOUTUBE -->
+                    <!-- MEDIA (Formerly YOUTUBE) -->
                     <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
-                        <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">YOUTUBE ▼</button>
+                        <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)">
+                            <span class="desktop-label">MEDIA ▼</span>
+                            <span class="mobile-label">MEDIA ▼</span>
+                        </button>
                         <div id="videoDropdown" class="dropdown-menu">
                             <div class="dropdown-list">
-                                <label class="check-item"><span>Geopolitics</span> <input type="checkbox" onchange="updateTempFilter('video', 'geopolitics', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('video', 'global', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('video', 'china', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('video', 'tech', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('video', 'ev', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Science</span> <input type="checkbox" onchange="updateTempFilter('video', 'science', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('video', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
-                                <label class="check-item"><span>Construction</span> <input type="checkbox" onchange="updateTempFilter('video', 'construction', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('video', 'usa', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('video', 'india', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-clear" onclick="clearFilters('video')">CLEAR</button><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK <span style="font-size:1.2em">✓</span></button></div>
+                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK</button></div>
+                        </div>
+                    </div>
+
+                    <!-- YOUTUBERS (NEW) -->
+                    <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('youtubers')">
+                        <button class="filter-btn" id="youtubersBtn" onclick="handleMenuClick('youtubers', event)">
+                            <span class="desktop-label">YOUTUBERS ▼</span>
+                            <span class="mobile-label">TUBERS ▼</span>
+                        </button>
+                        <div id="youtubersDropdown" class="dropdown-menu">
+                            <div class="dropdown-list">
+                                <label class="check-item"><span>Geo</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'geo', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Tech</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'tech', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>EV</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'ev', this.checked)"> <div class="check-indicator"></div></label>
+                                <label class="check-item"><span>Gaming</span> <input type="checkbox" onchange="updateTempFilter('youtubers', 'gaming', this.checked)"> <div class="check-indicator"></div></label>
+                            </div>
+                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('youtubers')">OK</button></div>
                         </div>
                     </div>
 
@@ -415,12 +351,12 @@
                                 <label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-clear" onclick="clearFilters('gaming')">CLEAR</button><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK <span style="font-size:1.2em">✓</span></button></div>
+                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK</button></div>
                         </div>
                     </div>
 
-                    <!-- GEOPOLITICS (NOW VISIBLE ON MOBILE AS 'GEO') -->
-                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative; display:block !important; flex:1;" onmouseleave="closeOnLeave('geopolitics')">
+                    <!-- GEOPOLITICS -->
+                    <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative;" onmouseleave="closeOnLeave('geopolitics')">
                         <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)">
                             <span class="desktop-label">GEOPOLITICS ▼</span>
                             <span class="mobile-label">GEO ▼</span>
@@ -434,7 +370,7 @@
                                 <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label>
                                 <label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label>
                             </div>
-                            <div class="dropdown-footer"><button class="footer-btn btn-clear" onclick="clearFilters('geopolitics')">CLEAR</button><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK <span style="font-size:1.2em">✓</span></button></div>
+                            <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div>
                         </div>
                     </div>
 
@@ -465,10 +401,12 @@
         const state = { 
             category: 'all', 
             videoFilters: new Set(),
+            youtubersFilters: new Set(), // NYTT
             gamingFilters: new Set(),
             geopoliticsFilters: new Set(),
             topicFilters: new Set(), 
             tempVideoFilters: new Set(),
+            tempYoutubersFilters: new Set(), // NYTT
             tempGamingFilters: new Set(),
             tempGeopoliticsFilters: new Set(),
             tempTopicFilters: new Set(),
@@ -522,27 +460,95 @@
         function setCategory(cat) {
             state.category = cat; state.page = 1; state.search = ''; searchInput.value = '';
             if (cat !== 'video') state.videoFilters.clear();
+            if (cat !== 'youtubers') state.youtubersFilters.clear();
             if (cat !== 'gaming') state.gamingFilters.clear();
             if (cat !== 'geopolitics') state.geopoliticsFilters.clear();
             if (cat !== 'topics') state.topicFilters.clear();
-            if (cat === 'all') { state.tempVideoFilters.clear(); state.tempGamingFilters.clear(); state.tempGeopoliticsFilters.clear(); state.tempTopicFilters.clear(); }
-            if (cat === 'saved') { readLaterBtn.classList.add('active'); filterBtns.forEach(btn => btn.classList.remove('active')); } else { readLaterBtn.classList.remove('active'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); filterBtns.forEach(btn => { const btnText = btn.textContent.toLowerCase(); const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0]; btn.classList.remove('active'); if (cat === 'video' && btnText.includes('youtube')) btn.classList.add('active'); else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active'); else if (cat === 'geopolitics' && btnText.includes('geopolitics')) btn.classList.add('active'); else if (cat === 'topics' && btnText.includes('all news') && btn.id === 'topicsBtn') btn.classList.add('active'); else if (cat !== 'video' && cat !== 'gaming' && cat !== 'geopolitics' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('youtube') && btn.id !== 'topicsBtn') btn.classList.add('active'); }); }
+
+            if (cat === 'all') {
+                state.tempVideoFilters.clear();
+                state.tempYoutubersFilters.clear();
+                state.tempGamingFilters.clear();
+                state.tempGeopoliticsFilters.clear();
+                state.tempTopicFilters.clear();
+            }
+
+            if (cat === 'saved') {
+                readLaterBtn.classList.add('active');
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+            } else {
+                readLaterBtn.classList.remove('active');
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+
+                filterBtns.forEach(btn => {
+                    const btnText = btn.textContent.toLowerCase();
+                    const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
+                    btn.classList.remove('active');
+                    
+                    if (cat === 'video' && btnText.includes('media')) btn.classList.add('active');
+                    else if (cat === 'youtubers' && btnText.includes('youtubers')) btn.classList.add('active');
+                    else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
+                    else if (cat === 'geopolitics' && btnText.includes('geopolitics')) btn.classList.add('active');
+                    else if (cat !== 'video' && cat !== 'youtubers' && cat !== 'gaming' && cat !== 'geopolitics' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('media') && btn.id !== 'topicsBtn') btn.classList.add('active');
+                });
+            }
             renderApp();
         }
 
         window.handleMenuClick = function(cat, event) {
             if (cat === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            if (cat === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); }
             if (cat === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
             if (cat === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); }
             setCategory(cat); toggleDropdown(cat, event);
         }
 
         window.closeOnLeave = function(type) { const menu = document.getElementById(type + 'Dropdown'); if (menu) menu.classList.remove('show'); }
-        window.toggleDropdown = function(type, event) { if(event) event.stopPropagation(); const menu = document.getElementById(type + 'Dropdown'); const wasOpen = menu.classList.contains('show'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); if (!wasOpen) { if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters); if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters); if (type === 'geopolitics') state.tempGeopoliticsFilters = new Set(state.geopoliticsFilters); if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters); updateCheckboxUI(type); menu.classList.add('show'); } }
-        window.updateTempFilter = function(type, value, isChecked) { let tempSet; if (type === 'video') tempSet = state.tempVideoFilters; else if (type === 'gaming') tempSet = state.tempGamingFilters; else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; else if (type === 'topics') tempSet = state.tempTopicFilters; if (isChecked) tempSet.add(value); else tempSet.delete(value); }
-        function updateCheckboxUI(type) { const container = document.getElementById(type + 'Dropdown'); if(!container) return; let tempSet; if (type === 'video') tempSet = state.tempVideoFilters; else if (type === 'gaming') tempSet = state.tempGamingFilters; else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; else if (type === 'topics') tempSet = state.tempTopicFilters; const inputs = container.querySelectorAll('input[type="checkbox"]'); inputs.forEach(input => { const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); if(valMatch && valMatch[1]) { const val = valMatch[1].replace(/'/g, ""); input.checked = tempSet.has(val); } }); }
-        window.applyFilters = function(type) { if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters); else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters); else if (type === 'geopolitics') state.geopoliticsFilters = new Set(state.tempGeopoliticsFilters); else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type); }
-        window.clearFilters = function(type) { if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); } else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); } else if (type === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); } else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); } updateCheckboxUI(type); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type === 'topics' ? 'all' : type); }
+        window.toggleDropdown = function(type, event) { if(event) event.stopPropagation(); const menu = document.getElementById(type + 'Dropdown'); const wasOpen = menu.classList.contains('show'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); if (!wasOpen) { 
+            if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
+            if (type === 'youtubers') state.tempYoutubersFilters = new Set(state.youtubersFilters);
+            if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
+            if (type === 'geopolitics') state.tempGeopoliticsFilters = new Set(state.geopoliticsFilters);
+            if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
+            updateCheckboxUI(type); menu.classList.add('show'); 
+        } }
+
+        window.updateTempFilter = function(type, value, isChecked) { 
+            let tempSet;
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'youtubers') tempSet = state.tempYoutubersFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters;
+            if (isChecked) tempSet.add(value); else tempSet.delete(value);
+        }
+        
+        function updateCheckboxUI(type) { const container = document.getElementById(type + 'Dropdown'); if(!container) return; let tempSet; 
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'youtubers') tempSet = state.tempYoutubersFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters;
+            const inputs = container.querySelectorAll('input[type="checkbox"]'); inputs.forEach(input => { const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); if(valMatch && valMatch[1]) { const val = valMatch[1].replace(/'/g, ""); input.checked = tempSet.has(val); } }); }
+
+        window.applyFilters = function(type) { 
+            if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
+            else if (type === 'youtubers') state.youtubersFilters = new Set(state.tempYoutubersFilters);
+            else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
+            else if (type === 'geopolitics') state.geopoliticsFilters = new Set(state.tempGeopoliticsFilters);
+            else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
+            document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type); 
+        }
+
+        window.clearFilters = function(type) { 
+            if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            else if (type === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); }
+            else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            else if (type === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); }
+            else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
+            updateCheckboxUI(type); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type === 'topics' ? 'all' : type); 
+        }
+
         window.onclick = function(event) { if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) { document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); } }
         
         const GENRES = { 'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'], 'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'], 'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'], 'mmorpg': ['mmo', 'mmorpg', 'world of warcraft', 'wow', 'final fantasy xiv', 'ffxiv', 'guild wars', 'elder scrolls online', 'runescape', 'black desert'], 'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'], 'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026'] };
@@ -556,9 +562,17 @@
                 const fullText = title + " " + summary;
 
                 if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); }
-                if (state.category === 'all') { if (art.is_video) return false; if (artCat === 'gaming') return false; return fullText.includes(state.search); }
+                if (state.category === 'all') { 
+                    // PÅ startsidan: Visa allt utom rena YouTube-analys videos (youtubers) och gaming-videos om man inte vill ha spam
+                    if (artCat === 'youtubers') return false; 
+                    if (artCat === 'gaming' && art.is_video) return false; 
+                    return fullText.includes(state.search); 
+                }
+
+                // MEDIA (VIDEO BUTTON) - Shows Official News Channels (CNN, BBC, CCTV etc)
                 if (state.category === 'video') { 
                     if (!art.is_video) return false; 
+                    if (artCat === 'youtubers') return false; // Hide independent youtubers
                     if (state.videoFilters.size > 0) { 
                         let matchFound = false; 
                         for (let filter of state.videoFilters) { 
@@ -568,7 +582,21 @@
                     } 
                     return fullText.includes(state.search); 
                 }
-                if (state.category === 'gaming') { if (artCat !== 'gaming') return false; if (art.is_video) return false; if (state.gamingFilters.size > 0) { let matchFound = false; for (let genre of state.gamingFilters) { const keywords = GENRES[genre]; if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); }
+
+                // YOUTUBERS BUTTON - Shows Independent Analysts (Johnny Harris, etc)
+                if (state.category === 'youtubers') {
+                    if (artCat !== 'youtubers') return false;
+                    if (state.youtubersFilters.size > 0) {
+                        let matchFound = false;
+                        for (let filter of state.youtubersFilters) {
+                            if (artTags.includes(filter)) { matchFound = true; break; }
+                        }
+                        if (!matchFound) return false;
+                    }
+                    return fullText.includes(state.search);
+                }
+
+                if (state.category === 'gaming') { if (artCat !== 'gaming') return false; if (state.gamingFilters.size > 0) { let matchFound = false; for (let genre of state.gamingFilters) { const keywords = GENRES[genre]; if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); }
                 
                 if (state.category === 'geopolitics') { 
                     if (artCat !== 'geopolitics' && artCat !== 'china') return false; 
@@ -592,7 +620,6 @@
 
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
-                // FALLBACK IF EMPTY
                 if (!imgUrl) imgUrl = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop";
                 
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';

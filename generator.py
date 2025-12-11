@@ -13,36 +13,28 @@ from urllib.parse import urljoin
 import urllib3
 import re
 
-# NY IMPORT: Översättning
 try:
     from deep_translator import GoogleTranslator
     TRANSLATOR_ACTIVE = True
 except ImportError:
-    print("VARNING: 'deep-translator' saknas. Kör 'pip install deep-translator'.")
     TRANSLATOR_ACTIVE = False
 
-# Stäng av SSL-varningar
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
-MAX_SUMMARY_LENGTH = 280 # NYTT: Hård gräns för textlängd
-
-# EN SNYGG STANDARD-BILD
+MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
-# --- 1. IMPORTERA KÄLLOR ---
 try:
     from sources import SOURCES
-    print(f"--- LADDADE {len(SOURCES)} KÄLLOR FRÅN sources.py ---")
+    print(f"--- LADDADE {len(SOURCES)} KÄLLOR ---")
 except ImportError:
-    print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.9 - TEXT CUTTER) ---")
+print(f"--- STARTAR GENERATORN (V20.5.18 - TIME FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -50,16 +42,10 @@ HEADERS = {
     "Referer": "https://www.google.com/"
 }
 
-# --- 2. HJÄLPFUNKTIONER ---
-
 def clean_text(text):
-    """Rensar HTML och klipper texten så den inte pajar layouten."""
     if not text: return ""
-    # Ta bort HTML-taggar
     text = BeautifulSoup(text, "html.parser").get_text(separator=" ")
-    # Ta bort extra mellanslag
     text = " ".join(text.split())
-    # Klipp texten
     if len(text) > MAX_SUMMARY_LENGTH:
         return text[:MAX_SUMMARY_LENGTH] + "..."
     return text
@@ -67,7 +53,6 @@ def clean_text(text):
 def translate_text(text, source_lang):
     if not TRANSLATOR_ACTIVE or not text: return text
     try:
-        # Klipp innan översättning för att spara tid/risk
         if len(text) > 1000: text = text[:1000]
         return GoogleTranslator(source=source_lang, target='en').translate(text)
     except Exception: return text
@@ -99,12 +84,10 @@ def clean_image_url_generic(url):
     if 'phys.org' in url or 'scx' in url: return url
     if 'fz.se' in url: return url
     if 'wp.com' in url or 'electrek' in url or '9to5' in url:
-        if 'w=' in url:
-            return re.sub(r'w=\d+', 'w=1600', url)
+        if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
-# --- 3. BILDSTRATEGIER ---
-
+# --- BILDSTRATEGIER ---
 def strategy_fz_se(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
@@ -113,8 +96,6 @@ def strategy_fz_se(link):
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return og["content"]
-        img = soup.select_one('figure.image img')
-        if img and img.get('src'): return urljoin(link, img.get('src'))
     except: pass
     return None
 
@@ -140,18 +121,6 @@ def strategy_aftonbladet(link):
         if r.status_code != 200: return None
         matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
         if matches: return matches[0].replace('&amp;', '&')
-        soup = BeautifulSoup(r.content, 'html.parser')
-        scripts = soup.find_all('script', type='application/ld+json')
-        for script in scripts:
-            try:
-                data = json.loads(script.string)
-                if isinstance(data, list): data = data[0]
-                if 'image' in data:
-                    img = data['image']
-                    if isinstance(img, list): return img[0]
-                    if isinstance(img, dict): return img.get('url')
-                    if isinstance(img, str): return img
-            except: pass
     except: pass
     return None
 
@@ -163,35 +132,6 @@ def strategy_deep_scrape(link):
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return urljoin(link, og["content"])
-        best_img = None
-        max_w = 0
-        images = soup.select('figure img, .entry-content img, article img, img')
-        for img in images:
-            candidates = []
-            if img.get('src'): candidates.append(img.get('src'))
-            if img.get('data-src'): candidates.append(img.get('data-src'))
-            srcset = img.get('srcset') or img.get('data-srcset')
-            if srcset:
-                for p in srcset.split(','):
-                    parts = p.strip().split(' ')
-                    if len(parts) >= 1: candidates.append(parts[0])
-            for c in candidates:
-                if not c or 'base64' in c: continue
-                full = urljoin(link, c)
-                score = 0
-                if 'w=' in full: 
-                    try: score = int(re.search(r'w=(\d+)', full).group(1))
-                    except: pass
-                elif img.get('width'):
-                    try: score = int(img['width'])
-                    except: pass
-                parent_cls = str(img.parent.get('class', []))
-                if 'featured' in parent_cls or 'hero' in parent_cls: score += 500
-                if any(x in full.lower() for x in ['logo', 'icon', 'avatar']): score = 0
-                if score > max_w:
-                    max_w = score
-                    best_img = full
-        return best_img
     except: pass
     return None
 
@@ -215,8 +155,6 @@ def strategy_default(entry):
         except: pass
     return img_url
 
-# --- 4. ROUTING LOGIK ---
-
 def get_image_for_article(entry, source_url):
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
@@ -239,13 +177,10 @@ def get_web_info(source):
         else:
             resp = get_session().get(source['url'], timeout=10, verify=False)
 
-        if resp.status_code != 200:
-            print(f"⚠️ VARNING: {source['source_name']} status {resp.status_code}.")
-            return []
+        if resp.status_code != 200: return []
 
         feed = feedparser.parse(resp.content)
-        if not feed.entries:
-            print(f"⚠️ TOMT FLÖDE: {source['source_name']}")
+        if not feed.entries: return []
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
@@ -256,7 +191,6 @@ def get_web_info(source):
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
 
-            # HÄMTA OCH STÄDA SAMMANFATTNINGEN HÄR
             raw_summary = entry.get('summary', '') or entry.get('description', '')
             clean_summary = clean_text(raw_summary)
 
@@ -280,9 +214,7 @@ def get_web_info(source):
                 "timestamp": timestamp,
                 "is_video": False
             })
-    except Exception as e: 
-        print(f"FEL ({source.get('source_name', 'Unknown')}): {e}")
-        pass
+    except: pass
     return found_articles
 
 def get_video_info(source):
@@ -315,9 +247,7 @@ def get_video_info(source):
                 if is_too_old(ts): continue
 
                 title = entry.get('title', 'Video')
-                # STÄDA VIDEOBESKRIVNING
-                raw_summary = entry.get('description', '')
-                clean_summary = clean_text(raw_summary)
+                clean_summary = clean_text(entry.get('description', ''))
 
                 lang_note = ""
                 if source.get('lang') == 'sv':
@@ -338,18 +268,14 @@ def get_video_info(source):
                     "timestamp": ts,
                     "is_video": True
                 })
-    except Exception as e:
-        print(f"FEL VID VIDEOHÄMTNING ({source.get('source_name')}): {e}")
+    except: pass
     return videos
 
-def get_video_info_wrapper(source):
-    return get_video_info(source)
-
 def process_source(source):
-    if source['type'] == 'video': return get_video_info_wrapper(source)
+    if source['type'] == 'video': return get_video_info(source)
     else: return get_web_info(source)
 
-# --- 5. EXEKVERING ---
+# --- EXEKVERING ---
 new_articles = []
 start_time = time.time()
 
@@ -361,35 +287,36 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
             if data: new_articles.extend(data)
         except: pass
 
-# --- 6. CLEANUP ---
 unique_map = {}
 for art in new_articles:
     if not art['title'] or art['title'] == 'Video': continue
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-final_list.sort(key=lambda x: x.get('timestamp', 0), reverse=True)
+for art in final_list:
+    jitter = random.randint(-7200, 7200)
+    art['sort_score'] = art['timestamp'] + jitter
+
+final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
 
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
-    if diff < 3600: art['time_str'] = f"{int(diff/60)}m ago"
+    # FIX FÖR TIDSVISNING:
+    if diff < 60: art['time_str'] = "Just Now"
+    elif diff < 3600: art['time_str'] = f"{int(diff/60)}m ago"
     elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
     else: art['time_str'] = f"{int(diff/86400)}d ago"
+    art.pop('sort_score', None)
 
 final_list = final_list[:TOTAL_LIMIT]
 
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_list, f, ensure_ascii=False, indent=2)
 
-print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
-print(f"Totalt antal artiklar: {len(final_list)}")
-
 if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
         html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("SUCCESS: index.html har uppdaterats!")
-else:
-    print("VARNING: template.html saknas!")
+    print(f"--- SUCCESS: {len(final_list)} articles generated in {time.time()-start_time:.2f}s ---")
