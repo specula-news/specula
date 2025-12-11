@@ -1,0 +1,23 @@
+name: 🛠️ Debug URL Logic
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Paste Article URL here (e.g. Sweclockers link)'
+        required: true
+
+jobs:
+  debug-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Python Deps
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: RUN DIAGNOSTICS
+        run: |
+          python debug_logic.py "${{ github.event.inputs.target_url }}"
