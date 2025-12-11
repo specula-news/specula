@@ -35,7 +35,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.32 - FORCE SHOW VIDEOS) ---")
+print(f"--- STARTAR GENERATORN (V20.5.33 - FULL METADATA MODE) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -228,18 +228,25 @@ def get_video_info(source):
     videos = []
     try:
         ydl_opts = {
-            'quiet': True, 
-            'ignoreerrors': True, 
-            'extract_flat': True, 
-            'playlistend': 5, # Max 5 videos per kanal
+            'quiet': True,
+            'ignoreerrors': True,
+            # HÄR ÄR DEN STORA FIXEN: extract_flat = False hämtar full metadata
+            'extract_flat': False, 
+            'playlistend': 5, 
             'no_warnings': True,
-            'http_headers': HEADERS 
+            'http_headers': HEADERS
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             if not info: return videos
-            entries = info.get('entries', [info])
+            
+            # Om det är en spellista/kanal, ligger videorna i 'entries'
+            # Om det är en enskild video, är 'info' själva videon
+            if 'entries' in info:
+                entries = info['entries']
+            else:
+                entries = [info]
 
             for entry in entries:
                 if not entry: continue
@@ -247,6 +254,7 @@ def get_video_info(source):
                 img_url = ''
                 thumbnails = entry.get('thumbnails', [])
                 if thumbnails and isinstance(thumbnails, list):
+                    # Försök ta den största bilden (sista i listan oftast)
                     try: img_url = thumbnails[-1].get('url', '')
                     except: pass
                 
@@ -256,14 +264,18 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    date_str = entry.get('upload_date') or entry.get('release_date')
-                    if date_str:
-                        ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
-                    elif entry.get('timestamp'):
-                        ts = entry['timestamp']
+                    # FIX: PRIORITERA EXAKTA TIMESTAMP FRÅN METADATA
+                    if entry.get("release_timestamp"):
+                        ts = entry["release_timestamp"]
+                    elif entry.get("timestamp"):
+                        ts = entry["timestamp"]
+                    elif entry.get("upload_date"):
+                        # Fallback till datumsträng YYYYMMDD
+                        ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
                 except: pass
 
-                # FIX: Om datum saknas, sätt till NU så videon syns!
+                # Fallback: Om timestamp fortfarande är 0, sätt till nu
+                # (Men med extract_flat=False bör detta hända extremt sällan)
                 if ts == 0:
                     ts = time.time()
 
@@ -280,7 +292,7 @@ def get_video_info(source):
 
                 videos.append({
                     "title": title,
-                    "link": entry.get('url') or entry.get('webpage_url') or f"https://www.youtube.com/watch?v={entry['id']}",
+                    "link": entry.get('webpage_url') or entry.get('url') or f"https://www.youtube.com/watch?v={entry['id']}",
                     "images": [img_url],
                     "summary": clean_summary,
                     "category": source.get('cat', 'video'),
@@ -330,8 +342,10 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    if diff < 3600:
-        art['time_str'] = "Just Now" # Mindre än 1h
+    if diff < 60:
+        art['time_str'] = "Just Now"
+    elif diff < 3600:
+        art['time_str'] = f"{int(diff/60)}m ago"
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
     elif diff < 604800: 
