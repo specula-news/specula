@@ -102,7 +102,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@wef/videos","cat":"economy","type":"video","source_name":"World Economic Forum","lang":"en","status":{},"lastStatus":"err"},
     {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en","status":{},"lastStatus":"err"},
     # --- GEO: Sweden ---
-    {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden","status":{},"lastStatus":"err"},
+    {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden","status":{},"lastStatus":"err"},
     {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden","status":{},"lastStatus":"err"},
     # --- GEO: EU ---
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu","status":{},"lastStatus":"err"},
