@@ -34,7 +34,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.28 - REAL TIME FIX) ---")
+print(f"--- STARTAR GENERATORN (V20.5.29 - HD IMAGES & TIME FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -70,7 +70,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False # Behåll om datum saknas
+    if timestamp == 0: return False 
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -126,6 +126,7 @@ def strategy_aftonbladet(link):
     return None
 
 def strategy_deep_scrape(link):
+    """Hämtar högupplöst bild via OpenGraph för sidor med dåliga RSS-bilder."""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
@@ -157,14 +158,20 @@ def strategy_default(entry):
     return img_url
 
 def get_image_for_article(entry, source_url):
+    # FZ.SE
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
+    # PHYS.ORG
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
+    # AFTONBLADET
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
-    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers']
+    
+    # DEEP SCRAPE LISTA (Här lägger vi till indiatimes för att fixa pixliga bilder)
+    deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
         if not url: return strategy_default(entry)
         return url
+        
     return strategy_default(entry)
 
 def get_web_info(source):
@@ -186,9 +193,8 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
-            # Om datum saknas, sätt det till 0, men sortera det sist
             if timestamp == 0:
-                timestamp = time.time() - 604800 # 1 vecka gammalt som default
+                timestamp = time.time() - 604800 
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
@@ -247,17 +253,18 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    # FÖRSÖK HITTA RIKTIGT DATUM
-                    if entry.get('upload_date'): 
-                        ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
+                    # FIX: HÄMTA DATUM KORREKT
+                    date_str = entry.get('upload_date') or entry.get('release_date')
+                    if date_str:
+                        ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
                     elif entry.get('timestamp'): 
                         ts = entry['timestamp']
                 except: pass
 
-                # OM INGET DATUM FINNS, ANVÄND INTE "JUST NU"
-                # Vi sätter det till 2 dagar sedan så det hamnar en bit ner
+                # FIX: Om datum saknas helt, sätt det till 30 dagar sedan (inte 2)
+                # Detta förhindrar att gamla videos visas som "New" eller "2 days ago".
                 if ts == 0:
-                    ts = time.time() - 172800 
+                    ts = time.time() - (86400 * 30)
 
                 if is_too_old(ts): continue
 
@@ -322,14 +329,15 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    # HÄR ÄR TIDSFIXEN
-    if diff < 3600: # Mindre än 1 timme
+    if diff < 60:
+        art['time_str'] = "Just Now"
+    elif diff < 3600:
         art['time_str'] = f"{int(diff/60)}m ago"
-    elif diff < 86400: # Mindre än 24h
+    elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
-    elif diff < 604800: # Mindre än 7 dagar
+    elif diff < 604800: 
         art['time_str'] = f"{int(diff/86400)}d ago"
-    elif diff < 2592000: # Mindre än 30 dagar
+    elif diff < 2592000:
         art['time_str'] = f"{int(diff/604800)}w ago"
     else:
         art['time_str'] = f"{int(diff/2592000)}mo ago"
@@ -341,9 +349,14 @@ final_list = final_list[:TOTAL_LIMIT]
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_list, f, ensure_ascii=False, indent=2)
 
+print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
+print(f"Totalt antal artiklar: {len(final_list)}")
+
 if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
         html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"--- SUCCESS: {len(final_list)} articles generated in {time.time()-start_time:.2f}s ---")
+    print("SUCCESS: index.html har uppdaterats!")
+else:
+    print("VARNING: template.html saknas!")
