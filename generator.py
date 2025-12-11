@@ -34,12 +34,14 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.29 - HD IMAGES & TIME FIX) ---")
+print(f"--- STARTAR GENERATORN (V20.5.30 - FAKE BROWSER HEADERS) ---")
 
+# Dessa headers används nu både för webbsidor OCH YouTube
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Referer": "https://www.google.com/"
+    "Referer": "https://www.google.com/",
+    "Accept-Language": "en-US,en;q=0.9"
 }
 
 def clean_text(text):
@@ -126,7 +128,6 @@ def strategy_aftonbladet(link):
     return None
 
 def strategy_deep_scrape(link):
-    """Hämtar högupplöst bild via OpenGraph för sidor med dåliga RSS-bilder."""
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
@@ -158,20 +159,14 @@ def strategy_default(entry):
     return img_url
 
 def get_image_for_article(entry, source_url):
-    # FZ.SE
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
-    # PHYS.ORG
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
-    # AFTONBLADET
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
-    
-    # DEEP SCRAPE LISTA (Här lägger vi till indiatimes för att fixa pixliga bilder)
     deep_list = ['dagensps', 'electrek', 'feber', 'nasa.gov', 'sweclockers', 'indiatimes']
     if any(d in source_url for d in deep_list):
         url = strategy_deep_scrape(entry.link)
         if not url: return strategy_default(entry)
         return url
-        
     return strategy_default(entry)
 
 def get_web_info(source):
@@ -193,8 +188,9 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
+            # Om datum saknas, sätt till nu minus slumpmässig tid (för att inte klumpa ihop)
             if timestamp == 0:
-                timestamp = time.time() - 604800 
+                timestamp = time.time() - random.randint(100, 3600)
 
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
@@ -232,7 +228,16 @@ def get_web_info(source):
 def get_video_info(source):
     videos = []
     try:
-        ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 10, 'no_warnings': True}
+        # FAKE BROWSER HEADERS - DETTA ÄR NYCKELN FÖR ATT FÅ DATUMET
+        ydl_opts = {
+            'quiet': True,
+            'ignoreerrors': True,
+            'extract_flat': True,
+            'playlistend': 10,
+            'no_warnings': True,
+            'http_headers': HEADERS # Använd samma headers som Chrome
+        }
+        
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             if not info: return videos
@@ -253,7 +258,7 @@ def get_video_info(source):
 
                 ts = 0
                 try:
-                    # FIX: HÄMTA DATUM KORREKT
+                    # YT-DLP returnerar ofta '20231211' som upload_date
                     date_str = entry.get('upload_date') or entry.get('release_date')
                     if date_str:
                         ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
@@ -261,10 +266,10 @@ def get_video_info(source):
                         ts = entry['timestamp']
                 except: pass
 
-                # FIX: Om datum saknas helt, sätt det till 30 dagar sedan (inte 2)
-                # Detta förhindrar att gamla videos visas som "New" eller "2 days ago".
+                # FIX: Om inget datum finns, sätt till NU (istället för 30 dagar sedan).
+                # Med 'http_headers' borde vi dock få datumet oftare nu.
                 if ts == 0:
-                    ts = time.time() - (86400 * 30)
+                    ts = time.time()
 
                 if is_too_old(ts): continue
 
@@ -329,10 +334,9 @@ now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
     
-    if diff < 60:
-        art['time_str'] = "Just Now"
-    elif diff < 3600:
-        art['time_str'] = f"{int(diff/60)}m ago"
+    # Här räknar vi ut tiden korrekt baserat på det extraherade datumet
+    if diff < 3600:
+        art['time_str'] = "Just Now" # Mindre än 1h
     elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
     elif diff < 604800: 
