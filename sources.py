@@ -2,6 +2,9 @@
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
+    {"url":"https://www.theguardian.com/europe","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
+    {"url":"https://www.bloomberg.com/europe","cat":"geopolitics","type":"web","source_name":"Bloomberg","lang":"en","filter_tag":"global"},
+    {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     {"url":"http://feeds.bbci.co.uk/news/world/rss.xml","cat":"geopolitics","type":"web","source_name":"BBC World","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
