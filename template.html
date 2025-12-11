@@ -104,7 +104,6 @@
         .btn-clear { color: #ff4444; opacity: 0.8; font-size: 0.75rem; }
         .btn-ok { background: var(--accent); color: #000; padding: 6px 20px; border-radius: 50px; font-size: 0.8rem; gap: 5px; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* READ LATER (GLUED) */
         .read-later-container { width: 100%; display: flex; justify-content: center; margin-top: -2px; z-index: 40; }
         .read-later-btn { position: relative; background: var(--nav-bg); border: 1px solid var(--border); border-top: none; color: var(--text-secondary); padding: 6px 30px; border-radius: 0 0 20px 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .read-later-btn::before { content: ''; position: absolute; top: -2px; left: 2px; right: 2px; height: 4px; background: var(--nav-bg); z-index: 45; }
@@ -117,7 +116,7 @@
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
             
-            /* GRID LAYOUT FOR MOBILE NAV (5 COLUMNS) */
+            /* SPLIT NAV: GRID TOP, FLEX BOTTOM */
             .unified-nav { 
                 display: flex; 
                 flex-direction: column; 
@@ -127,6 +126,7 @@
                 border-radius: 20px;
             }
 
+            /* TOP ROW: 5 BUTTONS GRID */
             .nav-top-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -134,11 +134,14 @@
                 border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             
+            /* BOTTOM ROW: FLEXBOX FOR PERFECT CENTERING (FIX) */
             .nav-bottom-row {
-                display: grid; 
-                grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 EQUAL COLUMNS */
+                display: flex !important; /* Forces Flexbox */
+                justify-content: center !important; /* Centers content */
+                align-items: center;
+                gap: 5px; /* Nice gap between buttons */
                 width: 100%;
-                padding: 5px 0;
+                padding: 8px 0;
             }
 
             .filter-btn { 
@@ -148,9 +151,15 @@
                 font-size: 0.75rem; 
             }
             
+            /* Bottom row buttons specific: Auto width to hug text */
+            .nav-bottom-row .filter-btn {
+                width: auto !important;
+                flex: 1; /* Equal space */
+                max-width: 25%; /* Limit width */
+            }
+            
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
-
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
@@ -252,13 +261,18 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
+                 <!-- V20.5.24 -->
+                 <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.24 - Flex Centering</strong>
+                    <div style="margin-top:5px; line-height:1.5;">
+                        • <strong>Center Fix:</strong> Switched bottom mobile nav to Flexbox centering to fix uneven spacing around short words like "EV".<br>
+                        • <strong>All News Filter:</strong> Strict "No Videos" rule applied to the main feed.
+                    </div>
+                 </li>
                  <!-- V20.5.23 -->
                  <li style="margin-bottom:25px; padding-left:15px; border-left: 2px solid #00f0ff;">
-                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.23 - News Purist</strong>
-                    <div style="margin-top:5px; line-height:1.5;">
-                        • <strong>Pure News:</strong> "All News" now strictly displays articles only. No videos will appear in this feed.<br>
-                        • <strong>Grid Polish:</strong> Perfected mobile layout alignment for the 4-column bottom row.
-                    </div>
+                    <strong style="color:var(--text-primary); font-size:1.1rem;">Version 20.5.23</strong><br>
+                    Pure News mode enabled.
                  </li>
             </ul>
         </div>
@@ -289,7 +303,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.23</div>
+                <div class="version-display" id="versionBtn">Version 20.5.24</div>
             </div>
             
             <div class="nav-wrapper">
@@ -376,7 +390,7 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM ROW (GRID 4 COLS) -->
+                    <!-- BOTTOM ROW (FLEX CENTERED FOR MOBILE) -->
                     <div class="nav-bottom-row desktop-categories-list">
                         <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
                         <button class="filter-btn" onclick="setCategory('ev')">EV</button>
@@ -620,6 +634,7 @@
 
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
+                // FALLBACK IF EMPTY
                 if (!imgUrl) imgUrl = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop";
                 
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';
