@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V2.2 (SMART RSS)</title>
+    <title>SPECULA ADMIN // V3.0 (EDIT & TEST)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -38,16 +38,36 @@
         .view-badge { font-size: 0.8rem; background: #222; padding: 4px 8px; border-radius: 4px; color: #888; font-family: 'Inter'; }
 
         /* GRID & CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
-        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 15px; transition: 0.2s; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 15px; }
+        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 15px; transition: 0.2s; position: relative; display: flex; flex-direction: column; gap: 8px; }
         .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
         
-        .card-meta { font-size: 0.65rem; color: #555; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; letter-spacing: 0.5px; }
-        .card-name { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 5px; outline: none; }
-        .card-name:focus { border-bottom: 1px solid var(--accent); }
-        .card-url { font-family: monospace; font-size: 0.7rem; color: #666; display: block; word-break: break-all; text-decoration: none; margin-bottom: 15px; }
+        .card-label { font-size: 0.65rem; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: -5px; }
         
-        .card-actions { display: flex; gap: 10px; border-top: 1px solid #222; padding-top: 10px; }
+        /* Edit Fields */
+        .edit-name { 
+            background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; 
+            font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0;
+        }
+        .edit-name:focus { border-color: var(--accent); outline: none; }
+
+        .url-row { display: flex; gap: 5px; }
+        .edit-url { 
+            background: #000; border: 1px solid #333; color: #bbb; 
+            font-family: monospace; font-size: 0.75rem; width: 100%; padding: 6px; border-radius: 4px;
+        }
+        .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
+
+        /* Mini Buttons */
+        .btn-mini { 
+            background: #222; border: 1px solid #444; color: #fff; 
+            padding: 0 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-mini:hover { background: #333; border-color: #fff; }
+        .btn-magic { color: var(--accent); border-color: #004455; }
+        .btn-magic:hover { background: var(--accent); color: #000; }
+
+        .card-actions { display: flex; gap: 10px; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
         .btn-del { background: transparent; border: 1px solid #333; color: #555; width: 30px; border-radius: 4px; cursor: pointer; }
         .btn-del:hover { color: #f00; border-color: #f00; }
@@ -70,7 +90,7 @@
     <input type="hidden" id="ghToken" value=""> 
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V2.2</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V3.0</span></div>
         <div class="actions">
             <button onclick="fetchSources()">↻ Reload</button>
             <button onclick="deployLive()">🚀 Deploy</button>
@@ -92,7 +112,7 @@
 
     <!-- Add Bar -->
     <div class="add-bar">
-        <input type="text" id="urlInput" placeholder="URL (e.g. www.sweclockers.com)..." style="flex-grow: 2;" oninput="autoSmartFix()">
+        <input type="text" id="urlInput" placeholder="URL (e.g. www.sweclockers.com)..." style="flex-grow: 2;" oninput="autoSmartFixAdd()">
         <input type="text" id="nameInput" placeholder="Name (Auto)" style="flex-grow: 1;">
         <button class="actions btn-save" style="border:none; padding:12px 24px; cursor:pointer;" onclick="addSource()">+ ADD</button>
     </div>
@@ -104,7 +124,6 @@
         // 0. SMART RSS DATABASE (Auto-Fixer)
         // ===============================================
         const SMART_RSS_MAP = {
-            // SWEDEN
             "sweclockers": "https://www.sweclockers.com/feeds/nyheter",
             "fz.se": "https://www.fz.se/feeds/nyheter",
             "fz": "https://www.fz.se/feeds/nyheter",
@@ -120,8 +139,6 @@
             "teslaclubsweden": "https://teslaclubsweden.se/feed/",
             "byggvarlden": "https://www.byggvarlden.se/feed/",
             "byggindustrin": "https://www.byggindustrin.se/rss/nyheter",
-
-            // TECH / GLOBAL
             "theverge": "https://www.theverge.com/rss/index.xml",
             "wired": "https://www.wired.com/feed/rss",
             "techcrunch": "https://techcrunch.com/feed/",
@@ -134,16 +151,12 @@
             "insideevs": "https://insideevs.com/rss/articles/all/",
             "cleantechnica": "https://cleantechnica.com/feed/",
             "oilprice": "https://oilprice.com/rss/main",
-
-            // GAMING
             "eurogamer": "https://www.eurogamer.net/feed",
             "pcgamer": "https://www.pcgamer.com/rss",
             "kotaku": "https://kotaku.com/rss",
             "polygon": "https://www.polygon.com/rss/index.xml",
             "ign": "https://feeds.ign.com/ign/news",
             "gamespot": "https://www.gamespot.com/feeds/news/",
-
-            // NEWS
             "bbc": "http://feeds.bbci.co.uk/news/world/rss.xml",
             "cnn": "http://rss.cnn.com/rss/edition.rss",
             "aljazeera": "https://www.aljazeera.com/xml/rss/all.xml",
@@ -213,7 +226,6 @@
                 const data = await res.json();
                 currentSha = data.sha;
                 const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0)));
-                
                 parsePython(text);
                 renderNav();
                 renderGrid();
@@ -313,9 +325,16 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <div class="card-meta">${item.source_name || 'Unknown'}</div>
-                    <div class="card-name" contenteditable="true" onblur="updateItem(${idx}, 'source_name', this.innerText)">${item.source_name || '-'}</div>
-                    <a href="${item.url}" target="_blank" class="card-url">${item.url}</a>
+                    <div class="card-label">NAME</div>
+                    <input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)">
+                    
+                    <div class="card-label">URL</div>
+                    <div class="url-row">
+                        <input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)">
+                        <button class="btn-mini" title="Test URL" onclick="testUrl(${idx})">🔗</button>
+                        <button class="btn-mini btn-magic" title="Convert to RSS" onclick="magicFix(${idx})">🪄</button>
+                    </div>
+
                     <div class="card-actions">
                         <select class="move-select" onchange="moveItem(${idx}, this.value)">
                             <option value="">Move to...</option>
@@ -336,6 +355,44 @@
             return html;
         }
 
+        // ===============================================
+        // EDIT & TEST FUNCTIONS
+        // ===============================================
+        function updateItem(idx, field, val) {
+            sourceData[activeFolder][idx][field] = val.trim();
+        }
+
+        function testUrl(idx) {
+            const url = document.getElementById(`url-${idx}`).value;
+            window.open(url, '_blank');
+        }
+
+        function magicFix(idx) {
+            const input = document.getElementById(`url-${idx}`);
+            const currentVal = input.value.toLowerCase();
+            
+            // 1. YouTube Fix
+            if(currentVal.includes('youtube.com/@') && !currentVal.includes('/videos')) {
+                const fixed = currentVal.replace(/\/$/, "") + '/videos';
+                input.value = fixed;
+                updateItem(idx, 'url', fixed);
+                showToast("Fixed YouTube Link! 🪄");
+                return;
+            }
+
+            // 2. Database Lookup
+            for (let key in SMART_RSS_MAP) {
+                if (currentVal.includes(key)) {
+                    const fixed = SMART_RSS_MAP[key];
+                    input.value = fixed;
+                    updateItem(idx, 'url', fixed);
+                    showToast("Converted to RSS! 🪄");
+                    return;
+                }
+            }
+            alert("No smart fix found for this URL in database.");
+        }
+
         function moveItem(idx, targetId) {
             if(!targetId) return;
             const item = sourceData[activeFolder][idx];
@@ -352,21 +409,37 @@
             if(confirm("Delete source?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); }
         }
 
-        function updateItem(idx, field, val) {
-            sourceData[activeFolder][idx][field] = val;
+        // ===============================================
+        // ADD NEW SOURCE
+        // ===============================================
+        function autoSmartFixAdd() {
+            let u = document.getElementById('urlInput');
+            let val = u.value.toLowerCase().trim();
+
+            if(val.includes('youtube.com/@') && !val.includes('/videos')) {
+                u.value = val.replace(/\/$/, "") + '/videos';
+                return;
+            }
+            if(!val.includes('rss') && !val.includes('feed') && !val.includes('.xml')) {
+                for (let key in SMART_RSS_MAP) {
+                    if (val.includes(key)) {
+                        u.value = SMART_RSS_MAP[key];
+                        let nameInput = document.getElementById('nameInput');
+                        if(!nameInput.value) nameInput.value = key.charAt(0).toUpperCase() + key.slice(1);
+                        showToast("Auto-Detected RSS! 🤖");
+                        return;
+                    }
+                }
+            }
         }
 
         function addSource() {
-            // Auto fix run one last time before adding
-            autoSmartFix();
-            
+            autoSmartFixAdd();
             const url = document.getElementById('urlInput').value.trim();
             const name = document.getElementById('nameInput').value.trim();
-            
             if(!url) return alert("URL Required");
             const cfg = FOLDER_CONFIG[activeFolder];
             
-            // Name auto-generation
             let finalName = name;
             if(!finalName) {
                 if(url.includes('youtube')) finalName = 'YouTube Channel';
@@ -419,7 +492,7 @@
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Admin Dashboard Update (V2.2)",
+                        message: "Admin Dashboard Update (V3.0)",
                         content: encoded,
                         sha: currentSha
                     })
@@ -429,41 +502,6 @@
                 currentSha = d.content.sha;
                 showToast("SAVED SUCCESSFULLY!");
             } catch(e) { alert(e.message); }
-        }
-
-        // ===============================================
-        // AUTO SMART FIXER LOGIC
-        // ===============================================
-        function autoSmartFix() {
-            let u = document.getElementById('urlInput');
-            let val = u.value.toLowerCase().trim();
-
-            // 1. YouTube Fix
-            if(val.includes('youtube.com/@') && !val.includes('/videos')) {
-                u.value = val.replace(/\/$/, "") + '/videos';
-                showToast("YouTube link optimized!");
-                return;
-            }
-
-            // 2. Lookup Database Fix
-            // Check if user input matches any key in SMART_RSS_MAP
-            // We ignore if they already typed 'rss' or 'feed' to avoid breaking valid custom links
-            if(!val.includes('rss') && !val.includes('feed') && !val.includes('.xml')) {
-                for (let key in SMART_RSS_MAP) {
-                    if (val.includes(key)) {
-                        u.value = SMART_RSS_MAP[key];
-                        
-                        // Auto-fill name if empty
-                        let nameInput = document.getElementById('nameInput');
-                        if(!nameInput.value) {
-                             nameInput.value = key.charAt(0).toUpperCase() + key.slice(1);
-                        }
-                        
-                        showToast("Auto-converted to RSS Feed! 🤖");
-                        return;
-                    }
-                }
-            }
         }
         
         function showToast(msg) {
