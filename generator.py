@@ -19,7 +19,7 @@ try:
 except ImportError:
     TRANSLATOR_ACTIVE = False
 
-# Stäng av varningar för osecure requests
+# Stäng av varningar för osäkra certifikat
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
@@ -38,7 +38,7 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V3.0 - SMART MIX & SWEC FIX) ---")
+print(f"--- STARTAR GENERATORN (V3.1 - SWEC JSON-LD FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -95,53 +95,50 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    Uppdaterad Sweclockers-strategi som prioriterar <picture>-taggar
-    för att hitta den högupplösta versionen.
+    NY STRATEGI: Använder Schema Data (JSON-LD) och Regex Brute Force.
+    Detta kringgår problem med lazy-loading av bilder.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=10, verify=False)
         if r.status_code != 200: return None
-        soup = BeautifulSoup(r.content, 'html.parser')
+        html_content = r.text
+        soup = BeautifulSoup(html_content, 'html.parser')
 
-        # 1. Kolla efter den specifika "Hero"-strukturen först
-        # Sweclockers lägger ofta huvudbilden i en picture-tagg inuti article-head
-        head_media = soup.find("div", class_="article-head__media")
-        if head_media:
-            # Försök hitta <source> med högsta upplösning (ofta webp eller jpg)
-            sources = head_media.find_all("source")
-            for source in sources:
-                srcset = source.get("srcset", "")
-                if srcset:
-                    # Ta den sista (största) URL:en i srcset
-                    best_url = srcset.split(",")[-1].strip().split(" ")[0]
-                    if best_url.startswith("//"): best_url = "https:" + best_url
-                    return best_url
-            
-            # Om inga source-taggar, ta img
-            img = head_media.find("img")
-            if img and img.get("src"):
-                src = img["src"]
-                if src.startswith("//"): src = "https:" + src
-                return src
+        # METOD 1: JSON-LD (Schema.org data) - Detta är mest pålitligt
+        # Sweclockers berättar för Google vilken som är huvudbilden här.
+        scripts = soup.find_all('script', type='application/ld+json')
+        for script in scripts:
+            try:
+                data = json.loads(script.string)
+                # Ofta ligger det under "image" -> "url" eller bara "image"
+                if 'image' in data:
+                    img_data = data['image']
+                    if isinstance(img_data, list): img_data = img_data[0]
+                    
+                    if isinstance(img_data, dict) and 'url' in img_data:
+                        return img_data['url']
+                    if isinstance(img_data, str):
+                        return img_data
+            except: continue
 
-        # 2. Fallback: OpenGraph (Ofta bra, men ibland croppad)
+        # METOD 2: Regex Brute Force på CDN
+        # Hitta alla länkar som går till deras bildserver och slutar på jpg/webp
+        # Vi letar efter nyckelord som indikerar en artikelbild (inte avatarer)
+        cdn_matches = re.findall(r'(https://cdn\.sweclockers\.com/artikel/bild/[^"]+\.(?:jpg|webp))', html_content)
+        if cdn_matches:
+            # Ta den första som ser ut att vara stor
+            for match in cdn_matches:
+                if "avatar" not in match and "emoticons" not in match:
+                     return match
+
+        # METOD 3: OpenGraph (Standard fallback)
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
             return og["content"]
 
-        # 3. Sista utväg: Leta i brödtexten
-        content = soup.find("div", class_="article-content")
-        if content:
-            images = content.find_all("img")
-            for img in images:
-                src = img.get("src", "")
-                # Filtrera bort skräp
-                if "cdn.sweclockers.com" in src and "emoticons" not in src and "avatar" not in src:
-                    if src.startswith("//"): return "https:" + src
-                    if src.startswith("http"): return src
-
-    except Exception: pass
+    except Exception as e:
+        print(f"Swec error: {e}")
     return None
 
 def strategy_fz_se(link):
@@ -353,36 +350,31 @@ for art in new_articles:
 final_list = list(unique_map.values())
 
 # =======================================================
-# NY SORTERINGSLOGIK (ANTI-KLUMP)
+# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP
 # =======================================================
 
 # 1. Sortera strikt efter tid först (Nyast först)
 final_list.sort(key=lambda x: x['timestamp'], reverse=True)
 
-# 2. Blanda om listan för att separera samma källor
+# 2. Separera källor för att undvika klumpar
 mixed_list = []
-source_buffer = [] # Tillfällig lagring för artiklar vi "hoppar över" tillfälligt
 last_source = None
+retry_buffer = [] # Artiklar vi hoppar över tillfälligt
 
-# Gå igenom den strikt sorterade listan
 while final_list:
-    # Hitta bästa kandidaten (helst inte samma källa som förra)
     best_index = -1
     
-    for i, art in enumerate(final_list):
-        # Titta bara på de 10 översta kandidaterna för att hålla någorlunda tidsordning
-        if i > 10: break
-        
-        # Om källan inte är samma som förra, ta den direkt
+    # Försök hitta en artikel bland de 8 översta som INTE har samma källa som förra
+    for i in range(min(len(final_list), 8)):
+        art = final_list[i]
         if art['source'] != last_source:
             best_index = i
             break
     
-    # Om vi inte hittade någon annan källa i toppen, ta den första ändå
+    # Om vi inte hittar någon unik, ta den första ändå (tidsordning vinner till slut)
     if best_index == -1:
         best_index = 0
         
-    # Flytta artikeln till den mixade listan
     selected_art = final_list.pop(best_index)
     mixed_list.append(selected_art)
     last_source = selected_art['source']
