@@ -38,7 +38,7 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V4.0 - HYBRID SCRAPER) ---")
+print(f"--- STARTAR GENERATORN (V4.1 - SWEC SPECIFIC CDN FIX) ---")
 
 # --- FAKE BROWSER HEADERS ---
 BROWSER_HEADERS = {
@@ -96,16 +96,31 @@ def clean_image_url_generic(url):
 # --- BILDSTRATEGIER ---
 
 def strategy_sweclockers(link):
+    """
+    Hämtar bilder från Sweclockers genom att leta efter deras specifika
+    dynamiska CDN-länkar (de som innehåller ?l=...).
+    """
     try:
         time.sleep(random.uniform(0.5, 1.0))
         session = get_session()
         r = session.get(link, timeout=10, verify=False)
         if r.status_code != 200: return None
-        soup = BeautifulSoup(r.text, 'html.parser')
+        html_content = r.text
 
-        og_image = soup.find("meta", property="og:image")
-        if og_image and og_image.get("content"): return og_image["content"]
+        # METOD 1: Regex för den specifika CDN-strukturen du visade
+        # Vi letar efter: https://cdn.sweclockers.com/artikel/bild/[siffror]?l=[tecken]
+        # Regexen stoppar vid citationstecken, mellanslag eller tag-slut
+        pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)'
+        
+        matches = re.findall(pattern_dynamic, html_content)
+        if matches:
+            # Sweclockers laddar ofta flera storlekar. Vi tar den första unika som hittas,
+            # eller den som ser längst ut (oftast mest komplex/bäst kvalitet)
+            best_match = max(matches, key=len) 
+            return best_match.replace("&amp;", "&")
 
+        # METOD 2: JSON-LD (Om regex missar)
+        soup = BeautifulSoup(html_content, 'html.parser')
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
             try:
@@ -117,15 +132,6 @@ def strategy_sweclockers(link):
                     if isinstance(img_data, str): return img_data
             except: continue
 
-        hero_div = soup.find("div", class_="article-head__media")
-        if hero_div:
-            sources = hero_div.find_all("source")
-            for source in sources:
-                srcset = source.get("srcset", "")
-                if "cdn.sweclockers.com" in srcset:
-                    return srcset.split(",")[-1].strip().split(" ")[0]
-            img = hero_div.find("img")
-            if img and img.get("src"): return img["src"]
     except Exception: pass
     return None
 
@@ -182,7 +188,6 @@ def strategy_default(entry):
                 img_url = getattr(enc, 'href', '')
                 break
     if not img_url:
-        # Om RSS saknar bild, kör deep scrape på artikeln
         return strategy_deep_scrape(entry.link)
     return img_url
 
@@ -192,15 +197,13 @@ def get_image_for_article(entry, source_url):
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     
-    # För alla andra, prova Deep Scrape (OG Image) om RSS saknar bild
     return strategy_default(entry)
 
 # --- GENERELL SCRAPER FÖR HEMSIDOR UTAN RSS ---
 
 def scrape_website_fallback(source):
     """
-    Läser in en vanlig HTML-sida och letar efter nyhetslänkar i h1, h2, h3 taggar.
-    Detta fungerar på t.ex. NyTeknik, Feber, etc om man saknar RSS.
+    Läser in en vanlig HTML-sida och letar efter nyhetslänkar.
     """
     print(f"   -> Scraping HTML directly: {source['url']}")
     found = []
@@ -212,10 +215,8 @@ def scrape_website_fallback(source):
         soup = BeautifulSoup(r.text, 'html.parser')
         base_url = source['url']
         
-        # Hitta alla rubriker (h1-h4) som innehåller en länk
-        # De flesta nyhetssajter har strukturen <h2><a href="...">Titel</a></h2>
+        # Leta efter rubriker som innehåller länkar
         headers = soup.find_all(['h1', 'h2', 'h3', 'h4'])
-        
         seen_links = set()
         
         for h in headers:
@@ -225,31 +226,26 @@ def scrape_website_fallback(source):
             url = urljoin(base_url, link.get('href'))
             title = link.get_text().strip()
             
-            # Filter: Ignorera tomma titlar eller extremt korta
             if len(title) < 10: continue
             if url in seen_links: continue
-            
             seen_links.add(url)
             
-            # Skapa ett "fake" entry objekt som liknar feedparser
-            class FakeEntry:
-                pass
+            # Skapa ett "fake" entry objekt
+            class FakeEntry: pass
             entry = FakeEntry()
             entry.link = url
             entry.title = title
-            entry.summary = "" # Vi har ingen summary från startsidan oftast
+            entry.summary = ""
             
-            # Hämta bild från själva artikeln
+            # Hämta bild
             img_url = get_image_for_article(entry, base_url)
             if not img_url: img_url = DEFAULT_IMAGE
             
-            # Språkhantering
             lang_note = ""
             if source.get('lang') == 'sv':
                 title = translate_text(title, 'sv')
                 lang_note = " (Translated)"
 
-            # Datum: Vi vet inte, sätt till NU (minus lite slump)
             ts = time.time() - random.randint(60, 3600*12) 
 
             found.append({
@@ -281,23 +277,17 @@ def get_web_info(source):
 
     try:
         session = get_session()
-        
-        # 1. Försök med RSS (Feedparser)
-        # Vi laddar ner innehållet först för att kunna skicka headers
         resp = session.get(source['url'], timeout=10, verify=False)
         
-        # Om servern ger felkod, avbryt
-        if resp.status_code != 200:
-            return []
+        if resp.status_code != 200: return []
 
-        # Parsa innehållet
+        # Försök parsa som RSS
         feed = feedparser.parse(resp.content)
         
-        # 2. Om RSS är tom -> Kör HYBRID SCRAPER (Vanlig hemsida)
+        # Om RSS är tom -> Kör Fallback Scraper
         if not feed.entries:
             return scrape_website_fallback(source)
 
-        # Om RSS fungerar, fortsätt som vanligt
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             if timestamp == 0: timestamp = time.time()
@@ -441,7 +431,6 @@ while final_list:
 
 final_list = mixed_list
 
-# Skapa tidssträngar
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
