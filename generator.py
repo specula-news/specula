@@ -25,7 +25,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
-MAX_AGE_DAYS = 90
+
+# HÄR ÄR DIN NYA TIDSGRÄNS:
+MAX_AGE_DAYS = 25 
+
 MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
@@ -35,7 +38,7 @@ try:
 except ImportError:
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.34 - FAST & ACCURATE TIME) ---")
+print(f"--- STARTAR GENERATORN (V20.5.33 - 8 VIDEO LIMIT & 25 DAY RULE) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -71,7 +74,7 @@ def parse_date_to_timestamp(entry):
     return 0 
 
 def is_too_old(timestamp):
-    if timestamp == 0: return False 
+    if timestamp == 0: return False # Om datum saknas, släpp igenom (säkerhet)
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -187,7 +190,6 @@ def get_web_info(source):
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
             
-            # Fallback till nu om datum saknas
             if timestamp == 0:
                 timestamp = time.time() - random.randint(100, 3600)
 
@@ -230,8 +232,8 @@ def get_video_info(source):
         ydl_opts = {
             'quiet': True,
             'ignoreerrors': True,
-            'extract_flat': True, # SNABBARE, MEN KRÄVER SMART DATUMTOLKNING
-            'playlistend': 5, 
+            'extract_flat': True, # Vi använder flat för snabbhet
+            'playlistend': 8,     # MAX 8 VIDEOS (2 rader)
             'no_warnings': True,
             'http_headers': HEADERS
         }
@@ -244,34 +246,35 @@ def get_video_info(source):
             for entry in entries:
                 if not entry: continue
                 
-                # BILDHANTERING
                 img_url = ''
                 thumbnails = entry.get('thumbnails', [])
                 if thumbnails and isinstance(thumbnails, list):
                     try: img_url = thumbnails[-1].get('url', '')
                     except: pass
                 
-                # REPARERAD BILD-LÄNK (Här var felet i förra koden!)
                 if not img_url and entry.get('id'):
                     img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
                 if not img_url: img_url = DEFAULT_IMAGE
 
-                # DATUMHANTERING - SMART LÄSNING
                 ts = 0
                 try:
-                    # I 'extract_flat' är upload_date oftast en sträng 'YYYYMMDD'
-                    upload_date_str = entry.get('upload_date')
-                    if upload_date_str and len(upload_date_str) == 8:
-                        ts = datetime.strptime(upload_date_str, '%Y%m%d').timestamp()
+                    # YT-DLP flat extraction ger ofta upload_date som YYYYMMDD
+                    date_str = entry.get('upload_date')
+                    if date_str and len(date_str) == 8:
+                        ts = datetime.strptime(date_str, '%Y%m%d').timestamp()
                     elif entry.get('timestamp'): 
                         ts = entry['timestamp']
                 except: pass
 
-                # Fallback: Om datum saknas helt, sätt till NU så videon syns
-                if ts == 0:
+                # 25-DAGARS REGELN
+                # Om vi har ett datum, kolla om det är för gammalt
+                if ts > 0:
+                    if is_too_old(ts): continue
+                else:
+                    # Om inget datum finns, sätt till nu (men risken är att gamla videos slinker igenom)
+                    # Med 'playlistend: 8' så hämtar vi dock bara de allra nyaste från kanalen,
+                    # så risken att få en 2 år gammal video är minimal.
                     ts = time.time()
-
-                if is_too_old(ts): continue
 
                 title = entry.get('title', 'Video')
                 clean_summary = clean_text(entry.get('description', ''))
