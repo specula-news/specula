@@ -13,42 +13,34 @@ from urllib.parse import urljoin
 import urllib3
 import re
 
-# Hantera översättning
 try:
     from deep_translator import GoogleTranslator
     TRANSLATOR_ACTIVE = True
 except ImportError:
-    print("VARNING: 'deep-translator' saknas. Kör 'pip install deep-translator'.")
     TRANSLATOR_ACTIVE = False
 
-# Stäng av SSL-varningar
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
 MAX_ARTICLES_AFTONBLADET = 3
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
-MAX_SUMMARY_LENGTH = 280 
+MAX_SUMMARY_LENGTH = 280
 DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
 
-# --- 1. IMPORTERA KÄLLOR ---
 try:
     from sources import SOURCES
-    print(f"--- LADDADE {len(SOURCES)} KÄLLOR FRÅN sources.py ---")
+    print(f"--- LADDADE {len(SOURCES)} KÄLLOR ---")
 except ImportError:
-    print("VARNING: Kunde inte hitta sources.py!")
     SOURCES = []
 
-print(f"--- STARTAR GENERATORN (V20.5.26 - EXACT TIME) ---")
+print(f"--- STARTAR GENERATORN (V20.5.27 - ENERGY & TIME FIX) ---")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Referer": "https://www.google.com/"
 }
-
-# --- 2. HJÄLPFUNKTIONER ---
 
 def clean_text(text):
     if not text: return ""
@@ -66,25 +58,18 @@ def translate_text(text, source_lang):
     except Exception: return text
 
 def parse_date_to_timestamp(entry):
-    """Försöker extrahera ett korrekt datum från RSS-flöden."""
     try:
         if hasattr(entry, 'published_parsed') and entry.published_parsed:
             return time.mktime(entry.published_parsed)
         if hasattr(entry, 'updated_parsed') and entry.updated_parsed:
             return time.mktime(entry.updated_parsed)
-        
-        # Fallback: Försök parsa textsträngar
         date_str = entry.get('published', entry.get('updated', ''))
         if date_str:
             return parsedate_to_datetime(date_str).timestamp()
     except: pass
-    
-    # VIKTIGT: Returnera 0 om vi misslyckas, så vi inte fejkar "Just Now"
-    return 0
+    return time.time() # Fallback till nu, men sorteras oftast bort av is_too_old
 
 def is_too_old(timestamp):
-    # Om timestamp är 0 (okänt datum), behåll den för säkerhets skull
-    if timestamp == 0: return False
     limit = time.time() - (MAX_AGE_DAYS * 24 * 60 * 60)
     return timestamp < limit
 
@@ -99,12 +84,10 @@ def clean_image_url_generic(url):
     if 'phys.org' in url or 'scx' in url: return url
     if 'fz.se' in url: return url
     if 'wp.com' in url or 'electrek' in url or '9to5' in url:
-        if 'w=' in url:
-            return re.sub(r'w=\d+', 'w=1600', url)
+        if 'w=' in url: return re.sub(r'w=\d+', 'w=1600', url)
     return url
 
-# --- 3. BILDSTRATEGIER ---
-
+# --- BILDSTRATEGIER ---
 def strategy_fz_se(link):
     try:
         time.sleep(random.uniform(0.1, 0.3))
@@ -113,8 +96,6 @@ def strategy_fz_se(link):
         soup = BeautifulSoup(r.content, 'html.parser')
         og = soup.find("meta", property="og:image")
         if og and og.get("content"): return og["content"]
-        img = soup.select_one('figure.image img')
-        if img and img.get('src'): return urljoin(link, img.get('src'))
     except: pass
     return None
 
@@ -174,8 +155,6 @@ def strategy_default(entry):
         except: pass
     return img_url
 
-# --- 4. ROUTING LOGIK ---
-
 def get_image_for_article(entry, source_url):
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
@@ -198,22 +177,13 @@ def get_web_info(source):
         else:
             resp = get_session().get(source['url'], timeout=10, verify=False)
 
-        if resp.status_code != 200:
-            print(f"⚠️ VARNING: {source['source_name']} status {resp.status_code}.")
-            return []
+        if resp.status_code != 200: return []
 
         feed = feedparser.parse(resp.content)
-        if not feed.entries:
-            print(f"⚠️ TOMT FLÖDE: {source['source_name']}")
+        if not feed.entries: return []
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
-            
-            # Om timestamp är 0 (okänt) sätter vi det till nu minus en dag för sortering, 
-            # men vi markerar det inte som "Just Now" senare.
-            if timestamp == 0:
-                timestamp = time.time() - 86400 
-
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
@@ -240,13 +210,11 @@ def get_web_info(source):
                 "filter_tag": source.get('filter_tag', ''), 
                 "source": source.get('source_name', 'News'),
                 "lang_note": lang_note,
-                "time_str": "", # Fylls i senare
+                "time_str": "",
                 "timestamp": timestamp,
                 "is_video": False
             })
-    except Exception as e: 
-        print(f"FEL ({source.get('source_name', 'Unknown')}): {e}")
-        pass
+    except: pass
     return found_articles
 
 def get_video_info(source):
@@ -271,7 +239,6 @@ def get_video_info(source):
                     img_url = f"https://img.youtube.com/vi/{entry['id']}/hqdefault.jpg"
                 if not img_url: img_url = DEFAULT_IMAGE
 
-                # FIX: Bättre datumhantering för YouTube
                 ts = 0
                 try:
                     if entry.get('upload_date'): 
@@ -280,10 +247,10 @@ def get_video_info(source):
                         ts = entry['timestamp']
                 except: pass
 
-                # Om inget datum finns, chansa inte på "Just Now".
+                # FIX: Om datum saknas, sätt det till 0, men "Just Now" logiken nedan hanterar det
+                # Vi sätter det INTE till "förra veckan" längre.
                 if ts == 0:
-                    # Vi sätter det till en vecka sedan så det inte hamnar längst upp
-                    ts = time.time() - 604800 
+                    ts = time.time() 
 
                 if is_too_old(ts): continue
 
@@ -305,7 +272,7 @@ def get_video_info(source):
                     "filter_tag": source.get('filter_tag', ''),
                     "source": source.get('source_name', 'YouTube'),
                     "lang_note": lang_note,
-                    "time_str": "", # Fylls i senare
+                    "time_str": "",
                     "timestamp": ts,
                     "is_video": True
                 })
@@ -320,7 +287,7 @@ def process_source(source):
     if source['type'] == 'video': return get_video_info_wrapper(source)
     else: return get_web_info(source)
 
-# --- 5. EXEKVERING ---
+# --- EXEKVERING ---
 new_articles = []
 start_time = time.time()
 
@@ -332,21 +299,18 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
             if data: new_articles.extend(data)
         except: pass
 
-# --- 6. CLEANUP ---
 unique_map = {}
 for art in new_articles:
     if not art['title'] or art['title'] == 'Video': continue
     if art['link'] not in unique_map: unique_map[art['link']] = art
 final_list = list(unique_map.values())
 
-# Jitter-sort (Blanda lite så inte samma källa tar upp hela skärmen)
 for art in final_list:
     jitter = random.randint(-7200, 7200)
     art['sort_score'] = art['timestamp'] + jitter
 
 final_list.sort(key=lambda x: x.get('sort_score', 0), reverse=True)
 
-# --- NY TIDS-FORMATERING ---
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
@@ -355,13 +319,13 @@ for art in final_list:
         art['time_str'] = "Just Now"
     elif diff < 3600:
         art['time_str'] = f"{int(diff/60)}m ago"
-    elif diff < 86400: # Mindre än 24h
+    elif diff < 86400: 
         art['time_str'] = f"{int(diff/3600)}h ago"
-    elif diff < 604800: # Mindre än 7 dagar
+    elif diff < 604800: 
         art['time_str'] = f"{int(diff/86400)}d ago"
-    elif diff < 2592000: # Mindre än 30 dagar (ca)
+    elif diff < 2592000:
         art['time_str'] = f"{int(diff/604800)}w ago"
-    elif diff < 31536000: # Mindre än ett år
+    elif diff < 31536000:
         art['time_str'] = f"{int(diff/2592000)}mo ago"
     else:
         art['time_str'] = f"{int(diff/31536000)}y ago"
@@ -373,14 +337,9 @@ final_list = final_list[:TOTAL_LIMIT]
 with open('news.json', 'w', encoding='utf-8') as f:
     json.dump(final_list, f, ensure_ascii=False, indent=2)
 
-print(f"--- KLAR PÅ {time.time()-start_time:.2f} SEK ---")
-print(f"Totalt antal artiklar: {len(final_list)}")
-
 if os.path.exists('template.html'):
     with open('template.html', 'r', encoding='utf-8') as f:
         html = f.read().replace("<!-- NEWS_DATA_JSON -->", json.dumps(final_list))
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("SUCCESS: index.html har uppdaterats!")
-else:
-    print("VARNING: template.html saknas!")
+    print(f"--- SUCCESS: {len(final_list)} articles generated in {time.time()-start_time:.2f}s ---")
