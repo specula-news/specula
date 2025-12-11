@@ -1,5 +1,3 @@
-[file name]: generator.py
-[file content begin]
 import json
 import os
 import requests
@@ -385,4 +383,3 @@ if os.path.exists('template.html'):
     print("SUCCESS: index.html har uppdaterats!")
 else:
     print("VARNING: template.html saknas!")
-[file content end]
