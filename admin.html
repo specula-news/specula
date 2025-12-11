@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V5.3 (ANALYZE BUTTON)</title>
+    <title>SPECULA ADMIN // V6.0 (DIAGNOSTICS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --fail: #ff4444; }
+        :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* HEADER */
@@ -18,18 +18,18 @@
         .actions button { background: #111; border: 1px solid #444; color: #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; transition: 0.2s; font-size: 0.75rem; white-space: nowrap; }
         .actions button:hover { border-color: #fff; color: #fff; }
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
-        .btn-dump { border-color: #ffaa00 !important; color: #ffaa00 !important; }
-        .btn-dump:hover { background: #ffaa00 !important; color: #000 !important; }
-        .btn-code { border-color: #555 !important; color: #aaa !important; }
-        .btn-code:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+        .btn-diag { border-color: var(--success) !important; color: var(--success) !important; }
+        .btn-diag:hover { background: var(--success) !important; color: #000 !important; }
+        
+        /* DIAGNOSTIC PROGRESS BAR */
+        .diag-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--success); width: 0%; transition: 0.3s; z-index: 101; }
 
-        /* NAVIGATION */
+        /* NAV */
         .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; height: auto; flex-shrink: 0; }
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; white-space: nowrap; background: #111; border: 1px solid transparent; }
         .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
         .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
         .nav-item::after { content: ''; position: absolute; left: 0; bottom: -15px; width: 100%; height: 20px; background: transparent; z-index: 10; }
-        
         .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-top: 5px; }
         .nav-item:hover .dropdown, .dropdown:hover { display: flex; }
         .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
@@ -37,32 +37,38 @@
         .drop-item.selected { color: var(--accent); }
         .count { font-size: 0.7em; opacity: 0.5; background: #333; padding: 2px 5px; border-radius: 4px; }
 
-        /* MAIN AREA */
+        /* GRID */
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 15px; }
         
         /* CARD */
-        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 15px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
+        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
         .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
+        
+        /* CARD HEADER (Logo & Status) */
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .favicon-wrap { display: flex; align-items: center; gap: 10px; }
+        .favicon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; background: #000; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #333; box-shadow: 0 0 5px rgba(0,0,0,0.5); transition: 0.3s; }
+        
+        /* STATUS COLORS */
+        .status-loading { background: #fff; animation: pulse 1s infinite; }
+        .status-ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .status-warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+        .status-err { background: var(--fail); box-shadow: 0 0 8px var(--fail); }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
         .card-label { font-size: 0.65rem; color: #555; text-transform: uppercase; font-weight: bold; margin-bottom: -5px; }
         .edit-name { background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0; }
         .edit-name:focus { border-color: var(--accent); outline: none; }
-        
         .url-row { display: flex; gap: 5px; align-items: center; }
         .edit-url { background: #000; border: 1px solid #333; color: #bbb; font-family: monospace; font-size: 0.75rem; width: 100%; padding: 8px; border-radius: 4px; }
         .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
         
-        .btn-analyze { 
-            background: #222; border: 1px solid #444; color: var(--accent); 
-            padding: 0 12px; border-radius: 4px; font-size: 0.7rem; 
-            font-family: 'Space Grotesk'; font-weight: bold; cursor: pointer; 
-            height: 32px; display: flex; align-items: center; gap: 5px;
-            white-space: nowrap;
-        }
-        .btn-analyze:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-
         .btn-mini { background: #222; border: 1px solid #444; color: #fff; padding: 0 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 32px; width: 32px; }
         .btn-mini:hover { background: #333; border-color: #fff; }
+        .btn-analyze { background: #222; border: 1px solid #444; color: var(--accent); padding: 0 12px; border-radius: 4px; font-size: 0.7rem; font-family: 'Space Grotesk'; font-weight: bold; cursor: pointer; height: 32px; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .btn-analyze:hover { background: var(--accent); color: #000; border-color: var(--accent); }
         .btn-magic { color: #ffaa00; border-color: #553300; }
         .btn-magic:hover { background: #ffaa00; color: #000; }
 
@@ -76,27 +82,19 @@
         .tester-overlay.open { display: flex; }
         .tester-window { width: 90%; max-width: 800px; max-height: 90vh; background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .tester-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .tester-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tester-input { flex-grow: 1; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 4px; font-family: monospace; }
-        .tester-btn { background: var(--accent); color: #000; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; border-radius: 4px; }
-        
         .results-area { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .result-row { background: #1a1a1a; padding: 15px; border-radius: 6px; border-left: 4px solid #333; display: flex; flex-direction: column; gap: 5px; }
+        .result-row { background: #1a1a1a; padding: 15px; border-radius: 6px; border-left: 4px solid #333; }
         .result-row.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
         .result-row.fail { border-left-color: var(--fail); opacity: 0.5; }
-        .result-name { font-weight: bold; font-family: 'Space Grotesk'; font-size: 0.9rem; }
-        .result-val { font-family: monospace; font-size: 0.75rem; color: #aaa; word-break: break-all; }
         .preview-img { max-width: 100%; height: auto; margin-top: 10px; border-radius: 4px; border: 1px solid #333; }
 
-        /* EDITOR */
+        /* EDITOR MODAL */
         .editor-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .editor-overlay.open { display: flex; }
         .editor-window { width: 90%; max-width: 1000px; height: 85vh; background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 20px; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; }
-        .editor-controls { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
         .btn-clear { background: #330000; border: 1px solid #550000; color: #ff5555; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        /* FOOTER */
+
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
         .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--accent); color: var(--accent); padding: 10px 25px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; }
@@ -113,15 +111,17 @@
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V5.3</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V6.0</span></div>
         <div class="actions">
-            <button class="btn-dump" onclick="document.getElementById('fileDumpInput').click()">📂 DUMP ZONE</button>
+            <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN DIAGNOSTICS</button>
+            <button class="btn-dump" onclick="document.getElementById('fileDumpInput').click()">📂 DUMP</button>
             <button class="btn-code" onclick="openEditor('template.html')">📝 HTML</button>
             <button class="btn-code" onclick="openEditor('generator.py')">⚙️ PY</button>
             <button onclick="fetchSources()">↻ Reload</button>
             <button onclick="deployLive()">🚀 Deploy</button>
             <button class="btn-save" onclick="saveToGitHub()">💾 SAVE LIST</button>
         </div>
+        <div id="diagProgress" class="diag-progress"></div>
     </div>
 
     <div class="nav-container" id="navBar"></div>
@@ -138,32 +138,26 @@
     <div class="tester-overlay" id="testerModal">
         <div class="tester-window">
             <div class="tester-header">
-                <div class="editor-title">🧪 IMAGE LOGIC TESTER</div>
+                <div style="font-family:'Space Grotesk'; font-size:1.2rem; font-weight:bold;">🧪 LOGIC ANALYZER</div>
                 <button class="btn-mini" onclick="closeTester()" style="font-size:1.2rem;">×</button>
             </div>
-            <div class="tester-input-group">
-                <input type="text" id="testUrlInput" class="tester-input" placeholder="e.g. https://www.sweclockers.com/nyhet/...">
-                <button class="tester-btn" onclick="runLogicTest()">ANALYZE</button>
-            </div>
-            <div id="testResults" class="results-area">
-                <div style="color:#444; text-align:center; margin-top:50px;">Waiting for input...</div>
-            </div>
+            <div id="testResults" class="results-area"></div>
         </div>
     </div>
 
     <!-- CODE EDITOR MODAL -->
     <div class="editor-overlay" id="editorModal">
         <div class="editor-window">
-            <div class="editor-header">
-                <div class="editor-title" id="editorTitle">EDITING FILE</div>
+            <div class="tester-header">
+                <div style="font-family:'Space Grotesk'; font-size:1.2rem; font-weight:bold;" id="editorTitle">EDIT</div>
                 <button class="btn-mini" onclick="closeEditor()" style="font-size:1rem;">×</button>
             </div>
             <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
-            <div class="editor-controls">
+            <div class="editor-controls" style="margin-top:15px; display:flex; justify-content:space-between;">
                 <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
                 <div style="display:flex; gap:10px;">
-                    <button class="actions" style="background:#333; color:white; border:none;" onclick="closeEditor()">Cancel</button>
-                    <button class="actions btn-save" style="border:none;" onclick="saveFileContent()">💾 SAVE TO GITHUB</button>
+                    <button class="actions" style="background:#333; color:white; border:none; padding:8px 16px;" onclick="closeEditor()">Cancel</button>
+                    <button class="actions btn-save" style="border:none; padding:8px 16px;" onclick="saveFileContent()">💾 SAVE</button>
                 </div>
             </div>
         </div>
@@ -179,105 +173,114 @@
 
     <script>
         // ===============================================
-        // LOGIC TESTER (IMPROVED)
+        // 1. DATA & CONFIG
         // ===============================================
-        function openTester(url) {
-            document.getElementById('testUrlInput').value = url || "";
-            document.getElementById('testResults').innerHTML = '<div style="color:#444; text-align:center; margin-top:50px;">Ready to analyze...</div>';
-            document.getElementById('testerModal').classList.add('open');
+        const SMART_RSS_MAP = { "sweclockers": "https://www.sweclockers.com/feeds/nyheter", "fz.se": "https://www.fz.se/feeds/nyheter", "fz": "https://www.fz.se/feeds/nyheter", "nyteknik": "https://www.nyteknik.se/rss", "feber": "https://feber.se/rss/", "aftonbladet": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "expressen": "https://feeds.expressen.se/nyheter/", "omni": "https://omni.se/rss/nyheter", "dagensps": "https://www.dagensps.se/feed/", "efn": "https://efn.se/feeds/feed.xml", "elbilen": "https://elbilen.se/feed/", "alltomelbil": "https://alltomelbil.se/feed/", "teslaclubsweden": "https://teslaclubsweden.se/feed/", "byggvarlden": "https://www.byggvarlden.se/feed/", "byggindustrin": "https://www.byggindustrin.se/rss/nyheter", "theverge": "https://www.theverge.com/rss/index.xml", "wired": "https://www.wired.com/feed/rss", "techcrunch": "https://techcrunch.com/feed/", "engadget": "https://www.engadget.com/rss.xml", "arstechnica": "https://feeds.arstechnica.com/arstechnica/index", "mashable": "https://mashable.com/feeds/rss/tech", "space.com": "https://www.space.com/feeds/all", "nasa": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "electrek": "https://electrek.co/feed/", "insideevs": "https://insideevs.com/rss/articles/all/", "cleantechnica": "https://cleantechnica.com/feed/", "oilprice": "https://oilprice.com/rss/main", "eurogamer": "https://www.eurogamer.net/feed", "pcgamer": "https://www.pcgamer.com/rss", "kotaku": "https://kotaku.com/rss", "polygon": "https://www.polygon.com/rss/index.xml", "ign": "https://feeds.ign.com/ign/news", "gamespot": "https://www.gamespot.com/feeds/news/", "bbc": "http://feeds.bbci.co.uk/news/world/rss.xml", "cnn": "http://rss.cnn.com/rss/edition.rss", "aljazeera": "https://www.aljazeera.com/xml/rss/all.xml", "reuters": "https://www.reutersagency.com/feed/", "cnbc": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "scmp": "https://www.scmp.com/rss/91/feed", "politico": "https://www.politico.eu/feed/" };
+        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
+        const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
+        
+        let sourceData = {}; let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
+
+        // ===============================================
+        // 2. DIAGNOSTICS & STATUS
+        // ===============================================
+        
+        function getFavicon(url) {
+            try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } 
+            catch(e) { return "https://via.placeholder.com/20"; }
         }
-        function closeTester() { document.getElementById('testerModal').classList.remove('open'); }
 
-        async function runLogicTest() {
-            const url = document.getElementById('testUrlInput').value.trim();
-            if (!url) return alert("Enter URL!");
+        async function runDiagnostics() {
+            if(!confirm("Run full diagnostics on ALL sources? This might take a minute.")) return;
+            
+            const allSources = [];
+            for(let key in sourceData) {
+                sourceData[key].forEach((item, idx) => {
+                    allSources.push({ ...item, folder: key, index: idx });
+                });
+            }
 
-            const resDiv = document.getElementById('testResults');
-            resDiv.innerHTML = '<div style="color:var(--accent); text-align:center;">Fetching via Proxy...</div>';
+            const total = allSources.length;
+            const bar = document.getElementById('diagProgress');
+            let completed = 0;
 
+            for(let src of allSources) {
+                // Update Status Dot to Loading
+                updateStatusDot(src.folder, src.index, 'loading');
+                
+                // --- TEST 1: FETCH FEED ---
+                try {
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(src.url)}`;
+                    const res = await fetch(proxyUrl);
+                    if(!res.ok) throw new Error("Fetch failed");
+                    const data = await res.json();
+                    
+                    // RSS Validation
+                    if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) {
+                        throw new Error("Invalid Format");
+                    }
+
+                    // --- TEST 2: CHECK IMAGE LOGIC (If it's not a video) ---
+                    let status = 'ok'; // Default Green
+                    
+                    // Try to find a link in the feed
+                    const urlMatch = data.contents.match(/<link>(.*?)<\/link>/) || data.contents.match(/href=["'](.*?)["']/);
+                    if(urlMatch && urlMatch[1] && !src.url.includes('youtube')) {
+                        // If we have a link, verify image logic
+                        const articleUrl = urlMatch[1].replace('<![CDATA[', '').replace(']]>', '');
+                        const imgSuccess = await verifyImageLogic(articleUrl);
+                        if(!imgSuccess) status = 'warn'; // Yellow (Feed works, image fails)
+                    }
+
+                    updateStatusDot(src.folder, src.index, status);
+
+                } catch(e) {
+                    updateStatusDot(src.folder, src.index, 'err');
+                }
+
+                completed++;
+                bar.style.width = (completed / total * 100) + "%";
+            }
+            
+            setTimeout(() => { bar.style.width = "0%"; showToast("Diagnostics Complete!"); }, 1000);
+        }
+
+        async function verifyImageLogic(url) {
             try {
-                // Use AllOrigins Proxy
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error("Proxy Failed");
-                const data = await response.json();
-                const html = data.contents; // This is the HTML string
+                // Quick check on the article page
+                const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const r = await fetch(pUrl);
+                const d = await r.json();
+                const h = d.contents;
+                
+                // Check for OG Image or Sweclockers specific
+                if(h.includes('og:image') || h.includes('cdn.sweclockers.com/artikel/bild')) return true;
+                return false;
+            } catch(e) { return false; }
+        }
 
-                let resultsHTML = "";
-                let foundImage = null;
-
-                // --- 1. OPEN GRAPH (Highest Priority Now) ---
-                let ogRes = null;
-                try {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, "text/html");
-                    const ogTag = doc.querySelector('meta[property="og:image"]');
-                    if (ogTag) ogRes = ogTag.getAttribute('content');
-                } catch(e){}
-                if (ogRes && !foundImage) foundImage = ogRes;
-                resultsHTML += renderResult("1. OpenGraph (Generic)", ogRes);
-
-                // --- 2. SWECLOCKERS REGEX (Updated JS Syntax) ---
-                // Python: r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)'
-                const swecRegex = /(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/g;
-                const swecMatches = html.match(swecRegex);
-                let swecRes = null;
-                if (swecMatches) {
-                    // Find longest match
-                    swecRes = swecMatches.reduce((a, b) => a.length > b.length ? a : b).replace(/&amp;/g, "&");
-                    if (!foundImage) foundImage = swecRes;
+        function updateStatusDot(folder, index, status) {
+            // Find the specific card element
+            // Note: Since we re-render grid often, this is tricky. 
+            // We'll update a property in memory and re-render the specific card if visible.
+            if(!sourceData[folder][index].status) sourceData[folder][index].status = {};
+            sourceData[folder][index].lastStatus = status;
+            
+            if(folder === activeFolder) {
+                const card = document.getElementById(`card-${index}`);
+                if(card) {
+                    const dot = card.querySelector('.status-dot');
+                    dot.className = `status-dot status-${status}`;
                 }
-                resultsHTML += renderResult("2. Sweclockers Regex (?l=)", swecRes);
-
-                // --- 3. JSON-LD ---
-                let jsonRes = null;
-                try {
-                    const doc = new DOMParser().parseFromString(html, "text/html");
-                    const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
-                    scripts.forEach(s => {
-                        try {
-                            const d = JSON.parse(s.innerText);
-                            const item = Array.isArray(d) ? d[0] : d;
-                            if (item.image) {
-                                if (typeof item.image === 'string') jsonRes = item.image;
-                                else if (item.image.url) jsonRes = item.image.url;
-                            }
-                        } catch(e){}
-                    });
-                } catch(e){}
-                resultsHTML += renderResult("3. JSON-LD", jsonRes);
-
-                // --- PREVIEW ---
-                if (foundImage) {
-                    resultsHTML = `<div style="text-align:center; margin-bottom:20px;">
-                        <div style="color:#00ff88; font-weight:bold; margin-bottom:5px;">✅ IMAGE FOUND:</div>
-                        <img src="${foundImage}" class="preview-img" style="max-height:200px;">
-                    </div>` + resultsHTML;
-                } else {
-                    resultsHTML = `<div style="text-align:center; color:#ff4444; font-weight:bold;">❌ FAILED TO FIND IMAGE</div>` + resultsHTML;
-                }
-
-                resDiv.innerHTML = resultsHTML;
-
-            } catch (e) {
-                resDiv.innerHTML = `<div style="color:red; text-align:center;">Error: ${e.message}</div>`;
             }
         }
 
-        function renderResult(name, value) {
-            const statusClass = value ? "success" : "fail";
-            return `<div class="result-row ${statusClass}">
-                <div class="result-name">${name}</div>
-                <div class="result-val">${value || "Not Found"}</div>
-            </div>`;
-        }
-
         // ===============================================
-        // GRID RENDER (NEW BUTTON)
+        // 3. UI RENDERING
         // ===============================================
+        
         function renderGrid() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('grid'); grid.innerHTML = '';
             document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label;
             const items = sourceData[activeFolder] || [];
             document.getElementById('countBadge').innerText = items.length;
@@ -285,9 +288,21 @@
             items.forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.id = `card-${idx}`;
+                
+                // Get Status Color
+                const stat = item.lastStatus || 'none';
+                const statClass = stat === 'none' ? '' : `status-${stat}`;
+
                 card.innerHTML = `
-                    <div class="card-label">NAME</div>
-                    <input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)">
+                    <div class="card-header">
+                        <div class="favicon-wrap">
+                            <img src="${getFavicon(item.url)}" class="favicon">
+                            <input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)">
+                        </div>
+                        <div class="status-dot ${statClass}" title="Status: ${stat}"></div>
+                    </div>
+                    
                     <div class="card-label">URL</div>
                     <div class="url-row">
                         <input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)">
@@ -308,80 +323,65 @@
         }
 
         // ===============================================
-        // DUMP ZONE LOGIC
+        // 4. TESTER LOGIC (Analyzer)
         // ===============================================
-        async function handleFileDump(input) {
-            const file = input.files[0]; if(!file) return;
-            const user = document.getElementById('ghUser').value;
-            const repo = document.getElementById('ghRepo').value;
-            const token = document.getElementById('ghToken').value;
-            if(!token) return alert("Missing Token");
-            if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; }
-            
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function() {
-                const contentBase64 = reader.result.split(',')[1];
-                let sha = null;
-                try {
-                    const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} });
-                    if(check.ok) sha = (await check.json()).sha;
-                } catch(e){}
-
-                try {
-                    await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha })
-                    });
-                    showToast("UPLOADED! 📂");
-                } catch(e) { alert("Error: " + e.message); }
-                input.value = "";
-            };
+        function openTester(url) {
+            if(!url) return alert("Enter URL");
+            document.getElementById('testResults').innerHTML = '<div style="color:var(--accent); text-align:center; padding:30px;">Running Analysis...</div>';
+            document.getElementById('testerModal').classList.add('open');
+            runLogicTest(url);
         }
+        function closeTester() { document.getElementById('testerModal').classList.remove('open'); }
 
-        // ===============================================
-        // EDITOR & STANDARD LOGIC
-        // ===============================================
-        let currentFileSha = "", currentFileName = "";
-        async function openEditor(filename) {
-            const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value;
-            if(!token) return alert("Missing Token"); showToast("Fetching " + filename + "...");
+        async function runLogicTest(url) {
             try {
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filename}`, { headers: { 'Authorization': `token ${token}` } });
-                const data = await res.json(); currentFileSha = data.sha; currentFileName = filename;
-                const content = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0)));
-                document.getElementById('codeContent').value = content;
-                document.getElementById('editorTitle').innerText = "EDITING: " + filename;
-                document.getElementById('editorModal').classList.add('open');
-            } catch(e) { alert("Error: " + e.message); }
-        }
-        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        async function saveFileContent() {
-            if(!confirm(`Overwrite ${currentFileName}?`)) return;
-            const content = document.getElementById('codeContent').value;
-            const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value;
-            const encoder = new TextEncoder(); const bytes = encoder.encode(content);
-            let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-            const encoded = btoa(binary);
-            try {
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${currentFileName}`, {
-                    method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Admin Edit: ${currentFileName}`, content: encoded, sha: currentFileSha })
-                });
-                const d = await res.json(); currentFileSha = d.content.sha; showToast("FILE SAVED!");
-            } catch(e) { alert("Error: " + e.message); }
-        }
-        function closeEditor() { document.getElementById('editorModal').classList.remove('open'); document.getElementById('codeContent').value = ""; }
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const response = await fetch(proxyUrl);
+                if(!response.ok) throw new Error("Proxy Failed");
+                const data = await response.json();
+                const html = data.contents;
 
-        const SMART_RSS_MAP = { "sweclockers": "https://www.sweclockers.com/feeds/nyheter", "fz.se": "https://www.fz.se/feeds/nyheter", "fz": "https://www.fz.se/feeds/nyheter", "nyteknik": "https://www.nyteknik.se/rss", "feber": "https://feber.se/rss/", "aftonbladet": "https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/", "expressen": "https://feeds.expressen.se/nyheter/", "omni": "https://omni.se/rss/nyheter", "dagensps": "https://www.dagensps.se/feed/", "efn": "https://efn.se/feeds/feed.xml", "elbilen": "https://elbilen.se/feed/", "alltomelbil": "https://alltomelbil.se/feed/", "teslaclubsweden": "https://teslaclubsweden.se/feed/", "byggvarlden": "https://www.byggvarlden.se/feed/", "byggindustrin": "https://www.byggindustrin.se/rss/nyheter", "theverge": "https://www.theverge.com/rss/index.xml", "wired": "https://www.wired.com/feed/rss", "techcrunch": "https://techcrunch.com/feed/", "engadget": "https://www.engadget.com/rss.xml", "arstechnica": "https://feeds.arstechnica.com/arstechnica/index", "mashable": "https://mashable.com/feeds/rss/tech", "space.com": "https://www.space.com/feeds/all", "nasa": "https://www.nasa.gov/rss/dyn/breaking_news.rss", "electrek": "https://electrek.co/feed/", "insideevs": "https://insideevs.com/rss/articles/all/", "cleantechnica": "https://cleantechnica.com/feed/", "oilprice": "https://oilprice.com/rss/main", "eurogamer": "https://www.eurogamer.net/feed", "pcgamer": "https://www.pcgamer.com/rss", "kotaku": "https://kotaku.com/rss", "polygon": "https://www.polygon.com/rss/index.xml", "ign": "https://feeds.ign.com/ign/news", "gamespot": "https://www.gamespot.com/feeds/news/", "bbc": "http://feeds.bbci.co.uk/news/world/rss.xml", "cnn": "http://rss.cnn.com/rss/edition.rss", "aljazeera": "https://www.aljazeera.com/xml/rss/all.xml", "reuters": "https://www.reutersagency.com/feed/", "cnbc": "https://www.cnbc.com/id/100727362/device/rss/rss.html", "scmp": "https://www.scmp.com/rss/91/feed", "politico": "https://www.politico.eu/feed/" };
-        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
-        const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
-        let sourceData = {}; let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
+                let htmlOut = "";
+                let foundImg = null;
 
+                // 1. OG Image
+                const ogMatch = html.match(/meta property=["']og:image["'] content=["'](.*?)["']/);
+                if(ogMatch) {
+                    foundImg = ogMatch[1];
+                    htmlOut += `<div class="result-row success"><div>1. OpenGraph</div><div class="result-val">${foundImg}</div></div>`;
+                } else {
+                    htmlOut += `<div class="result-row fail"><div>1. OpenGraph</div></div>`;
+                }
+
+                // 2. Swec Regex
+                const swecMatch = html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/);
+                if(swecMatch) {
+                    const fixed = swecMatch[0].replace(/&amp;/g, "&");
+                    if(!foundImg) foundImg = fixed;
+                    htmlOut += `<div class="result-row success"><div>2. Sweclockers Regex</div><div class="result-val">${fixed}</div></div>`;
+                } else {
+                    htmlOut += `<div class="result-row fail"><div>2. Sweclockers Regex</div></div>`;
+                }
+
+                if(foundImg) {
+                    htmlOut = `<div style="text-align:center; margin-bottom:20px;"><img src="${foundImg}" class="preview-img"></div>` + htmlOut;
+                }
+
+                document.getElementById('testResults').innerHTML = htmlOut;
+
+            } catch(e) {
+                document.getElementById('testResults').innerText = "Error: " + e.message;
+            }
+        }
+
+        // ===============================================
+        // 5. STANDARD FUNCTIONS (Fetch, Save, Editor...)
+        // ===============================================
+        
+        // (Keeping previous core logic minimal for brevity, ensure previous functions are here)
         window.onload = function() { for(let key in FOLDER_CONFIG) sourceData[key] = []; const t = prompt("Enter GitHub Token (ghp_...):"); if(t) { document.getElementById('ghToken').value = t; fetchSources(); } };
         async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { alert(e.message); } }
-        function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return alert("Err: No SOURCES found"); rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
+        function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return alert("Err"); rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
@@ -394,9 +394,18 @@
         function deleteItem(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
         function autoSmartFixAdd() { let u = document.getElementById('urlInput'); let val = u.value.toLowerCase().trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; return; } if(!val.includes('rss') && !val.includes('feed')) { for (let key in SMART_RSS_MAP) { if (val.includes(key)) { u.value = SMART_RSS_MAP[key]; document.getElementById('nameInput').value = key.charAt(0).toUpperCase() + key.slice(1); showToast("RSS Detected!"); return; } } } }
         function addSource() { autoSmartFixAdd(); const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Added Source"); }
-        async function saveToGitHub() { if(!confirm("Overwrite sources.py?")) return; let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V5.3)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED SUCCESSFULLY!"); } catch(e) { alert(e.message); } }
+        async function saveToGitHub() { if(!confirm("Overwrite sources.py?")) return; let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V6.0)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED SUCCESSFULLY!"); } catch(e) { alert(e.message); } }
         function showToast(msg, d=2000) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), d); }
         async function deployLive() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Started"); } catch(e) { alert("Deploy Error"); } }
+        
+        // --- DUMP ZONE ---
+        async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
+        
+        // --- EDITOR ---
+        async function openEditor(filename) { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); showToast("Fetching " + filename + "..."); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filename}`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); currentFileSha = data.sha; currentFileName = filename; const content = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); document.getElementById('codeContent').value = content; document.getElementById('editorTitle').innerText = "EDITING: " + filename; document.getElementById('editorModal').classList.add('open'); } catch(e) { alert("Error: " + e.message); } }
+        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
+        async function saveFileContent() { if(!confirm(`Overwrite ${currentFileName}?`)) return; const content = document.getElementById('codeContent').value; const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${currentFileName}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Admin Edit: ${currentFileName}`, content: encoded, sha: currentFileSha }) }); const d = await res.json(); currentFileSha = d.content.sha; showToast("FILE SAVED!"); } catch(e) { alert("Error: " + e.message); } }
+        function closeEditor() { document.getElementById('editorModal').classList.remove('open'); document.getElementById('codeContent').value = ""; }
     </script>
 </body>
 </html>
