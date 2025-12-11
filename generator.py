@@ -38,9 +38,9 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V4.1 - SWEC SPECIFIC CDN FIX) ---")
+print(f"--- STARTAR GENERATORN (V5.0 - CNN/AFTONBLADET/SWEC FIX) ---")
 
-# --- FAKE BROWSER HEADERS ---
+# --- FAKE BROWSER HEADERS (VIKTIGT FÖR ATT INTE BLI BLOCKAD) ---
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -97,8 +97,8 @@ def clean_image_url_generic(url):
 
 def strategy_sweclockers(link):
     """
-    Hämtar bilder från Sweclockers genom att leta efter deras specifika
-    dynamiska CDN-länkar (de som innehåller ?l=...).
+    Sweclockers-specifik logik: Letar efter JSON-LD eller Regex på deras CDN.
+    Detta är den logik vi vet fungerar för deras Hero-bilder.
     """
     try:
         time.sleep(random.uniform(0.5, 1.0))
@@ -107,19 +107,13 @@ def strategy_sweclockers(link):
         if r.status_code != 200: return None
         html_content = r.text
 
-        # METOD 1: Regex för den specifika CDN-strukturen du visade
-        # Vi letar efter: https://cdn.sweclockers.com/artikel/bild/[siffror]?l=[tecken]
-        # Regexen stoppar vid citationstecken, mellanslag eller tag-slut
+        # 1. Regex för dynamiska länkar (?l=...)
         pattern_dynamic = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)'
-        
         matches = re.findall(pattern_dynamic, html_content)
         if matches:
-            # Sweclockers laddar ofta flera storlekar. Vi tar den första unika som hittas,
-            # eller den som ser längst ut (oftast mest komplex/bäst kvalitet)
-            best_match = max(matches, key=len) 
-            return best_match.replace("&amp;", "&")
+            return max(matches, key=len).replace("&amp;", "&")
 
-        # METOD 2: JSON-LD (Om regex missar)
+        # 2. JSON-LD
         soup = BeautifulSoup(html_content, 'html.parser')
         scripts = soup.find_all('script', type='application/ld+json')
         for script in scripts:
@@ -131,7 +125,7 @@ def strategy_sweclockers(link):
                     if isinstance(img_data, dict) and 'url' in img_data: return img_data['url']
                     if isinstance(img_data, str): return img_data
             except: continue
-
+            
     except Exception: pass
     return None
 
@@ -158,22 +152,27 @@ def strategy_phys_org(entry):
         if '/tmb/' in img_url: return img_url.replace('/tmb/', '/800/')
     return img_url
 
-def strategy_aftonbladet(link):
-    try:
-        time.sleep(random.uniform(0.1, 0.3))
-        r = get_session().get(link, timeout=8, verify=False)
-        matches = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+[^"\s]*)', r.text)
-        if matches: return matches[0].replace('&amp;', '&')
-    except: pass
-    return None
-
 def strategy_deep_scrape(link):
+    """
+    Standard "Deep Scrape". Går in på sidan och hämtar og:image.
+    Detta är det säkraste för Aftonbladet, Dagens PS, CNN etc.
+    """
     try:
-        time.sleep(random.uniform(0.5, 1.0))
-        r = get_session().get(link, timeout=10, verify=False)
+        time.sleep(random.uniform(0.3, 0.7))
+        session = get_session()
+        r = session.get(link, timeout=8, verify=False)
         soup = BeautifulSoup(r.content, 'html.parser')
+        
+        # Priority 1: Open Graph Image
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"): return urljoin(link, og["content"])
+        if og and og.get("content"): 
+            return urljoin(link, og["content"])
+            
+        # Priority 2: Twitter Image
+        tw = soup.find("meta", name="twitter:image")
+        if tw and tw.get("content"):
+            return urljoin(link, tw["content"])
+            
     except: pass
     return None
 
@@ -187,86 +186,40 @@ def strategy_default(entry):
             if getattr(enc, 'type', '').startswith('image/'):
                 img_url = getattr(enc, 'href', '')
                 break
+    
+    # Om RSS saknar bild, testa Deep Scrape som fallback
     if not img_url:
         return strategy_deep_scrape(entry.link)
+        
     return img_url
 
 def get_image_for_article(entry, source_url):
+    # 1. Specifika logiker som kräver specialbehandling
     if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
-    if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     
+    # 2. "Deep Scrape" Lista - Sidor som kräver att vi besöker artikeln för att få bra bild
+    # Här lägger vi Aftonbladet, Dagens PS, CNN och andra stora sajter.
+    deep_scrape_sites = [
+        'dagensps', 
+        'aftonbladet', 
+        'cnn', 
+        'electrek', 
+        'feber', 
+        'nasa.gov', 
+        'indiatimes', 
+        'reuters', 
+        'cnbc',
+        'nyteknik'
+    ]
+    
+    if any(d in source_url for d in deep_scrape_sites):
+        url = strategy_deep_scrape(entry.link)
+        if url: return url
+        # Om deep scrape misslyckas, fall tillbaka till default (RSS)
+        
     return strategy_default(entry)
-
-# --- GENERELL SCRAPER FÖR HEMSIDOR UTAN RSS ---
-
-def scrape_website_fallback(source):
-    """
-    Läser in en vanlig HTML-sida och letar efter nyhetslänkar.
-    """
-    print(f"   -> Scraping HTML directly: {source['url']}")
-    found = []
-    try:
-        session = get_session()
-        r = session.get(source['url'], timeout=15, verify=False)
-        if r.status_code != 200: return []
-        
-        soup = BeautifulSoup(r.text, 'html.parser')
-        base_url = source['url']
-        
-        # Leta efter rubriker som innehåller länkar
-        headers = soup.find_all(['h1', 'h2', 'h3', 'h4'])
-        seen_links = set()
-        
-        for h in headers:
-            link = h.find('a')
-            if not link or not link.get('href'): continue
-            
-            url = urljoin(base_url, link.get('href'))
-            title = link.get_text().strip()
-            
-            if len(title) < 10: continue
-            if url in seen_links: continue
-            seen_links.add(url)
-            
-            # Skapa ett "fake" entry objekt
-            class FakeEntry: pass
-            entry = FakeEntry()
-            entry.link = url
-            entry.title = title
-            entry.summary = ""
-            
-            # Hämta bild
-            img_url = get_image_for_article(entry, base_url)
-            if not img_url: img_url = DEFAULT_IMAGE
-            
-            lang_note = ""
-            if source.get('lang') == 'sv':
-                title = translate_text(title, 'sv')
-                lang_note = " (Translated)"
-
-            ts = time.time() - random.randint(60, 3600*12) 
-
-            found.append({
-                "title": title,
-                "link": url,
-                "images": [img_url],
-                "summary": "",
-                "category": source['cat'],
-                "filter_tag": source.get('filter_tag', ''), 
-                "source": source.get('source_name', 'Web'),
-                "lang_note": lang_note,
-                "timestamp": ts,
-                "is_video": False
-            })
-            
-            if len(found) >= MAX_ARTICLES_DEFAULT: break
-            
-    except Exception as e:
-        print(f"Scrape error {source['url']}: {e}")
-        
-    return found
 
 # --- INFO HÄMTNING ---
 
@@ -281,12 +234,8 @@ def get_web_info(source):
         
         if resp.status_code != 200: return []
 
-        # Försök parsa som RSS
         feed = feedparser.parse(resp.content)
-        
-        # Om RSS är tom -> Kör Fallback Scraper
-        if not feed.entries:
-            return scrape_website_fallback(source)
+        if not feed.entries: return []
 
         for entry in feed.entries[:limit]:
             timestamp = parse_date_to_timestamp(entry)
@@ -294,6 +243,7 @@ def get_web_info(source):
             if is_too_old(timestamp): continue
             if not entry.get('title'): continue
 
+            # Hämta bild
             img_url = get_image_for_article(entry, source['url'])
             img_url = clean_image_url_generic(img_url)
             if not img_url: img_url = DEFAULT_IMAGE
@@ -431,6 +381,7 @@ while final_list:
 
 final_list = mixed_list
 
+# Skapa tidssträngar
 now = time.time()
 for art in final_list:
     diff = now - art['timestamp']
