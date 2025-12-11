@@ -24,7 +24,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
-MAX_ARTICLES_AFTONBLADET = 5  # Ökat lite då vi nu har en bra bildstrategi
+MAX_ARTICLES_AFTONBLADET = 6  # Ökat något då vi nu hittar bilder bättre
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
@@ -98,19 +98,19 @@ def clean_image_url_generic(url):
 def strategy_aftonbladet(link):
     """
     LOGIC 9: Aftonbladet Regex.
-    Letar efter länkar till images.aftonbladet-cdn.se i källkoden.
+    Letar efter direkta länkar till images.aftonbladet-cdn.se i källkoden.
+    Detta kringgår problem med OpenGraph eller redirects.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
         
-        # Samma regex som fungerade i ditt test
-        # Letar efter UUID-liknande namn (siffror, bokstäver, bindestreck)
+        # Regex för att hitta bild-ID/URL struktur i Aftonbladets kod
         pattern = r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)'
         matches = re.findall(pattern, r.text)
         
         if matches:
-            # Returnera den första träffen
+            # Returnera första träffen (oftast huvudbilden)
             return matches[0]
             
     except Exception: pass
@@ -118,7 +118,10 @@ def strategy_aftonbladet(link):
 
 def strategy_sweclockers(link):
     """
-    Sweclockers: Prio 1 OpenGraph, Prio 2 Regex.
+    Sweclockers: 
+    Prio 1: OpenGraph (Standard)
+    Prio 2: Regex (?l=...) (Backup om OG saknas)
+    Prio 3: JSON-LD
     """
     try:
         time.sleep(random.uniform(0.5, 1.0))
@@ -179,7 +182,7 @@ def strategy_phys_org(entry):
 
 def strategy_deep_scrape(link):
     """
-    Generell "Deep Scrape". Prioriterar OpenGraph.
+    Generell "Deep Scrape". Prioriterar OpenGraph och Twitter Cards.
     """
     try:
         time.sleep(random.uniform(0.3, 0.7))
@@ -224,7 +227,7 @@ def get_image_for_article(entry, source_url):
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     
     # 2. Sidor som behöver Deep Scrape (OG Image)
-    # Aftonbladet borttagen härifrån då den nu har egen strategi ovan
+    # Aftonbladet borttagen härifrån då den nu har egen strategi
     deep_scrape_sites = [
         'dagensps', 
         'cnn', 
