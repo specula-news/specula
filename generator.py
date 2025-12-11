@@ -38,22 +38,15 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V3.2 - FAKE BROWSER MODE) ---")
+print(f"--- STARTAR GENERATORN (V3.3 - SWECLOCKERS FINAL FIX) ---")
 
 # --- FAKE BROWSER HEADERS ---
-# Detta får scriptet att se exakt ut som Chrome på Windows 10
 BROWSER_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
     "Accept-Language": "sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
     "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Cache-Control": "max-age=0"
+    "Upgrade-Insecure-Requests": "1"
 }
 
 # --- HJÄLPFUNKTIONER ---
@@ -97,61 +90,56 @@ def is_too_old(timestamp):
 
 def clean_image_url_generic(url):
     if not url: return None
-    # Fix för wordpress/tech-sajter som skalar ner bilder
     if 'w=' in url: return re.sub(r'w=\d+', 'w=1200', url)
-    if 'resize=' in url: return re.sub(r'resize=\d+,\d+', 'resize=1200,800', url)
     return url
 
 # --- BILDSTRATEGIER ---
 
 def strategy_sweclockers(link):
     """
-    STRATEGI: FAKE BROWSER + REGEX BRUTE FORCE
-    Vi letar efter den specifika CDN-strukturen direkt i källkoden.
+    Uppdaterad för att hantera Sweclockers komplexa URL:er med ?l= parametrar.
     """
     try:
-        # Slumpmässig väntetid för att inte se ut som en robot
         time.sleep(random.uniform(0.5, 1.5))
-        
-        # Använd session med fulla browser-headers
-        session = get_session()
-        r = session.get(link, timeout=10, verify=False)
-        
-        if r.status_code != 200: 
-            return None
-            
+        r = get_session().get(link, timeout=10, verify=False)
+        if r.status_code != 200: return None
         html_content = r.text
-
-        # REGEX BRUTE FORCE
-        # Sweclockers bilder ligger på cdn.sweclockers.com/artikel/bild/...
-        # Vi letar efter den strängen följt av siffror och eventuella parametrar
-        
-        # Mönster: cdn.sweclockers.com/artikel/bild/ + (siffror) + (eventuella tecken till slut)
-        # Vi filtrerar bort citattecken som avslutar URLen
-        pattern = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+[^"\s\'<>]*)'
-        matches = re.findall(pattern, html_content)
-        
-        if matches:
-            # Gå igenom träffarna och ta den bästa
-            for match in matches:
-                # Filtrera bort små ikoner eller avatarer
-                if "avatar" in match or "emoticons" in match:
-                    continue
-                
-                # Om länken är kodad med &amp;, fixa det
-                clean_link = match.replace("&amp;", "&")
-                
-                # Det här är sannolikt huvudbilden
-                return clean_link
-
-        # Om Regex misslyckas, prova OpenGraph som sista utväg
         soup = BeautifulSoup(html_content, 'html.parser')
+
+        # METOD 1: Hitta <source srcset="..."> inuti article-head
+        # Detta är oftast där högupplösta bilder ligger på moderna sajter
+        hero_div = soup.find("div", class_="article-head__media")
+        if hero_div:
+            sources = hero_div.find_all("source")
+            for source in sources:
+                srcset = source.get("srcset", "")
+                if "cdn.sweclockers.com" in srcset:
+                    # srcset kan se ut så här: "url 1x, url 2x". Vi tar den sista (största).
+                    best_url = srcset.split(",")[-1].strip().split(" ")[0]
+                    if best_url.startswith("//"): best_url = "https:" + best_url
+                    return best_url
+
+        # METOD 2: Regex för URL:er med "?l=" (Den typen du länkade)
+        # Vi letar efter: https://cdn.sweclockers.com/artikel/bild/SIFFROR?l=TECKEN
+        pattern = r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[a-zA-Z0-9%\-_]+)'
+        matches = re.findall(pattern, html_content)
+        if matches:
+            # Ta den första unika länken vi hittar
+            return matches[0]
+
+        # METOD 3: Regex för "vanliga" bilder (.jpg/.webp) som fallback
+        pattern_old = r'(https://cdn\.sweclockers\.com/artikel/bild/[^"]+\.(?:jpg|webp))'
+        matches_old = re.findall(pattern_old, html_content)
+        for match in matches_old:
+            if "avatar" not in match and "emoticons" not in match:
+                return match
+
+        # METOD 4: OpenGraph (Sista utväg, ibland lågupplöst)
         og = soup.find("meta", property="og:image")
         if og and og.get("content"):
             return og["content"]
 
-    except Exception as e:
-        pass
+    except Exception: pass
     return None
 
 def strategy_fz_se(link):
@@ -238,7 +226,6 @@ def get_web_info(source):
     if 'aftonbladet' in source['url']: limit = MAX_ARTICLES_AFTONBLADET
 
     try:
-        # Använd get_session för alla web requests (för att skicka browser headers)
         session = get_session()
         
         if 'archdaily' in source['url']:
@@ -289,7 +276,6 @@ def get_web_info(source):
 def get_video_info(source):
     videos = []
     try:
-        # Uppdatera headers för yt-dlp också
         ydl_opts = {
             'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 
             'playlistend': 5, 'no_warnings': True, 'http_headers': BROWSER_HEADERS 
@@ -367,22 +353,16 @@ for art in new_articles:
 final_list = list(unique_map.values())
 
 # =======================================================
-# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP (Blandar källor)
+# SORTERINGSLOGIK: NYAST FÖRST + ANTI-KLUMP
 # =======================================================
 
-# 1. Sortera strikt efter tid först (Nyast först)
 final_list.sort(key=lambda x: x['timestamp'], reverse=True)
 
-# 2. Separera källor för att undvika klumpar
 mixed_list = []
 last_source = None
 
-# Använd en "while"-loop för att plocka artiklar en och en
 while final_list:
     best_index = -1
-    
-    # Sök bland de 6 översta artiklarna för att hitta en med ANNAN källa än den förra
-    # (Vi håller sökfönstret litet (6) för att inte förstöra tidsordningen för mycket)
     search_window = min(len(final_list), 6)
     
     for i in range(search_window):
@@ -391,9 +371,7 @@ while final_list:
             best_index = i
             break
     
-    # Om vi bara hittade samma källa (eller listan är slut), ta den första
-    if best_index == -1:
-        best_index = 0
+    if best_index == -1: best_index = 0
         
     selected_art = final_list.pop(best_index)
     mixed_list.append(selected_art)
