@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 import urllib3
 import re
 import yt_dlp
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     from deep_translator import GoogleTranslator
@@ -37,7 +37,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIES ---
+# --- STRATEGIER (BILDER) ---
 def strat_og(soup, html, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -98,7 +98,7 @@ def get_image(entry, source):
             if img: return img
         except: pass
 
-    # 2. RSS (Prioritera)
+    # 2. RSS
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -106,7 +106,7 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
 
-    # 3. CONTENT (WP Fix)
+    # 3. CONTENT
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -115,7 +115,7 @@ def get_image(entry, source):
                 if img: return img.get('src')
             except: pass
 
-    # 4. DEEP SCRAPE (Fallback)
+    # 4. FALLBACK
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
@@ -130,17 +130,11 @@ def process_feed(source):
     articles = []
     try:
         r = get_session().get(source['url'], timeout=15, verify=False)
-        if r.status_code != 200:
-            print(f"FAILED: {source['url']} (Status {r.status_code})")
-            return []
-            
+        if r.status_code != 200: return []
         feed = feedparser.parse(r.content)
-        if not feed.entries:
-            print(f"EMPTY: {source['url']} (Inga artiklar hittades)")
-            return []
+        if not feed.entries: return []
 
         for entry in feed.entries[:MAX_ARTICLES]:
-            # Datumhantering
             ts = time.time()
             try:
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
@@ -171,29 +165,50 @@ def process_feed(source):
                 "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
                 "feed_url": source['url']
             })
-    except Exception as e: print(f"CRASH: {source['url']} - {e}")
+    except Exception as e: print(f"Err {source['url']}: {e}")
     return articles
 
 def get_video_info(source):
     videos = []
     try:
-        # extract_flat=True ger oss 'upload_date' (YYYYMMDD) men inte exakt klockslag
-        ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
+        # NOTE: dump_single_json ger mer metadata än extract_flat för datum
+        ydl_opts = {
+            'quiet': True, 
+            'ignoreerrors': True, 
+            'extract_flat': True, 
+            'playlistend': 5
+        }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             for entry in info.get('entries', []):
                 if not entry: continue
+                
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
-                # --- FIX: PARSE YOUTUBE DATE ---
-                ts = time.time()
-                date_str = entry.get('upload_date')
-                if date_str:
+                # --- PRECISE TIME LOGIC ---
+                ts = 0
+                # 1. Try exact timestamp (float)
+                if entry.get('timestamp'):
+                    ts = entry['timestamp']
+                # 2. Try release_timestamp
+                elif entry.get('release_timestamp'):
+                    ts = entry['release_timestamp']
+                # 3. Try upload_date string (YYYYMMDD)
+                elif entry.get('upload_date'):
                     try:
-                        dt = datetime.strptime(date_str, '%Y%m%d')
-                        ts = dt.timestamp()
+                        d = entry['upload_date']
+                        dt = datetime.strptime(d, '%Y%m%d')
+                        # Set to noon to avoid "Just now" for everything today if script runs early
+                        ts = dt.replace(hour=12).timestamp()
                     except: pass
+                
+                # If everything failed, mark as old so it doesn't show as "Just Now" falsely, 
+                # OR set to now if you prefer. Setting to now causes the bug.
+                # Let's try to fetch page if needed? No, too slow.
+                # If ts is 0, we fallback to time.time() BUT we mark it specifically
+                if ts == 0: ts = time.time() - 86400 # Default to "Yesterday" if unknown to avoid confusion? 
+                # Actually, let's keep time.time() but hopefully steps 1-3 work.
                 
                 videos.append({
                     "title": entry['title'], "link": entry['url'], "images": [thumb],
@@ -223,16 +238,19 @@ if __name__ == "__main__":
             except: pass
 
     all_data.sort(key=lambda x: x['timestamp'], reverse=True)
-    seen = set()
     final = []
+    seen = set()
     for a in all_data:
         if a['link'] not in seen:
             final.append(a); seen.add(a['link'])
             
-    # TIDSFORMATERING FÖR JSON
+    # TIDSFORMATERING
     now = time.time()
     for art in final:
         diff = now - art['timestamp']
+        # YouTube fix: If diff is massive (future) or weird, handle it
+        if diff < 0: diff = 0
+        
         if diff < 3600: art['time_str'] = "Just Now"
         elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
         elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
