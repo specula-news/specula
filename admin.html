@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V11.4</title>
+    <title>SPECULA ADMIN // V11.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
@@ -78,9 +78,10 @@
         .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; font-weight: bold; white-space: nowrap; }
         .btn-apply:hover { background: #fff; }
         .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
+        .btn-preview { border-color: var(--accent) !important; color: var(--accent) !important; } 
+        .btn-preview:hover { background: var(--accent) !important; color: #000 !important; }
         .fail-options { display: flex; gap: 10px; margin-top: 20px; }
         .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
-        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
         .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
@@ -114,10 +115,9 @@
 
     <!-- MAIN UI -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V11.4</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V11.5</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center; gap:10px;">
-            <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
-            <button onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
+            <button class="btn-preview" onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
         </div>
         <div class="actions">
             <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
@@ -141,7 +141,7 @@
         <div class="grid" id="grid"></div>
     </div>
 
-    <!-- MODALS -->
+    <!-- DUMP MODAL -->
     <div class="overlay" id="dumpModal">
         <div class="modal-window dump-box">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
@@ -157,6 +157,7 @@
         </div>
     </div>
 
+    <!-- LOGIC ANALYZER -->
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -193,6 +194,7 @@
         </div>
     </div>
 
+    <!-- FAIL MODAL -->
     <div class="overlay" id="failModal">
         <div class="modal-window" style="max-width:500px; text-align:center;">
             <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
@@ -223,68 +225,7 @@
         let pendingAddUrl = ""; let pendingAddName = "";
         let activeAnalyzerIndex = -1;
 
-        window.onload = function() { 
-            for(let key in FOLDER_CONFIG) sourceData[key] = []; 
-            const savedToken = localStorage.getItem("gh_token");
-            const savedUser = localStorage.getItem("gh_user");
-            const savedRepo = localStorage.getItem("gh_repo");
-            if (savedToken && savedUser && savedRepo) { 
-                document.getElementById('loginModal').classList.remove('open'); 
-                fetchSources(savedUser, savedRepo, savedToken);
-            }
-            setupDropZone();
-        };
-
-        function performLogin() {
-            const user = document.getElementById('userInput').value.trim();
-            const repo = document.getElementById('repoInput').value.trim();
-            const token = document.getElementById('tokenInput').value.trim();
-            if(!user || !repo || !token) return alert("All fields are required.");
-            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
-            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
-        }
-        function logout() { localStorage.clear(); location.reload(); }
-
-        // --- CORE FUNCTIONS ---
-        async function fetchSources(u,r,t) { 
-            const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
-            try { 
-                // 1. Fetch Sources
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
-                if(!res.ok) throw new Error("Auth Failed"); 
-                const data = await res.json(); 
-                currentSha = data.sha; 
-                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
-                parsePython(text); 
-
-                // 2. Fetch News.json for REAL preview
-                try {
-                    const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
-                    const data2 = await res2.json();
-                    const text2 = new TextDecoder().decode(Uint8Array.from(atob(data2.content), c => c.charCodeAt(0))); 
-                    const articles = JSON.parse(text2);
-                    newsMap = {};
-                    articles.forEach(a => { 
-                        if(a.images && a.images.length > 0) {
-                            if(a.source) newsMap[a.source] = a.images[0]; 
-                            if(a.feed_url) newsMap[a.feed_url] = a.images[0];
-                            const rough = a.feed_url ? a.feed_url.replace(/\/$/, "") : "";
-                            if(rough) newsMap[rough] = a.images[0];
-                        }
-                    });
-                } catch(e) { console.log("No news.json found"); }
-
-                renderNav(); renderGrid(); showToast("Data Loaded"); 
-            } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
-        }
-
-        async function fetchProxy(url) {
-             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
-             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
-        }
-
-        // --- GRID RENDERING ---
+        // --- DEFINITIONS FIRST ---
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
 
         function renderGrid() { 
@@ -327,6 +268,65 @@
             }); 
         }
 
+        // --- INIT ---
+        window.onload = function() { 
+            for(let key in FOLDER_CONFIG) sourceData[key] = []; 
+            const savedToken = localStorage.getItem("gh_token");
+            const savedUser = localStorage.getItem("gh_user");
+            const savedRepo = localStorage.getItem("gh_repo");
+            if (savedToken && savedUser && savedRepo) { 
+                document.getElementById('loginModal').classList.remove('open'); 
+                fetchSources(savedUser, savedRepo, savedToken);
+            }
+            setupDropZone();
+        };
+
+        function performLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+            if(!user || !repo || !token) return alert("Required");
+            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
+            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
+        }
+        function logout() { localStorage.clear(); location.reload(); }
+
+        async function fetchSources(u,r,t) { 
+            const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
+            try { 
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
+                if(!res.ok) throw new Error("Auth Failed"); 
+                const data = await res.json(); 
+                currentSha = data.sha; 
+                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
+                parsePython(text); 
+
+                try {
+                    const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
+                    const data2 = await res2.json();
+                    const text2 = new TextDecoder().decode(Uint8Array.from(atob(data2.content), c => c.charCodeAt(0))); 
+                    const articles = JSON.parse(text2);
+                    newsMap = {};
+                    articles.forEach(a => { 
+                        if(a.images && a.images.length > 0) {
+                            if(a.source) newsMap[a.source] = a.images[0]; 
+                            if(a.feed_url) newsMap[a.feed_url] = a.images[0];
+                            const rough = a.feed_url ? a.feed_url.replace(/\/$/, "") : "";
+                            if(rough) newsMap[rough] = a.images[0];
+                        }
+                    });
+                } catch(e) { console.log("No news.json"); }
+
+                renderNav(); renderGrid(); showToast("Data Loaded"); 
+            } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
+        }
+
+        async function fetchProxy(url) {
+             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
+             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
+        }
+
         async function loadAllPreviews() {
             const items = sourceData[activeFolder]; if(!items) return;
             showToast("Simulating...", 3000);
@@ -342,34 +342,21 @@
             div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
             try {
                 const r = await fetchProxy(url); 
-                let text = "";
-                // Handle different proxies
-                if(r.headers.get("content-type")?.includes("json")) {
-                    const j = await r.json(); text = j.contents || JSON.stringify(j);
-                } else {
-                    text = await r.text();
-                }
-
-                // 1. Dirty Regex (Fastest)
-                const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
+                const text = await r.text();
+                
+                // V11.5 FIX: Handle both JSON-wrapped and Raw HTML responses
+                let cleanText = text;
+                try {
+                    const json = JSON.parse(text);
+                    if(json.contents) cleanText = json.contents;
+                } catch(e) {} // Not JSON, assume raw HTML
+                
+                // Match image
+                const match = cleanText.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
+                
                 if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
-                else { 
-                    // 2. XML Parsing (RSS)
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    const item = xmlDoc.querySelector('item, entry');
-                    let imgUrl = null;
-                    if (item) {
-                        const enc = item.querySelector('enclosure[type^="image"]');
-                        if (enc) imgUrl = enc.getAttribute('url');
-                        if(!imgUrl) {
-                            const media = item.getElementsByTagName('media:content')[0];
-                            if(media) imgUrl = media.getAttribute('url');
-                        }
-                    }
-                    if(imgUrl) div.innerHTML = `<img src="${imgUrl}"><div class="sim-tag">SIMULATION</div>`;
-                    else div.innerHTML = `<span>No Image Found</span>`; 
-                }
+                else { div.innerHTML = `<span>No Image Found</span>`; }
+
             } catch(e) { div.innerHTML = `<span>Err</span>`; }
         }
 
@@ -385,29 +372,72 @@
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
 
-        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const j = await r.json(); const text = j.contents || JSON.stringify(j); statusLog.innerHTML = '2. Parsing...'; 
-        
-        // ANALYZER LOGIC REVISED FOR JSON HANDLING
-        const parser = new DOMParser(); 
-        const xmlDoc = parser.parseFromString(text, "text/xml"); 
-        let articleUrl = null; 
-        
-        let items = xmlDoc.getElementsByTagName("entry"); 
-        if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } 
-        if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } 
-        if(!articleUrl && !url.includes('rss')) articleUrl = url; 
-        
-        if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } 
-        statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); 
-        
-        const ar = await fetchProxy(articleUrl); 
-        const ad = await ar.json(); 
-        const html = ad.contents || JSON.stringify(ad);
-        const doc = new DOMParser().parseFromString(html, "text/html"); 
-        
-        const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        async function openLogicAnalyzer(url, idx) { 
+            activeAnalyzerIndex = idx; 
+            document.getElementById('testerModal').classList.add('open'); 
+            const resBox = document.getElementById('logicResults'); 
+            const statusLog = document.getElementById('statusLog'); 
+            resBox.innerHTML = ''; 
+            statusLog.innerHTML = '1. Fetching... ' + url; 
+            
+            try { 
+                const r = await fetchProxy(url); 
+                const rawText = await r.text();
+                
+                // V11.5 FIX: Handle JSON wrapper or Raw HTML
+                let text = rawText;
+                try {
+                    const json = JSON.parse(rawText);
+                    if(json.contents) text = json.contents;
+                } catch(e){}
+
+                statusLog.innerHTML = '2. Parsing...'; 
+                
+                const parser = new DOMParser(); 
+                const xmlDoc = parser.parseFromString(text, "text/xml"); 
+                let articleUrl = null; 
+                let items = xmlDoc.getElementsByTagName("entry"); 
+                if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } 
+                if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } 
+                if(!articleUrl && !url.includes('rss')) articleUrl = url; 
+                
+                if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } 
+                statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); 
+                
+                const ar = await fetchProxy(articleUrl); 
+                const rawAr = await ar.text();
+                let html = rawAr;
+                try {
+                    const j = JSON.parse(rawAr);
+                    if(j.contents) html = j.contents;
+                } catch(e){}
+                
+                const doc = new DOMParser().parseFromString(html, "text/html"); 
+                
+                // STRATEGIES
+                const strategies = [ 
+                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, 
+                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, 
+                    { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, 
+                    { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, 
+                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, 
+                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, 
+                    { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, 
+                    { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, 
+                    { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } 
+                ]; 
+                
+                let htmlOut = ""; 
+                strategies.forEach(res => { 
+                    const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; 
+                    htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; 
+                }); 
+                resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; 
+            } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } 
+        }
+
         function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V10.5)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V11.5)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
         async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
         function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
