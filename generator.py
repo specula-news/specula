@@ -36,8 +36,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- NYA STRATEGIER (V6.1) ---
-
+# --- STRATEGIES ---
 def strat_og(soup, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -66,55 +65,30 @@ def strat_afton(html, url):
     m = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)', html)
     return m[0] if m else None
 
+def strat_wordpress(soup, url):
+    img = soup.find('img', class_=re.compile('wp-post-image'))
+    return urljoin(url, img.get('src')) if img else None
+
+def strat_lazy(soup, url):
+    img = soup.find('img', attrs={"data-src": True})
+    return urljoin(url, img['data-src']) if img else None
+
 def strat_hero(soup, url):
-    # Utökad sökning efter hero/featured
-    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'entry-image', 'top-image']:
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
         div = soup.find(class_=re.compile(cls, re.I))
         if div:
             img = div.find('img')
-            if img:
-                # Kolla src först, sen data-src
-                src = img.get('src') or img.get('data-src') or img.get('data-lazy-src')
-                if src: return urljoin(url, src)
-    return None
-
-def strat_wordpress(soup, url):
-    # WordPress standardklass för huvudbild
-    img = soup.find('img', class_=re.compile('wp-post-image'))
-    if img:
-        src = img.get('src') or img.get('data-src')
-        if src: return urljoin(url, src)
-    return None
-
-def strat_lazy(soup, url):
-    # Letar efter bilder som gömmer sig i data-src
-    imgs = soup.find_all('img', attrs={"data-src": True})
-    if imgs:
-        return urljoin(url, imgs[0]['data-src'])
+            if img: return urljoin(url, img.get('src'))
     return None
 
 def strat_largest(soup, url):
-    # Hittar bild med längst URL (ofta bäst kvalitet) eller srcset
-    best_img = None
-    max_len = 0
-    
-    # Kolla srcset först
-    srcsets = soup.find_all('img', srcset=True)
-    if srcsets:
-        best_img = srcsets[0]['srcset'].split(',').pop().trim().split(' ')[0]
-        return urljoin(url, best_img)
-
-    # Annars leta i article-taggen
-    target = soup.find('article') or soup
-    imgs = target.find_all('img', src=True)
-    
-    for img in imgs:
-        src = img['src']
-        if len(src) > max_len and 'logo' not in src and 'icon' not in src:
-            max_len = len(src)
-            best_img = src
-            
-    return urljoin(url, best_img) if best_img else None
+    imgs = soup.find_all('img', src=True)
+    if not imgs: return None
+    target = soup.find('article')
+    if target:
+        img = target.find('img', src=True)
+        if img: return urljoin(url, img['src'])
+    return urljoin(url, imgs[0]['src'])
 
 STRATEGY_MAP = {
     'og': strat_og, 'twitter': strat_twitter, 'json': strat_json,
@@ -130,26 +104,32 @@ def get_image(entry, source):
             r = get_session().get(entry.link, timeout=10, verify=False)
             soup = BeautifulSoup(r.text, 'html.parser')
             func = STRATEGY_MAP[strat_name]
-            
             if strat_name in ['swec', 'afton']: res = func(r.text, entry.link)
             else: res = func(soup, entry.link)
-            
             if res: return res
         except: pass
 
-    # 2. RSS FLÖDE
+    # 2. RSS FLÖDE (STANDARD)
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
     if 'enclosures' in entry:
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
-    
-    # 3. FALLBACK DEEP SCRAPE
+            
+    # 3. EXTRA SÖKNING I CONTENT (FIXAR DAGENS PS)
+    if 'content' in entry:
+        for c in entry.content:
+            try:
+                soup = BeautifulSoup(c.value, 'html.parser')
+                img = soup.find('img')
+                if img and img.get('src'): return img['src']
+            except: pass
+
+    # 4. FALLBACK DEEP SCRAPE
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
-        # Smart ordning: OG -> Twitter -> WP -> Hero -> Lazy
         for func in [strat_og, strat_twitter, strat_wordpress, strat_hero, strat_lazy]:
             res = func(soup, entry.link)
             if res: return res
