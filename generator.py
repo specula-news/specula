@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 import time
 import random
 import concurrent.futures
-from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin
 import urllib3
 import re
@@ -74,7 +73,7 @@ def strat_lazy(soup, url):
     return urljoin(url, img['data-src']) if img else None
 
 def strat_hero(soup, url):
-    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'entry-content', 'content']:
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
         div = soup.find(class_=re.compile(cls, re.I))
         if div:
             img = div.find('img')
@@ -84,18 +83,15 @@ def strat_hero(soup, url):
 def strat_largest(soup, url):
     imgs = soup.find_all('img', src=True)
     if not imgs: return None
-    # Prioritera bilder i <article>
     target = soup.find('article') or soup
-    # Hitta största bilden baserat på src-längd (ofta bäst kvalitet)
     best_img = None
     max_len = 0
     for img in target.find_all('img', src=True):
         src = img['src']
-        if 'logo' in src.lower() or 'avatar' in src.lower() or '.svg' in src.lower(): continue
+        if 'logo' in src.lower() or 'icon' in src.lower(): continue
         if len(src) > max_len:
             max_len = len(src)
             best_img = src
-            
     return urljoin(url, best_img) if best_img else None
 
 STRATEGY_MAP = {
@@ -105,7 +101,7 @@ STRATEGY_MAP = {
 }
 
 def get_image(entry, source):
-    # 1. SPECIFIK STRATEGI (FRÅN ADMIN)
+    # 1. SPECIFIK STRATEGI
     strat_name = source.get('image_strategy')
     if strat_name and strat_name in STRATEGY_MAP:
         try:
@@ -117,15 +113,30 @@ def get_image(entry, source):
             if res: return res
         except: pass
 
-    # 2. RSS FLÖDE (STANDARD)
+    # 2. RSS FLÖDE (HIGH RES CHECK)
+    rss_img = None
     if 'media_content' in entry:
-        try: return entry.media_content[0]['url']
-        except: pass
-    if 'enclosures' in entry:
+        # Hitta största bilden
+        media = entry.media_content
+        if isinstance(media, list):
+            best = max(media, key=lambda x: int(x.get('width', 0)) if x.get('width') and x.get('width').isdigit() else 0)
+            rss_img = best['url']
+        else:
+            rss_img = media[0]['url']
+    elif 'enclosures' in entry:
         for enc in entry.enclosures:
-            if enc.get('type', '').startswith('image'): return enc.get('href')
+            if enc.get('type', '').startswith('image'): 
+                rss_img = enc.get('href')
+                break
+    
+    # Om vi hittade en RSS-bild, kolla om den är "stor nog" eller om vi ska deep-scrapea ändå
+    if rss_img and 'guim.co.uk' in rss_img and 'width=140' in rss_img:
+        # Guardian Thumbnail detected -> Force Deep Scrape
+        rss_img = None 
+
+    if rss_img: return rss_img
             
-    # 3. CONTENT SCAN (WP FIX + ELBILEN FIX)
+    # 3. CONTENT SCAN
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -148,7 +159,7 @@ def get_image(entry, source):
 def process_feed(source):
     articles = []
     try:
-        r = get_session().get(source['url'], timeout=15, verify=False) # Increased timeout
+        r = get_session().get(source['url'], timeout=15, verify=False)
         feed = feedparser.parse(r.content)
         if not feed.entries: return []
 
@@ -180,7 +191,7 @@ def process_feed(source):
                 "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
                 "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
                 "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
-                "feed_url": source['url']  
+                "feed_url": source['url']
             })
     except Exception as e: print(f"Error {source['url']}: {e}")
     return articles
@@ -201,15 +212,9 @@ def get_video_info(source):
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
                 videos.append({
-                    "title": entry['title'], 
-                    "link": entry['url'], 
-                    "images": [thumb],
-                    "summary": desc, 
-                    "category": source['cat'], 
-                    "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], 
-                    "timestamp": time.time(), 
-                    "is_video": True,
+                    "title": entry['title'], "link": entry['url'], "images": [thumb],
+                    "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": time.time(), "is_video": True,
                     "feed_url": source['url']
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
@@ -257,7 +262,6 @@ if __name__ == "__main__":
     if os.path.exists('template.html'):
         with open('template.html', 'r', encoding='utf-8') as f: html = f.read()
         html = html.replace("<!-- NEWS_DATA_JSON -->", json.dumps(final))
-        # Add referrer fix for Dagens PS
         if '<head>' in html and 'referrer' not in html:
             html = html.replace('<head>', '<head><meta name="referrer" content="no-referrer">')
         with open("index.html", "w", encoding="utf-8") as f: f.write(html)
