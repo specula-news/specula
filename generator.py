@@ -74,7 +74,7 @@ def strat_lazy(soup, url):
     return urljoin(url, img['data-src']) if img else None
 
 def strat_hero(soup, url):
-    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'entry-content', 'content']:
         div = soup.find(class_=re.compile(cls, re.I))
         if div:
             img = div.find('img')
@@ -84,11 +84,19 @@ def strat_hero(soup, url):
 def strat_largest(soup, url):
     imgs = soup.find_all('img', src=True)
     if not imgs: return None
-    target = soup.find('article')
-    if target:
-        img = target.find('img', src=True)
-        if img: return urljoin(url, img['src'])
-    return urljoin(url, imgs[0]['src'])
+    # Prioritera bilder i <article>
+    target = soup.find('article') or soup
+    # Hitta största bilden baserat på src-längd (ofta bäst kvalitet)
+    best_img = None
+    max_len = 0
+    for img in target.find_all('img', src=True):
+        src = img['src']
+        if 'logo' in src.lower() or 'avatar' in src.lower() or '.svg' in src.lower(): continue
+        if len(src) > max_len:
+            max_len = len(src)
+            best_img = src
+            
+    return urljoin(url, best_img) if best_img else None
 
 STRATEGY_MAP = {
     'og': strat_og, 'twitter': strat_twitter, 'json': strat_json,
@@ -97,7 +105,7 @@ STRATEGY_MAP = {
 }
 
 def get_image(entry, source):
-    # 1. SPECIFIK STRATEGI
+    # 1. SPECIFIK STRATEGI (FRÅN ADMIN)
     strat_name = source.get('image_strategy')
     if strat_name and strat_name in STRATEGY_MAP:
         try:
@@ -109,7 +117,7 @@ def get_image(entry, source):
             if res: return res
         except: pass
 
-    # 2. RSS FLÖDE
+    # 2. RSS FLÖDE (STANDARD)
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -117,7 +125,7 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
             
-    # 3. CONTENT SCAN (WP FIX)
+    # 3. CONTENT SCAN (WP FIX + ELBILEN FIX)
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -130,7 +138,7 @@ def get_image(entry, source):
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
-        for func in [strat_og, strat_twitter, strat_wordpress, strat_hero, strat_lazy]:
+        for func in [strat_og, strat_twitter, strat_wordpress, strat_hero, strat_lazy, strat_largest]:
             res = func(soup, entry.link)
             if res: return res
     except: pass
@@ -140,7 +148,7 @@ def get_image(entry, source):
 def process_feed(source):
     articles = []
     try:
-        r = get_session().get(source['url'], timeout=10, verify=False)
+        r = get_session().get(source['url'], timeout=15, verify=False) # Increased timeout
         feed = feedparser.parse(r.content)
         if not feed.entries: return []
 
@@ -169,16 +177,10 @@ def process_feed(source):
                 except: pass
 
             articles.append({
-                "title": title, 
-                "link": entry.link, 
-                "images": [img or DEFAULT_IMAGE],
-                "summary": desc, 
-                "category": source['cat'], 
-                "filter_tag": source.get('filter_tag', ''),
-                "source": source.get('source_name', 'News'), 
-                "timestamp": ts, 
-                "is_video": False,
-                "feed_url": source['url']  # KEY FOR ADMIN MATCHING
+                "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
+                "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
+                "feed_url": source['url']  
             })
     except Exception as e: print(f"Error {source['url']}: {e}")
     return articles
@@ -208,7 +210,7 @@ def get_video_info(source):
                     "source": source['source_name'], 
                     "timestamp": time.time(), 
                     "is_video": True,
-                    "feed_url": source['url'] # KEY FOR ADMIN MATCHING
+                    "feed_url": source['url']
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
@@ -255,5 +257,8 @@ if __name__ == "__main__":
     if os.path.exists('template.html'):
         with open('template.html', 'r', encoding='utf-8') as f: html = f.read()
         html = html.replace("<!-- NEWS_DATA_JSON -->", json.dumps(final))
+        # Add referrer fix for Dagens PS
+        if '<head>' in html and 'referrer' not in html:
+            html = html.replace('<head>', '<head><meta name="referrer" content="no-referrer">')
         with open("index.html", "w", encoding="utf-8") as f: f.write(html)
         print("SUCCESS: index.html updated.")
