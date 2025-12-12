@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V11.1</title>
+    <title>SPECULA ADMIN // V11.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
@@ -17,8 +17,6 @@
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
-        .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
-        .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
         .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
         .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
@@ -51,8 +49,6 @@
         .card:hover .card-image img { transform: scale(1.05); }
         .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
         .sim-tag { position: absolute; top: 5px; right: 5px; background: var(--warning); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
-        .btn-preview { border-color: var(--accent) !important; color: var(--accent) !important; } 
-        .btn-preview:hover { background: var(--accent) !important; color: #000 !important; }
         .url-block { display: flex; flex-direction: column; gap: 5px; }
         .url-actions { display: flex; justify-content: space-between; align-items: center; }
         .edit-url { background: #000; border: 1px solid #333; color: #bbb; font-family: monospace; font-size: 0.75rem; width: 100%; padding: 8px; border-radius: 4px; margin-top: 5px; }
@@ -84,7 +80,6 @@
         .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
         .fail-options { display: flex; gap: 10px; margin-top: 20px; }
         .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
-        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
         .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
@@ -93,6 +88,8 @@
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
         .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
+        .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
+        .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -116,8 +113,9 @@
 
     <!-- MAIN UI -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V11.1</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V11.2</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center; gap:10px;">
+            <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
             <button onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
         </div>
         <div class="actions">
@@ -247,6 +245,13 @@
                 } else if (newsMap[item.url]) {
                     previewHtml = `<img src="${newsMap[item.url]}">`; 
                     tag = `<div class="live-tag">REAL OUTPUT</div>`; 
+                } else {
+                    // Try rough URL match (remove trailing slash)
+                    const cleanUrl = item.url.replace(/\/$/, "");
+                    if(newsMap[cleanUrl]) {
+                        previewHtml = `<img src="${newsMap[cleanUrl]}">`; 
+                        tag = `<div class="live-tag">REAL OUTPUT</div>`; 
+                    }
                 }
                 
                 const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
@@ -283,6 +288,26 @@
         }
         function logout() { localStorage.clear(); location.reload(); }
 
+        // --- ROBUST PROXY ---
+        async function fetchProxy(url) {
+            // Rotation strategy
+            const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+            const enc = encodeURIComponent(target);
+            try { 
+                const r1 = await fetch(`https://api.allorigins.win/get?url=${enc}`);
+                if(r1.ok) return r1;
+                throw new Error("AO fail");
+            } catch(e) {
+                try {
+                     const r2 = await fetch(`https://api.codetabs.com/v1/proxy?quest=${enc}`);
+                     if(r2.ok) return r2;
+                     throw new Error("CT fail");
+                } catch(e2) {
+                     return await fetch(`https://corsproxy.io/?${enc}`);
+                }
+            }
+        }
+
         async function fetchSources(u,r,t) { 
             const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
             try { 
@@ -299,11 +324,13 @@
                     const text2 = new TextDecoder().decode(Uint8Array.from(atob(data2.content), c => c.charCodeAt(0))); 
                     const articles = JSON.parse(text2);
                     newsMap = {};
-                    // MAP BY SOURCE NAME AND URL
                     articles.forEach(a => { 
                         if(a.images && a.images.length > 0) {
                             if(a.source) newsMap[a.source] = a.images[0]; 
                             if(a.feed_url) newsMap[a.feed_url] = a.images[0];
+                            // Rough match
+                            const rough = a.feed_url.replace(/\/$/, "");
+                            newsMap[rough] = a.images[0];
                         }
                     });
                 } catch(e) { console.log("No news.json"); }
@@ -312,12 +339,7 @@
             } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
-        async function fetchProxy(url) {
-             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
-             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
-        }
-
+        // --- PREVIEW ---
         async function loadAllPreviews() {
             const items = sourceData[activeFolder]; if(!items) return;
             showToast("Simulating...", 3000);
@@ -332,7 +354,9 @@
             const div = document.getElementById(`preview-${idx}`); if(!div) return;
             div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
             try {
-                const r = await fetchProxy(url); const text = await r.text();
+                const r = await fetchProxy(url); 
+                const text = await r.text(); // Get raw text to bypass JSON wrappers if any
+                // Dirty Regex - Most reliable for preview
                 const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
                 if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
                 else { div.innerHTML = `<span>No Image Found</span>`; }
@@ -351,9 +375,31 @@
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
 
-        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const d = await r.json(); statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const ad = await ar.json(); const html = ad.contents; const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const text = await r.text(); statusLog.innerHTML = '2. Parsing...'; 
+        
+        // Analyzer Logic
+        const parser = new DOMParser(); 
+        let articleUrl = null;
+        
+        // Try XML Parse
+        try {
+            const xmlDoc = parser.parseFromString(text, "text/xml"); 
+            let items = xmlDoc.getElementsByTagName("entry"); 
+            if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } 
+            if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } 
+        } catch(e) {}
+        
+        if(!articleUrl && !url.includes('rss')) articleUrl = url; 
+        if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } 
+        statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); 
+        
+        const ar = await fetchProxy(articleUrl); 
+        const html = await ar.text(); // Text is safer
+        const doc = parser.parseFromString(html, "text/html"); 
+        
+        const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
         function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V11.1)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V11.2)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
         async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
         function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
