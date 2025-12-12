@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V9.2 (ULTIMATE FIX)</title>
+    <title>SPECULA ADMIN // V9.6 (AUTO-FILL)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
@@ -52,6 +52,7 @@
         .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
         .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
         .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
+        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
         .card-footer { margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; display: flex; gap: 10px; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
@@ -64,41 +65,52 @@
         .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; align-items: center; }
         .logic-val { font-family: monospace; font-size: 0.8rem; color: #aaa; word-break: break-all; margin-top:5px; padding-top:5px; border-top:1px solid #333; }
         .preview-img { max-width: 100%; height: 150px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; align-self: center; }
-        .login-box { width: 400px; text-align: center; gap: 15px; }
-        .login-input { width: 90%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; }
-        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
+        
+        /* LOGIN BOX UPDATED */
+        .login-box { width: 400px; text-align: left; gap: 15px; }
+        .login-label { font-size: 0.8rem; color: #888; margin-top: 10px; margin-bottom: 2px; text-transform: uppercase; font-weight: bold; }
+        .login-input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 4px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; margin-top: 20px; }
+        
         .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 10px; font-size: 0.7rem; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-apply:hover { background: #fff; }
-        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
-        .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
-        .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .toast.show { opacity: 1; top: 110px; }
         .fail-options { display: flex; gap: 10px; margin-top: 20px; }
         .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
         .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
         .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
+        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
+        .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
+        .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast.show { opacity: 1; top: 110px; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
 <body>
 
-    <input type="hidden" id="ghUser" value="specula-news">
-    <input type="hidden" id="ghRepo" value="specula">
-    <input type="hidden" id="ghToken" value=""> 
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
+    <!-- LOGIN MODAL -->
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
-            <h2 style="color:var(--accent);">SPECULA LOGIN</h2>
-            <input type="password" id="tokenInput" class="login-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <h2 style="color:var(--accent); text-align:center;">SPECULA CONFIG</h2>
+            
+            <div class="login-label">GITHUB USERNAME</div>
+            <input type="text" id="userInput" class="login-input" value="specula-news">
+            
+            <div class="login-label">REPOSITORY NAME</div>
+            <input type="text" id="repoInput" class="login-input" value="specula">
+            
+            <div class="login-label">PERSONAL ACCESS TOKEN</div>
+            <input type="password" id="tokenInput" class="login-input" placeholder="ghp_...">
+            
             <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
         </div>
     </div>
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V9.2</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V9.6</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center;">
             <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
         </div>
@@ -141,6 +153,7 @@
         <div class="modal-window" style="max-width:500px; text-align:center;">
             <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
             <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
+            <p id="failUrl" style="font-family:monospace; background:#000; padding:10px; border-radius:4px; word-break:break-all; font-size:0.8rem;"></p>
             <div class="fail-options">
                 <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button>
                 <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button>
@@ -191,32 +204,78 @@
         let pendingAddUrl = ""; let pendingAddName = "";
         let activeAnalyzerIndex = -1;
 
+        // AUTH & INIT
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
+            
             const savedToken = localStorage.getItem("gh_token");
-            if (savedToken) { document.getElementById('ghToken').value = savedToken; document.getElementById('loginModal').classList.remove('open'); fetchSources(); }
-        };
-        function performLogin() {
-            const token = document.getElementById('tokenInput').value.trim();
-            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) return alert("Invalid Token");
-            localStorage.setItem("gh_token", token); document.getElementById('ghToken').value = token;
-            document.getElementById('loginModal').classList.remove('open'); fetchSources();
-        }
-        function logout() { localStorage.removeItem("gh_token"); location.reload(); }
+            const savedUser = localStorage.getItem("gh_user");
+            const savedRepo = localStorage.getItem("gh_repo");
 
-        // --- FETCH PROXY (FIXED) ---
+            if (savedToken && savedUser && savedRepo) { 
+                document.getElementById('loginModal').classList.remove('open'); 
+                fetchSources(savedUser, savedRepo, savedToken);
+            }
+        };
+
+        function performLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+
+            if(!user || !repo || !token) return alert("All fields are required.");
+
+            localStorage.setItem("gh_user", user);
+            localStorage.setItem("gh_repo", repo);
+            localStorage.setItem("gh_token", token);
+
+            document.getElementById('loginModal').classList.remove('open'); 
+            fetchSources(user, repo, token);
+        }
+
+        function logout() { 
+            localStorage.clear(); 
+            location.reload(); 
+        }
+
+        // FETCH PROXY
         async function fetchProxy(url) {
             try { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); }
             catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
         }
 
-        async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { if(e.message === "Auth Failed") logout(); else alert(e.message); } }
+        // CORE FUNCTIONS
+        async function fetchSources(user, repo, token) { 
+            // Load vars from args or localstorage if null
+            if(!user) user = localStorage.getItem("gh_user");
+            if(!repo) repo = localStorage.getItem("gh_repo");
+            if(!token) token = localStorage.getItem("gh_token");
+
+            try { 
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
+                
+                if(!res.ok) {
+                    if(res.status === 404) throw new Error("Error 404: Repository or sources.py not found. Check User/Repo settings.");
+                    if(res.status === 401) throw new Error("Error 401: Unauthorized. Token is invalid or expired.");
+                    throw new Error(`GitHub Error: ${res.status}`);
+                }
+
+                const data = await res.json(); 
+                currentSha = data.sha; 
+                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
+                parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); 
+            } catch(e) { 
+                alert(e.message); 
+                if(confirm("Return to login screen?")) logout();
+            } 
+        }
+
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
 
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
-        function renderGrid() { const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; const items = sourceData[activeFolder] || []; document.getElementById('countBadge').innerText = items.length + " Sources"; items.forEach((item, idx) => { const stat = item.lastStatus || 'none'; const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot status-${stat}" title="${stat}"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; grid.appendChild(card); }); }
+        function renderGrid() { const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; const items = sourceData[activeFolder] || []; document.getElementById('countBadge').innerText = items.length + " Sources"; items.forEach((item, idx) => { const stat = item.lastStatus || 'none'; const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot status-${stat}" title="${stat}"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; grid.appendChild(card); }); }
         function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
         function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
         function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
@@ -276,22 +335,39 @@
             let content = rawHeader + "\n\nSOURCES = [\n"; 
             for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } 
             content += "]\n\n" + rawFooter; 
-            const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V9.2)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } 
+            
+            const user = localStorage.getItem("gh_user");
+            const repo = localStorage.getItem("gh_repo");
+            const token = localStorage.getItem("gh_token");
+
+            const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V9.5)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } 
         }
 
-        async function deployLive() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
-        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
+        async function deployLive() { 
+            const user = localStorage.getItem("gh_user");
+            const repo = localStorage.getItem("gh_repo");
+            const token = localStorage.getItem("gh_token");
+            try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } 
+        }
+        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
 
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
-        async function fetchFileToEdit(f) { const u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
+        async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(fetchSources, 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
-        async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
+        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
+        async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
         async function runDiagnostics() {
             const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); }
             for(let src of allSources) { updateStatusDot(src.folder, src.index, 'loading'); try { const r = await fetchProxy(src.url); const data = await r.json(); if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) { updateStatusDot(src.folder, src.index, 'err'); continue; } updateStatusDot(src.folder, src.index, 'ok'); } catch(e) { updateStatusDot(src.folder, src.index, 'err'); } } showToast("Diagnostics Complete");
         }
         function updateStatusDot(folder, index, status) { if(!sourceData[folder][index].status) sourceData[folder][index].status = {}; sourceData[folder][index].lastStatus = status; if(folder === activeFolder) { const c = document.getElementById(`card-${index}`); if(c) c.querySelector('.status-dot').className = `status-dot status-${status}`; } }
+        async function autoDiscoverRSS(url, idx) { /* Simplified fix attempt logic could go here */ alert("Try removing and re-adding via Smart Add."); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function forceAddSource() { /* ... */ }
+        function searchGoogleForRSS() { /* ... */ }
+        
+        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
     </script>
 </body>
 </html>
