@@ -36,7 +36,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIES ---
+# --- STRATEGIES (MATCHING ADMIN JS) ---
 def strat_og(soup, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -97,7 +97,7 @@ STRATEGY_MAP = {
 }
 
 def get_image(entry, source):
-    # 1. SPECIFIK STRATEGI (FRÅN ADMIN)
+    # 1. SPECIFIK STRATEGI
     strat_name = source.get('image_strategy')
     if strat_name and strat_name in STRATEGY_MAP:
         try:
@@ -109,7 +109,7 @@ def get_image(entry, source):
             if res: return res
         except: pass
 
-    # 2. RSS FLÖDE (STANDARD)
+    # 2. RSS FLÖDE
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -117,7 +117,7 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
             
-    # 3. EXTRA SÖKNING I CONTENT (FIXAR DAGENS PS)
+    # 3. CONTENT SCAN (WP FIX)
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -169,9 +169,16 @@ def process_feed(source):
                 except: pass
 
             articles.append({
-                "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
-                "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False
+                "title": title, 
+                "link": entry.link, 
+                "images": [img or DEFAULT_IMAGE],
+                "summary": desc, 
+                "category": source['cat'], 
+                "filter_tag": source.get('filter_tag', ''),
+                "source": source.get('source_name', 'News'), 
+                "timestamp": ts, 
+                "is_video": False,
+                "feed_url": source['url']  # KEY FOR ADMIN MATCHING
             })
     except Exception as e: print(f"Error {source['url']}: {e}")
     return articles
@@ -192,9 +199,16 @@ def get_video_info(source):
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
                 videos.append({
-                    "title": entry['title'], "link": entry['url'], "images": [thumb],
-                    "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], "timestamp": time.time(), "is_video": True
+                    "title": entry['title'], 
+                    "link": entry['url'], 
+                    "images": [thumb],
+                    "summary": desc, 
+                    "category": source['cat'], 
+                    "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], 
+                    "timestamp": time.time(), 
+                    "is_video": True,
+                    "feed_url": source['url'] # KEY FOR ADMIN MATCHING
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
