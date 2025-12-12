@@ -44,7 +44,7 @@
         
         .nav-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 50; }
         
-        /* SEARCH BAR */
+        /* SEARCH BAR (GLUED TO TOP) */
         .search-container { position: relative; width: 100%; max-width: 300px; margin-bottom: -2px; z-index: 40; }
         .search-input { width: 100%; background: var(--nav-bg); border: 1px solid var(--border); border-bottom: none; color: var(--text-primary); padding: 8px 35px 8px 15px; border-radius: 20px 20px 0 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: 0.3s; }
         .search-container::after { content: ''; position: absolute; bottom: -2px; left: 5px; right: 5px; height: 4px; background: var(--nav-bg); z-index: 45; }
@@ -119,16 +119,47 @@
         @media (max-width: 768px) {
             .header-top { flex-direction: column; align-items: center; gap: 15px; }
             .logo-wrapper { align-items: center; } 
-            .unified-nav { display: flex; flex-direction: column; width: 100%; gap: 0; padding: 2px; border-radius: 20px; }
-            .nav-top-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
-            .nav-bottom-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; width: 100%; padding: 5px 0; }
-            .filter-btn { width: 100%; text-align: center; padding: 10px 0; font-size: 0.65rem; }
+            
+            /* SPLIT NAV: GRID TOP, GRID BOTTOM */
+            .unified-nav { 
+                display: flex; 
+                flex-direction: column; 
+                width: 100%; 
+                gap: 0;
+                padding: 2px;
+                border-radius: 20px;
+            }
+
+            /* TOP ROW: 5 BUTTONS GRID */
+            .nav-top-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                width: 100%;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            
+            /* BOTTOM ROW: 5 EQUAL COLUMNS */
+            .nav-bottom-row {
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                width: 100%;
+                padding: 5px 0;
+            }
+
+            .filter-btn { 
+                width: 100%;
+                text-align: center; 
+                padding: 10px 0; 
+                font-size: 0.65rem; 
+            }
+            
             .desktop-label { display: none !important; }
             .mobile-label { display: inline !important; }
             .hide-on-mobile { display: none !important; }
             .show-on-mobile { display: block !important; }
             .desktop-categories { display: none; }
             .mobile-hide { display: block !important; }
+
             .dropdown-menu { width: 100%; min-width: 200px; transform: none; }
             #topicsDropdown { left: 0; right: auto; transform: none; }
             #videoDropdown { left: 50%; transform: translateX(-50%); width: 260px; }
@@ -167,21 +198,22 @@
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 60px; }
         .page-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.9rem; }
         .page-btn:hover, .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; display: flex; flex-direction: column; max-height: 85vh; }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 16px; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.open .modal-card { transform: translateY(0); }
         .close-modal { float: right; font-size: 2rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; }
         
-        /* CHANGELOG STYLES */
-        .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; overflow-y: auto; padding-right: 10px; }
+        /* CHANGELOG LIST */
+        .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; max-height: 50vh; overflow-y: auto; padding-right:10px; }
         .changelog-item { margin-bottom: 25px; padding-left: 15px; border-left: 2px solid var(--border); position: relative; }
-        .changelog-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 50%; }
-        .changelog-ver { color: var(--accent); font-size: 1.1rem; font-weight: bold; display: block; margin-bottom: 5px; }
-        .changelog-desc { line-height: 1.5; }
+        .changelog-item.major { border-left-color: var(--accent); }
+        .changelog-item.backend { border-left-color: #ffaa00; }
+        .changelog-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .version-tag { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: var(--text-primary); }
+        .version-date { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; }
         .changelog-desc strong { color: var(--text-primary); }
-
+        
         .site-footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
         .footer-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-action { padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.9rem; border: 1px solid var(--border); }
@@ -229,30 +261,63 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
-                 <!-- V20.5.33 - CURRENT -->
-                 <li class="changelog-item">
-                    <span class="changelog-ver">Version 20.5.33 - Admin Sync & Image Fix</span>
+                 <!-- V21.0.0 (MASTER LOG) -->
+                 <li class="changelog-item major">
+                    <div class="changelog-header"><span class="version-tag" style="background:var(--accent); color:#000;">V21.0.0</span> <span class="version-date">Current</span></div>
                     <div class="changelog-desc">
-                        • <strong>Admin Sync:</strong> The Admin Panel now pulls images directly from the live `news.json`, ensuring the preview matches the website 100%.<br>
-                        • <strong>Image Logic:</strong> Generator now prioritizes high-res images and supports deep scraping (OpenGraph/WordPress/LazyLoad) via admin-selected strategies.<br>
-                        • <strong>Admin Fixes:</strong> Removed redundant buttons, fixed login loops, and added a visual "Logic Lab" to test image extraction strategies in real-time.<br>
-                        • <strong>Proxy Rotation:</strong> Added multiple proxies (CorsProxy, AllOrigins) to prevent "Failed to fetch" errors in the Admin panel.
+                        <strong>Complete System Sync:</strong><br>
+                        • <strong>Generator V6.9:</strong> Precise YouTube timestamps (no more "Just Now" bugs), Deep Scrape restored, Dagens PS content scan, Image Strategy enforcement.<br>
+                        • <strong>Admin V13.0:</strong> Clean UI, Automatic "True Preview" from JSON, Visual Logic Lab for testing scraping strategies, Proxy Rotation for stability.<br>
+                        • <strong>Frontend:</strong> Master History Log added.
                     </div>
                  </li>
+
+                 <!-- V20.5.40 -->
+                 <li class="changelog-item backend">
+                    <div class="changelog-header"><span class="version-tag">V20.5.40</span> <span class="version-date">Backend Update</span></div>
+                    <div class="changelog-desc">
+                        <strong>Admin V12.x Series:</strong><br>
+                        • Implemented "True Preview" (matching images from generated JSON).<br>
+                        • Added "Visual Logic Probe" to test 8+ scraping strategies in real-time.<br>
+                        • Fixed "Failed to fetch" errors with CORS Proxy rotation.
+                    </div>
+                 </li>
+
+                 <!-- V20.5.35 -->
+                 <li class="changelog-item backend">
+                    <div class="changelog-header"><span class="version-tag">V20.5.35</span> <span class="version-date">Generator Fix</span></div>
+                    <div class="changelog-desc">
+                        <strong>Generator V6.2:</strong><br>
+                        • Added deep content scanning for WordPress sites (Fixes Dagens PS images).<br>
+                        • Prioritized high-res images over thumbnails.
+                    </div>
+                 </li>
+
                  <!-- V20.5.32 -->
                  <li class="changelog-item">
-                    <span class="changelog-ver">Version 20.5.32 - Forced Visibility</span>
+                    <div class="changelog-header"><span class="version-tag">V20.5.32</span> <span class="version-date">Frontend Layout</span></div>
                     <div class="changelog-desc">
-                        • <strong>Show All Videos:</strong> Removed the strict date check. All videos are now shown, even if the date is missing (defaulting to "Just Now" if unknown).<br>
-                        • <strong>5-Column Mobile:</strong> Bottom nav row updated to 5 columns to fit "ENERGY".
+                        • <strong>Mobile Grid:</strong> Updated bottom nav to 5 columns to fit "ENERGY".<br>
+                        • <strong>Video Logic:</strong> Removed strict date checks for videos to ensure content visibility.
                     </div>
                  </li>
+
                  <!-- V20.5.30 -->
-                 <li class="changelog-item">
-                    <span class="changelog-ver">Version 20.5.30 - Source Fixes</span>
+                 <li class="changelog-item backend">
+                    <div class="changelog-header"><span class="version-tag">V20.5.30</span> <span class="version-date">Source Fixes</span></div>
                     <div class="changelog-desc">
-                        • <strong>Börskollen Fix:</strong> Corrected the URL from HTML to RSS and set language to 'sv'.<br>
-                        • <strong>Admin Safety:</strong> Admin panel now prevents accidental overwrites and handles duplicates automatically.
+                        • <strong>Börskollen:</strong> Fixed URL type (HTML -> RSS) and language.<br>
+                        • <strong>Safety:</strong> Admin panel now auto-sanitizes duplicate URLs.
+                    </div>
+                 </li>
+
+                 <!-- V20.5.0 -->
+                 <li class="changelog-item">
+                    <div class="changelog-header"><span class="version-tag">V20.5.0</span> <span class="version-date">Core Launch</span></div>
+                    <div class="changelog-desc">
+                        • <strong>PWA:</strong> Added Service Worker and Manifest.<br>
+                        • <strong>UI:</strong> Dark/Light mode, Search bar, Bookmark system.<br>
+                        • <strong>Grid:</strong> Responsive card layout.
                     </div>
                  </li>
             </ul>
@@ -284,14 +349,15 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 20.5.33</div>
+                <div class="version-display" id="versionBtn">Version 21.0.0</div>
             </div>
             
             <div class="nav-wrapper">
                 <div class="search-container"><input type="text" id="searchInput" class="search-input" placeholder="Search headlines..."><span class="search-icon">🔍</span></div>
 
                 <nav class="unified-nav" id="catNav">
-                    <!-- NAV BUTTONS -->
+                    
+                    <!-- TOP ROW (GRID 5 COLS ON MOBILE) -->
                     <div class="nav-top-row">
                         <div class="show-on-mobile" style="display:none;"><button class="filter-btn" onclick="setCategory('all')">NEWS</button></div>
                         <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
@@ -312,9 +378,16 @@
                             <div id="geopoliticsDropdown" class="dropdown-menu"><div class="dropdown-list"><label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'usa', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>EU</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'eu', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label></div><div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div></div>
                         </div>
                     </div>
+
+                    <!-- BOTTOM ROW (GRID 5 COLS FOR ENERGY) -->
                     <div class="nav-bottom-row desktop-categories-list">
-                        <button class="filter-btn" onclick="setCategory('tech')">Tech</button><button class="filter-btn" onclick="setCategory('energy')">Energy</button><button class="filter-btn" onclick="setCategory('ev')">EV</button><button class="filter-btn" onclick="setCategory('science')">Science</button><button class="filter-btn" onclick="setCategory('construction')">Construction</button>
+                        <button class="filter-btn" onclick="setCategory('tech')">Tech</button>
+                        <button class="filter-btn" onclick="setCategory('energy')">Energy</button>
+                        <button class="filter-btn" onclick="setCategory('ev')">EV</button>
+                        <button class="filter-btn" onclick="setCategory('science')">Science</button>
+                        <button class="filter-btn" onclick="setCategory('construction')">Construction</button>
                     </div>
+
                 </nav>
                 <div class="read-later-container"><button class="read-later-btn" id="readLaterBtn" onclick="toggleSavedView()"><span style="font-size:1.2em">♥</span> Read Later</button></div>
             </div>
@@ -324,41 +397,227 @@
         <div class="pagination" id="pagination"></div>
 
         <footer class="site-footer">
-            <div class="footer-buttons"><button onclick="openSuggestModal()" class="btn-action btn-donate" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);">+ Suggest</button><a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a></div>
+            <div class="footer-buttons">
+                <button onclick="openSuggestModal()" class="btn-action btn-donate" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);">+ Suggest</button>
+                <a href="https://paypal.me/lolish3k" target="_blank" class="btn-action btn-donate">♥ Donate</a>
+            </div>
             <div class="disclaimer-box">SPECULA is primarily built to save my own time, aggregating topics I personally follow. I update it according to my preferences, but if you have a great idea, feel free to use the Suggest button.</div>
         </footer>
     </div>
 
     <script>
-        const state = { category: 'all', videoFilters: new Set(), youtubersFilters: new Set(), gamingFilters: new Set(), geopoliticsFilters: new Set(), topicFilters: new Set(), tempVideoFilters: new Set(), tempYoutubersFilters: new Set(), tempGamingFilters: new Set(), tempGeopoliticsFilters: new Set(), tempTopicFilters: new Set(), saved: new Set(), search: '', page: 1, itemsPerPage: 45, articles: typeof newsData !== 'undefined' ? newsData : [] };
+        const state = { 
+            category: 'all', 
+            videoFilters: new Set(),
+            youtubersFilters: new Set(), 
+            gamingFilters: new Set(),
+            geopoliticsFilters: new Set(),
+            topicFilters: new Set(), 
+            tempVideoFilters: new Set(),
+            tempYoutubersFilters: new Set(), 
+            tempGamingFilters: new Set(),
+            tempGeopoliticsFilters: new Set(),
+            tempTopicFilters: new Set(),
+            saved: new Set(), 
+            search: '', 
+            page: 1, 
+            itemsPerPage: 45, 
+            articles: typeof newsData !== 'undefined' ? newsData : [] 
+        };
         
-        state.saved = new Set(); try { const loaded = localStorage.getItem('specula_saved'); if(loaded) state.saved = new Set(JSON.parse(loaded)); } catch(e) {}
-        const grid = document.getElementById('newsGrid'); const pagContainer = document.getElementById('pagination'); const searchInput = document.getElementById('searchInput'); const filterBtns = document.querySelectorAll('.filter-btn'); const floatPrev = document.getElementById('floatPrev'); const floatNext = document.getElementById('floatNext'); const readLaterBtn = document.getElementById('readLaterBtn'); const themeIcon = document.getElementById('themeIcon'); const themeLabel = document.getElementById('themeLabel');
+        state.saved = new Set();
+        try {
+            const loaded = localStorage.getItem('specula_saved');
+            if(loaded) state.saved = new Set(JSON.parse(loaded));
+        } catch(e) {}
+
+        const grid = document.getElementById('newsGrid');
+        const pagContainer = document.getElementById('pagination');
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const floatPrev = document.getElementById('floatPrev');
+        const floatNext = document.getElementById('floatNext');
+        const readLaterBtn = document.getElementById('readLaterBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeLabel = document.getElementById('themeLabel');
         
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
-        let deferredPrompt; const pwaToast = document.getElementById('pwaToast');
+
+        let deferredPrompt;
+        const pwaToast = document.getElementById('pwaToast');
+        
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); if (!window.matchMedia('(display-mode: standalone)').matches && isMobile) { setTimeout(() => { pwaToast.classList.add('show'); }, 3000); } });
         window.installApp = async () => { if (deferredPrompt) { pwaToast.classList.remove('show'); deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; deferredPrompt = null; } };
         window.dismissInstall = () => { pwaToast.classList.remove('show'); };
+
         function loadSaved() { const saved = localStorage.getItem('savedArticles'); if (saved) state.saved = new Set(JSON.parse(saved)); }
         window.toggleSave = function(url, event) { if (event && event.stopPropagation) { event.preventDefault(); event.stopPropagation(); } if (state.saved.has(url)) { state.saved.delete(url); } else { state.saved.add(url); } localStorage.setItem('specula_saved', JSON.stringify([...state.saved])); if (state.category === 'saved') { renderApp(); } else { if (event && event.currentTarget) { const btn = event.currentTarget; if (state.saved.has(url)) btn.classList.add('saved'); else btn.classList.remove('saved'); } else { renderApp(); } } }
         window.toggleSavedView = function() { if (state.category === 'saved') { setCategory('all'); } else { setCategory('saved'); } }
         window.resetHome = function(event) { if(event) event.preventDefault(); setCategory('all'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        window.handleImageError = function(img) { img.onerror = null; img.src = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop"; img.classList.add('active'); }
+        
+        window.handleImageError = function(img) {
+            img.onerror = null; 
+            img.src = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop"; 
+            img.classList.add('active'); 
+        }
+
         function init() { loadSaved(); renderApp(); if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); themeIcon.innerText = '☾'; themeLabel.innerText = 'DARK MODE'; } else { themeIcon.innerText = '☀'; themeLabel.innerText = 'LIGHT MODE'; } }
         window.toggleTheme = function(e) { if(e) { e.preventDefault(); e.stopPropagation(); } document.body.classList.toggle('light-mode'); if (document.body.classList.contains('light-mode')) { themeIcon.innerText = '☾'; themeLabel.innerText = 'DARK MODE'; localStorage.setItem('theme', 'light'); } else { themeIcon.innerText = '☀'; themeLabel.innerText = 'LIGHT MODE'; localStorage.setItem('theme', 'dark'); } }
         searchInput.addEventListener('input', (e) => { state.search = e.target.value.toLowerCase(); state.page = 1; renderApp(); });
-        function setCategory(cat) { state.category = cat; state.page = 1; state.search = ''; searchInput.value = ''; if (cat !== 'video') state.videoFilters.clear(); if (cat !== 'youtubers') state.youtubersFilters.clear(); if (cat !== 'gaming') state.gamingFilters.clear(); if (cat !== 'geopolitics') state.geopoliticsFilters.clear(); if (cat !== 'topics') state.topicFilters.clear(); if (cat === 'all') { state.tempVideoFilters.clear(); state.tempYoutubersFilters.clear(); state.tempGamingFilters.clear(); state.tempGeopoliticsFilters.clear(); state.tempTopicFilters.clear(); } if (cat === 'saved') { readLaterBtn.classList.add('active'); filterBtns.forEach(btn => btn.classList.remove('active')); } else { readLaterBtn.classList.remove('active'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); filterBtns.forEach(btn => { const btnText = btn.textContent.toLowerCase(); const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0]; btn.classList.remove('active'); if (cat === 'video' && btnText.includes('media')) btn.classList.add('active'); else if (cat === 'youtubers' && btnText.includes('youtubers')) btn.classList.add('active'); else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active'); else if (cat === 'geopolitics' && btnText.includes('geopolitics')) btn.classList.add('active'); else if (cat !== 'video' && cat !== 'youtubers' && cat !== 'gaming' && cat !== 'geopolitics' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('media') && btn.id !== 'topicsBtn') btn.classList.add('active'); }); } renderApp(); }
-        window.handleMenuClick = function(cat, event) { if (cat === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); } if (cat === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); } if (cat === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); } if (cat === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); } setCategory(cat); toggleDropdown(cat, event); }
+
+        function setCategory(cat) {
+            state.category = cat; state.page = 1; state.search = ''; searchInput.value = '';
+            if (cat !== 'video') state.videoFilters.clear();
+            if (cat !== 'youtubers') state.youtubersFilters.clear();
+            if (cat !== 'gaming') state.gamingFilters.clear();
+            if (cat !== 'geopolitics') state.geopoliticsFilters.clear();
+            if (cat !== 'topics') state.topicFilters.clear();
+
+            if (cat === 'all') {
+                state.tempVideoFilters.clear();
+                state.tempYoutubersFilters.clear();
+                state.tempGamingFilters.clear();
+                state.tempGeopoliticsFilters.clear();
+                state.tempTopicFilters.clear();
+            }
+
+            if (cat === 'saved') {
+                readLaterBtn.classList.add('active');
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+            } else {
+                readLaterBtn.classList.remove('active');
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+
+                filterBtns.forEach(btn => {
+                    const btnText = btn.textContent.toLowerCase();
+                    const catMatch = cat === 'all' ? 'all' : cat.split(' ')[0];
+                    btn.classList.remove('active');
+                    
+                    if (cat === 'video' && btnText.includes('media')) btn.classList.add('active');
+                    else if (cat === 'youtubers' && btnText.includes('youtubers')) btn.classList.add('active');
+                    else if (cat === 'gaming' && btnText.includes('gaming')) btn.classList.add('active');
+                    else if (cat === 'geopolitics' && btnText.includes('geopolitics')) btn.classList.add('active');
+                    else if (cat !== 'video' && cat !== 'youtubers' && cat !== 'gaming' && cat !== 'geopolitics' && cat !== 'topics' && btnText.includes(catMatch) && !btnText.includes('media') && btn.id !== 'topicsBtn') btn.classList.add('active');
+                });
+            }
+            renderApp();
+        }
+
+        window.handleMenuClick = function(cat, event) {
+            if (cat === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            if (cat === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); }
+            if (cat === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            if (cat === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); }
+            setCategory(cat); toggleDropdown(cat, event);
+        }
+
         window.closeOnLeave = function(type) { const menu = document.getElementById(type + 'Dropdown'); if (menu) menu.classList.remove('show'); }
-        window.toggleDropdown = function(type, event) { if(event) event.stopPropagation(); const menu = document.getElementById(type + 'Dropdown'); const wasOpen = menu.classList.contains('show'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); if (!wasOpen) { if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters); if (type === 'youtubers') state.tempYoutubersFilters = new Set(state.youtubersFilters); if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters); if (type === 'geopolitics') state.tempGeopoliticsFilters = new Set(state.geopoliticsFilters); if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters); updateCheckboxUI(type); menu.classList.add('show'); } }
-        window.updateTempFilter = function(type, value, isChecked) { let tempSet; if (type === 'video') tempSet = state.tempVideoFilters; else if (type === 'youtubers') tempSet = state.tempYoutubersFilters; else if (type === 'gaming') tempSet = state.tempGamingFilters; else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; else if (type === 'topics') tempSet = state.tempTopicFilters; if (isChecked) tempSet.add(value); else tempSet.delete(value); }
-        function updateCheckboxUI(type) { const container = document.getElementById(type + 'Dropdown'); if(!container) return; let tempSet; if (type === 'video') tempSet = state.tempVideoFilters; else if (type === 'youtubers') tempSet = state.tempYoutubersFilters; else if (type === 'gaming') tempSet = state.tempGamingFilters; else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters; else if (type === 'topics') tempSet = state.tempTopicFilters; const inputs = container.querySelectorAll('input[type="checkbox"]'); inputs.forEach(input => { const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); if(valMatch && valMatch[1]) { const val = valMatch[1].replace(/'/g, ""); input.checked = tempSet.has(val); } }); }
-        window.applyFilters = function(type) { if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters); else if (type === 'youtubers') state.youtubersFilters = new Set(state.tempYoutubersFilters); else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters); else if (type === 'geopolitics') state.geopoliticsFilters = new Set(state.tempGeopoliticsFilters); else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type); }
-        window.clearFilters = function(type) { if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); } else if (type === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); } else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); } else if (type === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); } else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); } updateCheckboxUI(type); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type === 'topics' ? 'all' : type); }
+        window.toggleDropdown = function(type, event) { if(event) event.stopPropagation(); const menu = document.getElementById(type + 'Dropdown'); const wasOpen = menu.classList.contains('show'); document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); if (!wasOpen) { 
+            if (type === 'video') state.tempVideoFilters = new Set(state.videoFilters);
+            if (type === 'youtubers') state.tempYoutubersFilters = new Set(state.youtubersFilters);
+            if (type === 'gaming') state.tempGamingFilters = new Set(state.gamingFilters);
+            if (type === 'geopolitics') state.tempGeopoliticsFilters = new Set(state.geopoliticsFilters);
+            if (type === 'topics') state.tempTopicFilters = new Set(state.topicFilters);
+            updateCheckboxUI(type); menu.classList.add('show'); 
+        } }
+
+        window.updateTempFilter = function(type, value, isChecked) { 
+            let tempSet;
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'youtubers') tempSet = state.tempYoutubersFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters;
+            if (isChecked) tempSet.add(value); else tempSet.delete(value);
+        }
+        
+        function updateCheckboxUI(type) { const container = document.getElementById(type + 'Dropdown'); if(!container) return; let tempSet; 
+            if (type === 'video') tempSet = state.tempVideoFilters;
+            else if (type === 'youtubers') tempSet = state.tempYoutubersFilters;
+            else if (type === 'gaming') tempSet = state.tempGamingFilters;
+            else if (type === 'geopolitics') tempSet = state.tempGeopoliticsFilters;
+            else if (type === 'topics') tempSet = state.tempTopicFilters;
+            const inputs = container.querySelectorAll('input[type="checkbox"]'); inputs.forEach(input => { const valMatch = input.getAttribute('onchange').match(/'([^']+)'/g); if(valMatch && valMatch[1]) { const val = valMatch[1].replace(/'/g, ""); input.checked = tempSet.has(val); } }); }
+
+        window.applyFilters = function(type) { 
+            if (type === 'video') state.videoFilters = new Set(state.tempVideoFilters);
+            else if (type === 'youtubers') state.youtubersFilters = new Set(state.tempYoutubersFilters);
+            else if (type === 'gaming') state.gamingFilters = new Set(state.tempGamingFilters);
+            else if (type === 'geopolitics') state.geopoliticsFilters = new Set(state.tempGeopoliticsFilters);
+            else if (type === 'topics') state.topicFilters = new Set(state.tempTopicFilters);
+            document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type); 
+        }
+
+        window.clearFilters = function(type) { 
+            if (type === 'video') { state.tempVideoFilters.clear(); state.videoFilters.clear(); }
+            else if (type === 'youtubers') { state.tempYoutubersFilters.clear(); state.youtubersFilters.clear(); }
+            else if (type === 'gaming') { state.tempGamingFilters.clear(); state.gamingFilters.clear(); }
+            else if (type === 'geopolitics') { state.tempGeopoliticsFilters.clear(); state.geopoliticsFilters.clear(); }
+            else if (type === 'topics') { state.tempTopicFilters.clear(); state.topicFilters.clear(); }
+            updateCheckboxUI(type); document.getElementById(type + 'Dropdown').classList.remove('show'); setCategory(type === 'topics' ? 'all' : type); 
+        }
+
         window.onclick = function(event) { if (!event.target.closest('.filter-btn') && !event.target.closest('.dropdown-menu')) { document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); } }
+        
         const GENRES = { 'action': ['action', 'adventure', 'combat', 'fight', 'war', 'battle', 'creed', 'gta', 'duty'], 'shooter': ['fps', 'shooter', 'call of duty', 'cod', 'battlefield', 'counter-strike', 'overwatch', 'doom', 'sniper', 'halo'], 'rpg': ['rpg', 'role-playing', 'final fantasy', 'baldurs', 'witcher', 'elden ring', 'dragon', 'pokemon', 'starfield', 'cyberpunk', 'fallout'], 'mmorpg': ['mmo', 'mmorpg', 'world of warcraft', 'wow', 'final fantasy xiv', 'ffxiv', 'guild wars', 'elder scrolls online', 'runescape', 'black desert'], 'strategy': ['strategy', 'rts', 'civilization', 'tactic', 'command', 'city', 'sim', 'manager', 'warcraft'], 'upcoming': ['upcoming', 'release date', 'trailer', 'announce', 'leak', 'rumor', 'reveal', '2025', '2026'] };
-        function getFilteredArticles() { return state.articles.filter(art => { const artCat = (art.category || '').trim().toLowerCase(); const artTags = (art.filter_tag || '').trim().toLowerCase(); const title = (art.title || '').toLowerCase(); const summary = (art.summary || '').toLowerCase(); const fullText = title + " " + summary; if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); } if (state.category === 'all') { if (art.is_video) return false; return fullText.includes(state.search); } if (state.category === 'video') { if (!art.is_video) return false; if (artCat === 'youtubers') return false; if (state.videoFilters.size > 0) { let matchFound = false; for (let filter of state.videoFilters) { if (artCat.includes(filter) || artTags.includes(filter)) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); } if (state.category === 'youtubers') { if (artCat !== 'youtubers') return false; if (state.youtubersFilters.size > 0) { let matchFound = false; for (let filter of state.youtubersFilters) { if (artTags.includes(filter)) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); } if (state.category === 'gaming') { if (artCat !== 'gaming') return false; if (state.gamingFilters.size > 0) { let matchFound = false; for (let genre of state.gamingFilters) { const keywords = GENRES[genre]; if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); } if (state.category === 'geopolitics') { if (artCat !== 'geopolitics' && artCat !== 'china') return false; if (state.geopoliticsFilters.size > 0) { if (!state.geopoliticsFilters.has(artTags)) return false; } return fullText.includes(state.search); } if (state.category === 'topics') { if (art.is_video) return false; if (artCat === 'gaming') return false; if (state.topicFilters.size > 0) { if (!state.topicFilters.has(artCat)) return false; } return fullText.includes(state.search); } if (art.is_video) return false; let matchesCat = (artCat === state.category); return matchesCat && fullText.includes(state.search); }); }
+
+        function getFilteredArticles() {
+            return state.articles.filter(art => {
+                const artCat = (art.category || '').trim().toLowerCase();
+                const artTags = (art.filter_tag || '').trim().toLowerCase();
+                const title = (art.title || '').toLowerCase();
+                const summary = (art.summary || '').toLowerCase();
+                const fullText = title + " " + summary;
+
+                if (state.category === 'saved') { if (!state.saved.has(art.link)) return false; return fullText.includes(state.search); }
+                if (state.category === 'all') { 
+                    if (art.is_video) return false; 
+                    return fullText.includes(state.search); 
+                }
+
+                if (state.category === 'video') { 
+                    if (!art.is_video) return false; 
+                    if (artCat === 'youtubers') return false; 
+                    if (state.videoFilters.size > 0) { 
+                        let matchFound = false; 
+                        for (let filter of state.videoFilters) { 
+                            if (artCat.includes(filter) || artTags.includes(filter)) { matchFound = true; break; } 
+                        } 
+                        if (!matchFound) return false; 
+                    } 
+                    return fullText.includes(state.search); 
+                }
+
+                if (state.category === 'youtubers') {
+                    if (artCat !== 'youtubers') return false;
+                    if (state.youtubersFilters.size > 0) {
+                        let matchFound = false;
+                        for (let filter of state.youtubersFilters) {
+                            if (artTags.includes(filter)) { matchFound = true; break; }
+                        }
+                        if (!matchFound) return false;
+                    }
+                    return fullText.includes(state.search);
+                }
+
+                if (state.category === 'gaming') { if (artCat !== 'gaming') return false; if (state.gamingFilters.size > 0) { let matchFound = false; for (let genre of state.gamingFilters) { const keywords = GENRES[genre]; if (keywords && keywords.some(k => fullText.includes(k))) { matchFound = true; break; } } if (!matchFound) return false; } return fullText.includes(state.search); }
+                
+                if (state.category === 'geopolitics') { 
+                    if (artCat !== 'geopolitics' && artCat !== 'china') return false; 
+                    if (state.geopoliticsFilters.size > 0) { 
+                        if (!state.geopoliticsFilters.has(artTags)) return false; 
+                    } 
+                    return fullText.includes(state.search); 
+                }
+                
+                if (state.category === 'topics') { if (art.is_video) return false; if (artCat === 'gaming') return false; if (state.topicFilters.size > 0) { if (!state.topicFilters.has(artCat)) return false; } return fullText.includes(state.search); }
+                
+                if (art.is_video) return false; 
+                let matchesCat = (artCat === state.category); 
+                return matchesCat && fullText.includes(state.search);
+            });
+        }
+
         function renderApp() {
             const filtered = getFilteredArticles();
             const totalPages = Math.ceil(filtered.length / state.itemsPerPage);
@@ -369,8 +628,10 @@
             grid.innerHTML = pageArticles.map((art, index) => {
                 let imgUrl = (art.images && art.images.length > 0) ? art.images[0] : '';
                 if (!imgUrl) imgUrl = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop";
+                
                 const isSaved = state.saved.has(art.link) ? 'saved' : '';
                 const translated = art.lang_note ? `<div class="translated-note">${art.lang_note}</div>` : '';
+                
                 const safeTitle = art.title || "No Title Available";
                 const safeSummary = art.summary || "No description available for this article.";
 
