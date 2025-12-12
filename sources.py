@@ -72,7 +72,7 @@ SOURCES = [
     {"url":"https://www.renewableenergyworld.com/feed/","cat":"energy","type":"web","source_name":"Renewable Energy World","lang":"en"},
     # --- TOPIC: EV ---
     {"url":"https://insideevs.com/rss/articles/all/","cat":"ev","type":"web","source_name":"InsideEVs","lang":"en"},
-    {"url":"https://electrek.co/feed/","cat":"ev","type":"web","source_name":"Electrek","lang":"en"},
+    {"url":"https://electrek.co/feed/","cat":"ev","type":"web","source_name":"Electrek","lang":"en","image_strategy":"og"},
     {"url":"https://cleantechnica.com/feed/","cat":"ev","type":"web","source_name":"CleanTechnica","lang":"en"},
     {"url":"https://teslaclubsweden.se/feed/","cat":"ev","type":"web","source_name":"Tesla Club Sweden","lang":"sv"},
     {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv"},
