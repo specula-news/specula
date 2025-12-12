@@ -25,18 +25,21 @@ jobs:
           # 2. Skapa dagens mapp
           mkdir -p "$BACKUP_DIR"
           
-          # 3. Kopiera filerna (om de finns)
+          # 3. Kopiera filer (om de finns)
           [ -f sources.py ] && cp sources.py "$BACKUP_DIR/"
           [ -f generator.py ] && cp generator.py "$BACKUP_DIR/"
           [ -f template.html ] && cp template.html "$BACKUP_DIR/"
+          [ -f admin.html ] && cp admin.html "$BACKUP_DIR/"
           
           echo "Backup created in: $BACKUP_DIR"
 
           # 4. Rensa mappar äldre än 10 dagar
-          # Detta kommando letar i 'backups', hittar mappar, sorterar dem, 
+          # Detta kommando letar i 'backups', hittar mappar, sorterar dem på tid, 
           # och tar bort alla utom de 10 senaste.
           cd backups
-          ls -1t | tail -n +11 | xargs -I {} rm -rf "{}" || true
+          if [ -d "." ]; then
+            ls -1t | tail -n +11 | xargs -I {} rm -rf "{}" || true
+          fi
           echo "Cleanup complete (kept last 10 backups)."
 
       - name: Commit and Push
