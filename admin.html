@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V10.4</title>
+    <title>SPECULA ADMIN // V10.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* HEADER */
-        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
-        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
+        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; gap: 20px; }
+        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; white-space: nowrap; }
         .brand span { color: var(--accent); }
-        .actions { display: flex; align-items: center; gap: 10px; }
+        
+        /* ACTIONS RIGHT */
+        .actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
         
         button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
         button:hover { border-color: #fff; color: #fff; }
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
-        .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
+        .btn-preview { border-color: var(--accent) !important; color: var(--accent) !important; } 
+        .btn-preview:hover { background: var(--accent) !important; color: #000 !important; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
         
         .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
@@ -42,7 +45,6 @@
         
         .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; position: relative; }
         .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
-        
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; padding-right: 30px; }
         .favicon-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
         .favicon { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; background: #000; }
@@ -58,7 +60,7 @@
         .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
         .btn-del-corner:hover { background: #550000; color: #ff9999; border-color: #ff4444; }
         
-        /* CARD IMAGE PREVIEW (TRUE PREVIEW) */
+        /* PREVIEW IMAGE */
         .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; margin-bottom: 10px; background-size: cover; background-position: center; border: 1px solid #333; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: 0.3s; }
         .card-image span { color: #555; font-size: 0.8rem; font-family: monospace; z-index: 2; position: relative; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; }
         .card-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: 0.3s; }
@@ -118,7 +120,7 @@
 
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
-    <!-- LOGIN MODAL -->
+    <!-- LOGIN -->
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
             <h2 style="color:var(--accent); text-align:center;">SPECULA CONFIG</h2>
@@ -132,13 +134,11 @@
         </div>
     </div>
 
-    <!-- MAIN UI -->
+    <!-- UI -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V10.4</span></div>
-        <div style="flex-grow:1; display:flex; justify-content:center; gap:10px;">
-            <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
-            <button onclick="loadAllPreviews()">👁️ LOAD PREVIEWS</button>
-        </div>
+        <div class="brand">SPECULA <span>// ADMIN V10.5</span></div>
+        <button class="btn-preview" onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
+        <div style="flex-grow:1;"></div>
         <div class="actions">
             <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
             <button onclick="openDumpModal()">📂 DUMP</button>
@@ -177,7 +177,7 @@
         </div>
     </div>
 
-    <!-- LOGIC ANALYZER -->
+    <!-- ANALYZER -->
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -188,8 +188,7 @@
             <div id="logicResults" class="logic-list"></div>
         </div>
     </div>
-
-    <!-- EDITOR -->
+    
     <div class="overlay" id="editorModal">
         <div class="modal-window editor-window">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -206,7 +205,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="overlay" id="selectorModal">
         <div class="modal-window" style="width:300px; text-align:center;">
             <h3>SELECT FILE</h3>
@@ -246,6 +245,33 @@
         let pendingAddUrl = ""; let pendingAddName = "";
         let activeAnalyzerIndex = -1;
 
+        // --- DEFINITIONS FIRST ---
+        function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
+
+        function renderGrid() { 
+            const grid = document.getElementById('grid'); grid.innerHTML = ''; 
+            document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; 
+            const items = sourceData[activeFolder] || []; 
+            document.getElementById('countBadge').innerText = items.length + " Sources"; 
+            
+            items.forEach((item, idx) => { 
+                const stat = item.lastStatus || 'none'; 
+                let previewHtml = '<span>No Preview</span>';
+                let tag = '';
+                if (newsMap[item.url]) { previewHtml = `<img src="${newsMap[item.url]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; }
+                
+                const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
+                card.innerHTML = `
+                    <button class="btn-del-corner" onclick="deleteItem(${idx})">×</button>
+                    <div class="status-dot status-${stat}" title="${stat}"></div>
+                    <div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div>
+                    <div class="card-image" id="preview-${idx}">${previewHtml}${tag}</div>
+                    <div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
+                grid.appendChild(card); 
+            }); 
+        }
+
+        // --- INIT ---
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
             const savedToken = localStorage.getItem("gh_token");
@@ -262,25 +288,15 @@
             const user = document.getElementById('userInput').value.trim();
             const repo = document.getElementById('repoInput').value.trim();
             const token = document.getElementById('tokenInput').value.trim();
-            if(!user || !repo || !token) return alert("All fields are required.");
+            if(!user || !repo || !token) return alert("Required");
             localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
             document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
         }
         function logout() { localStorage.clear(); location.reload(); }
 
-        // --- FETCH PROXY ---
-        async function fetchProxy(url) {
-            // Priority: corsproxy.io (Best for images/html), fallback allorigins
-            const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-            try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
-            catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
-        }
-
-        // --- CORE FUNCTIONS ---
         async function fetchSources(u,r,t) { 
             const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
             try { 
-                // 1. Fetch Sources
                 const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
                 if(!res.ok) throw new Error("Auth Failed"); 
                 const data = await res.json(); 
@@ -288,7 +304,6 @@
                 const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
                 parsePython(text); 
 
-                // 2. Fetch News.json for REAL preview (Prioritize this!)
                 try {
                     const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
                     const data2 = await res2.json();
@@ -296,149 +311,37 @@
                     const articles = JSON.parse(text2);
                     newsMap = {};
                     articles.forEach(a => { if(a.feed_url && a.images && a.images.length > 0) newsMap[a.feed_url] = a.images[0]; });
-                } catch(e) { console.log("No news.json found"); }
+                } catch(e) { console.log("No news.json"); }
 
                 renderNav(); renderGrid(); showToast("Data Loaded"); 
             } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
-        // --- GRID RENDERING ---
-        function renderGrid() { 
-            const grid = document.getElementById('grid'); grid.innerHTML = ''; 
-            document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; 
-            const items = sourceData[activeFolder] || []; 
-            document.getElementById('countBadge').innerText = items.length + " Sources"; 
-            
-            items.forEach((item, idx) => { 
-                const stat = item.lastStatus || 'none'; 
-                
-                // Determine Preview Image
-                let previewHtml = '<span>No Preview</span>';
-                let tag = '';
-
-                // A: True Preview (From JSON)
-                if (newsMap[item.url]) {
-                     previewHtml = `<img src="${newsMap[item.url]}">`;
-                     tag = `<div class="live-tag">REAL OUTPUT</div>`;
-                }
-                
-                const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
-                card.innerHTML = `
-                    <button class="btn-del-corner" onclick="deleteItem(${idx})">×</button>
-                    <div class="status-dot status-${stat}" title="${stat}"></div>
-                    <div class="card-header">
-                        <div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div>
-                    </div>
-                    
-                    <div class="card-image" id="preview-${idx}">
-                        ${previewHtml}
-                        ${tag}
-                    </div>
-
-                    <div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
-                grid.appendChild(card); 
-            }); 
+        async function fetchProxy(url) {
+             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
+             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
         }
 
-        // --- SIMULATED PREVIEW (LOAD BUTTON) ---
         async function loadAllPreviews() {
-            const items = sourceData[activeFolder];
-            if(!items) return;
-            showToast("Fetching Previews...", 3000);
+            const items = sourceData[activeFolder]; if(!items) return;
+            showToast("Simulating...", 3000);
             for(let i=0; i<items.length; i++) {
                 if(items[i].type === 'video') continue;
-                // Only load if we don't have a REAL preview
                 const currentHtml = document.getElementById(`preview-${i}`).innerHTML;
-                if(!currentHtml.includes("REAL OUTPUT")) {
-                    loadCardPreview(i, items[i].url);
-                    await new Promise(r => setTimeout(r, 200)); 
-                }
+                if(!currentHtml.includes("REAL OUTPUT")) { loadCardPreview(i, items[i].url); await new Promise(r => setTimeout(r, 200)); }
             }
         }
 
         async function loadCardPreview(idx, url) {
-            const div = document.getElementById(`preview-${idx}`);
-            if(!div) return;
-            div.innerHTML = `<span style="color:#555;">Loading...</span>`;
-            
+            const div = document.getElementById(`preview-${idx}`); if(!div) return;
+            div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
             try {
-                const r = await fetchProxy(url);
-                const text = await r.text();
-                let imgUrl = null;
-
-                // 1. DIRTY REGEX (Works on almost everything)
-                // Looks for typical image extensions inside URL structures
-                const regexMatch = text.match(/(https?:\/\/[^"'\s]+\.(?:jpg|jpeg|png|webp))/i);
-                if (regexMatch) {
-                    imgUrl = regexMatch[1];
-                }
-
-                // 2. If regex fails, try parsing (slower but safer)
-                if (!imgUrl) {
-                    const parser = new DOMParser();
-                    // Try XML first
-                    try {
-                        const xmlDoc = parser.parseFromString(text, "text/xml");
-                        const item = xmlDoc.querySelector('item, entry');
-                        if (item) {
-                             const enc = item.querySelector('enclosure[type^="image"]');
-                             if(enc) imgUrl = enc.getAttribute('url');
-                             if(!imgUrl) {
-                                 const media = item.getElementsByTagName('media:content')[0];
-                                 if(media) imgUrl = media.getAttribute('url');
-                             }
-                        }
-                    } catch(e) {}
-                }
-
-                if (imgUrl) {
-                    div.innerHTML = `<img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;"><div class="sim-tag">SIMULATION</div>`;
-                } else {
-                    div.innerHTML = `<span style="color:#555;">No Image Found</span>`;
-                }
-            } catch(e) {
-                div.innerHTML = `<span style="color:#330000;">Err</span>`;
-            }
-        }
-
-        // --- DRAG & DROP ---
-        function openDumpModal() { document.getElementById('dumpModal').classList.add('open'); }
-        function setupDropZone() {
-            const dropZone = document.getElementById('dropZone');
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-            });
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-            });
-            dropZone.addEventListener('drop', handleDrop, false);
-        }
-        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-        function handleDrop(e) { const dt = e.dataTransfer; const files = dt.files; handleFileSelect(files); }
-        function handleFileSelect(files) { if(files.length > 0) handleFileDump(files[0]); }
-
-        async function handleFileDump(file) { 
-            const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); 
-            if(!token) return alert("Missing Token"); 
-            if(!confirm(`Upload ${file.name} to GitHub?`)) return; 
-            
-            showToast("Uploading...");
-            closeModal('dumpModal');
-
-            const reader = new FileReader(); 
-            reader.readAsDataURL(file); 
-            reader.onload = async function() { 
-                const contentBase64 = reader.result.split(',')[1]; 
-                let sha = null; 
-                try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} 
-                try { 
-                    await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); 
-                    showToast("UPLOAD COMPLETE!"); 
-                } catch(e) { alert("Error: " + e.message); } 
-            }; 
+                const r = await fetchProxy(url); const text = await r.text();
+                const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
+                if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
+                else { div.innerHTML = `<span>No Image Found</span>`; }
+            } catch(e) { div.innerHTML = `<span>Err</span>`; }
         }
 
         // --- HELPERS ---
@@ -453,22 +356,28 @@
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
 
-        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const d = await r.json(); statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const ad = await ar.json(); const html = ad.contents; const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const d = await r.json(); statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const ad = await ar.json(); const html = ad.contents; const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
         function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V10.4)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V10.5)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
         async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
         function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
         async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
         async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
-        async function runDiagnostics() { /* Not used fully in this ver */ }
+        function openDumpModal() { document.getElementById('dumpModal').classList.add('open'); }
+        function setupDropZone() { const d = document.getElementById('dropZone'); ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => d.addEventListener(e, preventDefaults, false)); ['dragenter', 'dragover'].forEach(e => d.addEventListener(e, () => d.classList.add('dragover'), false)); ['dragleave', 'drop'].forEach(e => d.addEventListener(e, () => d.classList.remove('dragover'), false)); d.addEventListener('drop', handleDrop, false); }
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        function handleDrop(e) { handleFileSelect(e.dataTransfer.files); }
+        function handleFileSelect(files) { if(files.length > 0) handleFileDump(files[0]); }
+        async function handleFileDump(file) { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) return; showToast("Uploading..."); closeModal('dumpModal'); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); let sha = null; if(check.ok) sha = (await check.json()).sha; await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOAD COMPLETE!"); } catch(e) { alert("Error: " + e.message); } }; }
+        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        async function runDiagnostics() { /* Simplified */ }
         function showToast(msg, duration=2500) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
         function forceAddSource() { /* ... */ }
         function searchGoogleForRSS() { /* ... */ }
-        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
     </script>
 </body>
 </html>
