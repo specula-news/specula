@@ -3,43 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V12.2 (RESTORED)</title>
+    <title>SPECULA ADMIN // V12.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* HEADER */
-        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; gap: 15px; }
-        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; white-space: nowrap; margin-right: 20px; }
+        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
+        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
         .brand span { color: var(--accent); }
+        .actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
         
-        /* BUTTONS */
-        .actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 12px; font-size: 0.75rem; white-space: nowrap; }
+        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
         button:hover { border-color: #fff; color: #fff; }
-        
-        .btn-main { border-color: var(--accent); color: var(--accent); }
-        .btn-main:hover { background: var(--accent); color: #000; }
-        .btn-save { background: var(--success); color: #000; border-color: var(--success); }
-        .btn-save:hover { opacity: 0.9; }
+        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
-        .btn-logout:hover { background: #ff4444; color: #fff; }
         
-        .deploy-status { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; margin-right: 10px; }
+        .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
         .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
-
+        
         /* NAV */
         .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
         .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
         .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
-        /* MENU BRIDGE */
         .nav-item::after { content: ''; position: absolute; left: 0; bottom: -15px; width: 100%; height: 20px; background: transparent; z-index: 205; }
         .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-top: 5px; }
         .nav-item:hover .dropdown, .dropdown:hover { display: flex; }
         .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
         .drop-item:hover { background: #222; color: #fff; }
+        .drop-item.selected { color: var(--accent); }
 
         /* GRID */
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
@@ -47,24 +41,26 @@
         .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; position: relative; display: flex; flex-direction: column; gap: 10px; }
         .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); transition: 0.2s; }
         
+        /* CARD PREVIEW IMAGE */
+        .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; margin-bottom: 5px; background-size: cover; background-position: center; border: 1px solid #333; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-image span { color: #555; font-size: 0.8rem; font-family: monospace; z-index: 2; position: relative; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: 0.3s; }
+        .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.9; }
+
         .card-header { display: flex; justify-content: space-between; align-items: center; }
         .favicon-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
         .favicon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; background: #000; }
         .edit-name { background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0; }
         .edit-name:focus { border-color: var(--accent); outline: none; }
-
-        /* PREVIEW IMAGE */
-        .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; overflow: hidden; border: 1px solid #333; position: relative; display: flex; align-items: center; justify-content: center; }
-        .card-image span { color: #555; font-size: 0.8rem; font-family: monospace; z-index: 2; position: relative; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; }
-        .card-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: 0.3s; }
-        .card:hover .card-image img { transform: scale(1.05); }
-        .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
         
+        .url-block { display: flex; flex-direction: column; gap: 5px; }
+        .url-actions { display: flex; justify-content: space-between; align-items: center; }
         .edit-url { background: #000; border: 1px solid #333; color: #bbb; font-family: monospace; font-size: 0.75rem; width: 100%; padding: 8px; border-radius: 4px; }
+        .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
+        .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
         .card-footer { display: flex; gap: 10px; margin-top: auto; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
         
-        /* STATUS DOTS */
         .status-dot { position: absolute; top: 15px; right: 45px; width: 10px; height: 10px; border-radius: 50%; background: #333; }
         .status-ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; }
@@ -75,59 +71,60 @@
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
         
-        .login-box { width: 400px; text-align: center; gap: 15px; }
-        .login-input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; text-align:center; font-size:1.1rem; }
-        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
-
-        /* LOGIC LAB */
-        .logic-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
-        .logic-item { background: #161616; padding: 10px; border-radius: 6px; border-left: 4px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+        /* LOGIC LAB (FIXED LAYOUT) */
+        .logic-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
+        .logic-item { background: #161616; padding: 10px; border-radius: 6px; border-left: 4px solid #333; display: flex; align-items: center; justify-content: space-between; gap: 15px; height: 60px; }
         .logic-item.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
-        .logic-preview { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; background: #000; }
-        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .logic-info { flex: 1; min-width: 0; }
+        .logic-title { font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 2px; }
+        .logic-val { font-family: monospace; font-size: 0.7rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        /* FIX: Enforce image size in Analyzer */
+        .logic-item img { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; background: #000; border: 1px solid #333; flex-shrink: 0; display: block; }
+        
+        .btn-apply { background: var(--success); color: #000; border: none; padding: 0 15px; height: 30px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; font-weight: bold; white-space: nowrap; }
+        .btn-apply:hover { background: #fff; }
 
         .dump-box { width: 500px; height: 500px; }
         .drop-zone { height: 100%; border: 3px dashed #444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; cursor: pointer; background: #161616; }
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; }
         
-        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
-        .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
+        .login-box { width: 400px; text-align: center; gap: 15px; }
+        .login-input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; text-align:center; box-sizing: border-box; border-radius: 4px; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
+
+        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
+        .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
+        .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
 <body>
 
-    <!-- SETTINGS: YOUR GITHUB CONFIG (HARDCODED) -->
-    <input type="hidden" id="ghUser" value="specula-news">
-    <input type="hidden" id="ghRepo" value="specula">
-    
-    <input type="hidden" id="ghToken" value=""> 
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
-    <!-- LOGIN MODAL -->
+    <!-- LOGIN -->
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
-            <h2 style="color:var(--accent); margin:0;">SPECULA LOGIN</h2>
-            <p style="color:#666; font-size:0.8rem;">Locked to specula-news/specula</p>
-            <input type="password" id="tokenInput" class="login-input" placeholder="Paste Token Here...">
+            <h2 style="color:var(--accent); margin:0;">SPECULA CONFIG</h2>
+            <input type="text" id="userInput" class="login-input" value="specula" placeholder="GitHub User">
+            <input type="text" id="repoInput" class="login-input" value="specula" placeholder="Repo Name">
+            <input type="password" id="tokenInput" class="login-input" placeholder="ghp_...">
             <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
         </div>
     </div>
 
-    <!-- MAIN UI -->
+    <!-- UI -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V12.2</span></div>
-        
-        <button class="btn-main" onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
-        <button class="btn-main" onclick="openDumpModal()">📂 DUMP</button>
-        <button onclick="openSelector('html')">📝 HTML</button>
-        <button onclick="openSelector('py')">⚙️ PY</button>
-
+        <div class="brand">SPECULA <span>// ADMIN V12.3</span></div>
         <div class="actions">
             <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
+            <button onclick="openDumpModal()">📂 DUMP</button>
+            <button onclick="openSelector('html')">📝 HTML</button>
+            <button onclick="openSelector('py')">⚙️ PY</button>
             <button onclick="fetchSources()">↻</button>
             <button onclick="deployLive()">🚀 DEPLOY</button>
             <button class="btn-save" onclick="saveToGitHubSafe()">💾 SAVE</button>
@@ -160,7 +157,7 @@
         </div>
     </div>
 
-    <!-- LOGIC ANALYZER -->
+    <!-- ANALYZER -->
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window" style="width:700px;">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -179,9 +176,12 @@
                 <button onclick="closeModal('editorModal')" style="font-size:1.5rem; background:transparent; border:none;">×</button>
             </div>
             <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
-            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
-                <button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button>
-                <button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button>
+            <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button>
+                    <button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button>
+                </div>
             </div>
         </div>
     </div>
@@ -194,6 +194,19 @@
         </div>
     </div>
 
+    <!-- FAIL MODAL -->
+    <div class="overlay" id="failModal">
+        <div class="modal-window" style="max-width:500px; text-align:center;">
+            <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
+            <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
+            <div class="fail-options">
+                <button class="btn-fail-action" onclick="forceAddSource()">Force Add</button>
+                <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google</button>
+                <button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="add-bar">
         <input type="text" id="urlInput" class="add-input" placeholder="Paste URL (YouTube or Website)..." style="flex-grow: 2;" oninput="preCheckUrl()">
         <input type="text" id="nameInput" class="add-input" placeholder="Name (Optional)..." style="flex-grow: 1;">
@@ -203,111 +216,75 @@
     <div id="toast" class="toast">Action Saved</div>
 
     <script>
-        // CONFIG
         const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
         const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
         
         let sourceData = {}; let newsMap = {}; 
         let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
         let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
+        let pendingAddUrl = ""; let pendingAddName = "";
         let activeAnalyzerIndex = -1;
 
-        // AUTH & INIT
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
             const savedToken = localStorage.getItem("gh_token");
-            if (savedToken) { document.getElementById('ghToken').value = savedToken; document.getElementById('loginModal').classList.remove('open'); fetchSources(); }
+            const savedUser = localStorage.getItem("gh_user");
+            const savedRepo = localStorage.getItem("gh_repo");
+            if (savedToken && savedUser && savedRepo) { 
+                document.getElementById('loginModal').classList.remove('open'); 
+                fetchSources(savedUser, savedRepo, savedToken);
+            }
             setupDropZone();
         };
 
         function performLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
             const token = document.getElementById('tokenInput').value.trim();
-            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) return alert("Invalid Token");
-            localStorage.setItem("gh_token", token); document.getElementById('ghToken').value = token;
-            document.getElementById('loginModal').classList.remove('open'); fetchSources();
+            if(!user || !repo || !token) return alert("All fields are required.");
+            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
+            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
         }
-        function logout() { localStorage.removeItem("gh_token"); location.reload(); }
+        function logout() { localStorage.clear(); location.reload(); }
 
-        // FETCH SOURCES & PARSE
-        async function fetchSources() { 
-            const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; 
+        // FETCH PROXY (Same as before)
+        async function fetchProxy(url) {
+            const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+            try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
+            catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
+        }
+
+        async function fetchSources(u,r,t) { 
+            const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
             try { 
-                // 1. Get Sources
                 const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
                 if(!res.ok) throw new Error("Auth Failed"); 
                 const data = await res.json(); 
                 currentSha = data.sha; 
                 const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
                 parsePython(text); 
-                
-                // 2. Get True Previews
+
                 try {
                     const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
                     const data2 = await res2.json();
                     const text2 = new TextDecoder().decode(Uint8Array.from(atob(data2.content), c => c.charCodeAt(0))); 
                     const articles = JSON.parse(text2);
                     newsMap = {};
-                    articles.forEach(a => { if(a.feed_url && a.images?.[0]) newsMap[a.feed_url] = a.images[0]; });
-                } catch(e) {}
+                    articles.forEach(a => { 
+                        if(a.images && a.images.length > 0) {
+                            if(a.source) newsMap[a.source] = a.images[0]; 
+                            if(a.feed_url) newsMap[a.feed_url] = a.images[0];
+                            const rough = a.feed_url ? a.feed_url.replace(/\/$/, "") : "";
+                            if(rough) newsMap[rough] = a.images[0];
+                        }
+                    });
+                } catch(e) { console.log("No news.json found"); }
 
                 renderNav(); renderGrid(); showToast("Data Loaded"); 
-            } catch(e) { 
-                if(e.message === "Auth Failed") { document.getElementById('loginModal').classList.add('open'); }
-                else alert(e.message); 
-            } 
+            } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
-        // IMPROVED PARSING LOGIC (Handles ' and trailing commas)
-        function parsePython(text) { 
-            const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; 
-            rawHeader = text.substring(0, startIdx).trim(); 
-            const footerStart = text.indexOf('URLS_GLOBAL = ['); 
-            if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } 
-            else { rawFooter = ""; parseListContent(text.substring(startIdx)); } 
-        }
-        function parseListContent(str) { 
-            str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); 
-            for(let key in FOLDER_CONFIG) sourceData[key] = []; 
-            const lines = str.split('\n'); 
-            lines.forEach(line => { 
-                line = line.trim(); if(!line.startsWith('{')) return; 
-                if(line.endsWith(',')) line = line.slice(0, -1); 
-                try { 
-                    // Replace single quotes with double quotes for valid JSON
-                    // But be careful not to replace quotes inside strings if possible. 
-                    // Simple hack: assume keys/values are simple strings.
-                    // Better: use regex to fix JSON format if needed.
-                    // Usually users file is valid python dict syntax. 
-                    // Let's assume standard format: {"key": "val"}
-                    const item = JSON.parse(line); 
-                    const folderId = findFolderId(item); 
-                    if(folderId) sourceData[folderId].push(item); 
-                } catch(e) {} 
-            }); 
-        }
-        function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
-
-        // RENDER UI
-        function renderNav() { 
-            const nav = document.getElementById('navBar'); nav.innerHTML = ''; 
-            MENU.forEach(m => { 
-                if(m.subs) { 
-                    const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; 
-                    const drop = document.createElement('div'); drop.className = 'dropdown'; 
-                    m.subs.forEach(sid => { 
-                        const count = sourceData[sid] ? sourceData[sid].length : 0; 
-                        const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; 
-                        row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; 
-                        row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); 
-                    }); div.appendChild(drop); nav.appendChild(div); 
-                } else { 
-                    const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; 
-                    div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; 
-                    div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; 
-                    div.onclick = () => switchFolder(m.id); nav.appendChild(div); 
-                } 
-            }); 
-        }
+        // --- GRID RENDERING ---
         function renderGrid() { 
             const grid = document.getElementById('grid'); grid.innerHTML = ''; 
             document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; 
@@ -318,46 +295,99 @@
                 const stat = item.lastStatus || 'none'; 
                 let previewHtml = '<span>No Preview</span>';
                 let tag = '';
-                if (newsMap[item.url]) { previewHtml = `<img src="${newsMap[item.url]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; }
+                
+                // Real Preview Logic
+                if (newsMap[item.source_name]) { previewHtml = `<img src="${newsMap[item.source_name]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } 
+                else if (newsMap[item.url]) { previewHtml = `<img src="${newsMap[item.url]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } 
+                else {
+                    const cleanUrl = item.url.replace(/\/$/, "");
+                    if(newsMap[cleanUrl]) { previewHtml = `<img src="${newsMap[cleanUrl]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; }
+                }
+                
                 const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
                 card.innerHTML = `
                     <button class="btn-del-corner" onclick="deleteItem(${idx})">×</button>
                     <div class="status-dot status-${stat}" title="${stat}"></div>
                     <div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div>
                     <div class="card-image" id="preview-${idx}">${previewHtml}${tag}</div>
-                    <div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
+                    <div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
                 grid.appendChild(card); 
             }); 
         }
 
-        // OTHER FUNCTIONS
-        async function fetchProxy(url) {
-             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
-             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
-        }
-        async function loadAllPreviews() {
-            const items = sourceData[activeFolder]; if(!items) return;
-            showToast("Simulating...", 3000);
-            for(let i=0; i<items.length; i++) {
-                if(items[i].type === 'video') continue;
-                const currentHtml = document.getElementById(`preview-${i}`).innerHTML;
-                if(!currentHtml.includes("REAL OUTPUT")) { loadCardPreview(i, items[i].url); await new Promise(r => setTimeout(r, 200)); }
-            }
-        }
-        async function loadCardPreview(idx, url) {
-            const div = document.getElementById(`preview-${idx}`); if(!div) return;
-            div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
+        // --- ANALYZER (FIXED LAYOUT) ---
+        async function openLogicAnalyzer(url, idx) {
+            activeAnalyzerIndex = idx;
+            document.getElementById('testerModal').classList.add('open');
+            const resBox = document.getElementById('logicResults');
+            const statusLog = document.getElementById('statusLog');
+            resBox.innerHTML = '';
+            statusLog.innerHTML = '1. Fetching Feed... ' + url;
+
             try {
-                const r = await fetchProxy(url); const text = await r.text();
-                // Simple regex image finder
-                const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
-                if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
-                else { div.innerHTML = `<span>No Image Found</span>`; }
-            } catch(e) { div.innerHTML = `<span>Err</span>`; }
+                const r = await fetchProxy(url);
+                const rawText = await r.text();
+                let text = rawText;
+                try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){}
+
+                statusLog.innerHTML = '2. Parsing...';
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                let articleUrl = null;
+                
+                // Extract URL
+                let items = xmlDoc.getElementsByTagName("entry");
+                if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); }
+                if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } }
+                if(!articleUrl && !url.includes('rss')) articleUrl = url;
+
+                if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; }
+                statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30);
+
+                const ar = await fetchProxy(articleUrl);
+                const rawAr = await ar.text();
+                let html = rawAr;
+                try{ const ja = JSON.parse(rawAr); if(ja.contents) html = ja.contents; }catch(e){}
+                
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const strategies = [
+                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
+                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content },
+                    { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src },
+                    { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') },
+                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") },
+                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] },
+                    { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] },
+                    { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src },
+                    { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src }
+                ];
+
+                let htmlOut = "";
+                strategies.forEach(res => {
+                    if(res.val) { // ONLY SHOW WORKING
+                        htmlOut += `
+                        <div class="logic-item">
+                            <div class="logic-info">
+                                <div class="logic-title">${res.name}</div>
+                                <div class="logic-val">${res.val.substring(0,40)}...</div>
+                            </div>
+                            <img src="${res.val}" class="strat-preview" onerror="this.style.opacity=0.2">
+                            <button class="btn-apply" onclick="applyStrategy('${res.id}')">USE</button>
+                        </div>`;
+                    }
+                });
+                resBox.innerHTML = htmlOut || '<p style="padding:10px; color:#666;">No images found.</p>';
+                statusLog.innerHTML = '✅ Done.';
+
+            } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; }
         }
-        
-        // STANDARD ACTIONS
+
+        // --- HELPERS & REST ---
+        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
+        function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
+        function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
+        function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
+        function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
         function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
         function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
         function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
@@ -365,26 +395,26 @@
         function deleteItem(idx) { if(confirm("Are you sure?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
-
-        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const rawText = await r.text(); let text = rawText; try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){} statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(text, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const rawAr = await ar.text(); let html = rawAr; try{ const ja = JSON.parse(rawAr); if(ja.contents) html = ja.contents; }catch(e){} const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
-        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
-        
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V12.2)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
-        async function deployLive() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
-        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V12.3)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
+        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
-        async function fetchFileToEdit(f) { const u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
+        async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
+        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
         function openDumpModal() { document.getElementById('dumpModal').classList.add('open'); }
         function setupDropZone() { const d = document.getElementById('dropZone'); ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => d.addEventListener(e, preventDefaults, false)); ['dragenter', 'dragover'].forEach(e => d.addEventListener(e, () => d.classList.add('dragover'), false)); ['dragleave', 'drop'].forEach(e => d.addEventListener(e, () => d.classList.remove('dragover'), false)); d.addEventListener('drop', handleDrop, false); }
         function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
         function handleDrop(e) { handleFileSelect(e.dataTransfer.files); }
         function handleFileSelect(files) { if(files.length > 0) handleFileDump(files[0]); }
-        async function handleFileDump(file) { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) return; showToast("Uploading..."); closeModal('dumpModal'); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); let sha = null; if(check.ok) sha = (await check.json()).sha; await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOAD COMPLETE!"); } catch(e) { alert("Error: " + e.message); } }; }
+        async function handleFileDump(file) { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) return; showToast("Uploading..."); closeModal('dumpModal'); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); let sha = null; if(check.ok) sha = (await check.json()).sha; await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOAD COMPLETE!"); } catch(e) { alert("Error: " + e.message); } }; }
         function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        async function runDiagnostics() { /* Simplified */ }
         function showToast(msg, duration=2500) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
+        function forceAddSource() { /* ... */ }
+        function searchGoogleForRSS() { /* ... */ }
     </script>
 </body>
 </html>
