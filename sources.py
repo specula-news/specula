@@ -3,7 +3,7 @@
 SOURCES = [
     # --- NEWS: GLOBAL ---
     {"url":"https://ir.thomsonreuters.com/rss/news-releases.xml?items=15","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
-    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
+    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global","image_strategy":"twitter"},
     {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global","image_strategy":"first_img"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
@@ -55,7 +55,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@ewc/videos","cat":"gaming","type":"video","source_name":"Esports World Cup","lang":"en"},
     {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
     # --- TOPIC: Tech ---
-    {"url":"https://www.nyteknik.se/nyheter/ny-teknik-i-rrs-format/972205","cat":"tech","type":"web","source_name":"Nyteknik","lang":"sv"},
+    {"url":"https://www.nyteknik.se/nyheter/ny-teknik-i-rrs-format/972205","cat":"tech","type":"web","source_name":"Nyteknik","lang":"sv","image_strategy":"twitter"},
     {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
     {"url":"https://techcrunch.com/feed/","cat":"tech","type":"web","source_name":"TechCrunch","lang":"en"},
     {"url":"https://feeds.arstechnica.com/arstechnica/index","cat":"tech","type":"web","source_name":"Ars Technica","lang":"en"},
@@ -76,7 +76,7 @@ SOURCES = [
     {"url":"https://cleantechnica.com/feed/","cat":"ev","type":"web","source_name":"CleanTechnica","lang":"en"},
     {"url":"https://teslaclubsweden.se/feed/","cat":"ev","type":"web","source_name":"Tesla Club Sweden","lang":"sv"},
     {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv"},
-    {"url":"https://elbilen.se/feed/","cat":"ev","type":"web","source_name":"Elbilen.se","lang":"sv"},
+    {"url":"https://elbilen.se/feed/","cat":"ev","type":"web","source_name":"Elbilen.se","lang":"sv","image_strategy":"lazy"},
     # --- TOPIC: Science ---
     {"url":"https://www.space.com/feeds/all","cat":"science","type":"web","source_name":"Space.com","lang":"en"},
     {"url":"https://www.nasa.gov/rss/dyn/breaking_news.rss","cat":"science","type":"web","source_name":"NASA","lang":"en"},
