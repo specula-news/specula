@@ -9,20 +9,20 @@
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* HEADER */
+        /* HEADER - CLEAN NO CENTER BUTTONS */
         .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
         .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
         .brand span { color: var(--accent); }
         .actions { display: flex; align-items: center; gap: 10px; }
+        
         button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
         button:hover { border-color: #fff; color: #fff; }
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
-        .btn-log { border-color: #aaa; color: #aaa; } .btn-log:hover { background: #333; color: #fff; }
-
+        
         .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
         .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
-
+        
         /* NAV */
         .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
@@ -39,25 +39,28 @@
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
         .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; position: relative; display: flex; flex-direction: column; gap: 10px; }
-        .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
+        .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); transition: 0.2s; }
+        
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; padding-right: 30px; }
         .favicon-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
         .favicon { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; background: #000; }
         .edit-name { background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0; }
         .edit-name:focus { border-color: var(--accent); outline: none; }
         
+        /* PREVIEW IMAGE - AUTO LOADING */
         .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; margin-bottom: 5px; position: relative; overflow: hidden; display:flex; align-items:center; justify-content:center; border:1px solid #333; }
         .card-image span { color: #555; font-size: 0.8rem; font-family: monospace; z-index: 2; position: relative; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; }
         .card-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: 0.3s; }
         .card:hover .card-image img { transform: scale(1.05); }
         .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
         .sim-tag { position: absolute; top: 5px; right: 5px; background: var(--warning); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
-        
+
         .status-dot { position: absolute; top: 15px; right: 45px; width: 10px; height: 10px; border-radius: 50%; background: #333; }
         .status-ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .status-warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
         .status-err { background: var(--fail); box-shadow: 0 0 8px var(--fail); }
-        .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; }
+        
+        .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
         .btn-del-corner:hover { background: #550000; color: #ff9999; border-color: #ff4444; }
 
         .url-block { display: flex; flex-direction: column; gap: 5px; }
@@ -95,26 +98,21 @@
         .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; font-weight: bold; white-space: nowrap; }
         .btn-apply:hover { background: #fff; }
         .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
+        
         .fail-options { display: flex; gap: 10px; margin-top: 20px; }
         .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
+        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
+        
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
         .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
+        
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
+        
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
         .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
-        
-        /* TIMELINE LOG */
-        .timeline { border-left: 2px solid #333; margin-left: 20px; padding-left: 20px; position: relative; }
-        .timeline-item { margin-bottom: 30px; position: relative; }
-        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 5px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
-        .timeline-ver { color: var(--accent); font-weight: bold; font-size: 1.1rem; }
-        .timeline-date { color: #666; font-size: 0.8rem; margin-bottom: 10px; }
-        .timeline-desc { color: #ccc; font-size: 0.9rem; line-height: 1.5; }
-        .timeline-tag { display: inline-block; background: #222; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: #888; margin-right: 5px; border: 1px solid #444; }
-        
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -136,15 +134,12 @@
         </div>
     </div>
 
-    <!-- MAIN UI -->
+    <!-- MAIN UI (NO EXTRA BUTTONS) -->
     <div class="top-bar">
         <div class="brand">SPECULA <span>// ADMIN V13.0</span></div>
-        <div style="flex-grow:1; display:flex; justify-content:center; gap:10px;">
-            <button onclick="loadAllPreviews()">👁️ LOAD PREVIEWS</button>
-        </div>
+        <div style="flex-grow:1;"></div>
         <div class="actions">
             <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
-            <button onclick="openLog()">📜 LOGS</button>
             <button onclick="openDumpModal()">📂 DUMP</button>
             <button class="btn-code" onclick="openSelector('html')">📝 HTML</button>
             <button class="btn-code" onclick="openSelector('py')">⚙️ PY</button>
@@ -163,17 +158,6 @@
             <div id="countBadge" style="background:#222; padding:5px 10px; border-radius:4px; font-size:0.8rem; color:#888;">0 Sources</div>
         </div>
         <div class="grid" id="grid"></div>
-    </div>
-
-    <!-- LOG MODAL -->
-    <div class="overlay" id="logModal">
-        <div class="modal-window" style="width:700px; max-height:85vh;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3 style="margin:0;">SYSTEM CHANGELOG</h3>
-                <button onclick="closeModal('logModal')" style="background:transparent; border:none; font-size:1.5rem;">×</button>
-            </div>
-            <div id="logContent" class="timeline"></div>
-        </div>
     </div>
 
     <!-- DUMP MODAL -->
@@ -254,14 +238,6 @@
         const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
         const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
         
-        const LOGS = [
-            { ver: "V13.0", date: "Now", desc: "Added detailed Changelog UI. Fixed YouTube timestamps to use exact upload date or fallback to yesterday. Added precise logging for feed errors." },
-            { ver: "V12.9", date: "Prior", desc: "Removed redundant diagnostic buttons. Restored Force Load Previews to left side. Cleaned up UI." },
-            { ver: "V12.4", date: "Prior", desc: "Implemented True Preview system using news.json matching. Added fuzzy URL matching for admin cards." },
-            { ver: "V9.2", date: "Prior", desc: "Added Proxy Rotation (CorsProxy/AllOrigins) to fix 'Failed to fetch'. Added Submenu gap fix." },
-            { ver: "V6.0", date: "Prior", desc: "Rewrote Generator: Added Image Strategy engine, Fixed YouTube descriptions, Restored Deep Scrape fallback." }
-        ];
-
         let sourceData = {}; let newsMap = {}; 
         let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
         let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
@@ -290,31 +266,11 @@
         }
         function logout() { localStorage.clear(); location.reload(); }
 
-        // --- CHANGELOG UI ---
-        function openLog() {
-            const container = document.getElementById('logContent');
-            container.innerHTML = '';
-            LOGS.forEach(log => {
-                container.innerHTML += `
-                <div class="timeline-item">
-                    <div class="timeline-ver">${log.ver}</div>
-                    <div class="timeline-date">${log.date}</div>
-                    <div class="timeline-desc">${log.desc}</div>
-                </div>`;
-            });
-            document.getElementById('logModal').classList.add('open');
-        }
-
-        // --- FETCH PROXY ---
-        async function fetchProxy(url) {
-            const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-            try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
-            catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
-        }
-
+        // --- CORE FUNCTIONS ---
         async function fetchSources(u,r,t) { 
             const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
             try { 
+                // 1. Fetch Sources
                 const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
                 if(!res.ok) throw new Error("Auth Failed"); 
                 const data = await res.json(); 
@@ -322,6 +278,7 @@
                 const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
                 parsePython(text); 
 
+                // 2. Fetch News.json for REAL preview
                 try {
                     const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
                     const data2 = await res2.json();
@@ -342,6 +299,12 @@
             } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
+        async function fetchProxy(url) {
+             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
+             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
+        }
+
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
 
         function renderGrid() { 
@@ -355,6 +318,7 @@
                 let previewHtml = '<span>No Preview</span>';
                 let tag = '';
                 
+                // TRUE MATCH LOGIC
                 if (newsMap[item.source_name]) { 
                     previewHtml = `<img src="${newsMap[item.source_name]}">`; 
                     tag = `<div class="live-tag">REAL OUTPUT</div>`; 
@@ -386,25 +350,16 @@
             }); 
         }
 
-        async function loadAllPreviews() {
-            const items = sourceData[activeFolder]; if(!items) return;
-            showToast("Simulating...", 3000);
-            for(let i=0; i<items.length; i++) {
-                if(items[i].type === 'video') continue;
-                const currentHtml = document.getElementById(`preview-${i}`).innerHTML;
-                if(!currentHtml.includes("REAL OUTPUT")) { loadCardPreview(i, items[i].url); await new Promise(r => setTimeout(r, 200)); }
-            }
-        }
-
-        async function loadCardPreview(idx, url) {
-            const div = document.getElementById(`preview-${idx}`); if(!div) return;
-            div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
+        async function loadSim(idx, url) {
+            const div = document.getElementById(`preview-${idx}`);
+            if(!div || div.innerHTML.includes("REAL")) return;
             try {
-                const r = await fetchProxy(url); const text = await r.text();
+                const r = await fetchProxy(url);
+                const text = await r.text();
+                // Match ANY image extension for simulation preview
                 const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
                 if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
-                else { div.innerHTML = `<span>No Image Found</span>`; }
-            } catch(e) { div.innerHTML = `<span>Err</span>`; }
+            } catch(e) {}
         }
 
         // --- HELPERS ---
@@ -421,7 +376,7 @@
 
         async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const rawText = await r.text(); let text = rawText; try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){} statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(text, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const rawAr = await ar.text(); let html = rawAr; try{ const ja = JSON.parse(rawAr); if(ja.contents) html = ja.contents; }catch(e){} const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
         function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V13.0)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V12.9)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
         async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
         function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
