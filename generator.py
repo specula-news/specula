@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 import urllib3
 import re
 import yt_dlp
+from datetime import datetime
 
 try:
     from deep_translator import GoogleTranslator
@@ -128,7 +129,6 @@ def get_image(entry, source):
 def process_feed(source):
     articles = []
     try:
-        # Hämta med Session för headers
         r = get_session().get(source['url'], timeout=15, verify=False)
         if r.status_code != 200:
             print(f"FAILED: {source['url']} (Status {r.status_code})")
@@ -140,7 +140,7 @@ def process_feed(source):
             return []
 
         for entry in feed.entries[:MAX_ARTICLES]:
-            # Datumhantering - Om det misslyckas, ta NU istället för att skippa
+            # Datumhantering
             ts = time.time()
             try:
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
@@ -149,7 +149,6 @@ def process_feed(source):
                     ts = time.mktime(entry.updated_parsed)
             except: pass 
 
-            # Filtrera ENDAST om datumet är giltigt och för gammalt
             if (time.time() - ts) > (MAX_AGE_DAYS * 86400): continue
 
             img = get_image(entry, source)
@@ -178,6 +177,7 @@ def process_feed(source):
 def get_video_info(source):
     videos = []
     try:
+        # extract_flat=True ger oss 'upload_date' (YYYYMMDD) men inte exakt klockslag
         ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
@@ -185,13 +185,23 @@ def get_video_info(source):
                 if not entry: continue
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
+                
+                # --- FIX: PARSE YOUTUBE DATE ---
+                ts = time.time()
+                date_str = entry.get('upload_date')
+                if date_str:
+                    try:
+                        dt = datetime.strptime(date_str, '%Y%m%d')
+                        ts = dt.timestamp()
+                    except: pass
+                
                 videos.append({
                     "title": entry['title'], "link": entry['url'], "images": [thumb],
                     "summary": desc[:280], "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], "timestamp": time.time(), "is_video": True,
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
                     "feed_url": source['url']
                 })
-    except: pass
+    except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
 
 if __name__ == "__main__":
@@ -200,7 +210,6 @@ if __name__ == "__main__":
     except: SOURCES = []
 
     all_data = []
-    # Använd färre trådar för att undvika rate-limits
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         futures = []
         for s in SOURCES:
@@ -220,12 +229,20 @@ if __name__ == "__main__":
         if a['link'] not in seen:
             final.append(a); seen.add(a['link'])
             
+    # TIDSFORMATERING FÖR JSON
+    now = time.time()
+    for art in final:
+        diff = now - art['timestamp']
+        if diff < 3600: art['time_str'] = "Just Now"
+        elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
+        elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
+        else: art['time_str'] = f"{int(diff/604800)}w ago"
+
     with open('news.json', 'w', encoding='utf-8') as f: json.dump(final[:TOTAL_LIMIT], f, ensure_ascii=False, indent=2)
     
     if os.path.exists('template.html'):
         with open('template.html', 'r', encoding='utf-8') as f: html = f.read()
         html = html.replace("<!-- NEWS_DATA_JSON -->", json.dumps(final[:TOTAL_LIMIT]))
-        # Referrer fix för Dagens PS bilder
         if '<head>' in html and 'no-referrer' not in html:
             html = html.replace('<head>', '<head><meta name="referrer" content="no-referrer">')
         with open("index.html", "w", encoding="utf-8") as f: f.write(html)
