@@ -1,8 +1,8 @@
-# Sources for aggregation site - FIXED (v20.5.30)
+# Sources for aggregation site
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
-    {"url":"https://ir.thomsonreuters.com/rss/news-releases.xml?items=15","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
+    {"url":"https://www.reuters.com/rss/news/world","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
     {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
     {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
@@ -48,7 +48,6 @@ SOURCES = [
     # --- GAME: News ---
     {"url":"https://www.eurogamer.net/feed","cat":"gaming","type":"web","source_name":"Eurogamer","lang":"en"},
     {"url":"https://www.pcgamer.com/rss","cat":"gaming","type":"web","source_name":"PC Gamer","lang":"en"},
-    {"url":"https://www.fz.se/feeds/nyheter","cat":"gaming","type":"web","source_name":"FZ.se","lang":"sv"},
     # --- GAME: Video ---
     {"url":"https://www.youtube.com/@gamespot/videos","cat":"gaming","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@IGN/videos","cat":"gaming","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
@@ -100,8 +99,9 @@ SOURCES = [
     {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en"},
     # --- GEO: Sweden ---
     {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
-    {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden","image_strategy":"afton"},
+    {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
     # --- GEO: EU ---
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
 ]
 
+URLS_GLOBAL = []
