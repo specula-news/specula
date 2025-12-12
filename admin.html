@@ -3,256 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V12.4</title>
+    <title>SPECULA ADMIN // V12.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; gap: 20px; }
-        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; color: #fff; } .brand span { color: var(--accent); }
-        .actions { display: flex; gap: 10px; margin-left: auto; }
-        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; }
+        
+        /* HEADER */
+        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
+        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
+        .brand span { color: var(--accent); }
+        .actions { display: flex; align-items: center; gap: 10px; }
+        
+        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
         button:hover { border-color: #fff; color: #fff; }
-        .btn-save { background: var(--accent) !important; color: #000 !important; }
+        
+        /* RESTORED BUTTON STYLES */
+        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
+        .btn-preview { border-color: var(--accent) !important; color: var(--accent) !important; } 
+        .btn-preview:hover { background: var(--accent) !important; color: #000 !important; }
+        .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
+        
+        .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
+        .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
+        
+        /* NAV */
+        .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
+        .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
+        .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
+        .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
+        .nav-item::after { content: ''; position: absolute; left: 0; bottom: -15px; width: 100%; height: 20px; background: transparent; z-index: 205; }
+        .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-top: 5px; }
+        .nav-item:hover .dropdown, .dropdown:hover { display: flex; }
+        .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
+        .drop-item:hover { background: #222; color: #fff; }
+        .drop-item.selected { color: var(--accent); }
+
+        /* GRID */
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
-        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; }
-        .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; margin-bottom: 10px; position: relative; overflow: hidden; display:flex; align-items:center; justify-content:center; border:1px solid #333; }
-        .card-image img { width: 100%; height: 100%; object-fit: cover; }
-        .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .sim-tag { position: absolute; top: 5px; right: 5px; background: var(--warning); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .edit-name, .edit-url { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 8px; margin-bottom: 5px; font-size: 0.8rem; border-radius: 4px; }
-        .edit-name { font-weight: bold; font-size: 1rem; border: none; background: transparent; padding: 0; margin-bottom: 10px; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        
+        .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; position: relative; display: flex; flex-direction: column; gap: 10px; }
+        .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); transition: 0.2s; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; padding-right: 30px; }
+        .favicon-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
+        .favicon { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; background: #000; }
+        .edit-name { background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0; }
+        .edit-name:focus { border-color: var(--accent); outline: none; }
+        
+        /* CARD IMAGE */
+        .card-image { width: 100%; height: 160px; background: #080808; border-radius: 4px; margin-bottom: 5px; position: relative; overflow: hidden; display:flex; align-items:center; justify-content:center; border:1px solid #333; }
+        .card-image span { color: #555; font-size: 0.8rem; font-family: monospace; z-index: 2; position: relative; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: 0.3s; }
+        .card:hover .card-image img { transform: scale(1.05); }
+        .live-tag { position: absolute; top: 5px; right: 5px; background: var(--success); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
+        .sim-tag { position: absolute; top: 5px; right: 5px; background: var(--warning); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 10; opacity: 0.8; }
+
+        .status-dot { position: absolute; top: 15px; right: 45px; width: 10px; height: 10px; border-radius: 50%; background: #333; }
+        .status-ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .status-warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+        .status-err { background: var(--fail); box-shadow: 0 0 8px var(--fail); }
+        
+        .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
+        .btn-del-corner:hover { background: #550000; color: #ff9999; border-color: #ff4444; }
+
+        .url-block { display: flex; flex-direction: column; gap: 5px; }
+        .url-actions { display: flex; justify-content: space-between; align-items: center; }
+        .edit-url { background: #000; border: 1px solid #333; color: #bbb; font-family: monospace; font-size: 0.75rem; width: 100%; padding: 8px; border-radius: 4px; margin-top: 5px; }
+        .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
+        
+        .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
+        .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
+        
+        .card-footer { margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; display: flex; gap: 10px; }
+        .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
+
+        /* MODALS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .overlay.open { display: flex; }
-        .modal { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 25px; width: 600px; max-height: 80vh; overflow-y: auto; }
-        .logic-item { background: #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--success); }
-        .logic-preview { width: 80px; height: 50px; object-fit: cover; background: #000; border-radius: 4px; margin-right: 15px; }
-        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-weight: bold; cursor: pointer; border-radius: 4px; }
-        .nav-container { display: flex; gap: 10px; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); overflow-x: auto; }
-        .nav-item { padding: 8px 12px; background: #111; border-radius: 4px; color: #666; cursor: pointer; white-space: nowrap; font-weight: bold; font-size: 0.8rem; }
-        .nav-item.active { background: var(--accent); color: #000; }
-        /* UTILS */
-        .login-box { width: 400px; text-align: center; gap: 15px; display:flex; flex-direction:column; }
-        .login-input { padding: 10px; background: #000; border: 1px solid #333; color: #fff; }
+        .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
+        
+        /* DUMP BOX (Restored) */
+        .dump-box { width: 600px; height: 600px; max-width: 90vw; max-height: 90vh; }
+        .drop-zone { height: 100%; border: 3px dashed #444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; transition: 0.3s; cursor: pointer; background: #161616; }
+        .drop-zone:hover { border-color: var(--accent); color: var(--accent); }
+
+        .logic-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
+        .logic-item { background: #1a1a1a; padding: 12px; border-radius: 6px; border-left: 4px solid #333; display: flex; flex-direction: column; gap: 5px; }
+        .logic-item.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
+        .logic-item.fail { border-left-color: var(--fail); opacity: 0.6; }
+        .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; align-items: center; }
+        .logic-content { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        .logic-val { font-family: monospace; font-size: 0.75rem; color: #aaa; word-break: break-all; flex: 1; margin-right: 10px; }
+        .strat-preview { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #444; background: #000; }
+        
+        .login-box { width: 400px; text-align: left; gap: 15px; }
+        .login-label { font-size: 0.8rem; color: #888; margin-top: 10px; margin-bottom: 2px; text-transform: uppercase; font-weight: bold; }
+        .login-input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 4px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; margin-top: 20px; }
+        
+        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; font-weight: bold; white-space: nowrap; }
+        .btn-apply:hover { background: #fff; }
+        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
+        
+        .fail-options { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
+        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
+        
+        .editor-window { max-width: 1000px; height: 85vh; }
+        .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
+        .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
+        
+        .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
+        .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
+        
+        .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast.show { opacity: 1; top: 110px; }
+        .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
 <body>
 
-    <div class="overlay open" id="loginModal" style="z-index:9999;">
-        <div class="modal login-box">
-            <h2 style="color:var(--accent); margin:0;">SPECULA CONFIG</h2>
+    <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
+
+    <!-- LOGIN MODAL -->
+    <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
+        <div class="modal-window login-box">
+            <h2 style="color:var(--accent); text-align:center;">SPECULA CONFIG</h2>
+            <div class="login-label">GITHUB USERNAME</div>
             <input type="text" id="userInput" class="login-input" value="specula-news">
+            <div class="login-label">REPOSITORY NAME</div>
             <input type="text" id="repoInput" class="login-input" value="specula">
+            <div class="login-label">PERSONAL ACCESS TOKEN</div>
             <input type="password" id="tokenInput" class="login-input" placeholder="ghp_...">
-            <button onclick="performLogin()" style="background:var(--accent); color:#000; border:none; padding:10px; font-weight:bold;">UNLOCK</button>
+            <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
         </div>
     </div>
 
+    <!-- MAIN UI (RESTORED BUTTONS) -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// V12.4</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V12.6</span></div>
+        <div style="flex-grow:1; display:flex; justify-content:center; gap:10px;">
+            <button class="btn-preview" onclick="loadAllPreviews()">👁️ FORCE LOAD PREVIEWS</button>
+        </div>
         <div class="actions">
-            <button onclick="openDump()">📂 DUMP</button>
-            <button onclick="openEdit('html')">📝 HTML</button>
-            <button onclick="openEdit('py')">⚙️ PY</button>
+            <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
+            <button onclick="openDumpModal()">📂 DUMP</button>
+            <button class="btn-code" onclick="openSelector('html')">📝 HTML</button>
+            <button class="btn-code" onclick="openSelector('py')">⚙️ PY</button>
             <button onclick="fetchSources()">↻</button>
-            <button onclick="deploy()">🚀 DEPLOY</button>
-            <button class="btn-save" onclick="saveToGitHub()">💾 SAVE</button>
-            <button onclick="logout()" style="color:red">LOGOUT</button>
+            <button onclick="deployLive()">🚀 DEPLOY</button>
+            <button class="btn-save" onclick="saveToGitHubSafe()">💾 SAVE</button>
+            <button class="btn-logout" onclick="logout()">LOGOUT</button>
         </div>
     </div>
 
     <div class="nav-container" id="navBar"></div>
-    <div class="main-view"><div class="grid" id="grid"></div></div>
 
-    <!-- ANALYZER -->
-    <div class="overlay" id="testerModal">
-        <div class="modal">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                <h3>Working Image Logics</h3>
-                <button onclick="closeModal('testerModal')" style="background:none; border:none; color:#fff; font-size:1.5rem;">×</button>
+    <div class="main-view">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center;">
+            <div id="folderTitle" style="font-family:'Space Grotesk'; font-size:1.5rem; font-weight:bold;">LOCKED</div>
+            <div id="countBadge" style="background:#222; padding:5px 10px; border-radius:4px; font-size:0.8rem; color:#888;">0 Sources</div>
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- DUMP MODAL (RESTORED) -->
+    <div class="overlay" id="dumpModal">
+        <div class="modal-window dump-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <h3 style="margin:0;">UPLOAD FILE</h3>
+                <button onclick="closeModal('dumpModal')" style="background:transparent; border:none; font-size:1.5rem;">×</button>
             </div>
-            <div id="logicResults"></div>
+            <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInputHidden').click()">
+                <div style="font-size:4rem; margin-bottom:20px;">📂</div>
+                <h3 style="margin:0;">DROP FILE HERE</h3>
+                <p>or click to browse</p>
+                <input type="file" id="fileInputHidden" style="display:none" onchange="handleFileSelect(this.files)">
+            </div>
         </div>
     </div>
 
-    <!-- DUMP & EDIT MODALS OMITTED FOR BREVITY, SAME AS BEFORE -->
-    <div class="overlay" id="dumpModal"><div class="modal"><input type="file" onchange="handleFile(this.files)"></div></div>
-    <div class="overlay" id="editorModal"><div class="modal"><textarea id="codeContent" style="width:100%; height:400px; background:#000; color:#ccc;"></textarea><button onclick="saveFile()">SAVE</button><button onclick="closeModal('editorModal')">CLOSE</button></div></div>
+    <!-- LOGIC ANALYZER -->
+    <div class="overlay" id="testerModal">
+        <div class="modal-window tester-window">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
+                <div style="font-weight:bold; font-size:1.2rem;">⚡ VISUAL LOGIC PROBE</div>
+                <button style="border:none; background:transparent; font-size:1.5rem;" onclick="closeModal('testerModal')">×</button>
+            </div>
+            <div id="statusLog" class="status-box">Ready...</div>
+            <div id="logicResults" class="logic-list"></div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="editorModal">
+        <div class="modal-window editor-window">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
+                <div id="editorTitle" style="font-weight:bold;">EDIT</div>
+                <button onclick="closeModal('editorModal')" style="font-size:1.5rem; background:transparent; border:none;">×</button>
+            </div>
+            <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
+            <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button>
+                    <button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="selectorModal">
+        <div class="modal-window" style="width:300px; text-align:center;">
+            <h3>SELECT FILE</h3>
+            <div id="selectorButtons" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"></div>
+            <button onclick="closeModal('selectorModal')" style="margin-top:15px; width:100%; border:none; background:transparent;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- FAIL MODAL -->
+    <div class="overlay" id="failModal">
+        <div class="modal-window" style="max-width:500px; text-align:center;">
+            <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
+            <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
+            <div class="fail-options">
+                <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button>
+                <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button>
+                <button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="add-bar">
+        <input type="text" id="urlInput" class="add-input" placeholder="Paste URL (YouTube or Website)..." style="flex-grow: 2;" oninput="preCheckUrl()">
+        <input type="text" id="nameInput" class="add-input" placeholder="Name (Optional)..." style="flex-grow: 1;">
+        <button class="actions btn-save" style="border:none; padding:12px 24px; cursor:pointer;" onclick="handleAddClick()">+ ADD</button>
+    </div>
+
+    <div id="toast" class="toast">Action Saved</div>
 
     <script>
-        let sourceData = {}, newsMap = {}, activeFolder = 'GLOBAL_WEB', currentSha = "";
-        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
+        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
+        const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
+        
+        let sourceData = {}; let newsMap = {}; 
+        let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
+        let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
+        let pendingAddUrl = ""; let pendingAddName = "";
+        let activeAnalyzerIndex = -1;
 
-        window.onload = () => { if(localStorage.getItem("gh_token")) { document.getElementById('loginModal').classList.remove('open'); fetchSources(); } };
+        window.onload = function() { 
+            for(let key in FOLDER_CONFIG) sourceData[key] = []; 
+            const savedToken = localStorage.getItem("gh_token");
+            if (savedToken) { document.getElementById('loginModal').classList.remove('open'); fetchSources(null, null, savedToken); }
+            setupDropZone();
+        };
+
         function performLogin() {
-            localStorage.setItem("gh_user", document.getElementById('userInput').value);
-            localStorage.setItem("gh_repo", document.getElementById('repoInput').value);
-            localStorage.setItem("gh_token", document.getElementById('tokenInput').value);
-            document.getElementById('loginModal').classList.remove('open'); fetchSources();
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+            if(!user || !repo || !token) return alert("All fields are required.");
+            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
+            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
         }
-        function logout() { localStorage.removeItem("gh_token"); location.reload(); }
+        function logout() { localStorage.clear(); location.reload(); }
 
-        async function fetchSources() {
-            const u = localStorage.getItem("gh_user"), r = localStorage.getItem("gh_repo"), t = localStorage.getItem("gh_token");
-            try {
-                // 1. SOURCES
-                const res = await fetch(`https://api.github.com/repos/${u}/${r}/contents/sources.py`, { headers: { 'Authorization': `token ${t}` } });
-                const d = await res.json(); currentSha = d.sha;
-                parsePython(atob(d.content));
+        // --- CORE FUNCTIONS ---
+        async function fetchSources(u,r,t) { 
+            const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
+            try { 
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
+                if(!res.ok) throw new Error("Auth Failed"); 
+                const data = await res.json(); 
+                currentSha = data.sha; 
+                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
+                parsePython(text); 
 
-                // 2. REAL PREVIEW (news.json)
                 try {
-                    const res2 = await fetch(`https://api.github.com/repos/${u}/${r}/contents/news.json`, { headers: { 'Authorization': `token ${t}` } });
-                    const d2 = await res2.json();
-                    const articles = JSON.parse(atob(d2.content));
+                    const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
+                    const data2 = await res2.json();
+                    const text2 = new TextDecoder().decode(Uint8Array.from(atob(data2.content), c => c.charCodeAt(0))); 
+                    const articles = JSON.parse(text2);
                     newsMap = {};
                     articles.forEach(a => { if(a.feed_url && a.images?.[0]) newsMap[a.feed_url] = a.images[0]; });
                 } catch(e) {}
 
-                renderNav(); renderGrid();
-            } catch(e) { alert("Error: " + e.message); }
+                renderNav(); renderGrid(); showToast("Data Loaded"); 
+            } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
-        function renderGrid() {
-            const grid = document.getElementById('grid'); grid.innerHTML = '';
-            sourceData[activeFolder].forEach((item, idx) => {
-                let imgHtml = '<span>No Preview</span>', tag = '';
+        async function fetchProxy(url) {
+             const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+             try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
+             catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
+        }
+
+        function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
+
+        function renderGrid() { 
+            const grid = document.getElementById('grid'); grid.innerHTML = ''; 
+            document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; 
+            const items = sourceData[activeFolder] || []; 
+            document.getElementById('countBadge').innerText = items.length + " Sources"; 
+            
+            items.forEach((item, idx) => { 
+                const stat = item.lastStatus || 'none'; 
+                let previewHtml = '<span>No Preview</span>';
+                let tag = '';
                 
-                // TRUE MATCHING
-                const clean = item.url.replace(/\/$/, "");
-                const match = newsMap[item.url] || newsMap[clean];
-                
-                if (match) { 
-                    imgHtml = `<img src="${match}">`; 
-                    tag = `<div class="live-tag">REAL OUTPUT</div>`; 
-                } else if(item.type !== 'video') {
-                    // Start simulation if no real output
-                    setTimeout(() => loadSim(idx, item.url), 200 + (idx*200));
+                if (newsMap[item.source_name]) { previewHtml = `<img src="${newsMap[item.source_name]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } 
+                else if (newsMap[item.url]) { previewHtml = `<img src="${newsMap[item.url]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } 
+                else {
+                    const cleanUrl = item.url.replace(/\/$/, "");
+                    if(newsMap[cleanUrl]) { previewHtml = `<img src="${newsMap[cleanUrl]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; }
                 }
-
-                const card = document.createElement('div'); card.className = 'card';
+                
+                const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
                 card.innerHTML = `
-                    <div class="card-image" id="p-${idx}">${imgHtml}${tag}</div>
-                    <input class="edit-name" value="${item.source_name}" onchange="updateItem(${idx}, 'source_name', this.value)">
-                    <div style="font-size:0.7rem; color:#666; margin-bottom:5px;">Strategy: ${item.image_strategy || 'Auto'}</div>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="analyze('${item.url}', ${idx})" style="background:#222; border:1px solid #444; color:var(--accent);">⚡ ANALYZE</button>
-                        <button onclick="del(${idx})" style="color:red; margin-left:auto;">×</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+                    <button class="btn-del-corner" onclick="deleteItem(${idx})">×</button>
+                    <div class="status-dot status-${stat}" title="${stat}"></div>
+                    <div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div>
+                    <div class="card-image" id="preview-${idx}">${previewHtml}${tag}</div>
+                    <div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
+                grid.appendChild(card); 
+            }); 
         }
 
-        async function loadSim(idx, url) {
-            const div = document.getElementById(`p-${idx}`);
-            if(!div || div.innerHTML.includes("REAL")) return;
-            div.innerHTML = `<span style="color:#555">Simulating...</span>`;
+        async function loadAllPreviews() {
+            const items = sourceData[activeFolder]; if(!items) return;
+            showToast("Simulating...", 3000);
+            for(let i=0; i<items.length; i++) {
+                if(items[i].type === 'video') continue;
+                const currentHtml = document.getElementById(`preview-${i}`).innerHTML;
+                if(!currentHtml.includes("REAL OUTPUT")) { loadCardPreview(i, items[i].url); await new Promise(r => setTimeout(r, 200)); }
+            }
+        }
+
+        async function loadCardPreview(idx, url) {
+            const div = document.getElementById(`preview-${idx}`); if(!div) return;
+            div.innerHTML = `<span style="color:#555;">Simulating...</span>`;
             try {
-                const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
-                const t = await r.text();
-                const m = t.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
-                if(m) div.innerHTML = `<img src="${m[1]}"><div class="sim-tag">SIMULATION</div>`;
-                else div.innerHTML = `<span>No Image Found</span>`;
+                const r = await fetchProxy(url); const text = await r.text();
+                const match = text.match(/(http[s]?:\/\/[^\s"']+\.(?:jpg|jpeg|png|webp))/i);
+                if (match) { div.innerHTML = `<img src="${match[1]}"><div class="sim-tag">SIMULATION</div>`; } 
+                else { div.innerHTML = `<span>No Image Found</span>`; }
             } catch(e) { div.innerHTML = `<span>Err</span>`; }
         }
 
-        async function analyze(url, idx) {
-            document.getElementById('testerModal').classList.add('open');
-            const box = document.getElementById('logicResults'); box.innerHTML = 'Scanning...';
-            try {
-                const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
-                const t = await r.text();
-                // Basic extraction logic matching generator
-                const m_og = t.match(/property="og:image" content="([^"]+)"/);
-                const m_twitter = t.match(/name="twitter:image" content="([^"]+)"/);
-                const m_wp = t.match(/class="[^"]*wp-post-image[^"]*" src="([^"]+)"/);
-                const m_swec = t.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/);
-                const m_afton = t.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/);
-                
-                const strats = [
-                    {id:'og', name:'OpenGraph', val: m_og?.[1]},
-                    {id:'twitter', name:'Twitter', val: m_twitter?.[1]},
-                    {id:'wordpress', name:'WordPress', val: m_wp?.[1]},
-                    {id:'swec', name:'Sweclockers', val: m_swec?.[0]},
-                    {id:'afton', name:'Aftonbladet', val: m_afton?.[0]}
-                ];
-
-                box.innerHTML = '';
-                strats.forEach(s => {
-                    if(s.val) {
-                        box.innerHTML += `
-                        <div class="logic-item">
-                            <img src="${s.val}" class="logic-preview">
-                            <div style="flex:1"><b>${s.name}</b><br><small>${s.val.substring(0,30)}...</small></div>
-                            <button class="btn-apply" onclick="setStrat(${idx}, '${s.id}')">USE THIS</button>
-                        </div>`;
-                    }
-                });
-                if(!box.innerHTML) box.innerHTML = '<p>No images found via proxy.</p>';
-            } catch(e) { box.innerHTML = 'Error fetching url.'; }
-        }
-
-        function setStrat(idx, strat) {
-            sourceData[activeFolder][idx].image_strategy = strat;
-            document.getElementById('testerModal').classList.remove('open');
-            alert("Strategy saved! Click SAVE ALL to persist.");
-        }
-
-        // --- STANDARD HELPERS ---
+        // --- ROBUST PARSER (V12.5 Logic) ---
         function parsePython(text) {
-            const start = text.indexOf('SOURCES = ['); const end = text.indexOf('URLS_GLOBAL = [');
-            let content = text.substring(start, end).replace('SOURCES = [', '').trim();
-            if(content.endsWith(']')) content = content.slice(0, -1);
             for(let k in FOLDER_CONFIG) sourceData[k] = [];
-            content.split('\n').forEach(line => {
-                line = line.trim(); if(!line.startsWith('{')) return;
-                if(line.endsWith(',')) line = line.slice(0, -1);
-                try {
-                    const item = JSON.parse(line);
-                    for(let id in FOLDER_CONFIG) {
-                        if(item.cat === FOLDER_CONFIG[id].cat && item.filter_tag === FOLDER_CONFIG[id].tag) {
-                            sourceData[id].push(item); break;
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                const clean = line.trim().replace(/,$/, ''); 
+                if(clean.startsWith('{') && clean.endsWith('}')) {
+                    try {
+                        const item = JSON.parse(clean);
+                        for(let id in FOLDER_CONFIG) {
+                            const cfg = FOLDER_CONFIG[id];
+                            if(item.cat === cfg.cat && (!cfg.tag || item.filter_tag === cfg.tag)) {
+                                sourceData[id].push(item);
+                                break;
+                            }
                         }
-                    }
-                } catch(e){}
+                    } catch(e) {}
+                }
             });
         }
-        function renderNav() {
-            const nav = document.getElementById('navBar'); nav.innerHTML = '';
-            for(let id in FOLDER_CONFIG) {
-                const btn = document.createElement('div'); btn.className = `nav-item ${activeFolder===id?'active':''}`;
-                btn.innerText = FOLDER_CONFIG[id].label; btn.onclick=()=>{activeFolder=id;renderGrid();}; nav.appendChild(btn);
-            }
-        }
-        async function saveToGitHubSafe() {
-            if(!confirm("Push to GitHub?")) return;
-            let py = "SOURCES = [\n";
-            for(let k in sourceData) sourceData[k].forEach(i => py += `    ${JSON.stringify(i)},\n`);
-            py += "]\n\nURLS_GLOBAL = []";
-            const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token");
-            await fetch(`https://api.github.com/repos/${u}/${r}/contents/sources.py`, {
-                method: 'PUT', headers: { 'Authorization': `token ${t}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Update", content: btoa(py), sha: currentSha })
-            });
-            alert("Saved!");
-        }
-        async function deploy() {
-             const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token");
-             await fetch(`https://api.github.com/repos/${u}/${r}/actions/workflows/main.yml/dispatches`, {
-                method: 'POST', headers: { 'Authorization': `token ${t}`, 'Accept': 'application/vnd.github.v3+json' },
-                body: JSON.stringify({ ref: 'main' })
-            });
-            alert("Deploy started!");
-        }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
+        function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
+        function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
+        function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
+        function moveItem(idx, tid) { if(!tid) return; const item = sourceData[activeFolder][idx]; const cfg = FOLDER_CONFIG[tid]; item.cat = cfg.cat; if(cfg.type) item.type = cfg.type; if(cfg.tag) item.filter_tag = cfg.tag; sourceData[activeFolder].splice(idx, 1); sourceData[tid].unshift(item); renderGrid(); renderNav(); showToast("Moved"); }
+        function deleteItem(idx) { if(confirm("Are you sure?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
+        function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
+        function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
+
+        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const text = await r.text(); statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(text, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const rawAr = await ar.text(); let html = rawAr; try{ const ja = JSON.parse(rawAr); if(ja.contents) html = ja.contents; }catch(e){} const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V12.6)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
+        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
+        function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
+        async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
+        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
+        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
         function openDumpModal() { document.getElementById('dumpModal').classList.add('open'); }
-        function openSelector(t) { /* Implement selectors */ }
-        function handleFileDump(f) { /* Implement dump */ }
-        function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v; }
-        function del(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); } }
+        function setupDropZone() { const d = document.getElementById('dropZone'); ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => d.addEventListener(e, preventDefaults, false)); ['dragenter', 'dragover'].forEach(e => d.addEventListener(e, () => d.classList.add('dragover'), false)); ['dragleave', 'drop'].forEach(e => d.addEventListener(e, () => d.classList.remove('dragover'), false)); d.addEventListener('drop', handleDrop, false); }
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        function handleDrop(e) { handleFileSelect(e.dataTransfer.files); }
+        function handleFileSelect(files) { if(files.length > 0) handleFileDump(files[0]); }
+        async function handleFileDump(file) { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) return; showToast("Uploading..."); closeModal('dumpModal'); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); let sha = null; if(check.ok) sha = (await check.json()).sha; await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOAD COMPLETE!"); } catch(e) { alert("Error: " + e.message); } }; }
+        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        async function runDiagnostics() { /* Simplified */ }
+        function showToast(msg, duration=2500) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
+        function forceAddSource() { /* ... */ }
+        function searchGoogleForRSS() { /* ... */ }
     </script>
 </body>
 </html>
