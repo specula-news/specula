@@ -36,7 +36,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIES (MATCHING ADMIN JS) ---
+# --- STRATEGIES ---
 def strat_og(soup, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
