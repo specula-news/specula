@@ -4,7 +4,7 @@ SOURCES = [
     # --- NEWS: GLOBAL ---
     {"url":"https://ir.thomsonreuters.com/rss/news-releases.xml?items=15","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
     {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
-    {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global"},
+    {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global","image_strategy":"first_img"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
     {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global"},
