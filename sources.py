@@ -100,7 +100,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en"},
     # --- GEO: Sweden ---
     {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
-    {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
+    {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden","image_strategy":"afton"},
     # --- GEO: EU ---
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
 ]
