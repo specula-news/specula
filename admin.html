@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V9.6 (AUTO-FILL)</title>
+    <title>SPECULA ADMIN // V9.8 (VISUAL PREVIEW)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
@@ -23,7 +23,6 @@
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
         .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
         .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
-        /* BRIDGE FIX */
         .nav-item::after { content: ''; position: absolute; left: 0; bottom: -15px; width: 100%; height: 20px; background: transparent; z-index: 205; }
         .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-top: 5px; }
         .nav-item:hover .dropdown, .dropdown:hover { display: flex; }
@@ -52,28 +51,32 @@
         .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
         .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
         .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
-        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
         .card-footer { margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; display: flex; gap: 10px; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
+        
         .logic-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
         .logic-item { background: #1a1a1a; padding: 12px; border-radius: 6px; border-left: 4px solid #333; display: flex; flex-direction: column; gap: 5px; }
         .logic-item.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
         .logic-item.fail { border-left-color: var(--fail); opacity: 0.6; }
-        .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; align-items: center; }
-        .logic-val { font-family: monospace; font-size: 0.8rem; color: #aaa; word-break: break-all; margin-top:5px; padding-top:5px; border-top:1px solid #333; }
-        .preview-img { max-width: 100%; height: 150px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; align-self: center; }
         
-        /* LOGIN BOX UPDATED */
+        /* UPDATED HEADER FOR THUMBNAIL */
+        .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; align-items: center; }
+        .logic-content { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+        .logic-val { font-family: monospace; font-size: 0.75rem; color: #aaa; word-break: break-all; flex: 1; margin-right: 10px; }
+        
+        /* THUMBNAIL STYLE */
+        .strat-preview { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #444; background: #000; display: block; }
+        
         .login-box { width: 400px; text-align: left; gap: 15px; }
         .login-label { font-size: 0.8rem; color: #888; margin-top: 10px; margin-bottom: 2px; text-transform: uppercase; font-weight: bold; }
         .login-input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 4px; box-sizing: border-box; }
         .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; margin-top: 20px; }
-        
-        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 10px; font-size: 0.7rem; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 15px; font-size: 0.75rem; cursor: pointer; border-radius: 4px; font-weight: bold; white-space: nowrap; }
         .btn-apply:hover { background: #fff; }
+        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
         .fail-options { display: flex; gap: 10px; margin-top: 20px; }
         .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
         .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
@@ -84,6 +87,7 @@
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
+        .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -95,22 +99,19 @@
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
             <h2 style="color:var(--accent); text-align:center;">SPECULA CONFIG</h2>
-            
             <div class="login-label">GITHUB USERNAME</div>
             <input type="text" id="userInput" class="login-input" value="specula-news">
-            
             <div class="login-label">REPOSITORY NAME</div>
             <input type="text" id="repoInput" class="login-input" value="specula">
-            
             <div class="login-label">PERSONAL ACCESS TOKEN</div>
             <input type="password" id="tokenInput" class="login-input" placeholder="ghp_...">
-            
             <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
         </div>
     </div>
 
+    <!-- MAIN UI -->
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V9.6</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V9.8</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center;">
             <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
         </div>
@@ -140,20 +141,19 @@
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
-                <div style="font-weight:bold; font-size:1.2rem;">⚡ DEEP LOGIC PROBE</div>
+                <div style="font-weight:bold; font-size:1.2rem;">⚡ VISUAL LOGIC PROBE</div>
                 <button style="border:none; background:transparent; font-size:1.5rem;" onclick="closeModal('testerModal')">×</button>
             </div>
-            <div id="logicResults" class="logic-list">
-                <div style="text-align:center; padding:40px; color:#666;">Initializing deep scan...</div>
-            </div>
+            <div id="statusLog" class="status-box">Ready...</div>
+            <div id="logicResults" class="logic-list"></div>
         </div>
     </div>
 
+    <!-- OTHER MODALS -->
     <div class="overlay" id="failModal">
         <div class="modal-window" style="max-width:500px; text-align:center;">
             <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
             <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
-            <p id="failUrl" style="font-family:monospace; background:#000; padding:10px; border-radius:4px; word-break:break-all; font-size:0.8rem;"></p>
             <div class="fail-options">
                 <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button>
                 <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button>
@@ -204,76 +204,139 @@
         let pendingAddUrl = ""; let pendingAddName = "";
         let activeAnalyzerIndex = -1;
 
-        // AUTH & INIT
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
-            
             const savedToken = localStorage.getItem("gh_token");
             const savedUser = localStorage.getItem("gh_user");
             const savedRepo = localStorage.getItem("gh_repo");
-
             if (savedToken && savedUser && savedRepo) { 
                 document.getElementById('loginModal').classList.remove('open'); 
                 fetchSources(savedUser, savedRepo, savedToken);
             }
         };
-
         function performLogin() {
             const user = document.getElementById('userInput').value.trim();
             const repo = document.getElementById('repoInput').value.trim();
             const token = document.getElementById('tokenInput').value.trim();
-
             if(!user || !repo || !token) return alert("All fields are required.");
-
-            localStorage.setItem("gh_user", user);
-            localStorage.setItem("gh_repo", repo);
-            localStorage.setItem("gh_token", token);
-
-            document.getElementById('loginModal').classList.remove('open'); 
-            fetchSources(user, repo, token);
+            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
+            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
         }
-
-        function logout() { 
-            localStorage.clear(); 
-            location.reload(); 
-        }
+        function logout() { localStorage.clear(); location.reload(); }
 
         // FETCH PROXY
         async function fetchProxy(url) {
-            try { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); }
-            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
+            // Add timestamp to prevent caching
+            const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+            try { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
+            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
         }
 
-        // CORE FUNCTIONS
-        async function fetchSources(user, repo, token) { 
-            // Load vars from args or localstorage if null
-            if(!user) user = localStorage.getItem("gh_user");
-            if(!repo) repo = localStorage.getItem("gh_repo");
-            if(!token) token = localStorage.getItem("gh_token");
+        // --- UPDATED ANALYZER WITH VISUAL PREVIEW ---
+        async function openLogicAnalyzer(url, idx) {
+            activeAnalyzerIndex = idx;
+            document.getElementById('testerModal').classList.add('open');
+            const resBox = document.getElementById('logicResults');
+            const statusLog = document.getElementById('statusLog');
+            
+            resBox.innerHTML = '';
+            statusLog.innerHTML = '1. Fetching Feed... ' + url;
 
-            try { 
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); 
+            try {
+                // 1. Fetch Feed
+                const r = await fetchProxy(url);
+                if(!r.ok) throw new Error("Proxy Fetch Failed");
+                const d = await r.json();
                 
-                if(!res.ok) {
-                    if(res.status === 404) throw new Error("Error 404: Repository or sources.py not found. Check User/Repo settings.");
-                    if(res.status === 401) throw new Error("Error 401: Unauthorized. Token is invalid or expired.");
-                    throw new Error(`GitHub Error: ${res.status}`);
+                // 2. Parse Feed
+                statusLog.innerHTML = '2. Parsing Feed XML...';
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(d.contents, "text/xml");
+                
+                let articleUrl = null;
+                
+                // Try Atom/RSS standard formats
+                let items = xmlDoc.getElementsByTagName("entry");
+                if(items.length > 0) {
+                    const link = items[0].getElementsByTagName("link")[0];
+                    if(link) articleUrl = link.getAttribute("href");
+                }
+                if(!articleUrl) {
+                    items = xmlDoc.getElementsByTagName("item");
+                    if(items.length > 0) {
+                        const linkTag = items[0].getElementsByTagName("link")[0];
+                        if(linkTag) articleUrl = linkTag.textContent.trim();
+                    }
                 }
 
-                const data = await res.json(); 
-                currentSha = data.sha; 
-                const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); 
-                parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); 
+                // If not RSS/Atom, maybe it's already an article URL
+                if(!articleUrl && !url.includes('rss') && !url.includes('xml')) {
+                    articleUrl = url;
+                }
+
+                if (!articleUrl) { 
+                    statusLog.innerHTML = '❌ Failed to find article URL in feed.'; 
+                    return; 
+                }
+
+                statusLog.innerHTML = '3. Analyzing Article: ' + articleUrl.substring(0, 50) + '...';
+                
+                // 3. Fetch Article
+                const ar = await fetchProxy(articleUrl);
+                const ad = await ar.json();
+                const html = ad.contents;
+                const doc = new DOMParser().parseFromString(html, "text/html");
+
+                // 4. Run Strategies
+                const strategies = [
+                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
+                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content },
+                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") },
+                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] },
+                    { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] },
+                    { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src },
+                    { id: 'first_img', name: "First <img>", val: doc.querySelector('article img, img')?.src }
+                ];
+
+                let htmlOut = "";
+                strategies.forEach(res => {
+                    const status = res.val ? "success" : "fail";
+                    // Only show image if URL exists
+                    const imgTag = res.val ? `<img src="${res.val}" class="strat-preview" onerror="this.style.opacity=0.3">` : '';
+                    
+                    htmlOut += `
+                        <div class="logic-item ${status}">
+                            <div class="logic-header">
+                                <span>${res.name}</span>
+                                <button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button>
+                            </div>
+                            <div class="logic-content">
+                                <div class="logic-val">${res.val || 'No image found'}</div>
+                                ${imgTag}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resBox.innerHTML = htmlOut;
+                statusLog.innerHTML = '✅ Analysis Complete.';
+
             } catch(e) { 
-                alert(e.message); 
-                if(confirm("Return to login screen?")) logout();
-            } 
+                statusLog.innerHTML = '❌ ERROR: ' + e.message; 
+                console.error(e);
+            }
         }
 
+        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied! Save to GitHub."); closeModal('testerModal'); } }
+
+        // STANDARD FUNCTIONS
+        async function fetchSources(u,r,t) { 
+            const user = u || localStorage.getItem("gh_user"); const repo = r || localStorage.getItem("gh_repo"); const token = t || localStorage.getItem("gh_token");
+            try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
+        }
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
-
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
         function renderGrid() { const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; const items = sourceData[activeFolder] || []; document.getElementById('countBadge').innerText = items.length + " Sources"; items.forEach((item, idx) => { const stat = item.lastStatus || 'none'; const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot status-${stat}" title="${stat}"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-fix" id="fix-${idx}" onclick="autoDiscoverRSS('${item.url}', ${idx})" style="display:none;">FIX FOUND</button><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; grid.appendChild(card); }); }
         function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
@@ -281,91 +344,22 @@
         function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
         function moveItem(idx, tid) { if(!tid) return; const item = sourceData[activeFolder][idx]; const cfg = FOLDER_CONFIG[tid]; item.cat = cfg.cat; if(cfg.type) item.type = cfg.type; if(cfg.tag) item.filter_tag = cfg.tag; sourceData[activeFolder].splice(idx, 1); sourceData[tid].unshift(item); renderGrid(); renderNav(); showToast("Moved"); }
         function deleteItem(idx) { if(confirm("Are you sure?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
-
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
-
-        async function openLogicAnalyzer(url, idx) {
-            activeAnalyzerIndex = idx;
-            document.getElementById('testerModal').classList.add('open');
-            const resBox = document.getElementById('logicResults');
-            resBox.innerHTML = '<div style="text-align:center; padding:20px;">Fetching...</div>';
-            try {
-                const r = await fetchProxy(url); const d = await r.json();
-                const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); const items = xmlDoc.getElementsByTagName("item");
-                let articleUrl = null;
-                if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } else if (!url.includes('rss') && !url.includes('xml')) { articleUrl = url; }
-                if (!articleUrl) { resBox.innerHTML = '<div style="color:var(--warning)">Could not find article URL.</div>'; return; }
-                resBox.innerHTML = `<div style="text-align:center; padding-bottom:10px; color:#888;">Analyzing: <br>${articleUrl.substring(0,40)}...</div>`;
-                const ar = await fetchProxy(articleUrl); const ad = await ar.json(); const html = ad.contents;
-                const doc = new DOMParser().parseFromString(html, "text/html");
-                let results = []; let foundImg = null;
-                const strategies = [
-                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
-                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content },
-                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") },
-                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] },
-                    { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] },
-                    { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img')?.src }
-                ];
-                let htmlOut = "";
-                strategies.forEach(res => {
-                    if(res.val && !foundImg) foundImg = res.val;
-                    const status = res.val ? "success" : "fail";
-                    htmlOut += `<div class="logic-item ${status}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div>${res.val ? `<div class="logic-val">${res.val}</div>` : ''}</div>`;
-                });
-                if(foundImg) htmlOut = `<div style="text-align:center; margin-bottom:15px;"><img src="${foundImg}" class="preview-img"></div>` + htmlOut;
-                resBox.innerHTML = htmlOut;
-            } catch(e) { resBox.innerHTML = `<div style="color:red; text-align:center;">Error: ${e.message}</div>`; }
-        }
-
-        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied! Save to GitHub."); closeModal('testerModal'); } }
-
-        async function saveToGitHubSafe() {
-            if(!confirm("Overwrite sources.py?")) return;
-            const seenUrls = new Set();
-            for(let key in sourceData) {
-                const uniqueList = [];
-                sourceData[key].forEach(item => {
-                    const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl);
-                    if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv';
-                    uniqueList.push(item);
-                }); sourceData[key] = uniqueList;
-            }
-            let content = rawHeader + "\n\nSOURCES = [\n"; 
-            for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } 
-            content += "]\n\n" + rawFooter; 
-            
-            const user = localStorage.getItem("gh_user");
-            const repo = localStorage.getItem("gh_repo");
-            const token = localStorage.getItem("gh_token");
-
-            const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V9.5)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } 
-        }
-
-        async function deployLive() { 
-            const user = localStorage.getItem("gh_user");
-            const repo = localStorage.getItem("gh_repo");
-            const token = localStorage.getItem("gh_token");
-            try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } 
-        }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V9.8)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
         function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
-
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
         async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
         async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
         async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
-        async function runDiagnostics() {
-            const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); }
-            for(let src of allSources) { updateStatusDot(src.folder, src.index, 'loading'); try { const r = await fetchProxy(src.url); const data = await r.json(); if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) { updateStatusDot(src.folder, src.index, 'err'); continue; } updateStatusDot(src.folder, src.index, 'ok'); } catch(e) { updateStatusDot(src.folder, src.index, 'err'); } } showToast("Diagnostics Complete");
-        }
+        async function runDiagnostics() { const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); } for(let src of allSources) { updateStatusDot(src.folder, src.index, 'loading'); try { const r = await fetchProxy(src.url); const data = await r.json(); if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) { updateStatusDot(src.folder, src.index, 'err'); continue; } updateStatusDot(src.folder, src.index, 'ok'); } catch(e) { updateStatusDot(src.folder, src.index, 'err'); } } showToast("Diagnostics Complete"); }
         function updateStatusDot(folder, index, status) { if(!sourceData[folder][index].status) sourceData[folder][index].status = {}; sourceData[folder][index].lastStatus = status; if(folder === activeFolder) { const c = document.getElementById(`card-${index}`); if(c) c.querySelector('.status-dot').className = `status-dot status-${status}`; } }
-        async function autoDiscoverRSS(url, idx) { /* Simplified fix attempt logic could go here */ alert("Try removing and re-adding via Smart Add."); }
+        async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function forceAddSource() { /* ... */ }
         function searchGoogleForRSS() { /* ... */ }
-        
         function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
         function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
     </script>
