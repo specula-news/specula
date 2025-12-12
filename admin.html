@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V8.4 (AUTO-LOGIN)</title>
+    <title>SPECULA ADMIN // V9.0 (LOGIC PROBE)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -22,7 +22,6 @@
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
-        .btn-logout:hover { background: #ff4444; color: #fff; }
         
         .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
         .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
@@ -79,12 +78,10 @@
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
         
-        /* LOGIN MODAL SPECIAL */
         .login-box { width: 400px; text-align: center; gap: 15px; }
         .login-input { width: 90%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; }
         .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
 
-        /* EDITOR */
         .editor-window { max-width: 1000px; height: 85vh; }
         .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
         .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
@@ -96,12 +93,17 @@
         .logic-item.fail { border-left-color: var(--fail); opacity: 0.6; }
         .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; }
         .logic-val { font-family: monospace; font-size: 0.8rem; color: #aaa; word-break: break-all; margin-top:5px; padding-top:5px; border-top:1px solid #333; }
-        .preview-img { max-width: 100%; height: 180px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; }
+        .preview-img { max-width: 100%; height: 150px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; align-self: center; }
 
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
+        
+        .fail-options { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
+        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
+
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -112,7 +114,6 @@
     <input type="hidden" id="ghToken" value=""> 
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
-    <!-- LOGIN OVERLAY -->
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
             <h2 style="color:var(--accent);">SPECULA LOGIN</h2>
@@ -123,7 +124,7 @@
     </div>
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V8.4</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V9.0</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center;">
             <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
         </div>
@@ -151,12 +152,12 @@
         <div class="grid" id="grid"></div>
     </div>
 
-    <!-- MODALS -->
+    <!-- LOGIC ANALYZER -->
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
-                <div style="font-weight:bold; font-size:1.2rem;">🧪 IMAGE LOGIC ANALYZER</div>
-                <button style="border:none; background:transparent;" onclick="closeModal('testerModal')">×</button>
+                <div style="font-weight:bold; font-size:1.2rem;">⚡ DEEP LOGIC PROBE</div>
+                <button style="border:none; background:transparent; font-size:1.5rem;" onclick="closeModal('testerModal')">×</button>
             </div>
             <div id="logicResults" class="logic-list">
                 <div style="text-align:center; padding:40px; color:#666;">Initializing deep scan...</div>
@@ -164,23 +165,25 @@
         </div>
     </div>
 
+    <!-- FAIL MODAL -->
     <div class="overlay" id="failModal">
         <div class="modal-window" style="max-width:500px; text-align:center;">
             <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
             <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button style="flex:1; padding:15px; background:#222;" onclick="forceAddSource()">Force Add</button>
-                <button style="flex:1; padding:15px; background:#222;" onclick="searchGoogleForRSS()">Search Google</button>
-                <button style="flex:1; padding:15px; background:#222;" onclick="closeModal('failModal')">Cancel</button>
+            <div class="fail-options">
+                <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button>
+                <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button>
+                <button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button>
             </div>
         </div>
     </div>
 
+    <!-- EDITOR -->
     <div class="overlay" id="editorModal">
         <div class="modal-window editor-window">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
                 <div id="editorTitle" style="font-weight:bold;">EDIT</div>
-                <button onclick="closeModal('editorModal')">×</button>
+                <button onclick="closeModal('editorModal')" style="font-size:1.5rem; background:transparent; border:none;">×</button>
             </div>
             <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
             <div style="display:flex; justify-content:space-between; margin-top:15px;">
@@ -210,7 +213,6 @@
     <div id="toast" class="toast">Action Saved</div>
 
     <script>
-        // CONFIG
         const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
         const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
         
@@ -218,40 +220,22 @@
         let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
         let pendingAddUrl = ""; let pendingAddName = "";
 
-        // --- AUTH SYSTEM (NEW) ---
+        // --- AUTH ---
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
-            
             const savedToken = localStorage.getItem("gh_token");
-            if (savedToken) {
-                document.getElementById('ghToken').value = savedToken;
-                document.getElementById('loginModal').classList.remove('open');
-                fetchSources();
-            } else {
-                document.getElementById('loginModal').classList.add('open');
-            }
+            if (savedToken) { document.getElementById('ghToken').value = savedToken; document.getElementById('loginModal').classList.remove('open'); fetchSources(); }
         };
-
         function performLogin() {
             const token = document.getElementById('tokenInput').value.trim();
-            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) {
-                alert("Invalid Token format. Must start with ghp_ or github_pat_");
-                return;
-            }
-            localStorage.setItem("gh_token", token);
-            document.getElementById('ghToken').value = token;
-            document.getElementById('loginModal').classList.remove('open');
-            fetchSources();
+            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) return alert("Invalid Token format");
+            localStorage.setItem("gh_token", token); document.getElementById('ghToken').value = token;
+            document.getElementById('loginModal').classList.remove('open'); fetchSources();
         }
+        function logout() { if(confirm("Logout?")) { localStorage.removeItem("gh_token"); location.reload(); } }
 
-        function logout() {
-            if(confirm("Logout and clear token?")) {
-                localStorage.removeItem("gh_token");
-                location.reload();
-            }
-        }
-
-        async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { alert(e.message); if(e.message === "Auth Failed") logout(); } }
+        // --- CORE ---
+        async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { if(e.message === "Auth Failed") logout(); else alert(e.message); } }
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
@@ -287,6 +271,123 @@
             }); 
         }
 
+        // --- DEEP PROBE ---
+        async function openLogicAnalyzer(url) {
+            document.getElementById('testerModal').classList.add('open');
+            const resBox = document.getElementById('logicResults');
+            resBox.innerHTML = '<div style="text-align:center; padding:20px;">Fetching Feed & Article...</div>';
+
+            try {
+                // 1. Fetch Feed to find article URL
+                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const r = await fetch(proxy);
+                const d = await r.json();
+                
+                // Parse XML
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(d.contents, "text/xml");
+                const items = xmlDoc.getElementsByTagName("item");
+                
+                let articleUrl = null;
+                if(items.length > 0) {
+                    const linkTag = items[0].getElementsByTagName("link")[0];
+                    if(linkTag) articleUrl = linkTag.textContent.trim();
+                } else if (!url.includes('rss') && !url.includes('xml')) {
+                    articleUrl = url; // Fallback if it's already a website
+                }
+
+                if (!articleUrl) { resBox.innerHTML = '<div style="color:var(--warning)">Could not find article URL. Is this a valid feed?</div>'; return; }
+
+                resBox.innerHTML = `<div style="text-align:center; padding-bottom:10px; color:#888;">Analyzing: <br>${articleUrl.substring(0,40)}...</div>`;
+                
+                // 2. Fetch Article HTML
+                const ar = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(articleUrl)}`);
+                const ad = await ar.json();
+                const html = ad.contents;
+                
+                // Parse HTML
+                const doc = new DOMParser().parseFromString(html, "text/html");
+
+                let results = [];
+                let foundImg = null;
+
+                // --- STRATEGY 1: OpenGraph ---
+                const og = doc.querySelector('meta[property="og:image"]');
+                results.push({ name: "1. OpenGraph", val: og ? og.content : null });
+
+                // --- STRATEGY 2: Twitter ---
+                const tw = doc.querySelector('meta[name="twitter:image"]');
+                results.push({ name: "2. Twitter Card", val: tw ? tw.content : null });
+
+                // --- STRATEGY 3: JSON-LD ---
+                let jsonImg = null;
+                const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+                scripts.forEach(s => {
+                    try {
+                        const json = JSON.parse(s.innerText);
+                        const obj = Array.isArray(json) ? json[0] : json;
+                        if(obj.image) {
+                            if(typeof obj.image === 'string') jsonImg = obj.image;
+                            else if(obj.image.url) jsonImg = obj.image.url;
+                        }
+                    } catch(e){}
+                });
+                results.push({ name: "3. JSON-LD", val: jsonImg });
+
+                // --- STRATEGY 4: Link Rel ---
+                const lnk = doc.querySelector('link[rel="image_src"]');
+                results.push({ name: "4. Link Rel", val: lnk ? lnk.href : null });
+
+                // --- STRATEGY 5: Sweclockers ---
+                const swecMatch = html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/);
+                results.push({ name: "5. Sweclockers Regex", val: swecMatch ? swecMatch[0].replace(/&amp;/g, "&") : null });
+
+                // --- STRATEGY 6: Aftonbladet ---
+                const abMatch = html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/);
+                results.push({ name: "6. Aftonbladet Regex", val: abMatch ? abMatch[1] : null });
+
+                // --- STRATEGY 7: Hero Class ---
+                let heroImg = null;
+                const heroes = doc.querySelectorAll('.hero img, .featured-image img, .article-image img, .main-image img');
+                if(heroes.length > 0) heroImg = heroes[0].src;
+                results.push({ name: "7. Hero/Featured Class", val: heroImg });
+
+                // --- STRATEGY 8: First Article Image ---
+                let firstImg = null;
+                const articleImg = doc.querySelector('article img');
+                if(articleImg) firstImg = articleImg.src;
+                results.push({ name: "8. First <article> Image", val: firstImg });
+
+                // --- STRATEGY 9: Largest Srcset ---
+                let bestSrcset = null;
+                const srcsets = doc.querySelectorAll('img[srcset]');
+                if(srcsets.length > 0) {
+                    // Simple check: take the longest srcset string (heuristic for most data/pixels)
+                    let best = srcsets[0];
+                    srcsets.forEach(img => { if(img.srcset.length > best.srcset.length) best = img; });
+                    const parts = best.srcset.split(',');
+                    const lastPart = parts[parts.length-1].trim().split(' ')[0];
+                    if(lastPart) bestSrcset = lastPart;
+                }
+                results.push({ name: "9. Largest Srcset", val: bestSrcset });
+
+                // RENDER
+                let htmlOut = "";
+                results.forEach(res => {
+                    if(res.val && !foundImg) foundImg = res.val;
+                    const status = res.val ? "success" : "fail";
+                    htmlOut += `<div class="logic-item ${status}"><div class="logic-header"><span>${res.name}</span><span>${res.val ? "✅ MATCH" : "❌"}</span></div>${res.val ? `<div class="logic-val">${res.val}</div>` : ''}</div>`;
+                });
+
+                if(foundImg) htmlOut = `<div style="text-align:center; margin-bottom:15px;"><img src="${foundImg}" class="preview-img"></div>` + htmlOut;
+                resBox.innerHTML = htmlOut;
+
+            } catch(e) {
+                resBox.innerHTML = `<div style="color:red; text-align:center; padding:20px;">Error: ${e.message}</div>`;
+            }
+        }
+
+        // --- UTILS & ADD ---
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         async function handleAddClick() {
             const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required");
@@ -300,54 +401,13 @@
                 else { pendingAddUrl = url; pendingAddName = name; document.getElementById('failUrl').innerText = url; document.getElementById('failModal').classList.add('open'); }
             } catch(e) { pendingAddUrl = url; pendingAddName = name; document.getElementById('failUrl').innerText = url; document.getElementById('failModal').classList.add('open'); }
         }
-
         function forceAddSource() { addSourceDirect(pendingAddUrl, pendingAddName); closeModal('failModal'); }
         function searchGoogleForRSS() { const domain = new URL(pendingAddUrl).hostname; window.open(`https://www.google.com/search?q=${encodeURIComponent('site:' + domain + ' rss feed')}`, '_blank'); closeModal('failModal'); }
         function addSourceDirect(url, name) { const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
 
-        async function openLogicAnalyzer(url) {
-            document.getElementById('testerModal').classList.add('open');
-            const resBox = document.getElementById('logicResults');
-            resBox.innerHTML = '<div style="text-align:center; padding:20px;">1. Fetching & Parsing Feed...</div>';
-            try {
-                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`; const r = await fetch(proxy); const d = await r.json();
-                const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); const items = xmlDoc.getElementsByTagName("item");
-                let articleUrl = null;
-                if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } 
-                else if (!url.includes('rss') && !url.includes('xml')) { articleUrl = url; }
-                if (!articleUrl) { resBox.innerHTML = '<div style="color:var(--warning)">Could not extract article URL from feed. Is this a valid RSS?</div>'; return; }
-                resBox.innerHTML += `<div style="text-align:center; padding-bottom:10px; color:#888;">2. Analyzing Article: <br>${articleUrl.substring(0,40)}...</div>`;
-                const ar = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(articleUrl)}`); const ad = await ar.json(); const html = ad.contents;
-                let results = []; let foundImg = null;
-                const og = html.match(/meta property=["']og:image["'] content=["'](.*?)["']/); results.push({ name: "1. OpenGraph", val: og ? og[1] : null });
-                const tw = html.match(/meta name=["']twitter:image["'] content=["'](.*?)["']/); results.push({ name: "2. Twitter Card", val: tw ? tw[1] : null });
-                const lnk = html.match(/link rel=["']image_src["'] href=["'](.*?)["']/); results.push({ name: "3. Link Rel", val: lnk ? lnk[1] : null });
-                const schema = html.match(/"image":\s*["'](http.*?)["']/); results.push({ name: "4. Schema/JSON", val: schema ? schema[1] : null });
-                const swec = html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/); results.push({ name: "5. Sweclockers", val: swec ? swec[0].replace(/&amp;/g, "&") : null });
-                const ab = html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/); results.push({ name: "6. Aftonbladet", val: ab ? ab[1] : null });
-                const hero = html.match(/class=["'][^"']*(hero|featured|main-image)[^"']*["'][^>]*src=["'](.*?)["']/); results.push({ name: "7. Hero Class", val: hero ? hero[2] : null });
-                let htmlOut = ""; results.forEach(res => { if(res.val && !foundImg) foundImg = res.val; const status = res.val ? "success" : "fail"; htmlOut += `<div class="logic-item ${status}"><div class="logic-header"><span>${res.name}</span><span>${res.val ? "✅ MATCH" : "❌"}</span></div>${res.val ? `<div class="logic-val">${res.val}</div>` : ''}</div>`; });
-                if(foundImg) htmlOut = `<div style="text-align:center; margin-bottom:15px;"><img src="${foundImg}" class="preview-img"></div>` + htmlOut;
-                resBox.innerHTML = htmlOut;
-            } catch(e) { resBox.innerHTML = `<div style="color:red; text-align:center; padding:20px;">Error: ${e.message}</div>`; }
-        }
-
-        async function deployLive() {
-            const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; 
-            try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } 
-        }
-
-        function startDeployPolling() {
-            const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex';
-            if(deployInterval) clearInterval(deployInterval);
-            deployInterval = setInterval(async () => {
-                const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; 
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } });
-                const data = await res.json(); const run = data.workflow_runs[0];
-                statusText.innerText = `${run.status} (${run.conclusion || 'running'})`;
-                if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; }
-            }, 5000);
-        }
+        // --- DEPLOY ---
+        async function deployLive() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
+        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
 
         function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
         function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
@@ -356,7 +416,7 @@
         function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
         function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
         function moveItem(idx, tid) { if(!tid) return; const item = sourceData[activeFolder][idx]; const cfg = FOLDER_CONFIG[tid]; item.cat = cfg.cat; if(cfg.type) item.type = cfg.type; if(cfg.tag) item.filter_tag = cfg.tag; sourceData[activeFolder].splice(idx, 1); sourceData[tid].unshift(item); renderGrid(); renderNav(); showToast("Moved"); }
-        function deleteItem(idx) { if(confirm("Are you sure you want to delete this source?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
+        function deleteItem(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
         async function runDiagnostics() {
             const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); }
             for(let src of allSources) {
@@ -394,20 +454,7 @@
         function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
         async function fetchFileToEdit(f) { const u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        
-        async function saveFileContent() { 
-            if(!confirm("Overwrite?")) return; 
-            const c=document.getElementById('codeContent').value, u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); 
-            try{ 
-                const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); 
-                if(!res.ok) throw new Error("Status: " + res.status); 
-                const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); 
-                
-                // AUTO RELOAD MAIN LIST IF SOURCES CHANGED
-                if(currentFileName === 'sources.py') { setTimeout(fetchSources, 1000); }
-            }catch(e){alert("SAVE FAILED: " + e.message);} 
-        }
-        
+        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(fetchSources, 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
         async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
 
     </script>
