@@ -44,6 +44,9 @@ SOURCES = [
     {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev","status":{},"lastStatus":"err"},
     {"url":"https://www.youtube.com/@electricviking/videos","cat":"youtubers","type":"video","source_name":"Electric Viking","lang":"en","filter_tag":"ev","status":{},"lastStatus":"err"},
     # --- YT: Gaming ---
+    {"url":"https://www.youtube.com/@Raxxanterax/videos","cat":"youtubers","type":"video","source_name":"Raxxanterax","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@jackfrags/videos","cat":"youtubers","type":"video","source_name":"Jackfrags","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@ZiggyDGaming/videos","cat":"youtubers","type":"video","source_name":"ZiggyD","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@AsmonTV/videos","cat":"youtubers","type":"video","source_name":"AsmonTV","lang":"en","filter_tag":"gaming","status":{},"lastStatus":"err"},
     {"url":"https://www.youtube.com/@gameranxTV/videos","cat":"youtubers","type":"video","source_name":"Gameranx","lang":"en","filter_tag":"gaming","status":{},"lastStatus":"err"},
     # --- GAME: News ---
