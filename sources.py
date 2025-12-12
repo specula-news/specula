@@ -124,4 +124,4 @@ SOURCES = [
     
     # --- GEO: EU ---
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
-
+]
