@@ -36,7 +36,8 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIES ---
+# --- NYA STRATEGIER (V6.1) ---
+
 def strat_og(soup, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -52,7 +53,8 @@ def strat_json(soup, url):
             if isinstance(d, list): d = d[0]
             if 'image' in d:
                 img = d['image']
-                return img['url'] if isinstance(img, dict) else img
+                res = img['url'] if isinstance(img, dict) else img
+                return urljoin(url, res)
         except: continue
     return None
 
@@ -65,26 +67,59 @@ def strat_afton(html, url):
     return m[0] if m else None
 
 def strat_hero(soup, url):
-    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
+    # Utökad sökning efter hero/featured
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'entry-image', 'top-image']:
         div = soup.find(class_=re.compile(cls, re.I))
         if div:
             img = div.find('img')
-            if img and img.get('src'): return urljoin(url, img['src'])
+            if img:
+                # Kolla src först, sen data-src
+                src = img.get('src') or img.get('data-src') or img.get('data-lazy-src')
+                if src: return urljoin(url, src)
+    return None
+
+def strat_wordpress(soup, url):
+    # WordPress standardklass för huvudbild
+    img = soup.find('img', class_=re.compile('wp-post-image'))
+    if img:
+        src = img.get('src') or img.get('data-src')
+        if src: return urljoin(url, src)
+    return None
+
+def strat_lazy(soup, url):
+    # Letar efter bilder som gömmer sig i data-src
+    imgs = soup.find_all('img', attrs={"data-src": True})
+    if imgs:
+        return urljoin(url, imgs[0]['data-src'])
     return None
 
 def strat_largest(soup, url):
-    imgs = soup.find_all('img', src=True)
-    if not imgs: return None
-    # Enkel heuristik: ta bilden med längst src (ofta CDN med parametrar) eller första i article
-    target = soup.find('article')
-    if target:
-        img = target.find('img', src=True)
-        if img: return urljoin(url, img['src'])
-    return urljoin(url, imgs[0]['src'])
+    # Hittar bild med längst URL (ofta bäst kvalitet) eller srcset
+    best_img = None
+    max_len = 0
+    
+    # Kolla srcset först
+    srcsets = soup.find_all('img', srcset=True)
+    if srcsets:
+        best_img = srcsets[0]['srcset'].split(',').pop().trim().split(' ')[0]
+        return urljoin(url, best_img)
+
+    # Annars leta i article-taggen
+    target = soup.find('article') or soup
+    imgs = target.find_all('img', src=True)
+    
+    for img in imgs:
+        src = img['src']
+        if len(src) > max_len and 'logo' not in src and 'icon' not in src:
+            max_len = len(src)
+            best_img = src
+            
+    return urljoin(url, best_img) if best_img else None
 
 STRATEGY_MAP = {
     'og': strat_og, 'twitter': strat_twitter, 'json': strat_json,
-    'swec': strat_swec, 'afton': strat_afton, 'hero': strat_hero, 'largest': strat_largest
+    'swec': strat_swec, 'afton': strat_afton, 'hero': strat_hero, 
+    'largest': strat_largest, 'wordpress': strat_wordpress, 'lazy': strat_lazy
 }
 
 def get_image(entry, source):
@@ -95,13 +130,14 @@ def get_image(entry, source):
             r = get_session().get(entry.link, timeout=10, verify=False)
             soup = BeautifulSoup(r.text, 'html.parser')
             func = STRATEGY_MAP[strat_name]
-            # Vissa strategier behöver bara HTML, andra Soup
+            
             if strat_name in ['swec', 'afton']: res = func(r.text, entry.link)
             else: res = func(soup, entry.link)
+            
             if res: return res
         except: pass
 
-    # 2. RSS FLÖDE (SNABBAST & SÄKRAST)
+    # 2. RSS FLÖDE
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -109,13 +145,12 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
     
-    # 3. FALLBACK DEEP SCRAPE (Standard)
-    # Om ingen bild hittats, gör en generell scrape
+    # 3. FALLBACK DEEP SCRAPE
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
-        # Prova i ordning: OG -> Twitter -> JSON -> Hero
-        for func in [strat_og, strat_twitter, strat_json, strat_hero]:
+        # Smart ordning: OG -> Twitter -> WP -> Hero -> Lazy
+        for func in [strat_og, strat_twitter, strat_wordpress, strat_hero, strat_lazy]:
             res = func(soup, entry.link)
             if res: return res
     except: pass
@@ -130,27 +165,22 @@ def process_feed(source):
         if not feed.entries: return []
 
         for entry in feed.entries[:MAX_ARTICLES]:
-            # Datumhantering (Robust)
             try:
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
                     ts = time.mktime(entry.published_parsed)
                 elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
                     ts = time.mktime(entry.updated_parsed)
-                else:
-                    ts = time.time() # Om datum saknas, använd NU (så den syns)
+                else: ts = time.time()
             except: ts = time.time()
 
-            # Filtrera gammalt
             if (time.time() - ts) > (MAX_AGE_DAYS * 86400): continue
 
             img = get_image(entry, source)
             
-            # Textstädning
             raw_desc = entry.get('summary', '') or entry.get('description', '')
             desc = BeautifulSoup(raw_desc, 'html.parser').get_text(separator=' ').strip()
             desc = " ".join(desc.split())[:280] + "..." if len(desc) > 280 else desc
 
-            # Översättning
             title = entry.title
             if TRANSLATOR_ACTIVE and source.get('lang') == 'sv':
                 try:
@@ -169,7 +199,6 @@ def process_feed(source):
 def get_video_info(source):
     videos = []
     try:
-        # extract_flat=True är snabbt, men vi måste vara smarta med beskrivningen
         ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
@@ -178,22 +207,14 @@ def get_video_info(source):
             
             for entry in entries:
                 if not entry: continue
-                # Hämta beskrivning, fallback på titel
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 desc = desc[:280] + "..." if len(desc) > 280 else desc
-                
-                # Hämta tumnagel
-                thumb = DEFAULT_IMAGE
-                if entry.get('thumbnails'): thumb = entry['thumbnails'][-1]['url']
-                
-                # Datum (om saknas, använd NU)
-                ts = time.time()
-                # YouTube returnerar ibland upload_date som string 'YYYYMMDD'
+                thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
                 videos.append({
                     "title": entry['title'], "link": entry['url'], "images": [thumb],
                     "summary": desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], "timestamp": ts, "is_video": True
+                    "source": source['source_name'], "timestamp": time.time(), "is_video": True
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
@@ -202,11 +223,10 @@ if __name__ == "__main__":
     try:
         from sources import SOURCES
     except ImportError:
-        print("Error: sources.py not found or invalid.")
+        print("Error: sources.py not found.")
         SOURCES = []
 
     all_data = []
-    # 20 workers för hastighet
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         futures = []
         for s in SOURCES:
@@ -219,7 +239,6 @@ if __name__ == "__main__":
                 if res: all_data.extend(res)
             except: pass
 
-    # Sortera & Ta bort dubbletter
     all_data.sort(key=lambda x: x['timestamp'], reverse=True)
     seen = set()
     final = []
@@ -230,7 +249,6 @@ if __name__ == "__main__":
             
     final = final[:TOTAL_LIMIT]
 
-    # Skapa tidssträngar
     now = time.time()
     for art in final:
         diff = now - art['timestamp']
@@ -238,7 +256,6 @@ if __name__ == "__main__":
         elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
         else: art['time_str'] = f"{int(diff/86400)}d ago"
 
-    # Spara
     with open('news.json', 'w', encoding='utf-8') as f: json.dump(final, f, ensure_ascii=False, indent=2)
     
     if os.path.exists('template.html'):
