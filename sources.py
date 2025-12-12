@@ -2,13 +2,10 @@
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
-    {"url":"https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","cat":"geopolitics","type":"web","source_name":"The New York Times","lang":"en","filter_tag":"global","status":{},"lastStatus":"warn"},
     {"url":"https://www.reutersagency.com/feed/","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
     {"url":"https://www.theguardian.com/europe","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
-    {"url":"https://www.bloomberg.com/europe","cat":"geopolitics","type":"web","source_name":"Bloomberg","lang":"en","filter_tag":"global","status":{},"lastStatus":"warn"},
     {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
-    {"url":"http://feeds.bbci.co.uk/news/world/rss.xml","cat":"geopolitics","type":"web","source_name":"BBC World","lang":"en","filter_tag":"global","status":{},"lastStatus":"warn"},
     # --- MEDIA: Global ---
     {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
     {"url":"https://www.youtube.com/@aljazeeraenglish/videos","cat":"geopolitics","type":"video","source_name":"Al Jazeera English","lang":"en","filter_tag":"global","status":{},"lastStatus":"err"},
@@ -24,6 +21,10 @@ SOURCES = [
     # --- MEDIA: China ---
     {"url":"https://www.youtube.com/@channelnewsasia/videos","cat":"geopolitics","type":"video","source_name":"CNA","lang":"en","filter_tag":"china","status":{},"lastStatus":"err"},
     {"url":"https://www.youtube.com/@cgtn/videos","cat":"geopolitics","type":"video","source_name":"CGTN","lang":"en","filter_tag":"china","status":{},"lastStatus":"err"},
+    # --- MEDIA: USA ---
+    {"url":"http://feeds.bbci.co.uk/news/world/rss.xml","cat":"geopolitics","type":"video","source_name":"BBC World","lang":"en","filter_tag":"usa","status":{},"lastStatus":"warn"},
+    {"url":"https://www.bloomberg.com/europe","cat":"geopolitics","type":"video","source_name":"Bloomberg","lang":"en","filter_tag":"usa","status":{},"lastStatus":"warn"},
+    {"url":"https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","cat":"geopolitics","type":"video","source_name":"The New York Times","lang":"en","filter_tag":"usa","status":{},"lastStatus":"warn"},
     # --- MEDIA: India ---
     {"url":"https://www.youtube.com/@Firstpost/videos","cat":"geopolitics","type":"video","source_name":"Firstpost","lang":"en","filter_tag":"india","status":{},"lastStatus":"err"},
     # --- YT: Geo ---
