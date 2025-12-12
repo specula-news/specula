@@ -2,37 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SPECULA ADMIN // V12.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPECULA ADMIN // V12.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --success: #00ff88; --fail: #ff4444; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #000; z-index: 100; }
-        .actions { display: flex; gap: 10px; }
-        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; padding: 8px 16px; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; }
-        .btn-save { background: var(--accent) !important; color: #000 !important; }
-        .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* HEADER & NAV */
+        .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
+        .actions { display: flex; align-items: center; gap: 10px; }
+        button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
+        button:hover { border-color: #fff; color: #fff; }
+        .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
+        .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
+        .nav-item { padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; background: #111; border: 1px solid transparent; border-radius: 4px; }
+        .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
+        .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
+
+        /* MAIN LAYOUT */
+        .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
         .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; position: relative; }
-        .card-image { width: 100%; height: 160px; background: #000; border-radius: 4px; overflow: hidden; margin-bottom: 10px; border: 1px solid #333; }
+        .card-image { width: 100%; height: 160px; background: #000; border-radius: 4px; overflow: hidden; margin-bottom: 10px; border: 1px solid #333; display:flex; align-items:center; justify-content:center; }
         .card-image img { width: 100%; height: 100%; object-fit: cover; }
         .edit-name { background: transparent; border: none; color: #fff; font-size: 1.1rem; font-weight: bold; width: 100%; margin-bottom: 5px; }
         .edit-url { background: #000; border: 1px solid #333; color: #888; font-size: 0.7rem; width: 100%; padding: 8px; border-radius: 4px; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        
+        /* MODALS */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .overlay.open { display: flex; }
-        .modal { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 25px; width: 90%; max-width: 700px; }
+        .modal { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 25px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
+        
+        /* LOGIN SPECIFIC */
+        .login-box { width: 400px; text-align: center; gap: 15px; display: flex; flex-direction: column; }
+        .login-input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; }
+
+        /* LOGIC LAB */
         .logic-item { background: #1a1a1a; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--success); }
-        .logic-preview { width: 100px; height: 60px; object-fit: cover; border-radius: 4px; background: #000; margin-right: 15px; }
-        .btn-apply { background: var(--success); color: #000; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; }
-        .nav-container { display: flex; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; overflow-x: auto; }
-        .nav-item { padding: 8px 15px; cursor: pointer; color: #666; font-weight: bold; font-size: 0.8rem; background: #111; border-radius: 4px; white-space: nowrap; }
-        .nav-item.active { background: var(--accent); color: #000; }
+        .logic-preview { width: 80px; height: 50px; object-fit: cover; border-radius: 4px; background: #000; margin-right: 15px; }
+        .btn-apply { background: var(--success); color: #000; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
+    <!-- LOGIN MODAL (RESTORED) -->
+    <div class="overlay open" id="loginModal" style="z-index:9999;">
+        <div class="modal login-box">
+            <h2 style="color:var(--accent); margin:0;">SPECULA LOGIN</h2>
+            <input type="text" id="userInput" class="login-input" value="specula" placeholder="GitHub Username">
+            <input type="text" id="repoInput" class="login-input" value="specula" placeholder="Repository Name">
+            <input type="password" id="tokenInput" class="login-input" placeholder="ghp_...">
+            <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
+        </div>
+    </div>
+
     <div class="top-bar">
-        <div style="font-family:'Space Grotesk'; font-weight:bold; font-size:1.2rem;">SPECULA <span>// V12.0</span></div>
+        <div style="font-family:'Space Grotesk'; font-weight:bold; font-size:1.2rem;">SPECULA <span>// V12.1</span></div>
         <div class="actions">
             <button onclick="fetchSources()">↻ Reload</button>
             <button class="btn-save" onclick="saveToGitHubSafe()">💾 SAVE ALL</button>
@@ -46,11 +73,12 @@
         <div class="grid" id="grid"></div>
     </div>
 
+    <!-- LOGIC LAB MODAL -->
     <div class="overlay" id="testerModal">
         <div class="modal">
             <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                <h3 style="margin:0;">Working Image Logics</h3>
-                <button onclick="closeModal('testerModal')">×</button>
+                <h3 style="margin:0;">Visual Logic Probe</h3>
+                <button onclick="closeModal('testerModal')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">×</button>
             </div>
             <div id="logicResults"></div>
         </div>
@@ -58,16 +86,77 @@
 
     <script>
         let sourceData = {}; let newsMap = {}; let activeFolder = 'GLOBAL_WEB'; let currentSha = "";
-        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' } };
+        const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
+
+        // --- AUTH & INIT ---
+        window.onload = function() {
+            const token = localStorage.getItem("gh_token");
+            if (token) {
+                // Try to load. If fail, fetchSources will handle the error UI
+                fetchSources();
+            } else {
+                // Ensure login modal is open
+                document.getElementById('loginModal').classList.add('open');
+            }
+        };
+
+        function performLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+            if(!user || !repo || !token) return alert("All fields are required");
+            
+            localStorage.setItem("gh_user", user);
+            localStorage.setItem("gh_repo", repo);
+            localStorage.setItem("gh_token", token);
+            
+            fetchSources();
+        }
+
+        function logout() {
+            localStorage.removeItem("gh_token");
+            location.reload();
+        }
 
         async function fetchSources() {
-            const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token");
+            const user = localStorage.getItem("gh_user");
+            const repo = localStorage.getItem("gh_repo");
+            const token = localStorage.getItem("gh_token");
+
             try {
+                // 1. Fetch Sources
                 const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } });
-                const d = await res.json(); currentSha = d.sha;
-                const text = atob(d.content); parsePython(text);
-                renderNav(); renderGrid();
-            } catch(e) { alert("Login failed"); logout(); }
+                
+                if (!res.ok) {
+                    // IF AUTH FAILS, SHOW LOGIN MODAL AGAIN, DON'T ALERT
+                    if (res.status === 401 || res.status === 404) {
+                        document.getElementById('loginModal').classList.add('open');
+                        return;
+                    }
+                    throw new Error("GitHub Error: " + res.status);
+                }
+                
+                document.getElementById('loginModal').classList.remove('open');
+                const d = await res.json(); 
+                currentSha = d.sha;
+                const text = atob(d.content); 
+                parsePython(text);
+
+                // 2. Fetch News (True Preview)
+                try {
+                    const res2 = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/news.json`, { headers: { 'Authorization': `token ${token}` } });
+                    const d2 = await res2.json();
+                    const articles = JSON.parse(atob(d2.content));
+                    newsMap = {};
+                    articles.forEach(a => { if(a.feed_url && a.images?.[0]) newsMap[a.feed_url] = a.images[0]; });
+                } catch(e) {}
+
+                renderNav(); 
+                renderGrid();
+            } catch(e) { 
+                alert("Connection failed: " + e.message); 
+                document.getElementById('loginModal').classList.add('open');
+            }
         }
 
         function parsePython(text) {
@@ -75,7 +164,9 @@
             const endIdx = text.indexOf('URLS_GLOBAL = [');
             let content = text.substring(startIdx, endIdx).replace('SOURCES = [', '').trim();
             if(content.endsWith(']')) content = content.slice(0, -1);
+            
             for(let k in FOLDER_CONFIG) sourceData[k] = [];
+            
             content.split('\n').forEach(line => {
                 line = line.trim(); if(!line.startsWith('{')) return;
                 if(line.endsWith(',')) line = line.slice(0, -1);
@@ -89,66 +180,7 @@
             });
         }
 
-        async function openLogicAnalyzer(url, idx) {
-            document.getElementById('testerModal').classList.add('open');
-            const resBox = document.getElementById('logicResults');
-            resBox.innerHTML = '<p>Analyzing...</p>';
-            try {
-                const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
-                const text = await r.text();
-                const articleMatch = text.match(/<link>(.*?)<\/link>/) || [null, url];
-                const articleUrl = articleMatch[1];
-                const ar = await fetch(`https://corsproxy.io/?${encodeURIComponent(articleUrl)}`);
-                const html = await ar.text();
-                const doc = new DOMParser().parseFromString(html, "text/html");
-
-                const strats = [
-                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
-                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content },
-                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0] },
-                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[0] },
-                    { id: 'srcset', name: "High-Res Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] },
-                    { id: 'hero', name: "Hero/Featured", val: doc.querySelector('.hero img, .featured img, .article-image img')?.src }
-                ];
-
-                resBox.innerHTML = '';
-                strats.forEach(s => {
-                    if(s.val) {
-                        resBox.innerHTML += `
-                        <div class="logic-item">
-                            <img src="${s.val}" class="logic-preview">
-                            <div style="flex:1"><b>${s.name}</b><br><small>${s.val.substring(0,40)}...</small></div>
-                            <button class="btn-apply" onclick="applyStrat('${s.id}', ${idx})">USE THIS</button>
-                        </div>`;
-                    }
-                });
-                if(!resBox.innerHTML) resBox.innerHTML = '<p>No image found with any logic.</p>';
-            } catch(e){ resBox.innerHTML = '<p>Error during analysis.</p>'; }
-        }
-
-        function applyStrat(id, idx) {
-            sourceData[activeFolder][idx].image_strategy = id;
-            document.getElementById('testerModal').classList.remove('open');
-            alert("Strategy marked! Remember to SAVE ALL.");
-        }
-
-        function renderGrid() {
-            const grid = document.getElementById('grid'); grid.innerHTML = '';
-            sourceData[activeFolder].forEach((item, idx) => {
-                const card = document.createElement('div'); card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-image"><span>No Image</span></div>
-                    <input class="edit-name" value="${item.source_name}">
-                    <input class="edit-url" value="${item.url}">
-                    <div style="margin-top:10px; display:flex; gap:10px;">
-                        <button onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE LOGIC</button>
-                        <button onclick="deleteSource(${idx})" style="color:red">×</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
+        // --- UI ---
         function renderNav() {
             const nav = document.getElementById('navBar'); nav.innerHTML = '';
             for(let id in FOLDER_CONFIG) {
@@ -160,30 +192,90 @@
             }
         }
 
+        function renderGrid() {
+            const grid = document.getElementById('grid'); grid.innerHTML = '';
+            const items = sourceData[activeFolder] || [];
+            
+            items.forEach((item, idx) => {
+                let imgHtml = '<span>No Preview</span>';
+                if (newsMap[item.url]) imgHtml = `<img src="${newsMap[item.url]}">`;
+                
+                const card = document.createElement('div'); card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-image">${imgHtml}</div>
+                    <input class="edit-name" value="${item.source_name}">
+                    <input class="edit-url" value="${item.url}">
+                    <div style="margin-top:10px; display:flex; gap:10px;">
+                        <button onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button>
+                        <button onclick="deleteSource(${idx})" style="color:red">×</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- ANALYZER ---
+        async function openLogicAnalyzer(url, idx) {
+            document.getElementById('testerModal').classList.add('open');
+            const resBox = document.getElementById('logicResults');
+            resBox.innerHTML = '<p>Analyzing...</p>';
+            try {
+                const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+                const text = await r.text();
+                // Basic RSS parsing to find article link
+                let articleUrl = url;
+                const linkMatch = text.match(/<link>(.*?)<\/link>/);
+                if (linkMatch) articleUrl = linkMatch[1];
+
+                const ar = await fetch(`https://corsproxy.io/?${encodeURIComponent(articleUrl)}`);
+                const html = await ar.text();
+                const doc = new DOMParser().parseFromString(html, "text/html");
+
+                const strats = [
+                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
+                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0] },
+                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[0] },
+                    { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img')?.src }
+                ];
+
+                resBox.innerHTML = '';
+                strats.forEach(s => {
+                    if(s.val) {
+                        resBox.innerHTML += `
+                        <div class="logic-item">
+                            <img src="${s.val}" class="strat-preview">
+                            <div style="flex:1"><b>${s.name}</b><br><small>${s.val.substring(0,30)}...</small></div>
+                            <button class="btn-apply" onclick="applyStrat('${s.id}', ${idx})">USE</button>
+                        </div>`;
+                    }
+                });
+                if(resBox.innerHTML === '') resBox.innerHTML = '<p>No images found with standard probes.</p>';
+            } catch(e){ resBox.innerHTML = '<p>Analysis failed (Proxy error).</p>'; }
+        }
+
+        function applyStrat(id, idx) {
+            sourceData[activeFolder][idx].image_strategy = id;
+            document.getElementById('testerModal').classList.remove('open');
+            alert("Strategy set! Remember to SAVE ALL.");
+        }
+
         async function saveToGitHubSafe() {
-            if(!confirm("Push all changes to GitHub?")) return;
+            if(!confirm("Push changes?")) return;
             let py = "SOURCES = [\n";
             for(let k in sourceData) {
                 sourceData[k].forEach(item => py += `    ${JSON.stringify(item)},\n`);
             }
-            py += "]\n\nURLS_GLOBAL = []"; // Placeholder for footer
+            py += "]\n\nURLS_GLOBAL = []";
             const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token");
             await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, {
                 method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Admin Update Logic", content: btoa(py), sha: currentSha })
+                body: JSON.stringify({ message: "Admin Update", content: btoa(py), sha: currentSha })
             });
             alert("Saved!");
         }
 
-        function performLogin() {
-            localStorage.setItem("gh_user", document.getElementById('userInput').value);
-            localStorage.setItem("gh_repo", document.getElementById('repoInput').value);
-            localStorage.setItem("gh_token", document.getElementById('tokenInput').value);
-            fetchSources();
-        }
-        function logout() { localStorage.clear(); location.reload(); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        window.onload = () => { if(localStorage.getItem("gh_token")) fetchSources(); };
+        function deleteSource(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); } }
     </script>
 </body>
 </html>
