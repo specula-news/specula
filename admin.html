@@ -3,107 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V9.0 (LOGIC PROBE)</title>
+    <title>SPECULA ADMIN // V9.1 (AUTO-FIX)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --code-bg: #1e1e1e; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* HEADER */
         .top-bar { height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; }
         .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
         .brand span { color: var(--accent); }
         .actions { display: flex; align-items: center; gap: 10px; }
-        
         button { font-family: 'Space Grotesk'; font-weight: 700; cursor: pointer; transition: 0.2s; border-radius: 4px; border: 1px solid #444; background: #111; color: #ccc; padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; }
         button:hover { border-color: #fff; color: #fff; }
-
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
         .btn-logout { border-color: #ff4444; color: #ff4444; }
-        
         .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
         .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
-        .deploy-text { font-family: monospace; color: #aaa; }
-
-        /* NAV */
         .nav-container { display: flex; align-items: center; padding: 10px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); gap: 10px; z-index: 90; flex-wrap: wrap; min-height: 50px; flex-shrink: 0; }
         .nav-item { position: relative; padding: 8px 12px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 700; font-size: 0.8rem; color: #666; text-transform: uppercase; display: flex; align-items: center; gap: 5px; border-radius: 4px; background: #111; border: 1px solid transparent; }
         .nav-item:hover { color: #fff; background: #1a1a1a; border-color: #333; }
         .nav-item.active { color: #000; background: var(--accent); border-color: var(--accent); }
-        .nav-item::after { content: ''; position: absolute; left: 0; bottom: -15px; width: 100%; height: 20px; background: transparent; z-index: 205; }
-        
-        .dropdown { position: absolute; top: 100%; left: 0; background: #111; border: 1px solid #333; border-radius: 6px; padding: 5px; min-width: 180px; display: none; flex-direction: column; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-top: 5px; }
-        .nav-item:hover .dropdown, .dropdown:hover { display: flex; }
-        .drop-item { padding: 8px 12px; color: #888; font-size: 0.8rem; cursor: pointer; display: flex; justify-content: space-between; }
-        .drop-item:hover { background: #222; color: #fff; }
-        .drop-item.selected { color: var(--accent); }
-
-        /* GRID */
         .main-view { flex-grow: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at 50% 20%, #111 0%, #050505 60%); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(32%, 1fr)); gap: 20px; }
-        
         .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; position: relative; }
         .card:hover { border-color: #555; background: #1a1a1a; transform: translateY(-2px); }
-        
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; padding-right: 30px; }
         .favicon-wrap { display: flex; align-items: center; gap: 10px; width: 100%; }
         .favicon { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; background: #000; }
         .edit-name { background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; font-family: 'Space Grotesk'; font-weight: 700; font-size: 1rem; width: 100%; padding: 4px 0; }
         .edit-name:focus { border-color: var(--accent); outline: none; }
-        
         .status-dot { position: absolute; top: 15px; right: 45px; width: 10px; height: 10px; border-radius: 50%; background: #333; }
         .status-ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .status-warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
         .status-err { background: var(--fail); box-shadow: 0 0 8px var(--fail); }
         .status-loading { background: #fff; animation: pulse 1s infinite; }
-
         .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
         .btn-del-corner:hover { background: #550000; color: #ff9999; border-color: #ff4444; }
-
         .url-block { display: flex; flex-direction: column; gap: 5px; }
         .url-actions { display: flex; justify-content: space-between; align-items: center; }
         .edit-url { background: #000; border: 1px solid #333; color: #bbb; font-family: monospace; font-size: 0.75rem; width: 100%; padding: 8px; border-radius: 4px; margin-top: 5px; }
         .edit-url:focus { border-color: var(--accent); color: #fff; outline: none; }
-        
         .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
         .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
-        
         .card-footer { margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; display: flex; gap: 10px; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
-
-        /* MODALS */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
-        
-        .login-box { width: 400px; text-align: center; gap: 15px; }
-        .login-input { width: 90%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; }
-        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
-
-        .editor-window { max-width: 1000px; height: 85vh; }
-        .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
-        .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
-        
-        /* LOGIC ANALYZER STYLES */
         .logic-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
         .logic-item { background: #1a1a1a; padding: 12px; border-radius: 6px; border-left: 4px solid #333; display: flex; flex-direction: column; gap: 5px; }
         .logic-item.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
         .logic-item.fail { border-left-color: var(--fail); opacity: 0.6; }
-        .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; }
+        .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; align-items: center; }
         .logic-val { font-family: monospace; font-size: 0.8rem; color: #aaa; word-break: break-all; margin-top:5px; padding-top:5px; border-top:1px solid #333; }
         .preview-img { max-width: 100%; height: 150px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; align-self: center; }
-
+        .login-box { width: 400px; text-align: center; gap: 15px; }
+        .login-input { width: 90%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
+        .btn-apply { background: var(--success); color: #000; border: none; padding: 5px 10px; font-size: 0.7rem; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-apply:hover { background: #fff; }
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
         .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; top: 110px; }
-        
-        .fail-options { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
-        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
-
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -117,21 +79,18 @@
     <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
         <div class="modal-window login-box">
             <h2 style="color:var(--accent);">SPECULA LOGIN</h2>
-            <p style="color:#888;">Enter GitHub Token (saved locally)</p>
             <input type="password" id="tokenInput" class="login-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
             <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
         </div>
     </div>
 
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V9.0</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V9.1</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center;">
             <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
         </div>
         <div class="actions">
-            <div id="deployStatus" class="deploy-status">
-                <div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span>
-            </div>
+            <div id="deployStatus" class="deploy-status"><div class="deploy-dot"></div><span id="deployText" class="deploy-text">Checking...</span></div>
             <button onclick="document.getElementById('fileDumpInput').click()">📂 DUMP</button>
             <button class="btn-code" onclick="openSelector('html')">📝 HTML</button>
             <button class="btn-code" onclick="openSelector('py')">⚙️ PY</button>
@@ -165,45 +124,6 @@
         </div>
     </div>
 
-    <!-- FAIL MODAL -->
-    <div class="overlay" id="failModal">
-        <div class="modal-window" style="max-width:500px; text-align:center;">
-            <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
-            <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
-            <div class="fail-options">
-                <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button>
-                <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button>
-                <button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDITOR -->
-    <div class="overlay" id="editorModal">
-        <div class="modal-window editor-window">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
-                <div id="editorTitle" style="font-weight:bold;">EDIT</div>
-                <button onclick="closeModal('editorModal')" style="font-size:1.5rem; background:transparent; border:none;">×</button>
-            </div>
-            <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
-            <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button>
-                    <button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="overlay" id="selectorModal">
-        <div class="modal-window" style="width:300px; text-align:center;">
-            <h3>SELECT FILE</h3>
-            <div id="selectorButtons" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"></div>
-            <button onclick="closeModal('selectorModal')" style="margin-top:15px; width:100%; border:none; background:transparent;">Cancel</button>
-        </div>
-    </div>
-
     <div class="add-bar">
         <input type="text" id="urlInput" class="add-input" placeholder="Paste URL (YouTube or Website)..." style="flex-grow: 2;" oninput="preCheckUrl()">
         <input type="text" id="nameInput" class="add-input" placeholder="Name (Optional)..." style="flex-grow: 1;">
@@ -217,10 +137,8 @@
         const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
         
         let sourceData = {}; let rawHeader = ""; let rawFooter = ""; let currentSha = ""; let activeFolder = 'GLOBAL_WEB';
-        let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
-        let pendingAddUrl = ""; let pendingAddName = "";
+        let activeAnalyzerIndex = -1; // Tracks which source we are analyzing to apply fixes
 
-        // --- AUTH ---
         window.onload = function() { 
             for(let key in FOLDER_CONFIG) sourceData[key] = []; 
             const savedToken = localStorage.getItem("gh_token");
@@ -228,62 +146,48 @@
         };
         function performLogin() {
             const token = document.getElementById('tokenInput').value.trim();
-            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) return alert("Invalid Token format");
+            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) return alert("Invalid Token");
             localStorage.setItem("gh_token", token); document.getElementById('ghToken').value = token;
             document.getElementById('loginModal').classList.remove('open'); fetchSources();
         }
-        function logout() { if(confirm("Logout?")) { localStorage.removeItem("gh_token"); location.reload(); } }
+        function logout() { localStorage.removeItem("gh_token"); location.reload(); }
 
-        // --- CORE ---
+        // --- FETCH PROXY (FIXED) ---
+        async function fetchProxy(url) {
+            try { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); }
+            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
+        }
+
         async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { if(e.message === "Auth Failed") logout(); else alert(e.message); } }
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
 
-        function renderNav() { 
-            const nav = document.getElementById('navBar'); nav.innerHTML = ''; 
-            MENU.forEach(m => { 
-                if(m.subs) { 
-                    const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; 
-                    const drop = document.createElement('div'); drop.className = 'dropdown'; 
-                    m.subs.forEach(sid => { 
-                        const count = sourceData[sid] ? sourceData[sid].length : 0; 
-                        const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; 
-                        row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; 
-                        row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); 
-                    }); div.appendChild(drop); nav.appendChild(div); 
-                } else { 
-                    const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; 
-                    div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; 
-                    div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; 
-                    div.onclick = () => switchFolder(m.id); nav.appendChild(div); 
-                } 
-            }); 
-        }
+        function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
+        function renderGrid() { const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; const items = sourceData[activeFolder] || []; document.getElementById('countBadge').innerText = items.length + " Sources"; items.forEach((item, idx) => { const stat = item.lastStatus || 'none'; const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot status-${stat}" title="${stat}"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; grid.appendChild(card); }); }
+        function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
+        function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
+        function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
+        function moveItem(idx, tid) { if(!tid) return; const item = sourceData[activeFolder][idx]; const cfg = FOLDER_CONFIG[tid]; item.cat = cfg.cat; if(cfg.type) item.type = cfg.type; if(cfg.tag) item.filter_tag = cfg.tag; sourceData[activeFolder].splice(idx, 1); sourceData[tid].unshift(item); renderGrid(); renderNav(); showToast("Moved"); }
+        function deleteItem(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
 
-        function renderGrid() { 
-            const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('folderTitle').innerText = FOLDER_CONFIG[activeFolder].label; const items = sourceData[activeFolder] || []; document.getElementById('countBadge').innerText = items.length + " Sources"; 
-            items.forEach((item, idx) => { 
-                const stat = item.lastStatus || 'none'; 
-                const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
-                card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot status-${stat}" title="${stat}"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}')">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-mini" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; 
-                grid.appendChild(card); 
-            }); 
-        }
+        // --- ADD ---
+        function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
+        function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
 
         // --- DEEP PROBE ---
-        async function openLogicAnalyzer(url) {
+        async function openLogicAnalyzer(url, idx) {
+            activeAnalyzerIndex = idx;
             document.getElementById('testerModal').classList.add('open');
             const resBox = document.getElementById('logicResults');
-            resBox.innerHTML = '<div style="text-align:center; padding:20px;">Fetching Feed & Article...</div>';
+            resBox.innerHTML = '<div style="text-align:center; padding:20px;">Fetching...</div>';
 
             try {
-                // 1. Fetch Feed to find article URL
-                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                const r = await fetch(proxy);
+                // Fetch Proxy
+                const r = await fetchProxy(url);
                 const d = await r.json();
                 
-                // Parse XML
+                // Parse
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(d.contents, "text/xml");
                 const items = xmlDoc.getElementsByTagName("item");
@@ -292,142 +196,62 @@
                 if(items.length > 0) {
                     const linkTag = items[0].getElementsByTagName("link")[0];
                     if(linkTag) articleUrl = linkTag.textContent.trim();
-                } else if (!url.includes('rss') && !url.includes('xml')) {
-                    articleUrl = url; // Fallback if it's already a website
-                }
+                } else if (!url.includes('rss') && !url.includes('xml')) { articleUrl = url; }
 
-                if (!articleUrl) { resBox.innerHTML = '<div style="color:var(--warning)">Could not find article URL. Is this a valid feed?</div>'; return; }
+                if (!articleUrl) { resBox.innerHTML = '<div style="color:var(--warning)">Could not find article URL.</div>'; return; }
 
                 resBox.innerHTML = `<div style="text-align:center; padding-bottom:10px; color:#888;">Analyzing: <br>${articleUrl.substring(0,40)}...</div>`;
                 
-                // 2. Fetch Article HTML
-                const ar = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(articleUrl)}`);
+                // Fetch Article
+                const ar = await fetchProxy(articleUrl);
                 const ad = await ar.json();
                 const html = ad.contents;
                 
-                // Parse HTML
                 const doc = new DOMParser().parseFromString(html, "text/html");
-
                 let results = [];
                 let foundImg = null;
 
-                // --- STRATEGY 1: OpenGraph ---
-                const og = doc.querySelector('meta[property="og:image"]');
-                results.push({ name: "1. OpenGraph", val: og ? og.content : null });
+                const strategies = [
+                    { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content },
+                    { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content },
+                    { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") },
+                    { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] },
+                    { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }
+                ];
 
-                // --- STRATEGY 2: Twitter ---
-                const tw = doc.querySelector('meta[name="twitter:image"]');
-                results.push({ name: "2. Twitter Card", val: tw ? tw.content : null });
-
-                // --- STRATEGY 3: JSON-LD ---
-                let jsonImg = null;
-                const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
-                scripts.forEach(s => {
-                    try {
-                        const json = JSON.parse(s.innerText);
-                        const obj = Array.isArray(json) ? json[0] : json;
-                        if(obj.image) {
-                            if(typeof obj.image === 'string') jsonImg = obj.image;
-                            else if(obj.image.url) jsonImg = obj.image.url;
-                        }
-                    } catch(e){}
-                });
-                results.push({ name: "3. JSON-LD", val: jsonImg });
-
-                // --- STRATEGY 4: Link Rel ---
-                const lnk = doc.querySelector('link[rel="image_src"]');
-                results.push({ name: "4. Link Rel", val: lnk ? lnk.href : null });
-
-                // --- STRATEGY 5: Sweclockers ---
-                const swecMatch = html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/);
-                results.push({ name: "5. Sweclockers Regex", val: swecMatch ? swecMatch[0].replace(/&amp;/g, "&") : null });
-
-                // --- STRATEGY 6: Aftonbladet ---
-                const abMatch = html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/);
-                results.push({ name: "6. Aftonbladet Regex", val: abMatch ? abMatch[1] : null });
-
-                // --- STRATEGY 7: Hero Class ---
-                let heroImg = null;
-                const heroes = doc.querySelectorAll('.hero img, .featured-image img, .article-image img, .main-image img');
-                if(heroes.length > 0) heroImg = heroes[0].src;
-                results.push({ name: "7. Hero/Featured Class", val: heroImg });
-
-                // --- STRATEGY 8: First Article Image ---
-                let firstImg = null;
-                const articleImg = doc.querySelector('article img');
-                if(articleImg) firstImg = articleImg.src;
-                results.push({ name: "8. First <article> Image", val: firstImg });
-
-                // --- STRATEGY 9: Largest Srcset ---
-                let bestSrcset = null;
-                const srcsets = doc.querySelectorAll('img[srcset]');
-                if(srcsets.length > 0) {
-                    // Simple check: take the longest srcset string (heuristic for most data/pixels)
-                    let best = srcsets[0];
-                    srcsets.forEach(img => { if(img.srcset.length > best.srcset.length) best = img; });
-                    const parts = best.srcset.split(',');
-                    const lastPart = parts[parts.length-1].trim().split(' ')[0];
-                    if(lastPart) bestSrcset = lastPart;
-                }
-                results.push({ name: "9. Largest Srcset", val: bestSrcset });
-
-                // RENDER
                 let htmlOut = "";
-                results.forEach(res => {
+                strategies.forEach(res => {
                     if(res.val && !foundImg) foundImg = res.val;
                     const status = res.val ? "success" : "fail";
-                    htmlOut += `<div class="logic-item ${status}"><div class="logic-header"><span>${res.name}</span><span>${res.val ? "✅ MATCH" : "❌"}</span></div>${res.val ? `<div class="logic-val">${res.val}</div>` : ''}</div>`;
+                    htmlOut += `
+                        <div class="logic-item ${status}">
+                            <div class="logic-header">
+                                <span>${res.name}</span>
+                                <button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button>
+                            </div>
+                            ${res.val ? `<div class="logic-val">${res.val}</div>` : ''}
+                        </div>
+                    `;
                 });
 
                 if(foundImg) htmlOut = `<div style="text-align:center; margin-bottom:15px;"><img src="${foundImg}" class="preview-img"></div>` + htmlOut;
                 resBox.innerHTML = htmlOut;
 
-            } catch(e) {
-                resBox.innerHTML = `<div style="color:red; text-align:center; padding:20px;">Error: ${e.message}</div>`;
+            } catch(e) { resBox.innerHTML = `<div style="color:red; text-align:center;">Error: ${e.message}</div>`; }
+        }
+
+        function applyStrategy(stratCode) {
+            if(activeAnalyzerIndex > -1) {
+                sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode;
+                showToast("Strategy Applied! Save to GitHub.");
+                closeModal('testerModal');
             }
         }
 
-        // --- UTILS & ADD ---
-        function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
-        async function handleAddClick() {
-            const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required");
-            if(url.includes('youtube') || url.endsWith('.xml') || url.endsWith('.rss') || url.includes('feed')) { addSourceDirect(url, name); return; }
-            showToast("Scanning for Feeds...");
-            try {
-                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`; const res = await fetch(proxy); const data = await res.json();
-                const regex = /<link[^>]+rel=["']alternate["'][^>]+type=["']application\/(rss|atom)\+xml["'][^>]+href=["'](.*?)["']/g;
-                let matches = []; let match; while((match = regex.exec(data.contents)) !== null) { matches.push(match[2].startsWith('/') ? new URL(match[2], url).href : match[2]); }
-                if(matches.length > 0) { addSourceDirect(matches[0], name); } 
-                else { pendingAddUrl = url; pendingAddName = name; document.getElementById('failUrl').innerText = url; document.getElementById('failModal').classList.add('open'); }
-            } catch(e) { pendingAddUrl = url; pendingAddName = name; document.getElementById('failUrl').innerText = url; document.getElementById('failModal').classList.add('open'); }
-        }
-        function forceAddSource() { addSourceDirect(pendingAddUrl, pendingAddName); closeModal('failModal'); }
-        function searchGoogleForRSS() { const domain = new URL(pendingAddUrl).hostname; window.open(`https://www.google.com/search?q=${encodeURIComponent('site:' + domain + ' rss feed')}`, '_blank'); closeModal('failModal'); }
-        function addSourceDirect(url, name) { const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
-
-        // --- DEPLOY ---
-        async function deployLive() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
-        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
-
-        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
-        function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function switchFolder(id) { activeFolder = id; renderNav(); renderGrid(); }
-        function getMoveOptions(cid) { let html = ''; for(let id in FOLDER_CONFIG) { if(id !== cid) html += `<option value="${id}">${FOLDER_CONFIG[id].label}</option>`; } return html; }
-        function updateItem(idx, f, v) { sourceData[activeFolder][idx][f] = v.trim(); }
-        function moveItem(idx, tid) { if(!tid) return; const item = sourceData[activeFolder][idx]; const cfg = FOLDER_CONFIG[tid]; item.cat = cfg.cat; if(cfg.type) item.type = cfg.type; if(cfg.tag) item.filter_tag = cfg.tag; sourceData[activeFolder].splice(idx, 1); sourceData[tid].unshift(item); renderGrid(); renderNav(); showToast("Moved"); }
-        function deleteItem(idx) { if(confirm("Delete?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
-        async function runDiagnostics() {
-            const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); }
-            for(let src of allSources) {
-                updateStatusDot(src.folder, src.index, 'loading');
-                try { const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(src.url)}`); const data = await res.json(); if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) { updateStatusDot(src.folder, src.index, 'err'); continue; } updateStatusDot(src.folder, src.index, 'ok'); } catch(e) { updateStatusDot(src.folder, src.index, 'err'); }
-            } showToast("Diagnostics Complete");
-        }
-        function updateStatusDot(folder, index, status) { if(!sourceData[folder][index].status) sourceData[folder][index].status = {}; sourceData[folder][index].lastStatus = status; if(folder === activeFolder) { const c = document.getElementById(`card-${index}`); if(c) c.querySelector('.status-dot').className = `status-dot status-${status}`; } }
-        
+        // --- DEPLOY & SAVE ---
         async function saveToGitHubSafe() {
             if(!confirm("Overwrite sources.py?")) return;
+            // Clean
             const seenUrls = new Set();
             for(let key in sourceData) {
                 const uniqueList = [];
@@ -441,21 +265,32 @@
                 sourceData[key] = uniqueList;
             }
             let content = rawHeader + "\n\nSOURCES = [\n"; 
-            for(let id in sourceData) { 
-                if(sourceData[id].length > 0) { 
-                    content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; 
-                    sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); 
-                } 
-            } 
+            for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } 
             content += "]\n\n" + rawFooter; 
-            const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V8.3)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Status: " + res.status + " " + res.statusText); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert("SAVE FAILED: " + e.message); console.error(e); } 
+            const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V9.1)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED!"); } catch(e) { alert(e.message); } 
         }
 
-        function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button style="width:100%; margin-top:10px; padding:15px; background:#222;" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
-        async function fetchFileToEdit(f) { const u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
-        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=document.getElementById('ghUser').value, r=document.getElementById('ghRepo').value, t=document.getElementById('ghToken').value; const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(fetchSources, 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
-        async function handleFileDump(input) { const file = input.files[0]; if(!file) return; const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) { input.value = ""; return; } const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; let sha = null; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); if(check.ok) sha = (await check.json()).sha; } catch(e){} try { await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOADED! 📂"); } catch(e) { alert("Error: " + e.message); } input.value = ""; }; }
+        async function deployLive() {
+            const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; 
+            try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } 
+        }
+
+        function startDeployPolling() {
+            const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); 
+        }
+
+        // UTILS
+        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        async function runDiagnostics() {
+            const allSources = []; for(let key in sourceData) { sourceData[key].forEach((item, idx) => { allSources.push({ ...item, folder: key, index: idx }); }); }
+            for(let src of allSources) {
+                updateStatusDot(src.folder, src.index, 'loading');
+                try { const r = await fetchProxy(src.url); const data = await r.json(); if (!data.contents.includes('<rss') && !data.contents.includes('<feed') && !data.contents.includes('<html')) { updateStatusDot(src.folder, src.index, 'err'); continue; } updateStatusDot(src.folder, src.index, 'ok'); } catch(e) { updateStatusDot(src.folder, src.index, 'err'); }
+            } showToast("Diagnostics Complete");
+        }
+        function updateStatusDot(folder, index, status) { if(!sourceData[folder][index].status) sourceData[folder][index].status = {}; sourceData[folder][index].lastStatus = status; if(folder === activeFolder) { const c = document.getElementById(`card-${index}`); if(c) c.querySelector('.status-dot').className = `status-dot status-${status}`; } }
 
     </script>
 </body>
