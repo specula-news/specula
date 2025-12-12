@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V8.3 (FIXED)</title>
+    <title>SPECULA ADMIN // V8.4 (AUTO-LOGIN)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -21,7 +21,8 @@
 
         .btn-save { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
         .btn-diag { border-color: var(--success) !important; color: var(--success) !important; padding: 10px 30px; font-size: 0.9rem; }
-        .btn-diag:hover { background: var(--success) !important; color: #000 !important; box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
+        .btn-logout { border-color: #ff4444; color: #ff4444; }
+        .btn-logout:hover { background: #ff4444; color: #fff; }
         
         .deploy-status { display: none; align-items: center; gap: 10px; font-size: 0.8rem; background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #444; }
         .deploy-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1s infinite; }
@@ -69,8 +70,7 @@
         
         .btn-analyze { background: #222; color: var(--accent); border: 1px solid #333; font-size: 0.7rem; padding: 4px 8px; }
         .btn-analyze:hover { border-color: var(--accent); background: rgba(0, 240, 255, 0.1); }
-        .btn-fix { background: var(--warning); color: #000; border: none; font-size: 0.7rem; padding: 4px 8px; animation: pulse 2s infinite; display: none; }
-
+        
         .card-footer { margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; display: flex; gap: 10px; }
         .move-select { background: #000; color: #aaa; border: 1px solid #333; padding: 6px; border-radius: 4px; width: 100%; font-size: 0.75rem; cursor: pointer; }
 
@@ -79,6 +79,17 @@
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
         
+        /* LOGIN MODAL SPECIAL */
+        .login-box { width: 400px; text-align: center; gap: 15px; }
+        .login-input { width: 90%; padding: 15px; background: #000; border: 1px solid #333; color: #fff; font-family: monospace; border-radius: 6px; margin: 10px 0; }
+        .btn-login { width: 100%; padding: 15px; background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; }
+
+        /* EDITOR */
+        .editor-window { max-width: 1000px; height: 85vh; }
+        .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
+        .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
+        
+        /* LOGIC ANALYZER STYLES */
         .logic-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; overflow-y: auto; max-height: 60vh; }
         .logic-item { background: #1a1a1a; padding: 12px; border-radius: 6px; border-left: 4px solid #333; display: flex; flex-direction: column; gap: 5px; }
         .logic-item.success { border-left-color: var(--success); background: rgba(0, 255, 136, 0.05); }
@@ -86,18 +97,6 @@
         .logic-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; }
         .logic-val { font-family: monospace; font-size: 0.8rem; color: #aaa; word-break: break-all; margin-top:5px; padding-top:5px; border-top:1px solid #333; }
         .preview-img { max-width: 100%; height: 180px; object-fit: contain; background: #000; border: 1px solid #333; margin-top: 10px; border-radius: 4px; }
-        
-        .fail-options { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-fail-action { flex: 1; padding: 15px; background: #222; border: 1px solid #333; color: #ccc; border-radius: 6px; }
-        .btn-fail-action:hover { border-color: #fff; background: #333; color: #fff; }
-
-        /* EDITOR */
-        .editor-window { max-width: 1000px; height: 85vh; }
-        .code-area { flex-grow: 1; background: var(--code-bg); color: #ccc; border: 1px solid var(--border); font-family: monospace; padding: 15px; font-size: 0.9rem; resize: none; border-radius: 6px; white-space: pre-wrap; overflow-y: auto; margin: 15px 0; }
-        
-        .editor-controls { display: flex; justify-content: space-between; margin-top: 15px; }
-        .btn-clear { background: #330000; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; }
-        .btn-clear:hover { background: #550000; color: #fff; }
 
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
@@ -113,8 +112,18 @@
     <input type="hidden" id="ghToken" value=""> 
     <input type="file" id="fileDumpInput" style="display:none" onchange="handleFileDump(this)">
 
+    <!-- LOGIN OVERLAY -->
+    <div class="overlay open" id="loginModal" style="z-index:9999; background:#000;">
+        <div class="modal-window login-box">
+            <h2 style="color:var(--accent);">SPECULA LOGIN</h2>
+            <p style="color:#888;">Enter GitHub Token (saved locally)</p>
+            <input type="password" id="tokenInput" class="login-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <button class="btn-login" onclick="performLogin()">UNLOCK SYSTEM</button>
+        </div>
+    </div>
+
     <div class="top-bar">
-        <div class="brand">SPECULA <span>// ADMIN V8.3</span></div>
+        <div class="brand">SPECULA <span>// ADMIN V8.4</span></div>
         <div style="flex-grow:1; display:flex; justify-content:center;">
             <button class="btn-diag" onclick="runDiagnostics()">🔍 RUN FULL DIAGNOSTICS</button>
         </div>
@@ -128,6 +137,7 @@
             <button onclick="fetchSources()">↻</button>
             <button onclick="deployLive()">🚀 DEPLOY</button>
             <button class="btn-save" onclick="saveToGitHubSafe()">💾 SAVE</button>
+            <button class="btn-logout" onclick="logout()">LOGOUT</button>
         </div>
     </div>
 
@@ -135,13 +145,13 @@
 
     <div class="main-view">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center;">
-            <div id="folderTitle" style="font-family:'Space Grotesk'; font-size:1.5rem; font-weight:bold;">LOADING...</div>
+            <div id="folderTitle" style="font-family:'Space Grotesk'; font-size:1.5rem; font-weight:bold;">LOCKED</div>
             <div id="countBadge" style="background:#222; padding:5px 10px; border-radius:4px; font-size:0.8rem; color:#888;">0 Sources</div>
         </div>
         <div class="grid" id="grid"></div>
     </div>
 
-    <!-- MODAL: LOGIC ANALYZER -->
+    <!-- MODALS -->
     <div class="overlay" id="testerModal">
         <div class="modal-window tester-window">
             <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -154,21 +164,18 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD FAIL -->
     <div class="overlay" id="failModal">
         <div class="modal-window" style="max-width:500px; text-align:center;">
             <div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div>
             <p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p>
-            <p id="failUrl" style="font-family:monospace; background:#000; padding:10px; border-radius:4px; word-break:break-all;"></p>
-            <div class="fail-options">
-                <button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add URL as is)</span></button>
-                <button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS link)</span></button>
-                <button class="btn-fail-action" onclick="closeModal('failModal')">Cancel<br><span style="font-size:0.7em; color:#666;">(Do nothing)</span></button>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button style="flex:1; padding:15px; background:#222;" onclick="forceAddSource()">Force Add</button>
+                <button style="flex:1; padding:15px; background:#222;" onclick="searchGoogleForRSS()">Search Google</button>
+                <button style="flex:1; padding:15px; background:#222;" onclick="closeModal('failModal')">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: EDITOR -->
     <div class="overlay" id="editorModal">
         <div class="modal-window editor-window">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
@@ -176,8 +183,7 @@
                 <button onclick="closeModal('editorModal')">×</button>
             </div>
             <textarea id="codeContent" class="code-area" spellcheck="false"></textarea>
-            
-            <div class="editor-controls">
+            <div style="display:flex; justify-content:space-between; margin-top:15px;">
                 <button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button>
                 <div style="display:flex; gap:10px;">
                     <button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button>
@@ -204,6 +210,7 @@
     <div id="toast" class="toast">Action Saved</div>
 
     <script>
+        // CONFIG
         const FOLDER_CONFIG = { 'GLOBAL_WEB': { label: 'NEWS: GLOBAL', cat: 'geopolitics', type: 'web', tag: 'global' }, 'MEDIA_GLOBAL': { label: 'MEDIA: Global', cat: 'geopolitics', type: 'video', tag: 'global' }, 'MEDIA_CHINA': { label: 'MEDIA: China', cat: 'geopolitics', type: 'video', tag: 'china' }, 'MEDIA_USA': { label: 'MEDIA: USA', cat: 'geopolitics', type: 'video', tag: 'usa' }, 'MEDIA_INDIA': { label: 'MEDIA: India', cat: 'geopolitics', type: 'video', tag: 'india' }, 'YT_GEO': { label: 'YT: Geo', cat: 'youtubers', type: 'video', tag: 'geo' }, 'YT_TECH': { label: 'YT: Tech', cat: 'youtubers', type: 'video', tag: 'tech' }, 'YT_ENERGY': { label: 'YT: Energy', cat: 'youtubers', type: 'video', tag: 'energy' }, 'YT_EV': { label: 'YT: EV', cat: 'youtubers', type: 'video', tag: 'ev' }, 'YT_GAME': { label: 'YT: Gaming', cat: 'youtubers', type: 'video', tag: 'gaming' }, 'GAME_WEB': { label: 'GAME: News', cat: 'gaming', type: 'web', tag: null }, 'GAME_EWC': { label: 'GAME: Video', cat: 'gaming', type: 'video', tag: null }, 'TOPIC_TECH': { label: 'TOPIC: Tech', cat: 'tech', type: 'web', tag: null }, 'TOPIC_ENERGY': { label: 'TOPIC: Energy', cat: 'energy', type: 'web', tag: null }, 'TOPIC_EV': { label: 'TOPIC: EV', cat: 'ev', type: 'web', tag: null }, 'TOPIC_SCI': { label: 'TOPIC: Science', cat: 'science', type: null, tag: null }, 'TOPIC_CONST': { label: 'TOPIC: Constr', cat: 'construction', type: null, tag: null }, 'ECONOMY': { label: 'ECONOMY', cat: 'economy', type: null, tag: null }, 'GEO_SWE': { label: 'GEO: Sweden', cat: 'geopolitics', type: 'web', tag: 'sweden' }, 'GEO_EU': { label: 'GEO: EU', cat: 'geopolitics', type: 'video', tag: 'eu' } };
         const MENU = [ { id: 'GLOBAL_WEB', label: 'ALL NEWS' }, { label: 'MEDIA', subs: ['MEDIA_GLOBAL', 'MEDIA_CHINA', 'MEDIA_USA', 'MEDIA_INDIA'] }, { label: 'YOUTUBERS', subs: ['YT_GEO', 'YT_TECH', 'YT_ENERGY', 'YT_EV', 'YT_GAME'] }, { label: 'GAMING', subs: ['GAME_WEB', 'GAME_EWC'] }, { label: 'TOPICS', subs: ['TOPIC_TECH', 'TOPIC_ENERGY', 'TOPIC_EV', 'TOPIC_SCI', 'TOPIC_CONST', 'ECONOMY'] }, { label: 'GEOPOLITICS', subs: ['GEO_SWE', 'GEO_EU'] } ];
         
@@ -211,9 +218,40 @@
         let currentFileSha = ""; let currentFileName = ""; let deployInterval = null;
         let pendingAddUrl = ""; let pendingAddName = "";
 
-        window.onload = function() { for(let key in FOLDER_CONFIG) sourceData[key] = []; const t = prompt("Enter GitHub Token (ghp_...):"); if(t) { document.getElementById('ghToken').value = t; fetchSources(); } };
+        // --- AUTH SYSTEM (NEW) ---
+        window.onload = function() { 
+            for(let key in FOLDER_CONFIG) sourceData[key] = []; 
+            
+            const savedToken = localStorage.getItem("gh_token");
+            if (savedToken) {
+                document.getElementById('ghToken').value = savedToken;
+                document.getElementById('loginModal').classList.remove('open');
+                fetchSources();
+            } else {
+                document.getElementById('loginModal').classList.add('open');
+            }
+        };
 
-        async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { alert(e.message); } }
+        function performLogin() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if(!token.startsWith("ghp_") && !token.startsWith("github_pat_")) {
+                alert("Invalid Token format. Must start with ghp_ or github_pat_");
+                return;
+            }
+            localStorage.setItem("gh_token", token);
+            document.getElementById('ghToken').value = token;
+            document.getElementById('loginModal').classList.remove('open');
+            fetchSources();
+        }
+
+        function logout() {
+            if(confirm("Logout and clear token?")) {
+                localStorage.removeItem("gh_token");
+                location.reload();
+            }
+        }
+
+        async function fetchSources() { const user = document.getElementById('ghUser').value; const repo = document.getElementById('ghRepo').value; const token = document.getElementById('ghToken').value; try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { headers: { 'Authorization': `token ${token}` } }); if(!res.ok) throw new Error("Auth Failed"); const data = await res.json(); currentSha = data.sha; const text = new TextDecoder().decode(Uint8Array.from(atob(data.content), c => c.charCodeAt(0))); parsePython(text); renderNav(); renderGrid(); showToast("Data Loaded"); } catch(e) { alert(e.message); if(e.message === "Auth Failed") logout(); } }
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
@@ -328,7 +366,6 @@
         }
         function updateStatusDot(folder, index, status) { if(!sourceData[folder][index].status) sourceData[folder][index].status = {}; sourceData[folder][index].lastStatus = status; if(folder === activeFolder) { const c = document.getElementById(`card-${index}`); if(c) c.querySelector('.status-dot').className = `status-dot status-${status}`; } }
         
-        // --- SAFE SAVE FUNCTION ---
         async function saveToGitHubSafe() {
             if(!confirm("Overwrite sources.py?")) return;
             const seenUrls = new Set();
