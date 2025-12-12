@@ -48,7 +48,6 @@ SOURCES = [
     # --- GAME: News ---
     {"url":"https://www.eurogamer.net/feed","cat":"gaming","type":"web","source_name":"Eurogamer","lang":"en"},
     {"url":"https://www.pcgamer.com/rss","cat":"gaming","type":"web","source_name":"PC Gamer","lang":"en"},
-    {"url":"https://www.fz.se/feeds/nyheter","cat":"gaming","type":"web","source_name":"FZ.se","lang":"sv","image_strategy":"og"},
     # --- GAME: Video ---
     {"url":"https://www.youtube.com/@gamespot/videos","cat":"gaming","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@IGN/videos","cat":"gaming","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
