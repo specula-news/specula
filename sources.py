@@ -2,8 +2,8 @@
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
-    {"url":"https://www.reutersagency.com/feed/","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
-    {"url":"https://www.theguardian.com/europe","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
+    {"url":"https://www.reuters.com/rss/news/world","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
+    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
     {"url":"http://rss.cnn.com/rss/edition.rss","cat":"geopolitics","type":"web","source_name":"Cnn","lang":"en","filter_tag":"global"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
