@@ -24,7 +24,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- INSTÄLLNINGAR ---
 MAX_ARTICLES_DEFAULT = 10
-MAX_ARTICLES_AFTONBLADET = 6  # Ökat något då vi nu hittar bilder bättre
+MAX_ARTICLES_AFTONBLADET = 6
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
 MAX_SUMMARY_LENGTH = 280
@@ -38,7 +38,7 @@ except ImportError:
     SOURCES = []
     print("VARNING: sources.py hittades inte.")
 
-print(f"--- STARTAR GENERATORN (V5.3 - AFTONBLADET REGEX FIX) ---")
+print(f"--- STARTAR GENERATORN (V5.4 - IMAGE FIX) ---")
 
 # --- FAKE BROWSER HEADERS ---
 BROWSER_HEADERS = {
@@ -90,6 +90,7 @@ def is_too_old(timestamp):
 
 def clean_image_url_generic(url):
     if not url: return None
+    # Fix för vissa WordPress/CDN varianter
     if 'w=' in url: return re.sub(r'w=\d+', 'w=1200', url)
     return url
 
@@ -97,32 +98,30 @@ def clean_image_url_generic(url):
 
 def strategy_aftonbladet(link):
     """
-    LOGIC 9: Aftonbladet Regex.
-    Letar efter direkta länkar till images.aftonbladet-cdn.se i källkoden.
-    Detta kringgår problem med OpenGraph eller redirects.
+    FIXAD: Aftonbladet använder nu OpenGraph primärt. 
+    Regex ligger kvar som reserv.
     """
     try:
         time.sleep(random.uniform(0.1, 0.3))
         r = get_session().get(link, timeout=8, verify=False)
-        
-        # Regex för att hitta bild-ID/URL struktur i Aftonbladets kod
+        html = r.text
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # 1. Prova Open Graph (Detta är standard och säkrast)
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"):
+            return og["content"]
+
+        # 2. Reserv: Regex
         pattern = r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)'
-        matches = re.findall(pattern, r.text)
-        
+        matches = re.findall(pattern, html)
         if matches:
-            # Returnera första träffen (oftast huvudbilden)
             return matches[0]
             
     except Exception: pass
     return None
 
 def strategy_sweclockers(link):
-    """
-    Sweclockers: 
-    Prio 1: OpenGraph (Standard)
-    Prio 2: Regex (?l=...) (Backup om OG saknas)
-    Prio 3: JSON-LD
-    """
     try:
         time.sleep(random.uniform(0.5, 1.0))
         session = get_session()
@@ -182,7 +181,7 @@ def strategy_phys_org(entry):
 
 def strategy_deep_scrape(link):
     """
-    Generell "Deep Scrape". Prioriterar OpenGraph och Twitter Cards.
+    Generell "Deep Scrape". Förbättrad med JSON-LD och Link Rel.
     """
     try:
         time.sleep(random.uniform(0.3, 0.7))
@@ -190,48 +189,83 @@ def strategy_deep_scrape(link):
         r = session.get(link, timeout=8, verify=False)
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        # 1. Open Graph
+        # 1. Open Graph (Bäst)
         og = soup.find("meta", property="og:image")
-        if og and og.get("content"): 
-            return urljoin(link, og["content"])
+        if og and og.get("content"): return urljoin(link, og["content"])
             
         # 2. Twitter Card
         tw = soup.find("meta", name="twitter:image")
-        if tw and tw.get("content"):
-            return urljoin(link, tw["content"])
+        if tw and tw.get("content"): return urljoin(link, tw["content"])
+
+        # 3. JSON-LD Schema
+        scripts = soup.find_all('script', type='application/ld+json')
+        for script in scripts:
+            try:
+                data = json.loads(script.string)
+                if isinstance(data, list): data = data[0]
+                if 'image' in data:
+                    img = data['image']
+                    if isinstance(img, dict) and 'url' in img: return img['url']
+                    if isinstance(img, str): return img
+            except: continue
+
+        # 4. Link Rel=image_src
+        lnk = soup.find("link", rel="image_src")
+        if lnk and lnk.get("href"): return urljoin(link, lnk["href"])
             
     except: pass
     return None
 
 def strategy_default(entry):
+    """
+    Standardstrategi: Försök hitta bild i RSS-flödet FÖRST.
+    Om det misslyckas -> Deep Scrape.
+    """
     img_url = None
+    
+    # Check 1: Media Content (Vanligt för Electrek, NYT, etc)
     if 'media_content' in entry:
-        try: img_url = entry.media_content[0]['url']
+        try: 
+            # Hitta största bilden
+            media = entry.media_content
+            if isinstance(media, list):
+                best = max(media, key=lambda x: int(x.get('width', 0)) if x.get('width') else 0)
+                img_url = best['url']
+            else:
+                img_url = media[0]['url']
         except: pass
+    
+    # Check 2: Enclosures
     elif 'enclosures' in entry:
         for enc in entry.enclosures:
             if getattr(enc, 'type', '').startswith('image/'):
                 img_url = getattr(enc, 'href', '')
                 break
+                
+    # Check 3: Description HTML (WordPress lägger ofta bild här)
+    if not img_url and 'summary' in entry:
+        soup = BeautifulSoup(entry.summary, 'html.parser')
+        img = soup.find('img')
+        if img: img_url = img.get('src')
     
+    # FALLBACK: Om ingen bild i RSS -> Gå in på sidan
     if not img_url:
         return strategy_deep_scrape(entry.link)
         
     return img_url
 
 def get_image_for_article(entry, source_url):
-    # 1. KOPPLA KÄLLOR TILL RÄTT STRATEGI
+    # SPECIFIKA STRATEGIER
     if 'sweclockers' in source_url: return strategy_sweclockers(entry.link)
     if 'aftonbladet' in source_url: return strategy_aftonbladet(entry.link)
     if 'fz.se' in source_url: return strategy_fz_se(entry.link)
     if 'phys.org' in source_url or 'techxplore' in source_url: return strategy_phys_org(entry)
     
-    # 2. Sidor som behöver Deep Scrape (OG Image)
-    # Aftonbladet borttagen härifrån då den nu har egen strategi
+    # TVÅNGS-SCRAPE (Bara sidor som vi VET inte skickar bilder i RSS)
+    # Electrek borttagen härifrån eftersom de oftast har media_content i RSS
     deep_scrape_sites = [
         'dagensps', 
         'cnn', 
-        'electrek', 
         'feber', 
         'nasa.gov', 
         'indiatimes', 
