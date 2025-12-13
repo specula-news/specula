@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 import concurrent.futures
+from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin
 import urllib3
 import re
@@ -160,10 +161,16 @@ def process_feed(source):
                 except: pass
 
             articles.append({
-                "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
-                "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
-                "feed_url": source['url']
+                "title": title, 
+                "link": entry.link, 
+                "images": [img or DEFAULT_IMAGE],
+                "summary": clean_desc, 
+                "category": source['cat'], 
+                "filter_tag": source.get('filter_tag', ''),
+                "source": source.get('source_name', 'News'), 
+                "timestamp": ts, 
+                "is_video": False,
+                "feed_url": source['url']  # KEY FIX: SPARAR FEED URL FÖR ADMIN MATCHNING
             })
     except Exception as e: print(f"Err {source['url']}: {e}")
     return articles
@@ -171,7 +178,6 @@ def process_feed(source):
 def get_video_info(source):
     videos = []
     try:
-        # NOTE: dump_single_json ger mer metadata än extract_flat för datum
         ydl_opts = {
             'quiet': True, 
             'ignoreerrors': True, 
@@ -188,33 +194,30 @@ def get_video_info(source):
                 
                 # --- PRECISE TIME LOGIC ---
                 ts = 0
-                # 1. Try exact timestamp (float)
                 if entry.get('timestamp'):
                     ts = entry['timestamp']
-                # 2. Try release_timestamp
                 elif entry.get('release_timestamp'):
                     ts = entry['release_timestamp']
-                # 3. Try upload_date string (YYYYMMDD)
                 elif entry.get('upload_date'):
                     try:
                         d = entry['upload_date']
                         dt = datetime.strptime(d, '%Y%m%d')
-                        # Set to noon to avoid "Just now" for everything today if script runs early
                         ts = dt.replace(hour=12).timestamp()
                     except: pass
                 
-                # If everything failed, mark as old so it doesn't show as "Just Now" falsely, 
-                # OR set to now if you prefer. Setting to now causes the bug.
-                # Let's try to fetch page if needed? No, too slow.
-                # If ts is 0, we fallback to time.time() BUT we mark it specifically
-                if ts == 0: ts = time.time() - 86400 # Default to "Yesterday" if unknown to avoid confusion? 
-                # Actually, let's keep time.time() but hopefully steps 1-3 work.
+                if ts == 0: ts = time.time() - 86400 
                 
                 videos.append({
-                    "title": entry['title'], "link": entry['url'], "images": [thumb],
-                    "summary": desc[:280], "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], "timestamp": ts, "is_video": True,
-                    "feed_url": source['url']
+                    "title": entry['title'], 
+                    "link": entry['url'], 
+                    "images": [thumb],
+                    "summary": desc[:280], 
+                    "category": source['cat'], 
+                    "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], 
+                    "timestamp": ts, 
+                    "is_video": True,
+                    "feed_url": source['url'] # KEY FIX: SPARAR FEED URL FÖR ADMIN MATCHNING
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
@@ -244,11 +247,9 @@ if __name__ == "__main__":
         if a['link'] not in seen:
             final.append(a); seen.add(a['link'])
             
-    # TIDSFORMATERING
     now = time.time()
     for art in final:
         diff = now - art['timestamp']
-        # YouTube fix: If diff is massive (future) or weird, handle it
         if diff < 0: diff = 0
         
         if diff < 3600: art['time_str'] = "Just Now"
