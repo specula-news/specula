@@ -28,15 +28,12 @@
         header { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 0 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; position: relative; z-index: 1000; }
         .header-top { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
         
-        /* LOGO GROUP SPLIT */
+        /* LOGO GROUP */
         .logo-group { display: flex; align-items: flex-end; gap: 15px; }
-        
-        /* ICON -> ADMIN */
+        .logo-link { text-decoration: none; color: inherit; display: flex; align-items: flex-end; gap: 15px; cursor: pointer; }
         .link-icon { text-decoration: none; display: block; transition: transform 0.3s; }
         .logo-icon { height: 45px; filter: drop-shadow(0 0 10px var(--accent-glow)); }
         .link-icon:hover { animation: wiggle 0.5s ease-in-out; transform: scale(1.1); }
-        
-        /* TEXT -> INDEX */
         .link-text { text-decoration: none; color: inherit; }
         .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; line-height: 0.8; margin-bottom: -2px; transition: color 0.3s; }
         .link-text:hover .logo-text { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
@@ -169,6 +166,12 @@
         
         /* CHANGELOG LIST - MASTER HISTORY */
         .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; overflow-y: auto; padding-right: 10px; }
+        
+        /* ULTRA THIN SCROLLBAR */
+        .changelog-list::-webkit-scrollbar { width: 2px; }
+        .changelog-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .changelog-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
         .changelog-item { margin-bottom: 25px; padding-left: 15px; border-left: 2px solid var(--border); position: relative; }
         .changelog-item.major { border-left-color: var(--accent); }
         .changelog-item.backend { border-left-color: #ffaa00; }
@@ -230,21 +233,24 @@
             <!-- *** SYSTEM HISTORY PROTOCOL: NEVER REMOVE OLD ENTRIES. ONLY PREPEND NEW VERSIONS. *** -->
             
             <ul class="changelog-list">
+                 <!-- V21.1.2 -->
+                 <li class="changelog-item frontend">
+                    <div class="changelog-header"><span class="version-tag" style="background:var(--accent); color:#000;">V21.1.2</span> <span class="version-date">Current</span></div>
+                    <div class="changelog-desc">
+                        <strong>History & Polish:</strong><br>
+                        • <strong>Complete History:</strong> Restored V1.0-V4.0 legacy logs.<br>
+                        • <strong>Scrollbar:</strong> Implemented "Wheel-Looking" 2px slim scrollbar.<br>
+                        • <strong>Link Fix:</strong> Header links now refresh correctly.
+                    </div>
+                 </li>
                  <!-- V21.1.0 -->
                  <li class="changelog-item major">
-                    <div class="changelog-header"><span class="version-tag" style="background:var(--accent); color:#000;">V21.1.0</span> <span class="version-date">Current</span></div>
+                    <div class="changelog-header"><span class="version-tag">V21.1.0</span> <span class="version-date">Dec 2025</span></div>
                     <div class="changelog-desc">
                         <strong>Cyber & Precision:</strong><br>
                         • <strong>Backend:</strong> YouTube Time Fix (RSS Sniffer), Dagens PS (WordPress Content Scan), Feed-URL Binding.<br>
                         • <strong>Admin:</strong> V18.1 Cyber UI, Status Core, Red Delete Button, True Preview Logic.<br>
                         • <strong>Frontend:</strong> Cleaned menus (Removed USA/Sports filters), Link Split (Icon->Admin, Text->Home).
-                    </div>
-                 </li>
-                 <!-- V21.0.1 -->
-                 <li class="changelog-item major">
-                    <div class="changelog-header"><span class="version-tag">V21.0.1</span> <span class="version-date">Dec 2025</span></div>
-                    <div class="changelog-desc">
-                        <strong>Menu Cleanup:</strong> Removed USA/Sports from filters.
                     </div>
                  </li>
                  <!-- V21.0.0 -->
@@ -263,46 +269,42 @@
                         <strong>Visual Probe:</strong> Added Admin visual scraping analyzer & Drag-drop upload.
                     </div>
                  </li>
-                 <!-- V19.0.0 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V19.0.0</span> <span class="version-date">Dec 2025</span></div>
-                    <div class="changelog-desc">
-                        <strong>Strategy Engine:</strong> Apply specific image logic (OG, Twitter, Regex) per source. Proxy Rotation added.
-                    </div>
-                 </li>
-                 <!-- V5.0 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V5.0</span> <span class="version-date">Legacy</span></div>
-                    <div class="changelog-desc">
-                        <strong>Data Logic:</strong> YouTube Data Integration (upload_date), Strict Chronological Sorting.
-                    </div>
-                 </li>
                  <!-- V4.0 -->
                  <li class="changelog-item frontend">
-                    <div class="changelog-header"><span class="version-tag">V4.0</span> <span class="version-date">Legacy</span></div>
+                    <div class="changelog-header"><span class="version-tag">V4.0</span> <span class="version-date">VISUAL UPDATE</span></div>
                     <div class="changelog-desc">
-                        <strong>Frontend:</strong> Unified Navigation, Hover-to-Open Menus, PWA Implementation, Visual Checkboxes.
+                        <strong>Grid System:</strong> Implemented a responsive 3-column layout.<br>
+                        <strong>Visual Intelligence:</strong> Added support for article hero images with zoom-on-hover effects.<br>
+                        <strong>Typography:</strong> Updated font stack to Space Grotesk (Headers) and Inter (Body).<br>
+                        <strong>Card Design:</strong> New glassmorphism effect on cards with dynamic border glowing.
                     </div>
                  </li>
                  <!-- V3.0 -->
                  <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V3.0</span> <span class="version-date">Legacy</span></div>
+                    <div class="changelog-header"><span class="version-tag">V3.0</span> <span class="version-date">MEMORY & LOGIC</span></div>
                     <div class="changelog-desc">
-                        <strong>Specific Logic:</strong> Phys.org HD Fix, Aftonbladet Signature Fix, Electrek URL Clean.
+                        <strong>Database Integration:</strong> Implemented JSON-based storage.<br>
+                        <strong>Pagination:</strong> Added multi-page navigation.<br>
+                        <strong>Source Recognition:</strong> Automated favicon fetching.<br>
+                        <strong>Duplicate Detection:</strong> Logic upgrade to prevent same article twice.
                     </div>
                  </li>
                  <!-- V2.0 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V2.0</span> <span class="version-date">Legacy</span></div>
+                 <li class="changelog-item frontend">
+                    <div class="changelog-header"><span class="version-tag">V2.0</span> <span class="version-date">INTERFACE & VISION</span></div>
                     <div class="changelog-desc">
-                        <strong>Backend:</strong> Strategy-Based Routing, Smart Translation System, Deep Scrape Strategy, Text Truncating.
+                        <strong>Theme Engine:</strong> Added fully functional Dark/Light mode toggle with persistence.<br>
+                        <strong>Mobile Responsiveness:</strong> Optimized header and layout for mobile/tablets.<br>
+                        <strong>HUD Aesthetic:</strong> Initial styling with cyan accents and scanline effects.
                     </div>
                  </li>
                  <!-- V1.0 -->
                  <li class="changelog-item major">
-                    <div class="changelog-header"><span class="version-tag">V1.0</span> <span class="version-date">Genesis</span></div>
+                    <div class="changelog-header"><span class="version-tag">V1.0</span> <span class="version-date">GENESIS</span></div>
                     <div class="changelog-desc">
-                        <strong>Foundation:</strong> Smart Grid Layout, Dark/Light Mode, Mobile-Geo Optimization.
+                        <strong>Core Engine:</strong> Python-based RSS aggregator established.<br>
+                        <strong>AI Integration:</strong> Connected OpenAI API for automated 1-sentence summarization.<br>
+                        <strong>Auto-Deployment:</strong> Set up GitHub Actions for automated hourly updates.
                     </div>
                  </li>
             </ul>
@@ -337,7 +339,7 @@
                     </div>
                     <!-- LINK FIX END -->
                 </div>
-                <div class="version-display" id="versionBtn">Version 21.1.0</div>
+                <div class="version-display" id="versionBtn">Version 21.1.2</div>
             </div>
             
             <div class="nav-wrapper">
