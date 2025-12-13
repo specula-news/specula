@@ -3,7 +3,7 @@
 SOURCES = [
     # --- NEWS: GLOBAL ---
     {"url":"https://www.reuters.com/rss/news/world","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
-    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global","custom_image":"https://adfontesmedia.com/the-guardian-bias-and-reliability/","image_strategy":null},
+    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
     {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global"},
@@ -28,7 +28,6 @@ SOURCES = [
     {"url":"https://www.youtube.com/@lenapetrova/videos","cat":"youtubers","type":"video","source_name":"Lena Petrova","lang":"en","filter_tag":"geo"},
     # --- YT: Tech ---
     {"url":"https://www.youtube.com/@AnastasiInTech/videos","cat":"youtubers","type":"video","source_name":"Anastasi In Tech","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@veritasium/videos","cat":"youtubers","type":"video","source_name":"Veritasium","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"Smartereveryday","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@Jayztwocents/videos","cat":"youtubers","type":"video","source_name":"Jayztwocents","lang":"en","filter_tag":"tech"},
@@ -36,6 +35,8 @@ SOURCES = [
     {"url":"https://www.youtube.com/@MKBHD/videos","cat":"youtubers","type":"video","source_name":"MKBHD","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@Hardwareunboxed/videos","cat":"youtubers","type":"video","source_name":"Hardware Unboxed","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@der8auer-en/videos","cat":"youtubers","type":"video","source_name":"der8auer","lang":"en","filter_tag":"tech"},
+    # --- YT: Energy ---
+    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy"},
     # --- YT: EV ---
     {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev"},
     {"url":"https://www.youtube.com/@electricviking/videos","cat":"youtubers","type":"video","source_name":"Electric Viking","lang":"en","filter_tag":"ev"},
