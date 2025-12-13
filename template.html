@@ -157,12 +157,10 @@
         .modal-overlay.open .modal-card { transform: translateY(0); }
         .close-modal { float: right; font-size: 2rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; }
         
-        /* CHANGELOG LIST - MASSIVE HISTORY */
+        /* CHANGELOG LIST */
         .changelog-list { list-style: none; padding: 0; color: var(--text-secondary); font-size: 0.9rem; overflow-y: auto; padding-right: 10px; }
         .changelog-item { margin-bottom: 25px; padding-left: 15px; border-left: 2px solid var(--border); position: relative; }
         .changelog-item.major { border-left-color: var(--accent); }
-        .changelog-item.backend { border-left-color: #ffaa00; }
-        .changelog-item.frontend { border-left-color: #00ff88; }
         .changelog-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; background: var(--bg-card); border: 2px solid currentColor; border-radius: 50%; }
         .changelog-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .version-tag { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; color: var(--text-primary); }
@@ -217,89 +215,24 @@
                 <button class="close-modal" onclick="closeModal('changelogModal')">&times;</button>
             </div>
             <ul class="changelog-list">
+                 <!-- V21.0.1 (UI CLEANUP) -->
+                 <li class="changelog-item major">
+                    <div class="changelog-header"><span class="version-tag" style="background:var(--accent); color:#000;">V21.0.1</span> <span class="version-date">Current</span></div>
+                    <div class="changelog-desc">
+                        <strong>Menu Cleanup:</strong><br>
+                        • Removed <strong>USA</strong> from Media filters.<br>
+                        • Removed <strong>USA</strong> from Geopolitics filters.<br>
+                        • Removed <strong>Sports</strong> from Gaming filters.<br>
+                        • Admin Panel streamlined.
+                    </div>
+                 </li>
                  <!-- V21.0.0 (MASTER LOG) -->
                  <li class="changelog-item major">
-                    <div class="changelog-header"><span class="version-tag" style="background:var(--accent); color:#000;">V21.0.0</span> <span class="version-date">Current</span></div>
+                    <div class="changelog-header"><span class="version-tag">V21.0.0</span> <span class="version-date">Dec 2025</span></div>
                     <div class="changelog-desc">
                         <strong>Complete System Sync:</strong><br>
-                        • <strong>Generator V6.9:</strong> Precise YouTube timestamps (no more "Just Now" bugs), Deep Scrape restored, Dagens PS content scan, Image Strategy enforcement.<br>
-                        • <strong>Admin V13.0:</strong> Clean UI, Automatic "True Preview" from JSON, Visual Logic Lab for testing scraping strategies, Proxy Rotation for stability.<br>
-                        • <strong>Frontend:</strong> Master History Log added.
-                    </div>
-                 </li>
-                 <!-- V20.5.42 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.42</span> <span class="version-date">Admin Clean</span></div>
-                    <div class="changelog-desc">
-                        <strong>Admin V12.9:</strong> Removed redundant diagnostic buttons. Restored "Force Load Previews" to standard position.
-                    </div>
-                 </li>
-                 <!-- V20.5.40 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.40</span> <span class="version-date">Backend Core</span></div>
-                    <div class="changelog-desc">
-                        <strong>Admin V12.4:</strong> Implemented "True Preview" (matching images from generated JSON).<br>
-                        Added "Visual Logic Probe" to test 8+ scraping strategies in real-time.<br>
-                        Fixed "Failed to fetch" errors with CORS Proxy rotation.
-                    </div>
-                 </li>
-                 <!-- V20.5.38 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.38</span> <span class="version-date">Generator Logic</span></div>
-                    <div class="changelog-desc">
-                        <strong>Generator V6.6:</strong> Added `feed_url` binding for Admin Sync. Fixed YouTube flat extraction bugs.
-                    </div>
-                 </li>
-                 <!-- V20.5.35 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.35</span> <span class="version-date">Generator Fix</span></div>
-                    <div class="changelog-desc">
-                        <strong>Generator V6.2:</strong> Added deep content scanning for WordPress sites (Fixes Dagens PS images). Prioritized high-res images.
-                    </div>
-                 </li>
-                 <!-- V20.5.33 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.33</span> <span class="version-date">Admin Visuals</span></div>
-                    <div class="changelog-desc">
-                        <strong>Admin V10.0:</strong> Introduced "Live Preview" grid system.
-                    </div>
-                 </li>
-                 <!-- V20.5.32 -->
-                 <li class="changelog-item frontend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.32</span> <span class="version-date">Frontend Layout</span></div>
-                    <div class="changelog-desc">
-                        • <strong>Mobile Grid:</strong> Updated bottom nav to 5 columns to fit "ENERGY".<br>
-                        • <strong>Video Logic:</strong> Removed strict date checks for videos.
-                    </div>
-                 </li>
-                 <!-- V20.5.30 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.30</span> <span class="version-date">Source Fixes</span></div>
-                    <div class="changelog-desc">
-                        • <strong>Börskollen:</strong> Fixed URL type (HTML -> RSS) and language.<br>
-                        • <strong>Safety:</strong> Admin panel now auto-sanitizes duplicate URLs.
-                    </div>
-                 </li>
-                 <!-- V20.5.28 -->
-                 <li class="changelog-item backend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.28</span> <span class="version-date">Proxy Update</span></div>
-                    <div class="changelog-desc">
-                        <strong>Admin V9.2:</strong> Added Proxy Rotation & Submenu Bridge Fix.
-                    </div>
-                 </li>
-                 <!-- V20.5.20 -->
-                 <li class="changelog-item frontend">
-                    <div class="changelog-header"><span class="version-tag">V20.5.20</span> <span class="version-date">PWA Launch</span></div>
-                    <div class="changelog-desc">
-                        Added Service Worker and Manifest for installable app capability.
-                    </div>
-                 </li>
-                 <!-- V20.5.0 -->
-                 <li class="changelog-item major">
-                    <div class="changelog-header"><span class="version-tag">V20.5.0</span> <span class="version-date">Core Launch</span></div>
-                    <div class="changelog-desc">
-                        • <strong>UI:</strong> Dark/Light mode, Search bar, Bookmark system.<br>
-                        • <strong>Grid:</strong> Responsive card layout.
+                        • <strong>Generator V6.9:</strong> Precise YouTube timestamps, Deep Scrape restored, Dagens PS content scan.<br>
+                        • <strong>Admin V13.0:</strong> Automatic "True Preview" from JSON.<br>
                     </div>
                  </li>
             </ul>
@@ -331,7 +264,7 @@
                         <div class="theme-wrapper" onclick="toggleTheme(event)"><div class="theme-icon" id="themeIcon">☀</div><div class="theme-text" id="themeLabel">LIGHT MODE</div></div>
                     </div>
                 </div>
-                <div class="version-display" id="versionBtn">Version 21.0.0</div>
+                <div class="version-display" id="versionBtn">Version 21.0.1</div>
             </div>
             
             <div class="nav-wrapper">
@@ -345,7 +278,14 @@
                         <button class="filter-btn active hide-on-mobile" onclick="setCategory('all')">All News</button>
                         <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('video')">
                             <button class="filter-btn" id="videoBtn" onclick="handleMenuClick('video', event)"><span class="desktop-label">MEDIA ▼</span><span class="mobile-label">MEDIA ▼</span></button>
-                            <div id="videoDropdown" class="dropdown-menu"><div class="dropdown-list"><label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('video', 'global', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('video', 'china', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('video', 'usa', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('video', 'india', this.checked)"> <div class="check-indicator"></div></label></div><div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK</button></div></div>
+                            <div id="videoDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('video', 'global', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('video', 'china', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('video', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('video')">OK</button></div>
+                            </div>
                         </div>
                         <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('youtubers')">
                             <button class="filter-btn" id="youtubersBtn" onclick="handleMenuClick('youtubers', event)"><span class="desktop-label">YOUTUBERS ▼</span><span class="mobile-label">TUBERS ▼</span></button>
@@ -353,11 +293,30 @@
                         </div>
                         <div class="dropdown-wrapper" style="position:relative;" onmouseleave="closeOnLeave('gaming')">
                             <button class="filter-btn" id="gamingBtn" onclick="handleMenuClick('gaming', event)">GAMING ▼</button>
-                            <div id="gamingDropdown" class="dropdown-menu"><div class="dropdown-list"><label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Sports</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'sports', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label></div><div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK</button></div></div>
+                            <div id="gamingDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Action</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'action', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Shooter</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'shooter', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>RPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'rpg', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>MMORPG</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'mmorpg', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Strategy</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'strategy', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Upcoming</span> <input type="checkbox" onchange="updateTempFilter('gaming', 'upcoming', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('gaming')">OK</button></div>
+                            </div>
                         </div>
                         <div class="dropdown-wrapper desktop-categories mobile-hide" style="position:relative; display:block !important;" onmouseleave="closeOnLeave('geopolitics')">
                             <button class="filter-btn" id="geopoliticsBtn" onclick="handleMenuClick('geopolitics', event)"><span class="desktop-label">GEOPOLITICS ▼</span><span class="mobile-label">GEO ▼</span></button>
-                            <div id="geopoliticsDropdown" class="dropdown-menu"><div class="dropdown-list"><label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>USA</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'usa', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>EU</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'eu', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label><label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label></div><div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div></div>
+                            <div id="geopoliticsDropdown" class="dropdown-menu">
+                                <div class="dropdown-list">
+                                    <label class="check-item"><span>Global</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'global', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>China</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'china', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>EU</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'eu', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>India</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'india', this.checked)"> <div class="check-indicator"></div></label>
+                                    <label class="check-item"><span>Sweden</span> <input type="checkbox" onchange="updateTempFilter('geopolitics', 'sweden', this.checked)"> <div class="check-indicator"></div></label>
+                                </div>
+                                <div class="dropdown-footer"><button class="footer-btn btn-ok" onclick="applyFilters('geopolitics')">OK</button></div>
+                            </div>
                         </div>
                     </div>
 
