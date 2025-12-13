@@ -1,106 +1,311 @@
-# Sources for aggregation site
+import json
+import os
+import requests
+import feedparser
+from bs4 import BeautifulSoup
+import time
+import random
+import concurrent.futures
+from email.utils import parsedate_to_datetime
+from urllib.parse import urljoin
+import urllib3
+import re
+import yt_dlp
+import sys
+import traceback
 
-SOURCES = [
-    # --- NEWS: GLOBAL ---
-    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global","custom_image":"https://i.guim.co.uk/img/media/a39b4ea033439db46a70a2cf9318476188320cee/657_0_4366_3492/master/4366.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctZGVmYXVsdC5wbmc&s=8c886bf5809fba0b46a0adb94982c2dc","image_strategy":null},
-    {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
-    # --- MEDIA: Global ---
-    {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@aljazeeraenglish/videos","cat":"geopolitics","type":"video","source_name":"Al Jazeera English","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@BBCNews/videos","cat":"geopolitics","type":"video","source_name":"BBC News","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@France24_en/videos","cat":"geopolitics","type":"video","source_name":"France 24","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@Asianometry/videos","cat":"geopolitics","type":"video","source_name":"Asianometry","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@GeopoliticalEconomyReport/videos","cat":"geopolitics","type":"video","source_name":"Geopolitical Economy","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@wocomoDOCS/videos","cat":"geopolitics","type":"video","source_name":"wocomoDOCS","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@DWDocumentary/videos","cat":"geopolitics","type":"video","source_name":"DW Documentary","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@TheMilitaryShow/videos","cat":"geopolitics","type":"video","source_name":"The Military Show","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@asiasociety/videos","cat":"geopolitics","type":"video","source_name":"Asia Society","lang":"en","filter_tag":"global"},
-    {"url":"https://www.youtube.com/@VisualPolitikEN/videos","cat":"geopolitics","type":"video","source_name":"VisualPolitik EN","lang":"en","filter_tag":"global"},
-    # --- MEDIA: China ---
-    {"url":"https://www.youtube.com/@channelnewsasia/videos","cat":"geopolitics","type":"video","source_name":"CNA","lang":"en","filter_tag":"china"},
-    {"url":"https://www.youtube.com/@cgtn/videos","cat":"geopolitics","type":"video","source_name":"CGTN","lang":"en","filter_tag":"china"},
-    # --- MEDIA: India ---
-    {"url":"https://www.youtube.com/@Firstpost/videos","cat":"geopolitics","type":"video","source_name":"Firstpost","lang":"en","filter_tag":"india"},
-    # --- YT: Geo ---
-    {"url":"https://www.youtube.com/@brdecode123/videos","cat":"youtubers","type":"video","source_name":"BR Decode","lang":"en","filter_tag":"geo"},
-    {"url":"https://www.youtube.com/@johnnyharris/videos","cat":"youtubers","type":"video","source_name":"Johnny Harris","lang":"en","filter_tag":"geo"},
-    {"url":"https://www.youtube.com/@lenapetrova/videos","cat":"youtubers","type":"video","source_name":"Lena Petrova","lang":"en","filter_tag":"geo"},
-    # --- YT: Tech ---
-    {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"SmarterEveryDay","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@AnastasiInTech/videos","cat":"youtubers","type":"video","source_name":"Anastasi In Tech","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@veritasium/videos","cat":"youtubers","type":"video","source_name":"Veritasium","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@Jayztwocents/videos","cat":"youtubers","type":"video","source_name":"JayzTwoCents","lang":"en","filter_tag":"tech","custom_image":"https://yt3.googleusercontent.com/60ZHdHfspX1q6YI8_RW8Zz8fyR8Ne5aDHIwQ0TGN-vFkBWp5J1htI2VsLQQsnVoQbGhIxmJ3lQ=s160-c-k-c0x00ffffff-no-rj","image_strategy":null},
-    {"url":"https://www.youtube.com/@LinusTechTips/videos","cat":"youtubers","type":"video","source_name":"Linus Tech Tips","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@MKBHD/videos","cat":"youtubers","type":"video","source_name":"MKBHD","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@Hardwareunboxed/videos","cat":"youtubers","type":"video","source_name":"Hardware Unboxed","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@der8auer-en/videos","cat":"youtubers","type":"video","source_name":"der8auer","lang":"en","filter_tag":"tech"},
-    # --- YT: Energy ---
-    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy","custom_image":"https://yt3.googleusercontent.com/ytc/AIdro_nYFWjG64F27JNXiQXMCKYB0umXlsvIxNxkHzaBByxxeDk=s160-c-k-c0x00ffffff-no-rj","image_strategy":null},
-    # --- YT: EV ---
-    {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev"},
-    {"url":"https://www.youtube.com/@electricviking/videos","cat":"youtubers","type":"video","source_name":"Electric Viking","lang":"en","filter_tag":"ev"},
-    # --- YT: Gaming ---
-    {"url":"https://www.youtube.com/@Raxxanterax/videos","cat":"youtubers","type":"video","source_name":"Raxxanterax","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@jackfrags/videos","cat":"youtubers","type":"video","source_name":"Jackfrags","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@ZiggyDGaming/videos","cat":"youtubers","type":"video","source_name":"ZiggyD","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@AsmonTV/videos","cat":"youtubers","type":"video","source_name":"AsmonTV","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@gameranxTV/videos","cat":"youtubers","type":"video","source_name":"Gameranx","lang":"en","filter_tag":"gaming"},
-    # --- GAME: News ---
-    {"url":"https://www.eurogamer.net/feed","cat":"gaming","type":"web","source_name":"Eurogamer","lang":"en"},
-    {"url":"https://www.pcgamer.com/rss","cat":"gaming","type":"web","source_name":"PC Gamer","lang":"en"},
-    # --- GAME: Video ---
-    {"url":"https://www.youtube.com/@gamespot/videos","cat":"gaming","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@IGN/videos","cat":"gaming","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@ewc/videos","cat":"gaming","type":"video","source_name":"Esports World Cup","lang":"en"},
-    {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
-    # --- TOPIC: Tech ---
-    {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
-    {"url":"https://techcrunch.com/feed/","cat":"tech","type":"web","source_name":"TechCrunch","lang":"en"},
-    {"url":"https://feeds.arstechnica.com/arstechnica/index","cat":"tech","type":"web","source_name":"Ars Technica","lang":"en"},
-    {"url":"https://anastasiintech.substack.com/feed","cat":"tech","type":"web","source_name":"Anastasi In Tech","lang":"en"},
-    {"url":"https://feber.se/rss/","cat":"tech","type":"web","source_name":"Feber","lang":"sv"},
-    {"url":"https://www.wired.com/feed/rss","cat":"tech","type":"web","source_name":"WIRED","lang":"en"},
-    {"url":"https://www.engadget.com/rss.xml","cat":"tech","type":"web","source_name":"Engadget","lang":"en"},
-    {"url":"https://mashable.com/feeds/rss/tech","cat":"tech","type":"web","source_name":"Mashable","lang":"en"},
-    # --- TOPIC: Energy ---
-    {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en","image_strategy":"lazy"},
-    {"url":"https://energydigital.com/feed","cat":"energy","type":"web","source_name":"Energy Digital","lang":"en"},
-    {"url":"https://www.breakthroughenergy.org/news","cat":"energy","type":"web","source_name":"Breakthrough Energy","lang":"en"},
-    {"url":"https://oilprice.com/rss/main","cat":"energy","type":"web","source_name":"OilPrice","lang":"en"},
-    {"url":"https://www.renewableenergyworld.com/feed/","cat":"energy","type":"web","source_name":"Renewable Energy World","lang":"en"},
-    # --- TOPIC: EV ---
-    {"url":"https://insideevs.com/rss/articles/all/","cat":"ev","type":"web","source_name":"InsideEVs","lang":"en"},
-    {"url":"https://electrek.co/feed/","cat":"ev","type":"web","source_name":"Electrek","lang":"en"},
-    {"url":"https://cleantechnica.com/feed/","cat":"ev","type":"web","source_name":"CleanTechnica","lang":"en"},
-    {"url":"https://teslaclubsweden.se/feed/","cat":"ev","type":"web","source_name":"Tesla Club Sweden","lang":"sv"},
-    {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv"},
-    {"url":"https://elbilen.se/feed/","cat":"ev","type":"web","source_name":"Elbilen.se","lang":"sv"},
-    # --- TOPIC: Science ---
-    {"url":"https://www.space.com/feeds/all","cat":"science","type":"web","source_name":"Space.com","lang":"en"},
-    {"url":"https://www.nasa.gov/rss/dyn/breaking_news.rss","cat":"science","type":"web","source_name":"NASA","lang":"en"},
-    {"url":"https://www.youtube.com/@pbsspacetime/videos","cat":"science","type":"video","source_name":"PBS Space Time","lang":"en"},
-    {"url":"https://www.youtube.com/@Kurzgesagt/videos","cat":"science","type":"video","source_name":"Kurzgesagt","lang":"en"},
-    # --- TOPIC: Constr ---
-    {"url":"https://www.archdaily.com/rss","cat":"construction","type":"web","source_name":"ArchDaily","lang":"en"},
-    {"url":"https://www.constructiondive.com/feeds/news/","cat":"construction","type":"web","source_name":"Construction Dive","lang":"en"},
-    {"url":"https://www.constructionenquirer.com/feed/","cat":"construction","type":"web","source_name":"Construction Enquirer","lang":"en"},
-    {"url":"https://www.byggvarlden.se/feed/","cat":"construction","type":"web","source_name":"Byggvärlden","lang":"sv"},
-    {"url":"https://www.byggindustrin.se/rss/nyheter","cat":"construction","type":"web","source_name":"Byggindustrin","lang":"sv"},
-    {"url":"https://www.youtube.com/@TheB1M/videos","cat":"construction","type":"video","source_name":"The B1M","lang":"en"},
-    {"url":"https://www.youtube.com/@TomorrowsBuild/videos","cat":"construction","type":"video","source_name":"Tomorrow's Build","lang":"en"},
-    {"url":"https://www.youtube.com/@FD_Engineering/videos","cat":"construction","type":"video","source_name":"Free Documentary Engineering","lang":"en"},
-    # --- ECONOMY ---
-    {"url":"https://efn.se/feeds/feed.xml","cat":"economy","type":"web","source_name":"EFN.se","lang":"sv"},
-    {"url":"https://www.borskollen.se/rss/nyheter","cat":"economy","type":"web","source_name":"Börskollen","lang":"sv"},
-    {"url":"https://www.youtube.com/@qatareconomicforum430/videos","cat":"economy","type":"video","source_name":"Qatar Economic Forum","lang":"en"},
-    {"url":"https://www.youtube.com/@FII_INSTITUTE/videos","cat":"economy","type":"video","source_name":"FII Institute","lang":"en"},
-    {"url":"https://www.youtube.com/@wef/videos","cat":"economy","type":"video","source_name":"World Economic Forum","lang":"en"},
-    {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en"},
-    # --- GEO: Sweden ---
-    {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
-    {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
-    # --- GEO: EU ---
-    {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
-]
+# --- ERROR HANDLING START ---
+SYSTEM_ERROR = None
+try:
+    from sources import SOURCES
+except Exception as e:
+    SOURCES = []
+    SYSTEM_ERROR = f"CRITICAL: sources.py is broken. {str(e)}"
+    print(SYSTEM_ERROR)
+# --- ERROR HANDLING END ---
 
-URLS_GLOBAL = []
+try:
+    from deep_translator import GoogleTranslator
+    TRANSLATOR_ACTIVE = True
+except ImportError:
+    TRANSLATOR_ACTIVE = False
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# --- CONFIG ---
+MAX_ARTICLES = 10
+TOTAL_LIMIT = 2000
+MAX_AGE_DAYS = 90
+DEFAULT_IMAGE = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop"
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Referer": "https://www.google.com/"
+}
+
+def get_session():
+    s = requests.Session()
+    s.headers.update(HEADERS)
+    return s
+
+# --- STRATEGIES ---
+def strat_og(soup, html, url):
+    m = soup.find("meta", property="og:image")
+    return urljoin(url, m["content"]) if m and m.get("content") else None
+
+def strat_twitter(soup, html, url):
+    m = soup.find("meta", attrs={"name": "twitter:image"})
+    return urljoin(url, m["content"]) if m and m.get("content") else None
+
+def strat_swec(soup, html, url):
+    m = re.findall(r'(https://cdn\.sweclockers\.com/artikel/bild/\d+\?l=[^"\'\s>]+)', html)
+    return max(m, key=len).replace("&amp;", "&") if m else None
+
+def strat_afton(soup, html, url):
+    m = re.findall(r'(https://images\.aftonbladet-cdn\.se/v2/images/[a-zA-Z0-9\-]+)', html)
+    return m[0] if m else None
+
+def strat_wordpress(soup, html, url):
+    img = soup.find('img', class_=re.compile('wp-post-image'))
+    return urljoin(url, img.get('src')) if img else None
+
+def strat_lazy(soup, html, url):
+    img = soup.find('img', attrs={"data-src": True})
+    return urljoin(url, img['data-src']) if img else None
+
+def strat_hero(soup, html, url):
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
+        div = soup.find(class_=re.compile(cls, re.I))
+        if div:
+            img = div.find('img')
+            if img: return urljoin(url, img.get('src'))
+    return None
+
+def strat_largest(soup, html, url):
+    imgs = soup.find_all('img', src=True)
+    if not imgs: return None
+    target = soup.find('article')
+    if target:
+        img = target.find('img', src=True)
+        if img: return urljoin(url, img['src'])
+    return urljoin(url, imgs[0]['src'])
+
+STRATEGY_MAP = {
+    'og': strat_og, 'twitter': strat_twitter, 
+    'swec': strat_swec, 'afton': strat_afton, 
+    'wordpress': strat_wordpress, 'lazy': strat_lazy, 
+    'hero': strat_hero, 'largest': strat_largest
+}
+
+def get_image(entry, source):
+    # 1. Custom Image (Admin Override)
+    if source.get('custom_image'): return source['custom_image']
+
+    # 2. Forced Strategy
+    strat_name = source.get('image_strategy')
+    if strat_name and strat_name in STRATEGY_MAP:
+        try:
+            r = get_session().get(entry.link, timeout=10, verify=False)
+            soup = BeautifulSoup(r.text, 'html.parser')
+            func = STRATEGY_MAP[strat_name]
+            img = func(soup, r.text, entry.link)
+            if img: return img
+        except: pass
+
+    # 3. RSS Data
+    if 'media_content' in entry:
+        try: return entry.media_content[0]['url']
+        except: pass
+    if 'enclosures' in entry:
+        for enc in entry.enclosures:
+            if enc.get('type', '').startswith('image'): return enc.get('href')
+
+    # 4. Content Scan (WP Fix)
+    if 'content' in entry:
+        for c in entry.content:
+            try:
+                soup = BeautifulSoup(c.value, 'html.parser')
+                img = soup.find('img')
+                if img: return img.get('src')
+            except: pass
+
+    # 5. Fallback Scrape
+    try:
+        r = get_session().get(entry.link, timeout=10, verify=False)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        for func in [strat_og, strat_twitter, strat_wordpress, strat_hero, strat_lazy]:
+            res = func(soup, r.text, entry.link)
+            if res: return res
+    except: pass
+
+    return DEFAULT_IMAGE
+
+def process_feed(source):
+    articles = []
+    try:
+        r = get_session().get(source['url'], timeout=15, verify=False)
+        if r.status_code != 200: return []
+        feed = feedparser.parse(r.content)
+        if not feed.entries: return []
+
+        for entry in feed.entries[:MAX_ARTICLES]:
+            ts = time.time()
+            try:
+                if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                    ts = time.mktime(entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+                    ts = time.mktime(entry.updated_parsed)
+            except: pass 
+
+            if (time.time() - ts) > (MAX_AGE_DAYS * 86400): continue
+
+            img = get_image(entry, source)
+            
+            desc = entry.get('summary', '') or entry.get('description', '')
+            clean_desc = BeautifulSoup(desc, 'html.parser').get_text(separator=' ').strip()
+            clean_desc = " ".join(clean_desc.split())[:280] + "..." if len(clean_desc) > 280 else clean_desc
+
+            title = entry.title
+            if TRANSLATOR_ACTIVE and source.get('lang') == 'sv':
+                try: title = GoogleTranslator(source='sv', target='en').translate(title)
+                except: pass
+
+            articles.append({
+                "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
+                "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
+                "feed_url": source['url']
+            })
+    except Exception as e: print(f"Err {source['url']}: {e}")
+    return articles
+
+def get_channel_id(url):
+    try:
+        r = get_session().get(url, timeout=5)
+        if r.status_code == 200:
+            match = re.search(r'"externalId":"(UC[\w-]+)"', r.text) or re.search(r'channel_id=([a-zA-Z0-9_-]+)', r.text)
+            if match: return match.group(1)
+        ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': 0}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info.get('channel_id')
+    except: return None
+
+def get_video_info(source):
+    videos = []
+    rss_url = None
+    
+    # Try RSS Sniffing first (Exact Time)
+    if 'channel_id' in source: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
+    elif 'youtube.com/feeds' in source['url']: rss_url = source['url']
+    else:
+        cid = get_channel_id(source['url'])
+        if cid: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
+
+    if rss_url:
+        try:
+            feed = feedparser.parse(rss_url)
+            for entry in feed.entries[:5]:
+                ts = time.time()
+                if hasattr(entry, 'published_parsed'): ts = time.mktime(entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed'): ts = time.mktime(entry.updated_parsed)
+                
+                thumb = DEFAULT_IMAGE
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0: thumb = entry.media_thumbnail[0]['url']
+                elif source.get('custom_image'): thumb = source.get('custom_image')
+                
+                desc = entry.get('summary', '') or entry.get('media_description', '')
+                clean_desc = BeautifulSoup(desc, 'html.parser').get_text()[:280] + "..."
+
+                videos.append({
+                    "title": entry.title, "link": entry.link, "images": [thumb],
+                    "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
+                })
+            if videos: return videos
+        except: pass
+
+    # Fallback yt_dlp
+    try:
+        ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(source['url'], download=False)
+            for entry in info.get('entries', []):
+                if not entry: continue
+                desc = entry.get('description') or entry.get('title') or "Video Update"
+                thumb = DEFAULT_IMAGE
+                if entry.get('thumbnails'): thumb = entry['thumbnails'][-1].get('url', DEFAULT_IMAGE)
+                elif source.get('custom_image'): thumb = source.get('custom_image')
+
+                ts = 0
+                if entry.get('timestamp'): ts = entry['timestamp']
+                elif entry.get('upload_date'):
+                    try: ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
+                    except: pass
+                if ts == 0: ts = time.time() - 86400
+                
+                videos.append({
+                    "title": entry['title'], "link": entry['url'], "images": [thumb],
+                    "summary": desc[:280], "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
+                })
+    except: pass
+    return videos
+
+if __name__ == "__main__":
+    all_data = []
+
+    # Inject System Error if sources.py failed
+    if SYSTEM_ERROR:
+        all_data.append({
+            "title": "⚠️ SYSTEM ERROR: SOURCES.PY BROKEN",
+            "link": "#",
+            "images": [DEFAULT_IMAGE],
+            "summary": SYSTEM_ERROR,
+            "category": "tech",
+            "filter_tag": "global",
+            "source": "SYSTEM",
+            "timestamp": time.time(),
+            "is_video": False,
+            "feed_url": ""
+        })
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        futures = []
+        for s in SOURCES:
+            if s['type'] == 'video': futures.append(executor.submit(get_video_info, s))
+            else: futures.append(executor.submit(process_feed, s))
+            
+        for f in concurrent.futures.as_completed(futures):
+            try:
+                res = f.result()
+                if res: all_data.extend(res)
+            except: pass
+
+    all_data.sort(key=lambda x: x['timestamp'], reverse=True)
+    final = []
+    seen = set()
+    for a in all_data:
+        if a['link'] not in seen:
+            final.append(a); seen.add(a['link'])
+            
+    now = time.time()
+    for art in final:
+        diff = now - art['timestamp']
+        if diff < 0: diff = 0
+        if diff < 3600: art['time_str'] = "Just Now"
+        elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
+        elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
+        else: art['time_str'] = f"{int(diff/604800)}w ago"
+
+    with open('news.json', 'w', encoding='utf-8') as f: json.dump(final[:TOTAL_LIMIT], f, ensure_ascii=False, indent=2)
+    
+    if os.path.exists('template.html'):
+        with open('template.html', 'r', encoding='utf-8') as f: html = f.read()
+        html = html.replace("<!-- NEWS_DATA_JSON -->", json.dumps(final[:TOTAL_LIMIT]))
+        if '<head>' in html and 'no-referrer' not in html:
+            html = html.replace('<head>', '<head><meta name="referrer" content="no-referrer">')
+        with open("index.html", "w", encoding="utf-8") as f: f.write(html)
