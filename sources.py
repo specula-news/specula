@@ -35,7 +35,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@Hardwareunboxed/videos","cat":"youtubers","type":"video","source_name":"Hardware Unboxed","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@der8auer-en/videos","cat":"youtubers","type":"video","source_name":"der8auer","lang":"en","filter_tag":"tech"},
     # --- YT: Energy ---
-    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy"},
+    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy","custom_image":"https://yt3.googleusercontent.com/ytc/AIdro_nYFWjG64F27JNXiQXMCKYB0umXlsvIxNxkHzaBByxxeDk=s160-c-k-c0x00ffffff-no-rj","image_strategy":null},
     # --- YT: EV ---
     {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev"},
     {"url":"https://www.youtube.com/@electricviking/videos","cat":"youtubers","type":"video","source_name":"Electric Viking","lang":"en","filter_tag":"ev"},
