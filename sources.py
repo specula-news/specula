@@ -54,7 +54,6 @@ SOURCES = [
     {"url":"https://www.youtube.com/@ewc/videos","cat":"gaming","type":"video","source_name":"Esports World Cup","lang":"en"},
     {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
     # --- TOPIC: Tech ---
-    {"url":"https://www.nyteknik.se/nyheter/ny-teknik-i-rrs-format/972205","cat":"tech","type":"web","source_name":"Nyteknik","lang":"sv"},
     {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
     {"url":"https://techcrunch.com/feed/","cat":"tech","type":"web","source_name":"TechCrunch","lang":"en"},
     {"url":"https://feeds.arstechnica.com/arstechnica/index","cat":"tech","type":"web","source_name":"Ars Technica","lang":"en"},
