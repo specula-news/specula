@@ -3,7 +3,7 @@
 SOURCES = [
     # --- NEWS: GLOBAL ---
     {"url":"https://www.reuters.com/rss/news/world","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
-    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
+    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global","custom_image":"https://adfontesmedia.com/the-guardian-bias-and-reliability/","image_strategy":null},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
     {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global"},
