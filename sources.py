@@ -102,6 +102,9 @@ SOURCES = [
     {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
     {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
     # --- GEO: EU ---
+    {"url":"https://www.youtube.com/@GregTerryExperience/videos","cat":"geopolitics","type":"video","source_name":"Greg Terry Experience","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@CombatVeteranNews/videos","cat":"geopolitics","type":"video","source_name":"Combat Veteran News","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@MeidasTouch/videos","cat":"geopolitics","type":"video","source_name":"MeidasTouch","lang":"en","filter_tag":"eu"},
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
 ]
 
