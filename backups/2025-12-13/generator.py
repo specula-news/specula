@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 import concurrent.futures
+from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin
 import urllib3
 import re
@@ -168,16 +169,70 @@ def process_feed(source):
     except Exception as e: print(f"Err {source['url']}: {e}")
     return articles
 
-def get_video_info(source):
-    videos = []
+def get_channel_id(url):
+    """Extraherar Channel ID från en YouTube-länk för att bygga RSS."""
     try:
-        # NOTE: dump_single_json ger mer metadata än extract_flat för datum
-        ydl_opts = {
-            'quiet': True, 
-            'ignoreerrors': True, 
-            'extract_flat': True, 
-            'playlistend': 5
-        }
+        # Metod 1: Via HTML (Snabbast)
+        r = get_session().get(url, timeout=5)
+        if r.status_code == 200:
+            match = re.search(r'"externalId":"(UC[\w-]+)"', r.text) or re.search(r'channel_id=([a-zA-Z0-9_-]+)', r.text)
+            if match: return match.group(1)
+            
+        # Metod 2: Via yt_dlp (Robust men långsammare)
+        ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': 0}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info.get('channel_id')
+    except: return None
+
+def get_video_info(source):
+    """
+    Hämtar videos. Försöker först konvertera till RSS för exakt tid.
+    Faller tillbaka på yt_dlp om RSS misslyckas.
+    """
+    videos = []
+    rss_url = None
+    
+    # 1. Försök bygga RSS-URL (Detta ger exakt tid!)
+    if 'channel_id' in source: # Om du manuellt lagt in det
+        rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
+    elif 'youtube.com/feeds' in source['url']:
+        rss_url = source['url']
+    else:
+        # Gissa channel ID
+        cid = get_channel_id(source['url'])
+        if cid: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
+
+    # 2. Om vi har RSS, använd feedparser (Supersnabb + Exakt tid)
+    if rss_url:
+        try:
+            feed = feedparser.parse(rss_url)
+            for entry in feed.entries[:5]:
+                ts = time.time()
+                if hasattr(entry, 'published_parsed'):
+                    ts = time.mktime(entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed'):
+                    ts = time.mktime(entry.updated_parsed)
+                
+                thumb = DEFAULT_IMAGE
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
+                    thumb = entry.media_thumbnail[0]['url']
+                
+                desc = entry.get('summary', '') or entry.get('description', '') or entry.get('media_description', '')
+                clean_desc = BeautifulSoup(desc, 'html.parser').get_text()[:280] + "..."
+
+                videos.append({
+                    "title": entry.title, "link": entry.link, "images": [thumb],
+                    "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
+                })
+            if videos: return videos # Om lyckat, returnera direkt
+        except Exception as e: print(f"RSS Fail for {source['source_name']}: {e}")
+
+    # 3. FALLBACK: yt_dlp (Om RSS misslyckades)
+    try:
+        ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             for entry in info.get('entries', []):
@@ -186,29 +241,13 @@ def get_video_info(source):
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
-                # --- PRECISE TIME LOGIC ---
                 ts = 0
-                # 1. Try exact timestamp (float)
-                if entry.get('timestamp'):
-                    ts = entry['timestamp']
-                # 2. Try release_timestamp
-                elif entry.get('release_timestamp'):
-                    ts = entry['release_timestamp']
-                # 3. Try upload_date string (YYYYMMDD)
+                if entry.get('timestamp'): ts = entry['timestamp']
                 elif entry.get('upload_date'):
-                    try:
-                        d = entry['upload_date']
-                        dt = datetime.strptime(d, '%Y%m%d')
-                        # Set to noon to avoid "Just now" for everything today if script runs early
-                        ts = dt.replace(hour=12).timestamp()
+                    try: ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
                     except: pass
                 
-                # If everything failed, mark as old so it doesn't show as "Just Now" falsely, 
-                # OR set to now if you prefer. Setting to now causes the bug.
-                # Let's try to fetch page if needed? No, too slow.
-                # If ts is 0, we fallback to time.time() BUT we mark it specifically
-                if ts == 0: ts = time.time() - 86400 # Default to "Yesterday" if unknown to avoid confusion? 
-                # Actually, let's keep time.time() but hopefully steps 1-3 work.
+                if ts == 0: ts = time.time() - 86400 # Igår om okänt
                 
                 videos.append({
                     "title": entry['title'], "link": entry['url'], "images": [thumb],
@@ -244,13 +283,10 @@ if __name__ == "__main__":
         if a['link'] not in seen:
             final.append(a); seen.add(a['link'])
             
-    # TIDSFORMATERING
     now = time.time()
     for art in final:
         diff = now - art['timestamp']
-        # YouTube fix: If diff is massive (future) or weird, handle it
         if diff < 0: diff = 0
-        
         if diff < 3600: art['time_str'] = "Just Now"
         elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
         elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
