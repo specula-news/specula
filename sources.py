@@ -65,7 +65,7 @@ SOURCES = [
     {"url":"https://www.engadget.com/rss.xml","cat":"tech","type":"web","source_name":"Engadget","lang":"en"},
     {"url":"https://mashable.com/feeds/rss/tech","cat":"tech","type":"web","source_name":"Mashable","lang":"en"},
     # --- TOPIC: Energy ---
-    {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en"},
+    {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en","image_strategy":"lazy"},
     {"url":"https://energydigital.com/feed","cat":"energy","type":"web","source_name":"Energy Digital","lang":"en"},
     {"url":"https://www.breakthroughenergy.org/news","cat":"energy","type":"web","source_name":"Breakthrough Energy","lang":"en"},
     {"url":"https://oilprice.com/rss/main","cat":"energy","type":"web","source_name":"OilPrice","lang":"en"},
