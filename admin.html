@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V18.0</title>
+    <title>SPECULA ADMIN // V18.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
@@ -11,10 +11,15 @@
         
         /* HEADER */
         .top-bar { height: 80px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; position: relative; }
-        .brand-group { display: flex; flex-direction: column; }
-        .brand { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
-        .brand span { color: var(--accent); }
-        .version-tag { font-size: 0.65rem; color: #666; font-family: monospace; letter-spacing: 1px; }
+        
+        .brand-group { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+        .brand-row { display: flex; align-items: center; gap: 10px; }
+        .logo-img { height: 30px; cursor: pointer; transition: transform 0.2s; }
+        .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--accent)); }
+        .brand-text { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; text-decoration: none; transition: color 0.2s; }
+        .brand-text:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        .brand-text span { color: var(--accent); }
+        .version-tag { font-size: 0.65rem; color: #666; font-family: monospace; letter-spacing: 1px; margin-left: 40px; }
 
         /* CENTER STAGE */
         .center-stage { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 15px; }
@@ -93,7 +98,7 @@
         .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
         .btn-del-corner:hover { background: #330000; color: #ff4444; border-color: #ff4444; }
 
-        /* LINK BUTTON (BOTTOM RIGHT) - NOW RED HOVER */
+        /* LINK BUTTON (BOTTOM RIGHT) */
         .btn-link-action { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #444; color: #888; border-radius: 4px; cursor: pointer; transition: 0.2s; }
         .btn-link-action:hover { background: #330000; color: #ff4444; border-color: #ff4444; }
 
@@ -117,6 +122,11 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .overlay.open { display: flex; }
         .modal-window { background: #111; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); width: 90%; max-width: 800px; max-height: 90vh; }
+        
+        /* CLOSE BUTTON - RED */
+        .close-modal-btn { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #ff4444; transition: 0.2s; }
+        .close-modal-btn:hover { color: #fff; transform: scale(1.1); }
+
         .dump-box { width: 600px; height: 600px; max-width: 90vw; max-height: 90vh; }
         .drop-zone { height: 100%; border: 3px dashed #444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; transition: 0.3s; cursor: pointer; background: #161616; }
         .drop-zone:hover { border-color: var(--accent); color: var(--accent); }
@@ -144,9 +154,6 @@
         
         .add-bar { height: 70px; border-top: 1px solid var(--border); background: #080808; display: flex; align-items: center; padding: 0 30px; gap: 10px; flex-shrink: 0; }
         .add-input { background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; font-family: 'Inter'; font-size: 0.9rem; }
-        .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .toast.show { opacity: 1; top: 110px; }
-        .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
         
         /* FILE SELECT BUTTONS (WHITE TEXT FIX) */
         .btn-file-select {
@@ -172,6 +179,9 @@
         }
         .btn-cancel:hover { opacity: 1; }
 
+        .toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid var(--success); color: var(--success); padding: 12px 30px; border-radius: 30px; opacity: 0; pointer-events: none; transition: 0.3s; font-weight: bold; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast.show { opacity: 1; top: 110px; }
+        .status-box { background: #111; padding: 10px; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: #888; }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
@@ -184,7 +194,7 @@
         <div class="modal-window login-box">
             <h2 style="color:var(--accent); text-align:center;">SPECULA CONFIG</h2>
             <div class="login-label">GITHUB USERNAME</div>
-            <input type="text" id="userInput" class="login-input" value="specula-news">
+            <input type="text" id="userInput" class="login-input" value="specula">
             <div class="login-label">REPOSITORY NAME</div>
             <input type="text" id="repoInput" class="login-input" value="specula">
             <div class="login-label">PERSONAL ACCESS TOKEN</div>
@@ -196,8 +206,11 @@
     <!-- MAIN UI -->
     <div class="top-bar">
         <div class="brand-group">
-            <div class="brand">SPECULA <span>// ADMIN V18.0</span></div>
-            <div class="version-tag">SYSTEM ONLINE</div>
+            <div class="brand-row">
+                <img src="icon.png" class="logo-img" onclick="location.reload()" title="Reload Admin">
+                <a href="https://specula-news.netlify.app/" target="_blank" class="brand-text">SPECULA <span>ADMIN</span></a>
+            </div>
+            <div class="version-tag">V18.2</div>
         </div>
         
         <!-- CENTER STAGE (DEPLOY BUTTON) -->
@@ -227,12 +240,24 @@
     </div>
 
     <!-- MODALS -->
-    <div class="overlay" id="dumpModal"><div class="modal-window dump-box"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0;">UPLOAD FILE</h3><button onclick="closeModal('dumpModal')" style="background:transparent; border:none; font-size:1.5rem;">×</button></div><div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInputHidden').click()"><div style="font-size:4rem; margin-bottom:20px;">📂</div><h3 style="margin:0;">DROP FILE HERE</h3><p>or click to browse</p><input type="file" id="fileInputHidden" style="display:none" onchange="handleFileSelect(this.files)"></div></div></div>
-    <div class="overlay" id="testerModal"><div class="modal-window tester-window"><div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;"><div style="font-weight:bold; font-size:1.2rem;">⚡ VISUAL LOGIC PROBE</div><button style="border:none; background:transparent; font-size:1.5rem;" onclick="closeModal('testerModal')">×</button></div><div id="statusLog" class="status-box">Ready...</div><div id="logicResults" class="logic-list"></div></div></div>
-    <div class="overlay" id="failModal"><div class="modal-window" style="max-width:500px; text-align:center;"><div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div><p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p><div class="fail-options"><button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button><button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button><button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button></div></div></div>
-    <div class="overlay" id="editorModal"><div class="modal-window editor-window"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;"><div id="editorTitle" style="font-weight:bold;">EDIT</div><button onclick="closeModal('editorModal')" style="font-size:1.5rem; background:transparent; border:none;">×</button></div><textarea id="codeContent" class="code-area" spellcheck="false"></textarea><div style="display:flex; justify-content:space-between; margin-top:15px;"><button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button><div style="display:flex; gap:10px;"><button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button><button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button></div></div></div></div>
+    <div class="overlay" id="dumpModal"><div class="modal-window dump-box"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0;">UPLOAD FILE</h3><button onclick="closeModal('dumpModal')" class="close-modal-btn">×</button></div><div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInputHidden').click()"><div style="font-size:4rem; margin-bottom:20px;">📂</div><h3 style="margin:0;">DROP FILE HERE</h3><p>or click to browse</p><input type="file" id="fileInputHidden" style="display:none" onchange="handleFileSelect(this.files)"></div></div></div>
     
-    <!-- FILE SELECTOR MODAL (FIXED TEXT COLOR) -->
+    <!-- TESTER MODAL WITH RED X -->
+    <div class="overlay" id="testerModal">
+        <div class="modal-window tester-window">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:10px;">
+                <div style="font-weight:bold; font-size:1.2rem;">⚡ VISUAL LOGIC PROBE</div>
+                <button class="close-modal-btn" onclick="closeModal('testerModal')">×</button>
+            </div>
+            <div id="statusLog" class="status-box">Ready...</div>
+            <div id="logicResults" class="logic-list"></div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="failModal"><div class="modal-window" style="max-width:500px; text-align:center;"><div style="font-weight:bold; font-size:1.2rem; color:var(--warning);">⚠️ SCAN FAILED</div><p style="color:#aaa; margin:15px 0;">I couldn't find an obvious RSS feed on this URL.</p><div class="fail-options"><button class="btn-fail-action" onclick="forceAddSource()">Force Add<br><span style="font-size:0.7em; color:#666;">(Add as is)</span></button><button class="btn-fail-action" onclick="searchGoogleForRSS()">Search Google<br><span style="font-size:0.7em; color:#666;">(Find RSS)</span></button><button class="btn-fail-action" onclick="closeModal('failModal')">Cancel</button></div></div></div>
+    
+    <div class="overlay" id="editorModal"><div class="modal-window editor-window"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;"><div id="editorTitle" style="font-weight:bold;">EDIT</div><button onclick="closeModal('editorModal')" class="close-modal-btn">×</button></div><textarea id="codeContent" class="code-area" spellcheck="false"></textarea><div style="display:flex; justify-content:space-between; margin-top:15px;"><button class="btn-clear" onclick="clearEditor()">🗑️ CLEAR ALL</button><div style="display:flex; gap:10px;"><button onclick="closeModal('editorModal')" style="background:#333; border:none; color:white;">Cancel</button><button class="btn-save" onclick="saveFileContent()">💾 SAVE & UPLOAD</button></div></div></div></div>
+    
     <div class="overlay" id="selectorModal">
         <div class="modal-window" style="width:300px; text-align:center;">
             <h3>SELECT FILE</h3>
@@ -399,23 +424,7 @@
             items.forEach((item, idx) => { 
                 const stat = item.lastStatus || 'none'; 
                 let previewHtml = '<span>No Preview</span>'; let tag = '';
-                // Status dot logic
-                let dotClass = 'status-err';
-                if (newsMap[item.source_name] || newsMap[item.url]) {
-                    dotClass = 'status-ok';
-                    // Check if image is valid/simulated
-                    const img = newsMap[item.source_name] || newsMap[item.url];
-                    previewHtml = `<img src="${img}">`; 
-                    tag = `<div class="live-tag">REAL OUTPUT</div>`; 
-                } else {
-                    const cleanUrl = item.url.replace(/\/$/, "");
-                    if(newsMap[cleanUrl]) {
-                        previewHtml = `<img src="${newsMap[cleanUrl]}">`; 
-                        tag = `<div class="live-tag">REAL OUTPUT</div>`; 
-                        dotClass = 'status-ok';
-                    }
-                }
-                
+                if (newsMap[item.source_name]) { previewHtml = `<img src="${newsMap[item.source_name]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } else if (newsMap[item.url]) { previewHtml = `<img src="${newsMap[item.url]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } else { const cleanUrl = item.url.replace(/\/$/, ""); if(newsMap[cleanUrl]) { previewHtml = `<img src="${newsMap[cleanUrl]}">`; tag = `<div class="live-tag">REAL OUTPUT</div>`; } }
                 const card = document.createElement('div'); card.className = 'card'; card.id = `card-${idx}`; 
                 card.innerHTML = `<button class="btn-del-corner" onclick="deleteItem(${idx})">×</button><div class="status-dot ${dotClass}" title="Status"></div><div class="card-header"><div class="favicon-wrap"><img src="${getFavicon(item.url)}" class="favicon"><input class="edit-name" value="${item.source_name || ''}" onchange="updateItem(${idx}, 'source_name', this.value)"></div></div><div class="card-image" id="preview-${idx}">${previewHtml}${tag}</div><div class="url-block"><div class="url-actions"><div class="card-label">SOURCE URL</div><button class="btn-analyze" onclick="openLogicAnalyzer('${item.url}', ${idx})">⚡ ANALYZE</button></div><input id="url-${idx}" class="edit-url" value="${item.url}" onchange="updateItem(${idx}, 'url', this.value)"></div><div class="card-footer"><select class="move-select" onchange="moveItem(${idx}, this.value)"><option value="">Move to...</option>${getMoveOptions(activeFolder)}</select><button class="btn-link-action" onclick="window.open('${item.url}','_blank')">🔗</button></div>`; grid.appendChild(card); 
                 if (!tag && item.type !== 'video') { setTimeout(() => loadSim(idx, item.url), 200 + (idx * 200)); }
@@ -440,7 +449,7 @@
             } catch(e) { div.innerHTML = `<span>Err</span>`; }
         }
         
-        // ... (Keep other helpers like parsePython, saveToGitHubSafe, etc. unchanged) ...
+        // ... (Keep other helpers like parsePython, saveToGitHubSafe, etc. unchanged from V10.4) ...
         function parsePython(text) { const startIdx = text.indexOf('SOURCES = ['); if(startIdx === -1) return; rawHeader = text.substring(0, startIdx).trim(); const footerStart = text.indexOf('URLS_GLOBAL = ['); if(footerStart > -1) { rawFooter = text.substring(footerStart).trim(); parseListContent(text.substring(startIdx, footerStart).trim()); } else { rawFooter = ""; parseListContent(text.substring(startIdx)); } }
         function parseListContent(str) { str = str.replace('SOURCES = [', '').trim(); if(str.endsWith(']')) str = str.slice(0, -1).trim(); for(let key in FOLDER_CONFIG) sourceData[key] = []; const lines = str.split('\n'); lines.forEach(line => { line = line.trim(); if(!line.startsWith('{')) return; if(line.endsWith(',')) line = line.slice(0, -1); try { const item = JSON.parse(line); const folderId = findFolderId(item); if(folderId) sourceData[folderId].push(item); } catch(e) {} }); }
         function findFolderId(item) { for(let id in FOLDER_CONFIG) { const cfg = FOLDER_CONFIG[id]; let match = true; if(cfg.cat && item.cat !== cfg.cat) match = false; if(cfg.type && item.type !== cfg.type) match = false; if(cfg.tag && item.filter_tag !== cfg.tag) match = false; if(match) return id; } return null; }
@@ -464,7 +473,48 @@
         async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
         function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
         async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
-        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); if(!r.ok) throw new Error("Proxy Fail"); const d = await r.json(); statusLog.innerHTML = '2. Parsing...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(d.contents, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const ad = await ar.json(); const html = ad.contents; const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        
+        // --- VISUAL PROBE FIX ---
+        async function openLogicAnalyzer(url, idx) { 
+            activeAnalyzerIndex = idx; 
+            document.getElementById('testerModal').classList.add('open'); 
+            const resBox = document.getElementById('logicResults'); 
+            const statusLog = document.getElementById('statusLog'); 
+            resBox.innerHTML = ''; 
+            statusLog.innerHTML = '1. Fetching... ' + url; 
+            
+            try { 
+                const r = await fetchProxy(url); 
+                // IF PROXY FAILS, we assume raw HTML logic
+                const rawText = r.ok ? await r.text() : "";
+                // Parse logic... (simplified for stability)
+                let text = rawText; 
+                try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){} 
+                
+                statusLog.innerHTML = '2. Scanning...'; 
+                
+                // FORCE RAW TEXT MATCHING FIRST
+                const strategies = [ 
+                    { id: 'og', name: "OpenGraph", val: text.match(/property="og:image" content="([^"]+)"/)?.[1] }, 
+                    { id: 'twitter', name: "Twitter", val: text.match(/name="twitter:image" content="([^"]+)"/)?.[1] }, 
+                    { id: 'swec', name: "Sweclockers", val: text.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, 
+                    { id: 'afton', name: "Aftonbladet", val: text.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, 
+                    // Simple Regex fallback
+                    { id: 'first_img', name: "First JPG/PNG", val: text.match(/(https?:\/\/[^"'\s]+\.(?:jpg|jpeg|png|webp))/i)?.[1] } 
+                ]; 
+                
+                let htmlOut = ""; 
+                strategies.forEach(res => { 
+                    const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; 
+                    htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; 
+                }); 
+                resBox.innerHTML = htmlOut; 
+                statusLog.innerHTML = '✅ Done.'; 
+            } catch(e) { 
+                statusLog.innerHTML = 'Error: ' + e.message; 
+            } 
+        }
+
         function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
         async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
