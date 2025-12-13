@@ -27,9 +27,9 @@ SOURCES = [
     {"url":"https://www.youtube.com/@johnnyharris/videos","cat":"youtubers","type":"video","source_name":"Johnny Harris","lang":"en","filter_tag":"geo"},
     {"url":"https://www.youtube.com/@lenapetrova/videos","cat":"youtubers","type":"video","source_name":"Lena Petrova","lang":"en","filter_tag":"geo"},
     # --- YT: Tech ---
+    {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"SmarterEveryDay","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@AnastasiInTech/videos","cat":"youtubers","type":"video","source_name":"Anastasi In Tech","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@veritasium/videos","cat":"youtubers","type":"video","source_name":"Veritasium","lang":"en","filter_tag":"tech"},
-    {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"Smartereveryday","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@Jayztwocents/videos","cat":"youtubers","type":"video","source_name":"Jayztwocents","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@LinusTechTips/videos","cat":"youtubers","type":"video","source_name":"Linus Tech Tips","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@MKBHD/videos","cat":"youtubers","type":"video","source_name":"MKBHD","lang":"en","filter_tag":"tech"},
