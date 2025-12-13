@@ -36,6 +36,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@Hardwareunboxed/videos","cat":"youtubers","type":"video","source_name":"Hardware Unboxed","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@der8auer-en/videos","cat":"youtubers","type":"video","source_name":"der8auer","lang":"en","filter_tag":"tech"},
     # --- YT: Energy ---
+    {"url":"https://www.youtube.com/@benalexxander/videos","cat":"youtubers","type":"video","source_name":"Ben Alexxander","lang":"en","filter_tag":"energy"},
     {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy"},
     # --- YT: EV ---
     {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev"},
@@ -65,7 +66,6 @@ SOURCES = [
     {"url":"https://www.engadget.com/rss.xml","cat":"tech","type":"web","source_name":"Engadget","lang":"en"},
     {"url":"https://mashable.com/feeds/rss/tech","cat":"tech","type":"web","source_name":"Mashable","lang":"en"},
     # --- TOPIC: Energy ---
-    {"url":"https://www.youtube.com/@benalexxander/videos","cat":"energy","type":"web","source_name":"Ben Alexxander","lang":"en"},
     {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en","image_strategy":"lazy"},
     {"url":"https://energydigital.com/feed","cat":"energy","type":"web","source_name":"Energy Digital","lang":"en"},
     {"url":"https://www.breakthroughenergy.org/news","cat":"energy","type":"web","source_name":"Breakthrough Energy","lang":"en"},
