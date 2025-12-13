@@ -6,11 +6,23 @@ from bs4 import BeautifulSoup
 import time
 import random
 import concurrent.futures
+from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin
 import urllib3
 import re
 import yt_dlp
-from datetime import datetime, timezone
+import sys
+import traceback
+
+# --- ERROR HANDLING START ---
+SYSTEM_ERROR = None
+try:
+    from sources import SOURCES
+except Exception as e:
+    SOURCES = []
+    SYSTEM_ERROR = f"CRITICAL: sources.py is broken. {str(e)}"
+    print(SYSTEM_ERROR)
+# --- ERROR HANDLING END ---
 
 try:
     from deep_translator import GoogleTranslator
@@ -20,7 +32,7 @@ except ImportError:
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# --- KONFIGURATION ---
+# --- CONFIG ---
 MAX_ARTICLES = 10
 TOTAL_LIMIT = 2000
 MAX_AGE_DAYS = 90
@@ -37,7 +49,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIER ---
+# --- STRATEGIES ---
 def strat_og(soup, html, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -63,7 +75,7 @@ def strat_lazy(soup, html, url):
     return urljoin(url, img['data-src']) if img else None
 
 def strat_hero(soup, html, url):
-    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'lead']:
+    for cls in ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail']:
         div = soup.find(class_=re.compile(cls, re.I))
         if div:
             img = div.find('img')
@@ -87,7 +99,10 @@ STRATEGY_MAP = {
 }
 
 def get_image(entry, source):
-    # 1. TVINGAD STRATEGI (FRÅN ADMIN)
+    # 1. Custom Image (Admin Override)
+    if source.get('custom_image'): return source['custom_image']
+
+    # 2. Forced Strategy
     strat_name = source.get('image_strategy')
     if strat_name and strat_name in STRATEGY_MAP:
         try:
@@ -98,7 +113,7 @@ def get_image(entry, source):
             if img: return img
         except: pass
 
-    # 2. RSS STANDARD
+    # 3. RSS Data
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -106,7 +121,7 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
 
-    # 3. CONTENT SCAN
+    # 4. Content Scan (WP Fix)
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -115,7 +130,7 @@ def get_image(entry, source):
                 if img: return img.get('src')
             except: pass
 
-    # 4. FALLBACK DEEP SCRAPE
+    # 5. Fallback Scrape
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
@@ -123,10 +138,6 @@ def get_image(entry, source):
             res = func(soup, r.text, entry.link)
             if res: return res
     except: pass
-    
-    # 5. CUSTOM FALLBACK (MANUELLT VALD I ADMIN)
-    if source.get('custom_image'):
-        return source['custom_image']
 
     return DEFAULT_IMAGE
 
@@ -151,10 +162,7 @@ def process_feed(source):
 
             img = get_image(entry, source)
             
-            desc = ""
-            if 'summary' in entry: desc = entry.summary
-            elif 'description' in entry: desc = entry.description
-            
+            desc = entry.get('summary', '') or entry.get('description', '')
             clean_desc = BeautifulSoup(desc, 'html.parser').get_text(separator=' ').strip()
             clean_desc = " ".join(clean_desc.split())[:280] + "..." if len(clean_desc) > 280 else clean_desc
 
@@ -188,10 +196,9 @@ def get_video_info(source):
     videos = []
     rss_url = None
     
-    if 'channel_id' in source:
-        rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
-    elif 'youtube.com/feeds' in source['url']:
-        rss_url = source['url']
+    # Try RSS Sniffing first (Exact Time)
+    if 'channel_id' in source: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
+    elif 'youtube.com/feeds' in source['url']: rss_url = source['url']
     else:
         cid = get_channel_id(source['url'])
         if cid: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
@@ -205,12 +212,10 @@ def get_video_info(source):
                 elif hasattr(entry, 'updated_parsed'): ts = time.mktime(entry.updated_parsed)
                 
                 thumb = DEFAULT_IMAGE
-                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
-                    thumb = entry.media_thumbnail[0]['url']
-                elif source.get('custom_image'):
-                    thumb = source.get('custom_image') # FALLBACK TILL MANUELL BILD
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0: thumb = entry.media_thumbnail[0]['url']
+                elif source.get('custom_image'): thumb = source.get('custom_image')
                 
-                desc = entry.get('summary', '') or entry.get('description', '') or entry.get('media_description', '')
+                desc = entry.get('summary', '') or entry.get('media_description', '')
                 clean_desc = BeautifulSoup(desc, 'html.parser').get_text()[:280] + "..."
 
                 videos.append({
@@ -220,8 +225,9 @@ def get_video_info(source):
                     "feed_url": source['url']
                 })
             if videos: return videos
-        except Exception as e: print(f"RSS Fail: {e}")
+        except: pass
 
+    # Fallback yt_dlp
     try:
         ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -229,7 +235,6 @@ def get_video_info(source):
             for entry in info.get('entries', []):
                 if not entry: continue
                 desc = entry.get('description') or entry.get('title') or "Video Update"
-                
                 thumb = DEFAULT_IMAGE
                 if entry.get('thumbnails'): thumb = entry['thumbnails'][-1].get('url', DEFAULT_IMAGE)
                 elif source.get('custom_image'): thumb = source.get('custom_image')
@@ -247,15 +252,28 @@ def get_video_info(source):
                     "source": source['source_name'], "timestamp": ts, "is_video": True,
                     "feed_url": source['url']
                 })
-    except Exception as e: print(f"YT Error: {e}")
+    except: pass
     return videos
 
 if __name__ == "__main__":
-    try: from sources import SOURCES
-    except: SOURCES = []
-
     all_data = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+
+    # Inject System Error if sources.py failed
+    if SYSTEM_ERROR:
+        all_data.append({
+            "title": "⚠️ SYSTEM ERROR: SOURCES.PY BROKEN",
+            "link": "#",
+            "images": [DEFAULT_IMAGE],
+            "summary": SYSTEM_ERROR,
+            "category": "tech",
+            "filter_tag": "global",
+            "source": "SYSTEM",
+            "timestamp": time.time(),
+            "is_video": False,
+            "feed_url": ""
+        })
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         futures = []
         for s in SOURCES:
             if s['type'] == 'video': futures.append(executor.submit(get_video_info, s))
