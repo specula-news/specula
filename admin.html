@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPECULA ADMIN // V21.1</title>
+    <title>SPECULA ADMIN // V21.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --surface: #121212; --border: #333; --accent: #00f0ff; --text: #fff; --success: #00ff88; --warning: #ffaa00; --fail: #ff4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* HEADER */
-        .top-bar { height: 80px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; position: relative; overflow: hidden; }
+        .top-bar { height: 80px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(0,0,0,0.95); z-index: 100; flex-shrink: 0; position: relative; }
         
         .brand-group { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
         .brand-row { display: flex; align-items: center; gap: 10px; }
-        
-        /* LOGO SAFETY CONTAINER */
-        .logo-safe-wrapper { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .logo-img { width: 30px; height: 30px; object-fit: contain; cursor: pointer; transition: transform 0.2s; }
+        .logo-img { height: 30px; cursor: pointer; transition: transform 0.2s; }
         .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--accent)); }
-        
         .brand-text { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; color: #fff; text-decoration: none; transition: color 0.2s; }
         .brand-text:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
         .brand-text span { color: var(--accent); }
@@ -52,6 +48,7 @@
         .cyber-btn:hover::before { left: 100%; }
         .cyber-btn.syncing { border-color: var(--warning); color: var(--warning); animation: pulse-border 1.5s infinite; cursor: default; }
         .cyber-btn.success { border-color: var(--success); color: var(--success); background: rgba(0, 255, 136, 0.05); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+        .cyber-btn.error { border-color: var(--fail); color: var(--fail); box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
         
         @keyframes pulse-border { 0% { box-shadow: 0 0 5px var(--warning); } 50% { box-shadow: 0 0 20px var(--warning); } 100% { box-shadow: 0 0 5px var(--warning); } }
 
@@ -102,7 +99,7 @@
         .btn-del-corner { position: absolute; top: 10px; right: 10px; background: transparent; color: #444; border: 1px solid #333; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; padding: 0; transition:0.2s; }
         .btn-del-corner:hover { background: #330000; color: #ff4444; border-color: #ff4444; }
 
-        /* LINK BUTTON (BOTTOM RIGHT) */
+        /* LINK BUTTON */
         .btn-link-action { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #444; color: #888; border-radius: 4px; cursor: pointer; transition: 0.2s; }
         .btn-link-action:hover { background: #330000; color: #ff4444; border-color: #ff4444; }
 
@@ -212,11 +209,11 @@
         <div class="brand-group">
             <div class="brand-row">
                 <div class="logo-safe-wrapper">
-                    <img src="icon.png" width="30" height="30" class="logo-img" onclick="location.reload()" title="Reload Admin">
+                    <img src="icon.png" class="logo-img" onclick="location.reload()" title="Reload Admin">
                 </div>
                 <a href="https://specula-news.netlify.app/" target="_blank" class="brand-text">SPECULA <span>ADMIN</span></a>
             </div>
-            <div class="version-tag">V21.1</div>
+            <div class="version-tag">V21.2</div>
         </div>
         
         <!-- CENTER STAGE (DEPLOY BUTTON) -->
@@ -322,12 +319,24 @@
         function updateStatus(state, msg) {
             const btn = document.getElementById('deployCore');
             const info = document.getElementById('syncInfo');
-            btn.className = 'cyber-btn';
-            btn.style.cursor = 'pointer';
-            if(state === 'syncing') { btn.classList.add('syncing'); btn.innerText = msg; info.className = 'sync-info'; btn.style.cursor = 'default'; } 
-            else if (state === 'success') { btn.classList.add('success'); btn.innerText = 'COMPLETE'; setTimeout(() => { btn.className = 'cyber-btn'; btn.innerText = 'DEPLOY / SYNC'; info.className = 'sync-info visible success'; updateTimeAgo(); }, 2000); } 
-            else if (state === 'error') { btn.innerText = 'FAILED - RETRY'; btn.style.borderColor = 'var(--fail)'; btn.style.color = 'var(--fail)'; } 
-            else { btn.innerText = 'DEPLOY / SYNC'; }
+            btn.className = 'cyber-btn ' + state; // Add state class (syncing/success/error)
+            btn.innerText = msg;
+            
+            if(state === 'syncing') {
+                info.className = 'sync-info'; 
+                btn.style.cursor = 'default';
+            } else if (state === 'success') {
+                setTimeout(() => {
+                    btn.className = 'cyber-btn'; 
+                    btn.innerText = 'DEPLOY / SYNC';
+                    info.className = 'sync-info visible success'; 
+                    updateTimeAgo();
+                }, 2000);
+            } else if (state === 'error') {
+                 // Do nothing special, user clicks again
+            } else {
+                btn.innerText = 'DEPLOY / SYNC';
+            }
         }
 
         function updateTimeAgo() {
@@ -335,7 +344,7 @@
             const diff = Math.floor((Date.now() - lastSyncTime) / 60000);
             const timeStr = new Date(lastSyncTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const info = document.getElementById('syncInfo');
-            info.innerText = `LAST SUCCESSFUL SYNC: ${timeStr} (${diff}m ago)`;
+            info.innerText = `LAST SYNC: ${timeStr} (${diff}m ago)`;
             info.classList.add('visible');
         }
 
@@ -371,12 +380,70 @@
             } catch(e) { alert(e.message); if(e.message.includes("Auth")) logout(); } 
         }
 
+        async function deployLive() { 
+            const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); 
+            if(!user || !repo || !token) return alert("Missing Config");
+            
+            updateStatus('syncing', 'SYNCING...');
+            
+            try { 
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { 
+                    method: 'POST', 
+                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, 
+                    body: JSON.stringify({ ref: 'main' }) 
+                }); 
+                
+                if(!res.ok) {
+                    throw new Error(`GitHub Error: ${res.status}`);
+                }
+                
+                startDeployPolling(); 
+            } catch(e) { 
+                alert("Deploy Failed: " + e.message); 
+                updateStatus('error', 'FAILED - RETRY'); 
+            } 
+        }
+
+        function startDeployPolling() { 
+            if(deployInterval) clearInterval(deployInterval); 
+            deployInterval = setInterval(async () => { 
+                const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); 
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); 
+                const data = await res.json(); 
+                
+                if(data.workflow_runs && data.workflow_runs.length > 0) {
+                    const run = data.workflow_runs[0]; 
+                    if(run.status === 'completed') { 
+                        clearInterval(deployInterval); 
+                        if(run.conclusion === 'success') {
+                            lastSyncTime = Date.now();
+                            updateStatus('success', 'COMPLETE');
+                        } else {
+                            updateStatus('error', 'BUILD FAILED');
+                        }
+                    } else {
+                        const btn = document.getElementById('deployCore');
+                        btn.innerText = `SYNCING (${run.status.toUpperCase()})...`;
+                    }
+                }
+            }, 5000); 
+        }
+
+        // --- STANDARD FUNCS ---
+        function performLogin() {
+            const user = document.getElementById('userInput').value.trim();
+            const repo = document.getElementById('repoInput').value.trim();
+            const token = document.getElementById('tokenInput').value.trim();
+            if(!user || !repo || !token) return alert("Required");
+            localStorage.setItem("gh_user", user); localStorage.setItem("gh_repo", repo); localStorage.setItem("gh_token", token);
+            document.getElementById('loginModal').classList.remove('open'); fetchSources(user, repo, token);
+        }
+        function logout() { localStorage.clear(); location.reload(); }
         async function fetchProxy(url) {
              const target = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
              try { return await fetch(`https://corsproxy.io/?${encodeURIComponent(target)}`); }
              catch { return await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`); }
         }
-
         function renderNav() { const nav = document.getElementById('navBar'); nav.innerHTML = ''; MENU.forEach(m => { if(m.subs) { const div = document.createElement('div'); div.className = `nav-item ${m.subs.includes(activeFolder) ? 'active' : ''}`; div.innerHTML = `${m.label} ▾`; const drop = document.createElement('div'); drop.className = 'dropdown'; m.subs.forEach(sid => { const count = sourceData[sid] ? sourceData[sid].length : 0; const row = document.createElement('div'); row.className = `drop-item ${activeFolder === sid ? 'selected' : ''}`; row.innerHTML = `<span>${FOLDER_CONFIG[sid].label.split(': ')[1] || FOLDER_CONFIG[sid].label}</span> <span class="count">${count}</span>`; row.onclick = (e) => { e.stopPropagation(); switchFolder(sid); }; drop.appendChild(row); }); div.appendChild(drop); nav.appendChild(div); } else { const div = document.createElement('div'); div.className = `nav-item ${activeFolder === m.id ? 'active' : ''}`; div.innerHTML = m.label; const count = sourceData[m.id] ? sourceData[m.id].length : 0; div.innerHTML += ` <span class="count" style="margin-left:5px">${count}</span>`; div.onclick = () => switchFolder(m.id); nav.appendChild(div); } }); }
 
         function renderGrid() { 
@@ -425,65 +492,28 @@
         function deleteItem(idx) { if(confirm("Are you sure?")) { sourceData[activeFolder].splice(idx, 1); renderGrid(); renderNav(); } }
         function preCheckUrl() { let u = document.getElementById('urlInput'); let val = u.value.trim(); if(val.includes('youtube.com/@') && !val.includes('/videos')) { u.value = val.replace(/\/$/, "") + '/videos'; } }
         function handleAddClick() { const url = document.getElementById('urlInput').value.trim(); const name = document.getElementById('nameInput').value.trim(); if(!url) return alert("URL Required"); const cfg = FOLDER_CONFIG[activeFolder]; let finalName = name || (url.includes('youtube') ? 'YouTube Channel' : 'New Source'); const newItem = { "url": url, "cat": cfg.cat, "type": cfg.type || (url.includes('youtube') ? 'video' : 'web'), "source_name": finalName, "lang": "en" }; if(cfg.tag) newItem.filter_tag = cfg.tag; sourceData[activeFolder].unshift(newItem); document.getElementById('urlInput').value = ''; document.getElementById('nameInput').value = ''; renderGrid(); renderNav(); showToast("Source Added!"); }
-        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V21.1)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
-        async function deployLive() { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { await fetch(`https://api.github.com/repos/${user}/${repo}/actions/workflows/main.yml/dispatches`, { method: 'POST', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ ref: 'main' }) }); showToast("Deploy Triggered!"); startDeployPolling(); } catch(e) { alert("Deploy Error"); } }
-        function startDeployPolling() { const statusBox = document.getElementById('deployStatus'); const statusText = document.getElementById('deployText'); statusBox.style.display = 'flex'; if(deployInterval) clearInterval(deployInterval); deployInterval = setInterval(async () => { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); const res = await fetch(`https://api.github.com/repos/${user}/${repo}/actions/runs?per_page=1`, { headers: { 'Authorization': `token ${token}` } }); const data = await res.json(); const run = data.workflow_runs[0]; statusText.innerText = `${run.status} (${run.conclusion || 'running'})`; if(run.status === 'completed') { clearInterval(deployInterval); statusText.style.color = run.conclusion === 'success' ? '#00ff88' : 'red'; } }, 5000); }
-        function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button class="btn-file-select" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
-        async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
-        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
-        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
+        async function saveToGitHubSafe() { if(!confirm("Overwrite sources.py?")) return; const seenUrls = new Set(); for(let key in sourceData) { const uniqueList = []; sourceData[key].forEach(item => { const cleanUrl = item.url.trim(); if(seenUrls.has(cleanUrl)) return; seenUrls.add(cleanUrl); if(cleanUrl.includes('.se/') || cleanUrl.includes('.se')) if(item.lang !== 'sv') item.lang = 'sv'; uniqueList.push(item); }); sourceData[key] = uniqueList; } let content = rawHeader + "\n\nSOURCES = [\n"; for(let id in sourceData) { if(sourceData[id].length > 0) { content += `    # --- ${FOLDER_CONFIG[id].label} ---\n`; sourceData[id].forEach(item => { content += `    ${JSON.stringify(item)},\n`; }); } } content += "]\n\n" + rawFooter; const encoder = new TextEncoder(); const bytes = encoder.encode(content); let binary = ''; for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]); const encoded = btoa(binary); const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); try { const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/sources.py`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Admin Update (V21.2)", content: encoded, sha: currentSha }) }); if(!res.ok) throw new Error("Save Failed"); const d = await res.json(); currentSha = d.content.sha; showToast("SAVED & CLEANED!"); } catch(e) { alert(e.message); } }
+        
+        // ... (Keep existing Logic Analyzer, Dump, Editor functions) ...
         function openDumpModal() { document.getElementById('dumpModal').classList.add('open'); }
         function setupDropZone() { const d = document.getElementById('dropZone'); ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => d.addEventListener(e, preventDefaults, false)); ['dragenter', 'dragover'].forEach(e => d.addEventListener(e, () => d.classList.add('dragover'), false)); ['dragleave', 'drop'].forEach(e => d.addEventListener(e, () => d.classList.remove('dragover'), false)); d.addEventListener('drop', handleDrop, false); }
         function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
         function handleDrop(e) { handleFileSelect(e.dataTransfer.files); }
         function handleFileSelect(files) { if(files.length > 0) handleFileDump(files[0]); }
         async function handleFileDump(file) { const user = localStorage.getItem("gh_user"); const repo = localStorage.getItem("gh_repo"); const token = localStorage.getItem("gh_token"); if(!token) return alert("Missing Token"); if(!confirm(`Upload ${file.name}?`)) return; showToast("Uploading..."); closeModal('dumpModal'); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async function() { const contentBase64 = reader.result.split(',')[1]; try { const check = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { headers: {'Authorization': `token ${token}`} }); let sha = null; if(check.ok) sha = (await check.json()).sha; await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file.name}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Dump: ${file.name}`, content: contentBase64, sha: sha }) }); showToast("UPLOAD COMPLETE!"); } catch(e) { alert("Error: " + e.message); } }; }
-        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
-        async function runDiagnostics() { /* Simplified */ }
-        function showToast(msg, duration=2500) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function openSelector(t) { const b = document.getElementById('selectorButtons'); b.innerHTML = ''; const files = t === 'html' ? ['admin.html', 'template.html'] : ['sources.py', 'generator.py']; files.forEach(f => b.innerHTML += `<button class="btn-file-select" onclick="fetchFileToEdit('${f}'); closeModal('selectorModal')">${f}</button>`); document.getElementById('selectorModal').classList.add('open'); }
+        async function fetchFileToEdit(f) { const u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${f}`,{headers:{'Authorization':`token ${t}`}}); const d=await res.json(); currentFileSha=d.sha; currentFileName=f; document.getElementById('codeContent').value=new TextDecoder().decode(Uint8Array.from(atob(d.content),c=>c.charCodeAt(0))); document.getElementById('editorTitle').innerText="EDIT: "+f; document.getElementById('editorModal').classList.add('open'); }catch(e){alert(e.message);} }
+        function clearEditor() { document.getElementById('codeContent').value = ""; document.getElementById('codeContent').focus(); }
+        async function saveFileContent() { if(!confirm("Overwrite?")) return; const c=document.getElementById('codeContent').value, u=localStorage.getItem("gh_user"), r=localStorage.getItem("gh_repo"), t=localStorage.getItem("gh_token"); const enc=btoa(String.fromCharCode(...new TextEncoder().encode(c))); try{ const res=await fetch(`https://api.github.com/repos/${u}/${r}/contents/${currentFileName}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${currentFileName}`,content:enc,sha:currentFileSha})}); if(!res.ok) throw new Error("Status: " + res.status); const d=await res.json(); currentFileSha=d.content.sha; closeModal('editorModal'); showToast("File Saved!"); if(currentFileName === 'sources.py') { setTimeout(() => fetchSources(u,r,t), 1000); } }catch(e){alert("SAVE FAILED: " + e.message);} }
+        async function openLogicAnalyzer(url, idx) { activeAnalyzerIndex = idx; document.getElementById('testerModal').classList.add('open'); const resBox = document.getElementById('logicResults'); const statusLog = document.getElementById('statusLog'); resBox.innerHTML = ''; statusLog.innerHTML = '1. Fetching... ' + url; try { const r = await fetchProxy(url); const rawText = await r.text(); let text = rawText; try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){} statusLog.innerHTML = '2. Scanning...'; const parser = new DOMParser(); const xmlDoc = parser.parseFromString(text, "text/xml"); let articleUrl = null; let items = xmlDoc.getElementsByTagName("entry"); if(items.length > 0) { const link = items[0].getElementsByTagName("link")[0]; if(link) articleUrl = link.getAttribute("href"); } if(!articleUrl) { items = xmlDoc.getElementsByTagName("item"); if(items.length > 0) { const linkTag = items[0].getElementsByTagName("link")[0]; if(linkTag) articleUrl = linkTag.textContent.trim(); } } if(!articleUrl && !url.includes('rss')) articleUrl = url; if (!articleUrl) { statusLog.innerHTML = '❌ No URL found.'; return; } statusLog.innerHTML = '3. Deep Scan: ' + articleUrl.substring(0, 30); const ar = await fetchProxy(articleUrl); const rawAr = await ar.text(); let html = rawAr; try{ const ja = JSON.parse(rawAr); if(ja.contents) html = ja.contents; }catch(e){} const doc = new DOMParser().parseFromString(html, "text/html"); const strategies = [ { id: 'og', name: "OpenGraph", val: doc.querySelector('meta[property="og:image"]')?.content }, { id: 'twitter', name: "Twitter", val: doc.querySelector('meta[name="twitter:image"]')?.content }, { id: 'wordpress', name: "WordPress", val: doc.querySelector('.wp-post-image')?.src }, { id: 'lazy', name: "Lazy Load", val: doc.querySelector('img[data-src]')?.getAttribute('data-src') }, { id: 'swec', name: "Sweclockers", val: html.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, { id: 'afton', name: "Aftonbladet", val: html.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, { id: 'largest', name: "Largest Srcset", val: doc.querySelector('img[srcset]')?.srcset.split(',').pop().trim().split(' ')[0] }, { id: 'hero', name: "Hero Class", val: doc.querySelector('.hero img, .featured img, .article-image img, .main-image img')?.src }, { id: 'first_img', name: "First Image", val: doc.querySelector('article img, img')?.src } ]; let htmlOut = ""; strategies.forEach(res => { const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; }); resBox.innerHTML = htmlOut; statusLog.innerHTML = '✅ Done.'; } catch(e) { statusLog.innerHTML = 'Error: ' + e.message; } }
+        function applyStrategy(stratCode) { if(activeAnalyzerIndex > -1) { sourceData[activeFolder][activeAnalyzerIndex].image_strategy = stratCode; showToast("Strategy Applied!"); closeModal('testerModal'); } }
         async function autoDiscoverRSS(url, idx) { alert("Try removing and re-adding via Smart Add."); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function forceAddSource() { /* ... */ }
         function searchGoogleForRSS() { /* ... */ }
-        
-        // VISUAL PROBE LOGIC
-        async function openLogicAnalyzer(url, idx) { 
-            activeAnalyzerIndex = idx; 
-            document.getElementById('testerModal').classList.add('open'); 
-            const resBox = document.getElementById('logicResults'); 
-            const statusLog = document.getElementById('statusLog'); 
-            resBox.innerHTML = ''; 
-            statusLog.innerHTML = '1. Fetching... ' + url; 
-            
-            try { 
-                const r = await fetchProxy(url); 
-                // CRASH FIX: Get text FIRST
-                const rawText = await r.text();
-                let text = rawText; 
-                try { const j = JSON.parse(rawText); if(j.contents) text = j.contents; } catch(e){} 
-                
-                statusLog.innerHTML = '2. Scanning...'; 
-                
-                // Use simple text matching to avoid complex XML parsing bugs
-                const strategies = [ 
-                    { id: 'og', name: "OpenGraph", val: text.match(/property="og:image" content="([^"]+)"/)?.[1] }, 
-                    { id: 'twitter', name: "Twitter", val: text.match(/name="twitter:image" content="([^"]+)"/)?.[1] }, 
-                    { id: 'swec', name: "Sweclockers", val: text.match(/(https:\/\/cdn\.sweclockers\.com\/artikel\/bild\/\d+\?l=[^"'\s>]+)/)?.[0].replace(/&amp;/g, "&") }, 
-                    { id: 'afton', name: "Aftonbladet", val: text.match(/(https:\/\/images\.aftonbladet-cdn\.se\/v2\/images\/[a-zA-Z0-9\-]+)/)?.[1] }, 
-                    { id: 'first_img', name: "First JPG/PNG", val: text.match(/(https?:\/\/[^"'\s]+\.(?:jpg|jpeg|png|webp))/i)?.[1] } 
-                ]; 
-                
-                let htmlOut = ""; 
-                strategies.forEach(res => { 
-                    const imgTag = res.val ? `<img src="${res.val}" class="strat-preview">` : ''; 
-                    htmlOut += `<div class="logic-item ${res.val ? 'success' : 'fail'}"><div class="logic-header"><span>${res.name}</span><button class="btn-apply" onclick="applyStrategy('${res.id}')">✅ USE THIS</button></div><div class="logic-content"><div class="logic-val">${res.val || 'None'}</div>${imgTag}</div></div>`; 
-                }); 
-                resBox.innerHTML = htmlOut; 
-                statusLog.innerHTML = '✅ Done.'; 
-            } catch(e) { 
-                statusLog.innerHTML = 'Error: ' + e.message; 
-            } 
-        }
+        function getFavicon(url) { try { const domain = new URL(url).hostname; return `https://icons.duckduckgo.com/ip3/${domain}.ico`; } catch(e) { return "https://via.placeholder.com/20"; } }
+        function showToast(msg, duration=2500) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
+        async function runDiagnostics() { /* Stub */ }
     </script>
 </body>
 </html>
