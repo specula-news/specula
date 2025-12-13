@@ -161,29 +161,78 @@ def process_feed(source):
                 except: pass
 
             articles.append({
-                "title": title, 
-                "link": entry.link, 
-                "images": [img or DEFAULT_IMAGE],
-                "summary": clean_desc, 
-                "category": source['cat'], 
-                "filter_tag": source.get('filter_tag', ''),
-                "source": source.get('source_name', 'News'), 
-                "timestamp": ts, 
-                "is_video": False,
-                "feed_url": source['url']  # KEY FIX: SPARAR FEED URL FÖR ADMIN MATCHNING
+                "title": title, "link": entry.link, "images": [img or DEFAULT_IMAGE],
+                "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
+                "feed_url": source['url']
             })
     except Exception as e: print(f"Err {source['url']}: {e}")
     return articles
 
-def get_video_info(source):
-    videos = []
+def get_channel_id(url):
+    """Extraherar Channel ID från en YouTube-länk för att bygga RSS."""
     try:
-        ydl_opts = {
-            'quiet': True, 
-            'ignoreerrors': True, 
-            'extract_flat': True, 
-            'playlistend': 5
-        }
+        # Metod 1: Via HTML (Snabbast)
+        r = get_session().get(url, timeout=5)
+        if r.status_code == 200:
+            match = re.search(r'"externalId":"(UC[\w-]+)"', r.text) or re.search(r'channel_id=([a-zA-Z0-9_-]+)', r.text)
+            if match: return match.group(1)
+            
+        # Metod 2: Via yt_dlp (Robust men långsammare)
+        ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': 0}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info.get('channel_id')
+    except: return None
+
+def get_video_info(source):
+    """
+    Hämtar videos. Försöker först konvertera till RSS för exakt tid.
+    Faller tillbaka på yt_dlp om RSS misslyckas.
+    """
+    videos = []
+    rss_url = None
+    
+    # 1. Försök bygga RSS-URL (Detta ger exakt tid!)
+    if 'channel_id' in source: # Om du manuellt lagt in det
+        rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
+    elif 'youtube.com/feeds' in source['url']:
+        rss_url = source['url']
+    else:
+        # Gissa channel ID
+        cid = get_channel_id(source['url'])
+        if cid: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
+
+    # 2. Om vi har RSS, använd feedparser (Supersnabb + Exakt tid)
+    if rss_url:
+        try:
+            feed = feedparser.parse(rss_url)
+            for entry in feed.entries[:5]:
+                ts = time.time()
+                if hasattr(entry, 'published_parsed'):
+                    ts = time.mktime(entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed'):
+                    ts = time.mktime(entry.updated_parsed)
+                
+                thumb = DEFAULT_IMAGE
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
+                    thumb = entry.media_thumbnail[0]['url']
+                
+                desc = entry.get('summary', '') or entry.get('description', '') or entry.get('media_description', '')
+                clean_desc = BeautifulSoup(desc, 'html.parser').get_text()[:280] + "..."
+
+                videos.append({
+                    "title": entry.title, "link": entry.link, "images": [thumb],
+                    "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
+                })
+            if videos: return videos # Om lyckat, returnera direkt
+        except Exception as e: print(f"RSS Fail for {source['source_name']}: {e}")
+
+    # 3. FALLBACK: yt_dlp (Om RSS misslyckades)
+    try:
+        ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             for entry in info.get('entries', []):
@@ -192,32 +241,19 @@ def get_video_info(source):
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
                 
-                # --- PRECISE TIME LOGIC ---
                 ts = 0
-                if entry.get('timestamp'):
-                    ts = entry['timestamp']
-                elif entry.get('release_timestamp'):
-                    ts = entry['release_timestamp']
+                if entry.get('timestamp'): ts = entry['timestamp']
                 elif entry.get('upload_date'):
-                    try:
-                        d = entry['upload_date']
-                        dt = datetime.strptime(d, '%Y%m%d')
-                        ts = dt.replace(hour=12).timestamp()
+                    try: ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
                     except: pass
                 
-                if ts == 0: ts = time.time() - 86400 
+                if ts == 0: ts = time.time() - 86400 # Igår om okänt
                 
                 videos.append({
-                    "title": entry['title'], 
-                    "link": entry['url'], 
-                    "images": [thumb],
-                    "summary": desc[:280], 
-                    "category": source['cat'], 
-                    "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], 
-                    "timestamp": ts, 
-                    "is_video": True,
-                    "feed_url": source['url'] # KEY FIX: SPARAR FEED URL FÖR ADMIN MATCHNING
+                    "title": entry['title'], "link": entry['url'], "images": [thumb],
+                    "summary": desc[:280], "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
                 })
     except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
@@ -251,7 +287,6 @@ if __name__ == "__main__":
     for art in final:
         diff = now - art['timestamp']
         if diff < 0: diff = 0
-        
         if diff < 3600: art['time_str'] = "Just Now"
         elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
         elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
