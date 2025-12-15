@@ -100,6 +100,7 @@ SOURCES = [
     {"url":"https://www.youtube.com/@wef/videos","cat":"economy","type":"video","source_name":"World Economic Forum","lang":"en"},
     {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en"},
     # --- GEO: Sweden ---
+    {"url":"https://feeds.expressen.se/nyheter/","cat":"geopolitics","type":"web","source_name":"Expressen","lang":"sv","filter_tag":"sweden"},
     {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
     {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
     # --- GEO: EU ---
