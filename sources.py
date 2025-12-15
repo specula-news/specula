@@ -76,7 +76,7 @@ SOURCES = [
     {"url":"https://electrek.co/feed/","cat":"ev","type":"web","source_name":"Electrek","lang":"en"},
     {"url":"https://cleantechnica.com/feed/","cat":"ev","type":"web","source_name":"CleanTechnica","lang":"en"},
     {"url":"https://teslaclubsweden.se/feed/","cat":"ev","type":"web","source_name":"Tesla Club Sweden","lang":"sv"},
-    {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv"},
+    {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv","image_strategy":"twitter"},
     {"url":"https://elbilen.se/feed/","cat":"ev","type":"web","source_name":"Elbilen.se","lang":"sv"},
     # --- TOPIC: Science ---
     {"url":"https://www.space.com/feeds/all","cat":"science","type":"web","source_name":"Space.com","lang":"en"},
