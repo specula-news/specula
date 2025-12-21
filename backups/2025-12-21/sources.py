@@ -1,9 +1,10 @@
-# Sources for aggregation site - FINAL ADJUSTMENTS (v20.5.28)
+# Sources for aggregation site
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
+    {"url":"https://www.reuters.com/rss/news/world","cat":"geopolitics","type":"web","source_name":"Reuters","lang":"en","filter_tag":"global"},
+    {"url":"https://www.theguardian.com/europe/rss","cat":"geopolitics","type":"web","source_name":"The Guardian","lang":"en","filter_tag":"global"},
     {"url":"https://www.aljazeera.com/xml/rss/all.xml","cat":"geopolitics","type":"web","source_name":"Al Jazeera","lang":"en","filter_tag":"global"},
-    {"url":"http://feeds.bbci.co.uk/news/world/rss.xml","cat":"geopolitics","type":"web","source_name":"BBC World","lang":"en","filter_tag":"global"},
     # --- MEDIA: Global ---
     {"url":"https://www.youtube.com/@dwnews/videos","cat":"geopolitics","type":"video","source_name":"DW News","lang":"en","filter_tag":"global"},
     {"url":"https://www.youtube.com/@aljazeeraenglish/videos","cat":"geopolitics","type":"video","source_name":"Al Jazeera English","lang":"en","filter_tag":"global"},
@@ -24,34 +25,38 @@ SOURCES = [
     # --- YT: Geo ---
     {"url":"https://www.youtube.com/@brdecode123/videos","cat":"youtubers","type":"video","source_name":"BR Decode","lang":"en","filter_tag":"geo"},
     {"url":"https://www.youtube.com/@johnnyharris/videos","cat":"youtubers","type":"video","source_name":"Johnny Harris","lang":"en","filter_tag":"geo"},
-    {"url":"https://www.youtube.com/@VisualPolitikEN/videos","cat":"youtubers","type":"video","source_name":"VisualPolitik","lang":"en","filter_tag":"geo"},
     {"url":"https://www.youtube.com/@lenapetrova/videos","cat":"youtubers","type":"video","source_name":"Lena Petrova","lang":"en","filter_tag":"geo"},
     # --- YT: Tech ---
+    {"url":"https://www.youtube.com/@AnastasiInTech/videos","cat":"youtubers","type":"video","source_name":"Anastasi In Tech","lang":"en","filter_tag":"tech"},
+    {"url":"https://www.youtube.com/@veritasium/videos","cat":"youtubers","type":"video","source_name":"Veritasium","lang":"en","filter_tag":"tech"},
+    {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"Smartereveryday","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@Jayztwocents/videos","cat":"youtubers","type":"video","source_name":"Jayztwocents","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@LinusTechTips/videos","cat":"youtubers","type":"video","source_name":"Linus Tech Tips","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@MKBHD/videos","cat":"youtubers","type":"video","source_name":"MKBHD","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@Hardwareunboxed/videos","cat":"youtubers","type":"video","source_name":"Hardware Unboxed","lang":"en","filter_tag":"tech"},
     {"url":"https://www.youtube.com/@der8auer-en/videos","cat":"youtubers","type":"video","source_name":"der8auer","lang":"en","filter_tag":"tech"},
     # --- YT: Energy ---
-    {"url":"https://www.youtube.com/@veritasium/videos","cat":"youtubers","type":"video","source_name":"Veritasium","lang":"en","filter_tag":"energy"},
-    {"url":"https://www.youtube.com/@smartereveryday/videos","cat":"youtubers","type":"video","source_name":"SmarterEveryDay","lang":"en","filter_tag":"energy"},
+    {"url":"https://www.youtube.com/@benalexxander/videos","cat":"youtubers","type":"video","source_name":"Ben Alexxander","lang":"en","filter_tag":"energy"},
+    {"url":"https://www.youtube.com/@UndecidedMF/videos","cat":"youtubers","type":"video","source_name":"UndecidedMF","lang":"en","filter_tag":"energy"},
     # --- YT: EV ---
     {"url":"https://www.youtube.com/@FullyChargedShow/videos","cat":"youtubers","type":"video","source_name":"Fully Charged","lang":"en","filter_tag":"ev"},
     {"url":"https://www.youtube.com/@electricviking/videos","cat":"youtubers","type":"video","source_name":"Electric Viking","lang":"en","filter_tag":"ev"},
     # --- YT: Gaming ---
+    {"url":"https://www.youtube.com/@Raxxanterax/videos","cat":"youtubers","type":"video","source_name":"Raxxanterax","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@jackfrags/videos","cat":"youtubers","type":"video","source_name":"Jackfrags","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@ZiggyDGaming/videos","cat":"youtubers","type":"video","source_name":"ZiggyD","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@AsmonTV/videos","cat":"youtubers","type":"video","source_name":"AsmonTV","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@gameranxTV/videos","cat":"youtubers","type":"video","source_name":"Gameranx","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@IGN/videos","cat":"youtubers","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
-    {"url":"https://www.youtube.com/@gamespot/videos","cat":"youtubers","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
     # --- GAME: News ---
     {"url":"https://www.eurogamer.net/feed","cat":"gaming","type":"web","source_name":"Eurogamer","lang":"en"},
     {"url":"https://www.pcgamer.com/rss","cat":"gaming","type":"web","source_name":"PC Gamer","lang":"en"},
-    {"url":"https://www.fz.se/feeds/nyheter","cat":"gaming","type":"web","source_name":"FZ.se","lang":"sv"},
     # --- GAME: Video ---
+    {"url":"https://www.youtube.com/@gamespot/videos","cat":"gaming","type":"video","source_name":"GameSpot","lang":"en","filter_tag":"gaming"},
+    {"url":"https://www.youtube.com/@IGN/videos","cat":"gaming","type":"video","source_name":"IGN","lang":"en","filter_tag":"gaming"},
     {"url":"https://www.youtube.com/@ewc/videos","cat":"gaming","type":"video","source_name":"Esports World Cup","lang":"en"},
     {"url":"https://www.youtube.com/@esl/videos","cat":"gaming","type":"video","source_name":"ESL","lang":"en"},
     # --- TOPIC: Tech ---
-    {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
+    {"url":"https://www.nyteknik.se/nyheter/ny-teknik-i-rrs-format/972205","cat":"tech","type":"web","source_name":"Nyteknik","lang":"sv"},
     {"url":"https://www.theverge.com/rss/index.xml","cat":"tech","type":"web","source_name":"The Verge","lang":"en"},
     {"url":"https://techcrunch.com/feed/","cat":"tech","type":"web","source_name":"TechCrunch","lang":"en"},
     {"url":"https://feeds.arstechnica.com/arstechnica/index","cat":"tech","type":"web","source_name":"Ars Technica","lang":"en"},
@@ -61,7 +66,7 @@ SOURCES = [
     {"url":"https://www.engadget.com/rss.xml","cat":"tech","type":"web","source_name":"Engadget","lang":"en"},
     {"url":"https://mashable.com/feeds/rss/tech","cat":"tech","type":"web","source_name":"Mashable","lang":"en"},
     # --- TOPIC: Energy ---
-    {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en"},
+    {"url":"https://energy.economictimes.indiatimes.com/rss/recentstories","cat":"energy","type":"web","source_name":"ET EnergyWorld","lang":"en","image_strategy":"lazy"},
     {"url":"https://energydigital.com/feed","cat":"energy","type":"web","source_name":"Energy Digital","lang":"en"},
     {"url":"https://www.breakthroughenergy.org/news","cat":"energy","type":"web","source_name":"Breakthrough Energy","lang":"en"},
     {"url":"https://oilprice.com/rss/main","cat":"energy","type":"web","source_name":"OilPrice","lang":"en"},
@@ -70,9 +75,8 @@ SOURCES = [
     {"url":"https://insideevs.com/rss/articles/all/","cat":"ev","type":"web","source_name":"InsideEVs","lang":"en"},
     {"url":"https://electrek.co/feed/","cat":"ev","type":"web","source_name":"Electrek","lang":"en"},
     {"url":"https://cleantechnica.com/feed/","cat":"ev","type":"web","source_name":"CleanTechnica","lang":"en"},
-    {"url":"https://oilprice.com/rss/main","cat":"ev","type":"web","source_name":"OilPrice","lang":"en"},
     {"url":"https://teslaclubsweden.se/feed/","cat":"ev","type":"web","source_name":"Tesla Club Sweden","lang":"sv"},
-    {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv"},
+    {"url":"https://alltomelbil.se/feed/","cat":"ev","type":"web","source_name":"Allt om Elbil","lang":"sv","image_strategy":"twitter"},
     {"url":"https://elbilen.se/feed/","cat":"ev","type":"web","source_name":"Elbilen.se","lang":"sv"},
     # --- TOPIC: Science ---
     {"url":"https://www.space.com/feeds/all","cat":"science","type":"web","source_name":"Space.com","lang":"en"},
@@ -96,95 +100,16 @@ SOURCES = [
     {"url":"https://www.youtube.com/@wef/videos","cat":"economy","type":"video","source_name":"World Economic Forum","lang":"en"},
     {"url":"https://www.youtube.com/@TheDiaryOfACEO/videos","cat":"economy","type":"video","source_name":"Diary of a CEO","lang":"en"},
     # --- GEO: Sweden ---
-    {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/nyheter/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
+    {"url":"https://feeds.expressen.se/nyheter/","cat":"geopolitics","type":"web","source_name":"Expressen","lang":"sv","filter_tag":"sweden"},
+    {"url":"https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/","cat":"geopolitics","type":"web","source_name":"Aftonbladet","lang":"sv","filter_tag":"sweden"},
     {"url":"https://www.dagensps.se/feed/","cat":"geopolitics","type":"web","source_name":"Dagens PS","lang":"sv","filter_tag":"sweden"},
     # --- GEO: EU ---
+    {"url":"https://www.youtube.com/@RFU/videos","cat":"geopolitics","type":"video","source_name":"RFU News — Reporting from Ukraine","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@Professor-Gerdes/videos","cat":"geopolitics","type":"video","source_name":"Professor Gerdes Explains","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@GregTerryExperience/videos","cat":"geopolitics","type":"video","source_name":"Greg Terry Experience","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@CombatVeteranNews/videos","cat":"geopolitics","type":"video","source_name":"Combat Veteran News","lang":"en","filter_tag":"eu"},
+    {"url":"https://www.youtube.com/@MeidasTouch/videos","cat":"geopolitics","type":"video","source_name":"MeidasTouch","lang":"en","filter_tag":"eu"},
     {"url":"https://www.youtube.com/@EUdebatesLIVE/videos","cat":"geopolitics","type":"video","source_name":"EU Debates","lang":"en","filter_tag":"eu"},
 ]
 
-URLS_GLOBAL = [
-]
-
-URLS_TECH = [
-]
-
-URLS_ENERGY = [
-]
-
-URLS_EV = [
-]
-
-URLS_SCIENCE = [
-]
-
-URLS_CONSTRUCTION = [
-]
-
-URLS_VIDEO_GLOBAL = [
-]
-
-URLS_VIDEO_CHINA = [
-]
-
-URLS_VIDEO_USA = [
-]
-
-URLS_VIDEO_INDIA = [
-]
-
-URLS_YOUTUBE_GEO = [
-]
-
-URLS_YOUTUBE_TECH = [
-]
-
-URLS_YOUTUBE_ENERGY = [
-]
-
-URLS_YOUTUBE_EV = [
-]
-
-URLS_YOUTUBE_GAMING = [
-]
-
-URLS_GAMING = [
-]
-
-URLS_GAMING_ACTION = [
-]
-
-URLS_GAMING_SHOOTER = [
-]
-
-URLS_GAMING_RPG = [
-]
-
-URLS_GAMING_MMORPG = [
-]
-
-URLS_GAMING_STRATEGY = [
-]
-
-URLS_GAMING_SPORTS = [
-]
-
-URLS_GAMING_UPCOMING = [
-]
-
-URLS_GEO_GLOBAL = [
-]
-
-URLS_GEO_USA = [
-]
-
-URLS_GEO_CHINA = [
-]
-
-URLS_GEO_EU = [
-]
-
-URLS_GEO_INDIA = [
-]
-
-URLS_GEO_SWEDEN = [
-]
+URLS_GLOBAL = []
