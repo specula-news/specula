@@ -6,10 +6,12 @@ from bs4 import BeautifulSoup
 import time
 import random
 import concurrent.futures
+from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin
 import urllib3
 import re
 import yt_dlp
+from datetime import datetime, timezone
 
 try:
     from deep_translator import GoogleTranslator
@@ -36,7 +38,7 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
-# --- STRATEGIES ---
+# --- STRATEGIER (BILDER) ---
 def strat_og(soup, html, url):
     m = soup.find("meta", property="og:image")
     return urljoin(url, m["content"]) if m and m.get("content") else None
@@ -97,7 +99,7 @@ def get_image(entry, source):
             if img: return img
         except: pass
 
-    # 2. RSS (Prioritera)
+    # 2. RSS
     if 'media_content' in entry:
         try: return entry.media_content[0]['url']
         except: pass
@@ -105,7 +107,7 @@ def get_image(entry, source):
         for enc in entry.enclosures:
             if enc.get('type', '').startswith('image'): return enc.get('href')
 
-    # 3. CONTENT (WP Fix)
+    # 3. CONTENT
     if 'content' in entry:
         for c in entry.content:
             try:
@@ -114,7 +116,7 @@ def get_image(entry, source):
                 if img: return img.get('src')
             except: pass
 
-    # 4. DEEP SCRAPE (Fallback)
+    # 4. FALLBACK
     try:
         r = get_session().get(entry.link, timeout=10, verify=False)
         soup = BeautifulSoup(r.text, 'html.parser')
@@ -128,19 +130,12 @@ def get_image(entry, source):
 def process_feed(source):
     articles = []
     try:
-        # Hämta med Session för headers
         r = get_session().get(source['url'], timeout=15, verify=False)
-        if r.status_code != 200:
-            print(f"FAILED: {source['url']} (Status {r.status_code})")
-            return []
-            
+        if r.status_code != 200: return []
         feed = feedparser.parse(r.content)
-        if not feed.entries:
-            print(f"EMPTY: {source['url']} (Inga artiklar hittades)")
-            return []
+        if not feed.entries: return []
 
         for entry in feed.entries[:MAX_ARTICLES]:
-            # Datumhantering - Om det misslyckas, ta NU istället för att skippa
             ts = time.time()
             try:
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
@@ -149,7 +144,6 @@ def process_feed(source):
                     ts = time.mktime(entry.updated_parsed)
             except: pass 
 
-            # Filtrera ENDAST om datumet är giltigt och för gammalt
             if (time.time() - ts) > (MAX_AGE_DAYS * 86400): continue
 
             img = get_image(entry, source)
@@ -172,26 +166,96 @@ def process_feed(source):
                 "source": source.get('source_name', 'News'), "timestamp": ts, "is_video": False,
                 "feed_url": source['url']
             })
-    except Exception as e: print(f"CRASH: {source['url']} - {e}")
+    except Exception as e: print(f"Err {source['url']}: {e}")
     return articles
 
+def get_channel_id(url):
+    """Extraherar Channel ID från en YouTube-länk för att bygga RSS."""
+    try:
+        # Metod 1: Via HTML (Snabbast)
+        r = get_session().get(url, timeout=5)
+        if r.status_code == 200:
+            match = re.search(r'"externalId":"(UC[\w-]+)"', r.text) or re.search(r'channel_id=([a-zA-Z0-9_-]+)', r.text)
+            if match: return match.group(1)
+            
+        # Metod 2: Via yt_dlp (Robust men långsammare)
+        ydl_opts = {'quiet': True, 'extract_flat': True, 'playlistend': 0}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info.get('channel_id')
+    except: return None
+
 def get_video_info(source):
+    """
+    Hämtar videos. Försöker först konvertera till RSS för exakt tid.
+    Faller tillbaka på yt_dlp om RSS misslyckas.
+    """
     videos = []
+    rss_url = None
+    
+    # 1. Försök bygga RSS-URL (Detta ger exakt tid!)
+    if 'channel_id' in source: # Om du manuellt lagt in det
+        rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={source['channel_id']}"
+    elif 'youtube.com/feeds' in source['url']:
+        rss_url = source['url']
+    else:
+        # Gissa channel ID
+        cid = get_channel_id(source['url'])
+        if cid: rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
+
+    # 2. Om vi har RSS, använd feedparser (Supersnabb + Exakt tid)
+    if rss_url:
+        try:
+            feed = feedparser.parse(rss_url)
+            for entry in feed.entries[:5]:
+                ts = time.time()
+                if hasattr(entry, 'published_parsed'):
+                    ts = time.mktime(entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed'):
+                    ts = time.mktime(entry.updated_parsed)
+                
+                thumb = DEFAULT_IMAGE
+                if 'media_thumbnail' in entry and len(entry.media_thumbnail) > 0:
+                    thumb = entry.media_thumbnail[0]['url']
+                
+                desc = entry.get('summary', '') or entry.get('description', '') or entry.get('media_description', '')
+                clean_desc = BeautifulSoup(desc, 'html.parser').get_text()[:280] + "..."
+
+                videos.append({
+                    "title": entry.title, "link": entry.link, "images": [thumb],
+                    "summary": clean_desc, "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
+                    "feed_url": source['url']
+                })
+            if videos: return videos # Om lyckat, returnera direkt
+        except Exception as e: print(f"RSS Fail for {source['source_name']}: {e}")
+
+    # 3. FALLBACK: yt_dlp (Om RSS misslyckades)
     try:
         ydl_opts = {'quiet': True, 'ignoreerrors': True, 'extract_flat': True, 'playlistend': 5}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(source['url'], download=False)
             for entry in info.get('entries', []):
                 if not entry: continue
+                
                 desc = entry.get('description') or entry.get('title') or "Video Update"
                 thumb = entry.get('thumbnails', [{}])[-1].get('url', DEFAULT_IMAGE)
+                
+                ts = 0
+                if entry.get('timestamp'): ts = entry['timestamp']
+                elif entry.get('upload_date'):
+                    try: ts = datetime.strptime(entry['upload_date'], '%Y%m%d').timestamp()
+                    except: pass
+                
+                if ts == 0: ts = time.time() - 86400 # Igår om okänt
+                
                 videos.append({
                     "title": entry['title'], "link": entry['url'], "images": [thumb],
                     "summary": desc[:280], "category": source['cat'], "filter_tag": source.get('filter_tag', ''),
-                    "source": source['source_name'], "timestamp": time.time(), "is_video": True,
+                    "source": source['source_name'], "timestamp": ts, "is_video": True,
                     "feed_url": source['url']
                 })
-    except: pass
+    except Exception as e: print(f"YT Error {source['url']}: {e}")
     return videos
 
 if __name__ == "__main__":
@@ -200,7 +264,6 @@ if __name__ == "__main__":
     except: SOURCES = []
 
     all_data = []
-    # Använd färre trådar för att undvika rate-limits
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         futures = []
         for s in SOURCES:
@@ -214,18 +277,26 @@ if __name__ == "__main__":
             except: pass
 
     all_data.sort(key=lambda x: x['timestamp'], reverse=True)
-    seen = set()
     final = []
+    seen = set()
     for a in all_data:
         if a['link'] not in seen:
             final.append(a); seen.add(a['link'])
             
+    now = time.time()
+    for art in final:
+        diff = now - art['timestamp']
+        if diff < 0: diff = 0
+        if diff < 3600: art['time_str'] = "Just Now"
+        elif diff < 86400: art['time_str'] = f"{int(diff/3600)}h ago"
+        elif diff < 604800: art['time_str'] = f"{int(diff/86400)}d ago"
+        else: art['time_str'] = f"{int(diff/604800)}w ago"
+
     with open('news.json', 'w', encoding='utf-8') as f: json.dump(final[:TOTAL_LIMIT], f, ensure_ascii=False, indent=2)
     
     if os.path.exists('template.html'):
         with open('template.html', 'r', encoding='utf-8') as f: html = f.read()
         html = html.replace("<!-- NEWS_DATA_JSON -->", json.dumps(final[:TOTAL_LIMIT]))
-        # Referrer fix för Dagens PS bilder
         if '<head>' in html and 'no-referrer' not in html:
             html = html.replace('<head>', '<head><meta name="referrer" content="no-referrer">')
         with open("index.html", "w", encoding="utf-8") as f: f.write(html)
