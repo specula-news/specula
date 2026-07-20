@@ -2,7 +2,9 @@ name: Delete Old Runs
 
 on: 
   workflow_dispatch:
-
+  
+  schedule:
+    - cron: '0 2 1,11,21 * *'
 jobs:
   del_runs:
     runs-on: ubuntu-latest
