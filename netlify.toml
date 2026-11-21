@@ -1,0 +1,24 @@
+# SPECULA on Netlify
+#
+# Netlify only hosts the website shell in site/. The news itself is NOT deployed here:
+# GitHub Actions writes it to the repo's `data` branch every 4 hours and the page loads it
+# straight from GitHub. So the 4-hourly updates never trigger a Netlify deploy.
+
+[build]
+  publish = "site"
+  command = "echo 'Static site - nothing to build'"
+
+  # Each production deploy costs Netlify credits, so only deploy when the website itself changed.
+  # Commits that only touch sources.py, generator.py, workflows, backups/ or README are skipped.
+  # (If both refs are equal - e.g. "Trigger deploy" in the Netlify UI - the deploy goes ahead.)
+  ignore = "if [ \"$CACHED_COMMIT_REF\" = \"$COMMIT_REF\" ]; then exit 1; fi; git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- site/ netlify.toml"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"

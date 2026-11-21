@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <title>SPECULA Admin</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,700..900&family=Manrope:wght@400..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        (function () { var t = 'system'; try { t = JSON.parse(localStorage.getItem('specula_prefs') || '{}').theme || 'system'; } catch (e) {}
+            if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', t); })();
+    </script>
+    <style>
+        :root { --f-ui: 'Manrope', system-ui, sans-serif; --f-brand: 'Manrope', system-ui, sans-serif; --f-display: 'Fraunces', Georgia, serif; --f-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; --ease: cubic-bezier(.2,.7,.2,1); }
+        :root, [data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #120e0b; --surface: #1b1511; --surface-2: #241c16; --surface-3: #31271f; --glass: rgba(18,14,11,.84);
+            --line: rgba(255,200,150,.075); --line-2: rgba(255,200,150,.15);
+            --text: #f4ece2; --text-2: #b9a998; --text-3: #87786b;
+            --accent: #f6a93b; --accent-ink: #1e1206; --accent-soft: rgba(246,169,59,.13);
+            --ok: #74d99a; --warn: #f6a93b; --err: #f07b5d; --idle: #87786b;
+            --shadow-pop: 0 24px 70px -20px rgba(0,0,0,.85), 0 0 0 1px var(--line-2);
+        }
+        [data-theme="light"] {
+            color-scheme: light;
+            --bg: #f6f0e7; --surface: #fffcf7; --surface-2: #f3eadf; --surface-3: #e7dbcc; --glass: rgba(246,240,231,.86);
+            --line: rgba(70,45,20,.09); --line-2: rgba(70,45,20,.17);
+            --text: #22180f; --text-2: #5f4f41; --text-3: #8c7b6a;
+            --accent: #bd6610; --accent-ink: #fff; --accent-soft: rgba(189,102,16,.1);
+            --ok: #23874e; --warn: #a86a00; --err: #c4502f; --idle: #8c7b6a;
+            --shadow-pop: 0 24px 60px -18px rgba(60,35,10,.35), 0 0 0 1px var(--line-2);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); }
+        * { margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body { font-family: var(--f-ui); font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg); display: flex; flex-direction: column; overflow: hidden; -webkit-font-smoothing: antialiased; }
+        button, input, select, textarea { font: inherit; color: inherit; }
+        button { cursor: pointer; background: none; border: 0; }
+        a { color: inherit; }
+        [hidden] { display: none !important; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+        svg.i { width: 17px; height: 17px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* buttons & inputs */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--surface); font-weight: 600; font-size: .86rem; white-space: nowrap; transition: background .15s, border-color .15s, opacity .15s; }
+        .btn:hover { background: var(--surface-2); border-color: var(--text-3); }
+        .btn:disabled { opacity: .45; cursor: not-allowed; }
+        .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+        .btn-primary:hover { background: var(--accent); border-color: var(--accent); filter: brightness(1.08); }
+        .btn-danger { color: var(--err); }
+        .btn-danger:hover { background: color-mix(in oklab, var(--err) 12%, transparent); border-color: var(--err); }
+        .btn-sm { height: 30px; padding: 0 10px; font-size: .8rem; border-radius: 8px; }
+        .icon-btn { width: 32px; height: 32px; border-radius: 8px; display: inline-grid; place-items: center; color: var(--text-2); transition: background .15s, color .15s; }
+        .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+        .icon-btn.danger:hover { color: var(--err); background: color-mix(in oklab, var(--err) 12%, transparent); }
+        .input, .select { height: 36px; width: 100%; padding: 0 11px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--surface-2); outline: none; font-size: .88rem; transition: border-color .15s, box-shadow .15s; }
+        .input:focus, .select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .input.mono { font-family: var(--f-mono); font-size: .78rem; }
+        .select { padding-right: 28px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-3) 50%), linear-gradient(135deg, var(--text-3) 50%, transparent 50%); background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+        .select.sm { height: 30px; font-size: .78rem; border-radius: 8px; padding-left: 8px; }
+        label.lbl { display: block; font-size: .78rem; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
+        .hint { font-size: .8rem; color: var(--text-3); }
+        .kbd { font: 600 .7rem var(--f-ui); border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; color: var(--text-3); }
+
+        /* top bar */
+        .topbar { flex: none; height: 60px; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); z-index: 20; }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand svg { width: 32px; height: 32px; color: var(--text); }
+        .brand b { font: italic 900 1.3rem var(--f-display); letter-spacing: -.01em; text-transform: none; }
+        .brand span { font: 600 .72rem var(--f-brand); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 7px; border-radius: 6px; }
+        .run { display: flex; align-items: center; gap: 12px; margin: 0 auto; }
+        .run-btn { position: relative; overflow: hidden; height: 38px; padding: 0 18px; border-radius: 11px; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-soft); font: 700 .8rem var(--f-brand); letter-spacing: .1em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; transition: all .2s; }
+        .run-btn:hover { background: color-mix(in oklab, var(--accent) 22%, transparent); }
+        .run-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent) 30%, transparent), transparent); transform: translateX(-100%); }
+        .run-btn.busy { border-color: var(--warn); color: var(--warn); background: color-mix(in oklab, var(--warn) 10%, transparent); cursor: default; }
+        .run-btn.busy::after { animation: sweep 1.6s infinite; background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--warn) 30%, transparent), transparent); }
+        .run-btn.done { border-color: var(--ok); color: var(--ok); background: color-mix(in oklab, var(--ok) 10%, transparent); }
+        .run-btn.fail { border-color: var(--err); color: var(--err); background: color-mix(in oklab, var(--err) 10%, transparent); }
+        @keyframes sweep { to { transform: translateX(100%); } }
+        .run-info { font-size: .78rem; color: var(--text-3); white-space: nowrap; }
+        .run-info a { color: var(--text-2); }
+        .actions { display: flex; align-items: center; gap: 6px; }
+        .dirty { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: color-mix(in oklab, var(--warn) 14%, transparent); color: var(--warn); font-size: .76rem; font-weight: 600; }
+        .dirty::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .menu { position: relative; }
+        .menu-pop { position: absolute; right: 0; top: calc(100% + 6px); min-width: 210px; padding: 6px; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-pop); display: none; z-index: 50; }
+        .menu.open .menu-pop { display: block; }
+        .menu-pop button, .menu-pop a { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; font-size: .86rem; text-decoration: none; text-align: left; }
+        .menu-pop button:hover, .menu-pop a:hover { background: var(--surface-2); }
+        .menu-pop hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
+
+        /* shell */
+        .shell { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+        .sidebar { border-right: 1px solid var(--line); overflow-y: auto; padding: 16px 12px 24px; }
+        .side-group { margin-bottom: 14px; }
+        .side-group h4 { font: 700 .68rem var(--f-brand); letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); padding: 0 10px 6px; }
+        .folder { width: 100%; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 9px; font-size: .87rem; color: var(--text-2); text-align: left; }
+        .folder:hover { background: var(--surface-2); color: var(--text); }
+        .folder.on { background: var(--accent-soft); color: var(--text); font-weight: 600; }
+        .folder .n { margin-left: auto; font-size: .74rem; color: var(--text-3); font-weight: 600; }
+        .folder .bad { font-size: .68rem; font-weight: 700; color: var(--err); background: color-mix(in oklab, var(--err) 14%, transparent); border-radius: 999px; padding: 0 6px; }
+        .content { overflow-y: auto; padding: 22px 26px 60px; }
+        .health { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
+        .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+        .stat b { display: block; font: 700 1.5rem/1.1 var(--f-brand); }
+        .stat span { font-size: .78rem; color: var(--text-3); }
+        .stat.err b { color: var(--err); } .stat.ok b { color: var(--ok); }
+        .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+        .head h1 { font: italic 800 1.7rem var(--f-display); letter-spacing: -.015em; }
+        .head .sub { color: var(--text-3); font-size: .85rem; }
+        .head-tools { display: flex; gap: 8px; align-items: center; }
+        .search { position: relative; width: 260px; }
+        .search svg.i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-3); }
+        .search .input { padding-left: 32px; }
+
+        /* cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+        .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .15s; }
+        .card:hover { border-color: var(--line-2); }
+        .card.paused { opacity: .62; }
+        .card.changed { border-color: color-mix(in oklab, var(--warn) 55%, transparent); }
+        .prev { position: relative; aspect-ratio: 16 / 7; background: var(--surface-2); overflow: hidden; }
+        .prev img { width: 100%; height: 100%; object-fit: cover; }
+        .prev .none { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-3); font-size: .8rem; }
+        .prev .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 9px; background: linear-gradient(transparent, rgba(0,0,0,.82)); color: #fff; font-size: .78rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .badge { position: absolute; top: 9px; left: 9px; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: .72rem; font-weight: 700; background: rgba(0,0,0,.72); color: #fff; backdrop-filter: blur(6px); }
+        .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--idle)); box-shadow: 0 0 8px var(--c, transparent); }
+        .badge.ok { --c: #34d399; } .badge.warn { --c: #fbbf24; } .badge.err { --c: #ff5470; } .badge.idle { --c: #9aa3ad; }
+        .vid-tag { position: absolute; top: 9px; right: 9px; height: 24px; padding: 0 8px; border-radius: 999px; background: rgba(0,0,0,.72); color: #fff; font-size: .7rem; font-weight: 700; display: inline-flex; align-items: center; }
+        .card-body { padding: 12px 14px 12px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .name-row { display: flex; align-items: center; gap: 9px; }
+        .name-row img { width: 20px; height: 20px; border-radius: 5px; background: var(--surface-3); flex: none; }
+        .name { flex: 1; min-width: 0; height: 32px; border: 0; border-bottom: 1px solid transparent; background: transparent; font: 700 1rem var(--f-brand); outline: none; padding: 0; }
+        .name:hover { border-bottom-color: var(--line-2); }
+        .name:focus { border-bottom-color: var(--accent); }
+        .err-msg { font-size: .78rem; color: var(--err); background: color-mix(in oklab, var(--err) 9%, transparent); border-radius: 8px; padding: 6px 9px; line-height: 1.4; }
+        .err-msg.warn { color: var(--warn); background: color-mix(in oklab, var(--warn) 10%, transparent); }
+        .opts { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; }
+        .opt-lbl { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 3px; display: block; }
+        .card-foot { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-top: 1px solid var(--line); }
+        .card-foot .grow { flex: 1; }
+        .empty { grid-column: 1 / -1; text-align: center; padding: 60px 20px; border: 1px dashed var(--line-2); border-radius: 16px; color: var(--text-2); }
+
+        /* dialogs */
+        dialog { margin: auto; border: 0; padding: 0; background: var(--surface); color: var(--text); border-radius: 18px; box-shadow: var(--shadow-pop); width: min(620px, calc(100vw - 24px)); max-height: 88vh; overflow: hidden; }
+        dialog[open] { display: flex; flex-direction: column; animation: pop .25s var(--ease); }
+        dialog::backdrop { background: rgba(3,5,8,.62); backdrop-filter: blur(4px); }
+        @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+        .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px 12px 22px; border-bottom: 1px solid var(--line); }
+        .dlg-head h2 { font: italic 800 1.3rem var(--f-display); }
+        .dlg-body { padding: 18px 22px 22px; overflow-y: auto; }
+        .dlg-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--line); }
+        .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
+        .row.one { grid-template-columns: 1fr; }
+        .log { font-family: var(--f-mono); font-size: .76rem; color: var(--text-2); background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; white-space: pre-wrap; }
+        .result { border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: grid; grid-template-columns: 96px 1fr auto; gap: 12px; align-items: center; margin-bottom: 8px; }
+        .result.ok { border-color: color-mix(in oklab, var(--ok) 45%, transparent); }
+        .result img, .result .noimg { width: 96px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--surface-2); display: grid; place-items: center; font-size: .7rem; color: var(--text-3); }
+        .result b { display: block; font-size: .86rem; }
+        .result code { font-family: var(--f-mono); font-size: .7rem; color: var(--text-3); word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .found { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .found button { text-align: left; border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; }
+        .found button:hover, .found button.on { border-color: var(--accent); background: var(--accent-soft); }
+        .found small { display: block; font-family: var(--f-mono); color: var(--text-3); font-size: .72rem; word-break: break-all; }
+        .check { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 12px; background: var(--surface-2); font-size: .86rem; margin-top: 12px; }
+        .check.ok { background: color-mix(in oklab, var(--ok) 11%, transparent); }
+        .check.err { background: color-mix(in oklab, var(--err) 10%, transparent); }
+        .check ul { margin: 6px 0 0 16px; color: var(--text-2); font-size: .8rem; }
+        #editorDlg { width: min(1100px, calc(100vw - 24px)); height: 88vh; }
+        #editorDlg .dlg-body { flex: 1; display: flex; flex-direction: column; padding: 0; }
+        #code { flex: 1; width: 100%; resize: none; border: 0; outline: none; background: var(--surface-2); padding: 16px 18px; font: .82rem/1.55 var(--f-mono); tab-size: 4; white-space: pre; }
+        .drop { border: 2px dashed var(--line-2); border-radius: 14px; padding: 40px 20px; text-align: center; color: var(--text-2); cursor: pointer; transition: all .2s; }
+        .drop:hover, .drop.over { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+        .drop svg.i { width: 40px; height: 40px; margin-bottom: 10px; stroke-width: 1.4; }
+
+        /* login */
+        .login { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: radial-gradient(900px 420px at 50% -120px, rgba(246,169,59,.09), transparent 70%), var(--bg); }
+        .login-card { width: min(420px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: var(--shadow-pop); }
+        .login-card .brand { justify-content: center; margin-bottom: 6px; }
+        .login-card p.lead { text-align: center; color: var(--text-3); font-size: .86rem; margin-bottom: 22px; }
+        .login-card .field { margin-bottom: 14px; }
+        .remember { display: flex; align-items: center; gap: 8px; font-size: .84rem; color: var(--text-2); margin: 4px 0 18px; }
+        .login-err { color: var(--err); font-size: .84rem; margin-bottom: 12px; }
+
+        .toasts { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 200; pointer-events: none; }
+        .toast { pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 16px; border-radius: 12px; background: var(--text); color: var(--bg); font-weight: 500; font-size: .86rem; box-shadow: 0 16px 40px -12px rgba(0,0,0,.6); animation: pop .25s var(--ease); }
+        .toast.err { background: var(--err); color: #fff; }
+        .toast button { font-weight: 700; color: var(--accent); padding: 4px 8px; border-radius: 6px; }
+        [data-theme="light"] .toast button { color: #5eeaf5; }
+
+        @media (max-width: 960px) {
+            .run-info { display: none; }
+            .shell { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .sidebar { border-right: 0; border-bottom: 1px solid var(--line); display: flex; gap: 6px; overflow-x: auto; padding: 10px 12px; }
+            .side-group { display: contents; }
+            .side-group h4 { display: none; }
+            .folder { flex: none; width: auto; border: 1px solid var(--line); }
+            .content { padding: 16px; }
+            .search { width: 100%; }
+            .head-tools { width: 100%; }
+        }
+        @media (max-width: 640px) {
+            .topbar { gap: 8px; padding: 0 10px; }
+            .brand b, .brand span, .hide-sm { display: none; }
+            .run-btn { padding: 0 12px; }
+            .row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <radialGradient id="g-iris" cx="0.38" cy="0.34" r="0.78"><stop offset="0" stop-color="#ffe6b0"/><stop offset="0.5" stop-color="#f6a93b"/><stop offset="1" stop-color="#b5601a"/></radialGradient>
+            <clipPath id="g-lid"><path d="M7 32C16 18.5 48 18.5 57 32C48 45.5 16 45.5 7 32Z"/></clipPath>
+        </defs>
+        <symbol id="logo" viewBox="0 0 64 64"><g clip-path="url(#g-lid)"><circle cx="32" cy="32" r="11" fill="url(#g-iris)"/><circle cx="32" cy="32" r="4.8" fill="#07090b"/><circle cx="28.3" cy="28.1" r="2.1" fill="#fff" opacity=".92"/></g><path d="M7 32C16 18.5 48 18.5 57 32C48 45.5 16 45.5 7 32Z" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linejoin="round"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12z"/></symbol>
+        <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+        <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+        <symbol id="i-resume" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12z"/></symbol>
+        <symbol id="i-test" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+        <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+        <symbol id="i-code" viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 20V9M7.5 13.5 12 9l4.5 4.5M5 4.5h14"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 16l4-4-4-4M14 12H4"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></symbol>
+    </svg>
+
+    <!-- ===================== LOGIN ===================== -->
+    <div class="login" id="login">
+        <form class="login-card" id="loginForm" autocomplete="off">
+            <div class="brand"><svg aria-hidden="true"><use href="#logo"/></svg><b>Specula</b><span>Admin</span></div>
+            <p class="lead">Connect to the GitHub repository that runs the site.</p>
+            <div class="field"><label class="lbl" for="lUser">GitHub user or organisation</label><input class="input" id="lUser" value="specula-news" required></div>
+            <div class="field"><label class="lbl" for="lRepo">Repository</label><input class="input" id="lRepo" value="specula" required></div>
+            <div class="field"><label class="lbl" for="lBranch">Branch</label><input class="input" id="lBranch" value="main" required></div>
+            <div class="field"><label class="lbl" for="lToken">Personal access token</label><input class="input mono" id="lToken" type="password" placeholder="github_pat_… or ghp_…" required>
+                <p class="hint" style="margin-top:6px">Fine-grained token for this repo with <b>Contents</b> and <b>Actions</b> set to read &amp; write.</p></div>
+            <label class="remember"><input type="checkbox" id="lRemember" checked> Remember on this device</label>
+            <p class="login-err" id="loginErr" hidden></p>
+            <button class="btn btn-primary" style="width:100%;height:42px" id="loginBtn">Unlock</button>
+        </form>
+    </div>
+
+    <!-- ===================== TOP BAR ===================== -->
+    <header class="topbar">
+        <a class="brand" href="./" title="Open the site"><svg aria-hidden="true"><use href="#logo"/></svg><b>Specula</b><span>Admin V20</span></a>
+        <div class="run">
+            <button class="run-btn" id="runBtn" title="Run the generator on GitHub Actions now"><svg class="i"><use href="#i-play"/></svg><span id="runText">Run update</span></button>
+            <span class="run-info" id="runInfo"></span>
+        </div>
+        <div class="actions">
+            <span class="dirty" id="dirty" hidden>Unsaved</span>
+            <button class="btn btn-primary" id="saveBtn" disabled><svg class="i"><use href="#i-save"/></svg><span class="hide-sm">Save</span></button>
+            <div class="menu" id="menu">
+                <button class="icon-btn" id="menuBtn" aria-label="More"><svg class="i"><use href="#i-more"/></svg></button>
+                <div class="menu-pop">
+                    <button data-menu="edit"><svg class="i"><use href="#i-code"/></svg>Edit a file…</button>
+                    <button data-menu="upload"><svg class="i"><use href="#i-upload"/></svg>Upload a file…</button>
+                    <button data-menu="reload"><svg class="i"><use href="#i-refresh"/></svg>Reload from GitHub</button>
+                    <a href="./" target="_blank" rel="noopener"><svg class="i"><use href="#i-eye"/></svg>View site</a>
+                    <a id="repoLink" href="#" target="_blank" rel="noopener"><svg class="i"><use href="#i-link"/></svg>Open repository</a>
+                    <hr>
+                    <button data-menu="logout" style="color:var(--err)"><svg class="i"><use href="#i-out"/></svg>Log out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== SHELL ===================== -->
+    <div class="shell">
+        <nav class="sidebar" id="sidebar" aria-label="Folders"></nav>
+        <main class="content" id="content">
+            <div class="health" id="health"></div>
+            <div class="head">
+                <div><h1 id="folderTitle">Sources</h1><div class="sub" id="folderSub"></div></div>
+                <div class="head-tools">
+                    <div class="search"><svg class="i"><use href="#i-search"/></svg><input class="input" id="search" placeholder="Find a source…" autocomplete="off"></div>
+                    <button class="btn btn-primary" id="addBtn"><svg class="i"><use href="#i-plus"/></svg>Add source</button>
+                </div>
+            </div>
+            <div class="grid" id="grid"></div>
+        </main>
+    </div>
+
+    <!-- ===================== DIALOGS ===================== -->
+    <dialog id="addDlg">
+        <div class="dlg-head"><h2>Add a source</h2><button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+        <div class="dlg-body">
+            <div class="row one"><div><label class="lbl" for="aUrl">Website, RSS feed or YouTube channel</label><input class="input mono" id="aUrl" placeholder="https://www.example.com  ·  https://www.youtube.com/@channel"></div></div>
+            <div class="row">
+                <div><label class="lbl" for="aName">Name</label><input class="input" id="aName" placeholder="Filled in automatically"></div>
+                <div><label class="lbl" for="aFolder">Folder</label><select class="select" id="aFolder"></select></div>
+            </div>
+            <div class="row">
+                <div><label class="lbl" for="aLang">Language</label><select class="select" id="aLang"><option value="en">English</option><option value="sv">Swedish (headlines translated)</option></select></div>
+                <div style="display:flex;align-items:flex-end"><button class="btn" id="aCheck" style="width:100%"><svg class="i"><use href="#i-zap"/></svg>Find &amp; test feed</button></div>
+            </div>
+            <div id="aResult"></div>
+        </div>
+        <div class="dlg-foot"><button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="aAdd"><svg class="i"><use href="#i-plus"/></svg>Add source</button></div>
+    </dialog>
+
+    <dialog id="probeDlg">
+        <div class="dlg-head"><h2 id="probeTitle">Image finder</h2><button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+        <div class="dlg-body">
+            <div class="log" id="probeLog">Ready…</div>
+            <div id="probeResults"></div>
+        </div>
+    </dialog>
+
+    <dialog id="testDlg">
+        <div class="dlg-head"><h2 id="testTitle">Feed test</h2><button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+        <div class="dlg-body" id="testBody"></div>
+    </dialog>
+
+    <dialog id="editorDlg">
+        <div class="dlg-head">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0"><h2>Edit</h2><select class="select sm" id="fileSel" style="width:auto"></select><span class="hint" id="fileInfo"></span></div>
+            <div style="display:flex;gap:8px"><button class="btn btn-sm" data-close>Cancel</button><button class="btn btn-sm btn-primary" id="fileSave"><svg class="i"><use href="#i-save"/></svg>Save to GitHub</button></div>
+        </div>
+        <div class="dlg-body"><textarea id="code" spellcheck="false"></textarea></div>
+    </dialog>
+
+    <dialog id="uploadDlg">
+        <div class="dlg-head"><h2>Upload a file</h2><button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+        <div class="dlg-body">
+            <div class="drop" id="drop"><svg class="i"><use href="#i-upload"/></svg><div><b>Drop a file here</b> or click to choose</div><div class="hint" style="margin-top:4px">It is committed to the repository (existing files are replaced).</div></div>
+            <input type="file" id="fileInput" hidden>
+            <div class="row" style="margin-top:14px" id="upRow" hidden>
+                <div><label class="lbl" for="upPath">Path in repository</label><input class="input mono" id="upPath"></div>
+                <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="upGo" style="width:100%"><svg class="i"><use href="#i-upload"/></svg>Upload</button></div>
+            </div>
+        </div>
+    </dialog>
+
+    <div class="toasts" id="toasts"></div>
+
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (s, r) { return (r || document).querySelector(s); };
+        var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+        function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+        function icon(id) { return '<svg class="i"><use href="#i-' + id + '"/></svg>'; }
+        function ago(ts) { if (!ts) return ''; var s = Math.max(0, Date.now() / 1000 - ts); if (s < 90) return 'just now'; if (s < 3600) return Math.round(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; }
+        function host(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } }
+
+        /* ---------- folders (must stay in this order: it is the order written to sources.py) ---------- */
+        var FOLDERS = [
+            { id: 'GLOBAL_WEB',   py: 'NEWS: GLOBAL',   group: 'News',      label: 'Global news',  cat: 'geopolitics', type: 'web',   tag: 'global' },
+            { id: 'MEDIA_GLOBAL', py: 'MEDIA: Global',  group: 'Media',     label: 'Global',       cat: 'geopolitics', type: 'video', tag: 'global' },
+            { id: 'MEDIA_CHINA',  py: 'MEDIA: China',   group: 'Media',     label: 'China',        cat: 'geopolitics', type: 'video', tag: 'china' },
+            { id: 'MEDIA_INDIA',  py: 'MEDIA: India',   group: 'Media',     label: 'India',        cat: 'geopolitics', type: 'video', tag: 'india' },
+            { id: 'YT_GEO',       py: 'YT: Geo',        group: 'YouTubers', label: 'Geo',          cat: 'youtubers',   type: 'video', tag: 'geo' },
+            { id: 'YT_TECH',      py: 'YT: Tech',       group: 'YouTubers', label: 'Tech',         cat: 'youtubers',   type: 'video', tag: 'tech' },
+            { id: 'YT_ENERGY',    py: 'YT: Energy',     group: 'YouTubers', label: 'Energy',       cat: 'youtubers',   type: 'video', tag: 'energy' },
+            { id: 'YT_EV',        py: 'YT: EV',         group: 'YouTubers', label: 'EV',           cat: 'youtubers',   type: 'video', tag: 'ev' },
+            { id: 'YT_GAME',      py: 'YT: Gaming',     group: 'YouTubers', label: 'Gaming',       cat: 'youtubers',   type: 'video', tag: 'gaming' },
+            { id: 'GAME_WEB',     py: 'GAME: News',     group: 'Gaming',    label: 'News',         cat: 'gaming',      type: 'web',   tag: null },
+            { id: 'GAME_EWC',     py: 'GAME: Video',    group: 'Gaming',    label: 'Video',        cat: 'gaming',      type: 'video', tag: null },
+            { id: 'TOPIC_TECH',   py: 'TOPIC: Tech',    group: 'Topics',    label: 'Tech',         cat: 'tech',        type: null,    tag: null },
+            { id: 'TOPIC_ENERGY', py: 'TOPIC: Energy',  group: 'Topics',    label: 'Energy',       cat: 'energy',      type: null,    tag: null },
+            { id: 'TOPIC_EV',     py: 'TOPIC: EV',      group: 'Topics',    label: 'EV',           cat: 'ev',          type: null,    tag: null },
+            { id: 'TOPIC_SCI',    py: 'TOPIC: Science', group: 'Topics',    label: 'Science',      cat: 'science',     type: null,    tag: null },
+            { id: 'TOPIC_CONST',  py: 'TOPIC: Constr',  group: 'Topics',    label: 'Construction', cat: 'construction', type: null,   tag: null },
+            { id: 'ECONOMY',      py: 'ECONOMY',        group: 'Topics',    label: 'Economy',      cat: 'economy',     type: null,    tag: null },
+            { id: 'GEO_SWE',      py: 'GEO: Sweden',    group: 'News',      label: 'Sweden',       cat: 'geopolitics', type: 'web',   tag: 'sweden' },
+            { id: 'GEO_EU',       py: 'GEO: EU',        group: 'Media',     label: 'EU',           cat: 'geopolitics', type: 'video', tag: 'eu' },
+            { id: 'UNSORTED',     py: 'OTHER',          group: 'Other',     label: 'Unsorted',     cat: null,          type: null,    tag: null }
+        ];
+        var FOLDER = {}; FOLDERS.forEach(function (f) { FOLDER[f.id] = f; });
+        var GROUPS = ['News', 'Media', 'YouTubers', 'Gaming', 'Topics', 'Other'];
+        var STRATEGIES = [['', 'Auto'], ['og', 'OpenGraph'], ['twitter', 'Twitter card'], ['jsonld', 'JSON-LD'], ['wordpress', 'WordPress'], ['hero', 'Hero / featured'], ['lazy', 'Lazy data-src'], ['srcset', 'Largest srcset'], ['largest', 'First article img'], ['swec', 'Sweclockers'], ['afton', 'Aftonbladet']];
+        var LANGS = [['en', 'EN'], ['sv', 'SV']];
+
+        /* ---------- state ---------- */
+        var cfg = null;                 // { user, repo, branch, token }
+        var items = [];                 // [{ uid, folder, data }]
+        var uidSeq = 0;
+        var rawHeader = '', rawFooter = '', sourcesSha = '', savedText = '';
+        var newsBySource = {}, statusByUrl = {}, status = null, channelIds = {};
+        var view = 'ALL', query = '';
+
+        /* ---------- storage ---------- */
+        function loadCfg() {
+            var s = null;
+            try { s = JSON.parse(sessionStorage.getItem('specula_admin') || localStorage.getItem('specula_admin') || 'null'); } catch (e) {}
+            if (!s) { // V18 stored separate keys
+                try { var t = localStorage.getItem('gh_token'); if (t) s = { user: localStorage.getItem('gh_user'), repo: localStorage.getItem('gh_repo'), branch: 'main', token: t, remember: true }; } catch (e) {}
+            }
+            return s && s.token ? s : null;
+        }
+        function storeCfg(c) {
+            try {
+                ['gh_token', 'gh_user', 'gh_repo'].forEach(function (k) { localStorage.removeItem(k); });
+                localStorage.removeItem('specula_admin'); sessionStorage.removeItem('specula_admin');
+                if (c) (c.remember ? localStorage : sessionStorage).setItem('specula_admin', JSON.stringify(c));
+            } catch (e) {}
+        }
+
+        /* ---------- GitHub API ---------- */
+        function api(path, opts) {
+            opts = opts || {};
+            var headers = { Authorization: 'Bearer ' + cfg.token, Accept: opts.raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+            if (opts.body) headers['Content-Type'] = 'application/json';
+            return fetch('https://api.github.com/repos/' + cfg.user + '/' + cfg.repo + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: 'no-store' })
+                .then(function (r) {
+                    if (r.status === 204) return null;
+                    if (!r.ok) return r.text().then(function (t) { var m = ''; try { m = JSON.parse(t).message; } catch (e) {} var err = new Error((m || 'GitHub error') + ' (' + r.status + ')'); err.status = r.status; throw err; });
+                    return opts.raw ? r.text() : r.json();
+                });
+        }
+        function b64decode(s) { var bin = atob(String(s).replace(/\s/g, '')); var bytes = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); return new TextDecoder().decode(bytes); }
+        function b64encode(str) { var bytes = new TextEncoder().encode(str), bin = '', CH = 0x8000; for (var i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH)); return btoa(bin); }
+        function getFile(path) { return api('/contents/' + path + '?ref=' + encodeURIComponent(cfg.branch)).then(function (d) { return { sha: d.sha, text: d.content ? b64decode(d.content) : '', size: d.size }; }); }
+        function getRaw(path, ref) { return api('/contents/' + path + '?ref=' + encodeURIComponent(ref || cfg.branch) + '&t=' + Date.now(), { raw: true }); }
+        var DATA_BRANCH = 'data';   // where the "Update News" workflow publishes news.json / status.json
+        function getData(path) { return getRaw(path, DATA_BRANCH).catch(function () { return getRaw(path); }); }   // falls back to the old v7 location on main
+        function putFile(path, contentB64, sha, message) { return api('/contents/' + path, { method: 'PUT', body: { message: message, content: contentB64, sha: sha || undefined, branch: cfg.branch } }); }
+
+        /* ---------- CORS proxy (for testing third-party feeds in the browser) ---------- */
+        var PROXIES = [
+            function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+            function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); },
+            function (u) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u); }
+        ];
+        function proxyFetch(url) {
+            var i = 0;
+            function next() {
+                if (i >= PROXIES.length) return Promise.reject(new Error('All CORS proxies failed — the site may block them. The generator (on GitHub) can still work.'));
+                var p = PROXIES[i++], ctl = new AbortController(), timer = setTimeout(function () { ctl.abort(); }, 12000);
+                return fetch(p(url), { signal: ctl.signal }).then(function (r) { clearTimeout(timer); if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) { if (!t || t.length < 20) throw new Error('empty'); return t; }).catch(function () { clearTimeout(timer); return next(); });
+            }
+            return next();
+        }
+        function parseFeed(text) {
+            var doc = new DOMParser().parseFromString(text, 'text/xml');
+            if (doc.querySelector('parsererror')) return null;
+            var root = doc.documentElement && doc.documentElement.nodeName.toLowerCase();
+            if (['rss', 'feed', 'rdf:rdf'].indexOf(root) === -1) return null;
+            var entries = $$('item', doc).length ? $$('item', doc) : $$('entry', doc);
+            var title = (doc.querySelector('channel > title, feed > title') || {}).textContent || '';
+            return {
+                title: title.trim(), items: entries.slice(0, 10).map(function (e) {
+                    var linkEl = e.querySelector('link'), link = linkEl ? (linkEl.getAttribute('href') || linkEl.textContent || '').trim() : '';
+                    var d = (e.querySelector('pubDate, published, updated, date') || {}).textContent || '';
+                    return { title: ((e.querySelector('title') || {}).textContent || '').trim(), link: link, date: d ? Date.parse(d) / 1000 : 0 };
+                })
+            };
+        }
+
+        /* ---------- sources.py parsing & writing ---------- */
+        function folderFor(d) {
+            for (var i = 0; i < FOLDERS.length; i++) {
+                var f = FOLDERS[i]; if (!f.cat) continue;
+                if (d.cat !== f.cat) continue;
+                if (f.type && d.type !== f.type) continue;
+                if (f.tag && d.filter_tag !== f.tag) continue;
+                return f.id;
+            }
+            return 'UNSORTED';
+        }
+        function parsePython(text) {
+            var start = text.indexOf('SOURCES = [');
+            if (start === -1) throw new Error('sources.py has no "SOURCES = [" list');
+            rawHeader = text.substring(0, start).trim();
+            var footStart = text.indexOf('URLS_GLOBAL = [');
+            var body = footStart > -1 ? text.substring(start, footStart) : text.substring(start);
+            rawFooter = footStart > -1 ? text.substring(footStart).trim() : '';
+            items = [];
+            var skipped = 0;
+            body.split('\n').forEach(function (line) {
+                line = line.trim();
+                if (line.charAt(0) !== '{') return;
+                if (line.slice(-1) === ',') line = line.slice(0, -1);
+                try { var d = JSON.parse(line); items.push({ uid: ++uidSeq, folder: folderFor(d), data: d }); } catch (e) { skipped++; }
+            });
+            if (skipped) toast(skipped + ' line(s) in sources.py could not be read and were left out — check the file in the editor.', true);
+        }
+        function buildPython() {
+            var out = rawHeader + '\n\nSOURCES = [\n';
+            FOLDERS.forEach(function (f) {
+                var list = items.filter(function (it) { return it.folder === f.id; });
+                if (!list.length) return;
+                out += '    # --- ' + f.py + ' ---\n';
+                list.forEach(function (it) { out += '    ' + JSON.stringify(it.data) + ',\n'; });
+            });
+            return out + ']\n\n' + rawFooter + (rawFooter ? '\n' : '');
+        }
+        function entryLines(text) {
+            var m = new Map();
+            text.split('\n').forEach(function (l) { l = l.trim(); if (l.charAt(0) !== '{') return; if (l.slice(-1) === ',') l = l.slice(0, -1); m.set(l, (m.get(l) || 0) + 1); });
+            return m;
+        }
+        function changedLines() {
+            var a = entryLines(savedText), b = entryLines(buildPython()), gone = 0, added = 0;
+            a.forEach(function (c, l) { gone += Math.max(0, c - (b.get(l) || 0)); });
+            b.forEach(function (c, l) { added += Math.max(0, c - (a.get(l) || 0)); });
+            return { n: Math.max(gone, added), oldSet: a }; // an edited source = one line out, one line in
+        }
+        function updateDirty() {
+            var c = changedLines(), dirty = c.n > 0;
+            $('#dirty').hidden = !dirty;
+            $('#dirty').textContent = c.n + ' unsaved change' + (c.n === 1 ? '' : 's');
+            $('#saveBtn').disabled = !dirty;
+            $$('.card[data-uid]').forEach(function (el) { var it = byUid(+el.dataset.uid); el.classList.toggle('changed', !!it && !c.oldSet.has(JSON.stringify(it.data))); });
+            return dirty;
+        }
+        function byUid(uid) { for (var i = 0; i < items.length; i++) if (items[i].uid === uid) return items[i]; return null; }
+
+        /* ---------- health ---------- */
+        function health(it) {
+            var d = it.data, s = statusByUrl[d.url], latest = newsBySource[d.url] || newsBySource[d.source_name];
+            if (d.disabled) return { cls: 'idle', label: 'Paused' };
+            if (s) {
+                if (s.ok && s.count > 0) return { cls: 'ok', label: 'OK · ' + s.count };
+                if (s.ok) return { cls: 'warn', label: 'Empty', msg: s.error || 'The feed works but had nothing new.' , warn: true };
+                if (s.kept) return { cls: 'warn', label: 'Failing', msg: (s.error || 'Fetch failed') + ' — showing ' + s.kept + ' older stories.' };
+                return { cls: 'err', label: 'Error', msg: s.error || 'Fetch failed' };
+            }
+            if (status) return { cls: 'idle', label: 'Not fetched yet' };
+            return latest ? { cls: 'ok', label: 'Live' } : { cls: 'idle', label: 'No data yet' };
+        }
+        function isProblem(it) { var h = health(it); return h.cls === 'err' || h.cls === 'warn'; }
+
+        /* ---------- rendering ---------- */
+        function visibleItems() {
+            var q = query.toLowerCase();
+            return items.filter(function (it) {
+                if (q) return (it.data.source_name + ' ' + it.data.url).toLowerCase().indexOf(q) !== -1;
+                if (view === 'ALL') return true;
+                if (view === 'PROBLEMS') return isProblem(it);
+                if (view === 'PAUSED') return !!it.data.disabled;
+                return it.folder === view;
+            });
+        }
+        function renderSidebar() {
+            var counts = {}, bad = {};
+            items.forEach(function (it) { counts[it.folder] = (counts[it.folder] || 0) + 1; if (isProblem(it)) bad[it.folder] = (bad[it.folder] || 0) + 1; });
+            var probs = items.filter(isProblem).length, paused = items.filter(function (it) { return it.data.disabled; }).length;
+            var html = '<div class="side-group"><h4>Overview</h4>' +
+                folderBtn('ALL', 'All sources', items.length) +
+                folderBtn('PROBLEMS', 'Needs attention', null, probs) +
+                (paused ? folderBtn('PAUSED', 'Paused', paused) : '') + '</div>';
+            GROUPS.forEach(function (g) {
+                var fs = FOLDERS.filter(function (f) { return f.group === g && (f.id !== 'UNSORTED' || counts.UNSORTED); });
+                if (!fs.length) return;
+                html += '<div class="side-group"><h4>' + esc(g) + '</h4>' + fs.map(function (f) { return folderBtn(f.id, f.label, counts[f.id] || 0, bad[f.id]); }).join('') + '</div>';
+            });
+            $('#sidebar').innerHTML = html;
+        }
+        function folderBtn(id, label, n, bad) {
+            return '<button class="folder' + (view === id && !query ? ' on' : '') + '" data-folder="' + id + '"><span>' + esc(label) + '</span>' + (bad ? '<span class="bad" title="' + bad + ' need attention">' + bad + '</span>' : '') + (n == null ? '' : '<span class="n">' + n + '</span>') + '</button>';
+        }
+        function renderHealth() {
+            if (!status) { $('#health').innerHTML = '<div class="stat"><b>—</b><span>No status.json yet. It appears after the first update run.</span></div>'; return; }
+            var bad = items.filter(isProblem).length;
+            $('#health').innerHTML =
+                '<div class="stat"><b>' + ago(status.generated_at) + '</b><span>Last update · took ' + (status.duration_s || 0) + 's</span></div>' +
+                '<div class="stat"><b>' + (status.articles || 0) + '</b><span>Stories on the site</span></div>' +
+                '<div class="stat ok"><b>' + status.sources_ok + '/' + status.sources_total + '</b><span>Sources working</span></div>' +
+                '<div class="stat' + (bad ? ' err' : '') + '"><b>' + bad + '</b><span>Need attention</span></div>';
+        }
+        function renderGrid() {
+            var list = visibleItems(), f = FOLDER[view];
+            $('#folderTitle').textContent = query ? 'Search results' : view === 'ALL' ? 'All sources' : view === 'PROBLEMS' ? 'Needs attention' : view === 'PAUSED' ? 'Paused sources' : (f.group + ' · ' + f.label);
+            $('#folderSub').textContent = list.length + ' source' + (list.length === 1 ? '' : 's') + (f && !query && f.cat ? ' · category “' + f.cat + '”' + (f.tag ? ', tag “' + f.tag + '”' : '') : '');
+            if (!list.length) {
+                $('#grid').innerHTML = '<div class="empty">' + (view === 'PROBLEMS' && !query ? '<b>Everything is working.</b><br>No failing or empty sources in the last run.' : 'No sources here yet. Use <b>Add source</b> to add one.') + '</div>';
+                return;
+            }
+            $('#grid').innerHTML = list.map(cardHTML).join('');
+            updateDirty();
+        }
+        function opt(list, val) { return list.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === (val || '') ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join(''); }
+        function cardHTML(it) {
+            var d = it.data, h = health(it), latest = newsBySource[d.url] || newsBySource[d.source_name], isVid = d.type === 'video';
+            var prev = latest && latest.img ? '<img src="' + esc(latest.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<div class="none">' + (latest ? 'No image found' : 'No stories yet') + '</div>';
+            var folderOpts = FOLDERS.map(function (f) { return [f.id, f.group + ' · ' + f.label]; });
+            return '<div class="card' + (d.disabled ? ' paused' : '') + '" data-uid="' + it.uid + '">' +
+                '<div class="prev">' + prev + (latest ? '<div class="cap">' + esc(latest.title) + ' · ' + ago(latest.ts) + '</div>' : '') +
+                '<span class="badge ' + h.cls + '">' + esc(h.label) + '</span>' + (isVid ? '<span class="vid-tag">VIDEO</span>' : '') + '</div>' +
+                '<div class="card-body">' +
+                '<div class="name-row"><img src="https://icons.duckduckgo.com/ip3/' + esc(host(d.url) || 'example.com') + '.ico" alt="" onerror="this.style.visibility=\'hidden\'"><input class="name" data-field="source_name" value="' + esc(d.source_name || '') + '" aria-label="Name"></div>' +
+                '<input class="input mono" data-field="url" value="' + esc(d.url) + '" aria-label="URL" spellcheck="false">' +
+                (h.msg ? '<div class="err-msg' + (h.cls === 'warn' ? ' warn' : '') + '">' + esc(h.msg) + '</div>' : '') +
+                '<div class="opts">' +
+                '<label><span class="opt-lbl">Type</span><select class="select sm" data-field="type">' + opt([['web', 'Web / RSS'], ['video', 'YouTube']], d.type) + '</select></label>' +
+                '<label><span class="opt-lbl">Language</span><select class="select sm" data-field="lang">' + opt(LANGS, d.lang || 'en') + '</select></label>' +
+                '<label><span class="opt-lbl">Images</span><select class="select sm" data-field="image_strategy"' + (isVid ? ' disabled title="Videos always use YouTube thumbnails"' : '') + '>' + opt(STRATEGIES, d.image_strategy) + '</select></label>' +
+                '</div>' +
+                '<label><span class="opt-lbl">Folder</span><select class="select sm" data-move>' + opt(folderOpts, it.folder) + '</select></label>' +
+                '</div>' +
+                '<div class="card-foot">' +
+                '<button class="btn btn-sm" data-act="test" title="Fetch the feed now and show what it contains">' + icon('test') + 'Test</button>' +
+                (isVid ? '' : '<button class="btn btn-sm" data-act="probe" title="Find the best way to get images for this source">' + icon('zap') + 'Images</button>') +
+                '<span class="grow"></span>' +
+                '<button class="icon-btn" data-act="pause" title="' + (d.disabled ? 'Resume' : 'Pause (keep but skip)') + '">' + icon(d.disabled ? 'resume' : 'pause') + '</button>' +
+                '<a class="icon-btn" href="' + esc(/^https?:/i.test(d.url) ? d.url : '#') + '" target="_blank" rel="noopener" title="Open URL">' + icon('link') + '</a>' +
+                '<button class="icon-btn danger" data-act="delete" title="Delete">' + icon('trash') + '</button>' +
+                '</div></div>';
+        }
+        function renderAll() { renderSidebar(); renderHealth(); renderGrid(); updateDirty(); }
+
+        /* ---------- editing ---------- */
+        function setField(it, field, value) {
+            value = String(value).trim();
+            if (field === 'image_strategy' && !value) delete it.data.image_strategy;
+            else it.data[field] = value;
+            if (field === 'type') it.folder = it.folder; // folder stays; matching happens on reload
+            updateDirty();
+        }
+        function moveItem(it, folderId) {
+            var f = FOLDER[folderId]; if (!f) return;
+            it.folder = folderId;
+            if (f.cat) it.data.cat = f.cat;
+            if (f.type) it.data.type = f.type;
+            if (f.tag) it.data.filter_tag = f.tag; else if (f.cat) delete it.data.filter_tag;
+            renderAll(); toast('Moved to ' + f.group + ' · ' + f.label);
+        }
+        function removeItem(it) {
+            var idx = items.indexOf(it); if (idx === -1) return;
+            items.splice(idx, 1); renderAll();
+            toast('Deleted ' + (it.data.source_name || 'source'), false, 'Undo', function () { items.splice(idx, 0, it); renderAll(); });
+        }
+
+        document.addEventListener('change', function (e) {
+            var card = e.target.closest('.card[data-uid]'); if (!card) return;
+            var it = byUid(+card.dataset.uid); if (!it) return;
+            if (e.target.dataset.field) {
+                setField(it, e.target.dataset.field, e.target.value);
+                if (e.target.dataset.field === 'type') renderGrid();
+            }
+            if (e.target.hasAttribute('data-move')) moveItem(it, e.target.value);
+        });
+        document.addEventListener('input', function (e) { if (e.target.dataset && e.target.dataset.field && e.target.closest('.card')) { var it = byUid(+e.target.closest('.card').dataset.uid); if (it) setField(it, e.target.dataset.field, e.target.value); } });
+        document.addEventListener('click', function (e) {
+            var t = e.target.closest('[data-folder],[data-act],[data-close],[data-menu]');
+            if (!e.target.closest('#menu')) $('#menu').classList.remove('open');
+            if (!t) return;
+            if (t.dataset.close !== undefined) { t.closest('dialog').close(); return; }
+            if (t.dataset.folder) { view = t.dataset.folder; query = ''; $('#search').value = ''; renderSidebar(); renderGrid(); $('#content').scrollTop = 0; return; }
+            if (t.dataset.menu) { $('#menu').classList.remove('open'); menuAction(t.dataset.menu); return; }
+            var card = t.closest('.card[data-uid]'), it = card && byUid(+card.dataset.uid);
+            if (!it) return;
+            if (t.dataset.act === 'delete') removeItem(it);
+            if (t.dataset.act === 'pause') { if (it.data.disabled) delete it.data.disabled; else it.data.disabled = true; renderAll(); toast(it.data.disabled ? 'Paused — the generator will skip it' : 'Resumed'); }
+            if (t.dataset.act === 'probe') openProbe(it);
+            if (t.dataset.act === 'test') openTest(it);
+        });
+        $$('dialog').forEach(function (d) { d.addEventListener('click', function (e) { if (e.target === d) d.close(); }); });
+        $('#menuBtn').addEventListener('click', function (e) { e.stopPropagation(); $('#menu').classList.toggle('open'); });
+        $('#search').addEventListener('input', function (e) { query = e.target.value.trim(); renderSidebar(); renderGrid(); });
+        window.addEventListener('beforeunload', function (e) { if (cfg && !$('#saveBtn').disabled) { e.preventDefault(); e.returnValue = ''; } });
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if ($('#editorDlg').open) saveFile(); else if (!$('#saveBtn').disabled) save(); }
+        });
+
+        /* ---------- save sources.py ---------- */
+        function save() {
+            var text = buildPython(), btn = $('#saveBtn');
+            btn.disabled = true;
+            putFile('sources.py', b64encode(text), sourcesSha, 'Admin: update sources (V19)')
+                .then(function (d) {
+                    sourcesSha = d.content.sha; savedText = text; updateDirty();
+                    toast('Saved sources.py', false, 'Run update now', runUpdate, 8000);
+                })
+                .catch(function (err) {
+                    btn.disabled = false;
+                    if (err.status === 409 || err.status === 422) toast('sources.py changed on GitHub since you loaded it. Use “Reload from GitHub” (your edits here will be lost) or copy them first.', true);
+                    else toast('Save failed: ' + err.message, true);
+                });
+        }
+        $('#saveBtn').addEventListener('click', save);
+
+        /* ---------- run update (GitHub Actions) ---------- */
+        var polling = null;
+        function setRun(state, text) {
+            var b = $('#runBtn'); b.className = 'run-btn' + (state ? ' ' + state : ''); $('#runText').textContent = text;
+            b.disabled = state === 'busy';
+        }
+        function showLastRun(run) {
+            if (!run) { $('#runInfo').textContent = ''; return; }
+            var when = ago(Date.parse(run.updated_at || run.created_at) / 1000);
+            var res = run.status !== 'completed' ? run.status.replace('_', ' ') : run.conclusion === 'success' ? 'succeeded' : (run.conclusion || 'finished');
+            $('#runInfo').innerHTML = 'Last run <a href="' + esc(run.html_url) + '" target="_blank" rel="noopener">' + esc(res) + '</a> · ' + esc(when);
+        }
+        function latestRun() { return api('/actions/workflows/main.yml/runs?per_page=1&branch=' + encodeURIComponent(cfg.branch)).then(function (d) { return d.workflow_runs && d.workflow_runs[0]; }); }
+        function runUpdate() {
+            if (polling) return;
+            var started = Date.now();
+            setRun('busy', 'Starting…');
+            api('/actions/workflows/main.yml/dispatches', { method: 'POST', body: { ref: cfg.branch } })
+                .then(function () { poll(started); })
+                .catch(function (err) { setRun('fail', 'Failed'); toast('Could not start the workflow: ' + err.message + '. The token needs Actions: read & write.', true); setTimeout(function () { setRun('', 'Run update'); }, 4000); });
+        }
+        function poll(started) {
+            var runId = null;
+            polling = setInterval(function () {
+                var req = runId ? api('/actions/runs/' + runId) : latestRun();
+                req.then(function (run) {
+                    if (!run) return;
+                    if (!runId) { if (Date.parse(run.created_at) < started - 15000) { setRun('busy', 'Queued…'); return; } runId = run.id; }
+                    showLastRun(run);
+                    if (run.status !== 'completed') {
+                        var secs = Math.round((Date.now() - started) / 1000);
+                        setRun('busy', (run.status === 'queued' ? 'Queued' : 'Running') + ' · ' + Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0'));
+                        return;
+                    }
+                    clearInterval(polling); polling = null;
+                    if (run.conclusion === 'success') { setRun('done', 'Updated'); toast('Update finished — the site will refresh within a minute.'); loadFeedData().then(renderAll); }
+                    else { setRun('fail', 'Run failed'); toast('The update run failed. Open “Last run” for the log.', true); }
+                    setTimeout(function () { setRun('', 'Run update'); }, 5000);
+                }).catch(function () {});
+            }, 5000);
+        }
+        $('#runBtn').addEventListener('click', runUpdate);
+
+        /* ---------- add source ---------- */
+        var addState = { url: '', name: '', type: 'web', feedOk: false };
+        function normalizeYouTube(u) {
+            var m = u.match(/youtube\.com\/(@[\w.\-]+|channel\/UC[\w-]{22}|c\/[\w.\-]+|user\/[\w.\-]+)/i);
+            if (m) return 'https://www.youtube.com/' + m[1] + '/videos';
+            if (/youtube\.com\/feeds\/videos\.xml/i.test(u)) return u;
+            return null;
+        }
+        function guessLang(u) { var h = host(u); return /\.se$/.test(h) ? 'sv' : 'en'; }
+        function openAdd() {
+            $('#aUrl').value = ''; $('#aName').value = ''; $('#aResult').innerHTML = '';
+            $('#aFolder').innerHTML = FOLDERS.map(function (f) { return '<option value="' + f.id + '"' + (f.id === (FOLDER[view] ? view : 'TOPIC_TECH') ? ' selected' : '') + '>' + esc(f.group + ' · ' + f.label) + '</option>'; }).join('');
+            $('#aLang').value = 'en';
+            addState = { url: '', name: '', type: 'web', feedOk: false };
+            $('#addDlg').showModal(); $('#aUrl').focus();
+        }
+        function addResult(cls, html) { $('#aResult').innerHTML = '<div class="check ' + cls + '">' + html + '</div>'; }
+        function checkAdd() {
+            var raw = $('#aUrl').value.trim();
+            if (!raw) { $('#aUrl').focus(); return; }
+            if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
+            $('#aLang').value = guessLang(raw);
+            var dup = items.filter(function (it) { return it.data.url.replace(/\/$/, '') === raw.replace(/\/$/, ''); })[0];
+            if (dup) { addResult('err', '<div>This URL is already in <b>' + esc(FOLDER[dup.folder].group + ' · ' + FOLDER[dup.folder].label) + '</b> as “' + esc(dup.data.source_name) + '”.</div>'); return; }
+            if (/youtube\.com|youtu\.be/i.test(raw)) {
+                var yt = normalizeYouTube(raw);
+                if (!yt) { addResult('err', 'That looks like a video link. Paste the <b>channel</b> address instead (e.g. youtube.com/@channel).'); return; }
+                $('#aUrl').value = yt; addState = { url: yt, type: 'video', feedOk: true };
+                if (!$('#aName').value) $('#aName').value = decodeURIComponent((yt.match(/\/@([^/]+)/) || [, ''])[1]);
+                if (!FOLDER[$('#aFolder').value].type || FOLDER[$('#aFolder').value].type === 'web') $('#aFolder').value = 'YT_TECH';
+                addResult('ok', '<div><b>YouTube channel</b><br><span class="hint">The generator finds the channel’s video feed automatically. Pick the folder it belongs in.</span></div>');
+                return;
+            }
+            addResult('', 'Looking for a feed…');
+            proxyFetch(raw).then(function (text) {
+                var feed = parseFeed(text);
+                if (feed) return feedFound(raw, feed);
+                var doc = new DOMParser().parseFromString(text, 'text/html');
+                var links = $$('link[rel="alternate"]', doc).filter(function (l) { return /rss|atom|xml/i.test(l.getAttribute('type') || ''); })
+                    .map(function (l) { try { return { url: new URL(l.getAttribute('href'), raw).href, title: l.getAttribute('title') || '' }; } catch (e) { return null; } }).filter(Boolean);
+                if (!$('#aName').value) { var og = doc.querySelector('meta[property="og:site_name"]'); if (og) $('#aName').value = og.getAttribute('content'); }
+                if (links.length === 1) return testCandidate(links[0].url);
+                if (links.length > 1) {
+                    $('#aResult').innerHTML = '<div class="check"><div><b>This site has ' + links.length + ' feeds.</b> Pick one:</div></div><div class="found">' +
+                        links.map(function (l) { return '<button data-feed="' + esc(l.url) + '">' + esc(l.title || 'Feed') + '<small>' + esc(l.url) + '</small></button>'; }).join('') + '</div>';
+                    return;
+                }
+                return tryCommon(raw);
+            }).catch(function (err) { notFound(raw, err.message); });
+        }
+        function tryCommon(raw) {
+            var base; try { base = new URL(raw).origin; } catch (e) { return notFound(raw); }
+            var paths = ['/feed', '/rss', '/feed.xml', '/rss.xml', '/atom.xml', '/index.xml', '/feeds/posts/default', '/rss/'];
+            var i = 0;
+            function next() {
+                if (i >= paths.length) return notFound(raw);
+                var u = base + paths[i++];
+                addResult('', 'Trying ' + esc(u) + '…');
+                return proxyFetch(u).then(function (t) { var f = parseFeed(t); if (f && f.items.length) return feedFound(u, f); return next(); }).catch(next);
+            }
+            return next();
+        }
+        function testCandidate(u) { addResult('', 'Testing ' + esc(u) + '…'); return proxyFetch(u).then(function (t) { var f = parseFeed(t); if (f) feedFound(u, f); else notFound(u); }).catch(function (e) { notFound(u, e.message); }); }
+        function feedFound(u, feed) {
+            $('#aUrl').value = u; addState = { url: u, type: 'web', feedOk: true };
+            if (!$('#aName').value && feed.title) $('#aName').value = feed.title.split(/\s[|–—-]\s/)[0].trim();
+            var newest = feed.items.reduce(function (m, x) { return Math.max(m, x.date || 0); }, 0);
+            addResult('ok', '<div><b>Feed found</b> — ' + feed.items.length + ' items' + (newest ? ', newest ' + ago(newest) : '') +
+                '<ul>' + feed.items.slice(0, 4).map(function (x) { return '<li>' + esc(x.title) + '</li>'; }).join('') + '</ul></div>');
+        }
+        function notFound(u, why) {
+            addState = { url: u, type: 'web', feedOk: false };
+            addResult('err', '<div><b>No RSS feed found.</b> ' + (why ? '<span class="hint">' + esc(why) + '</span>' : '') +
+                '<br>You can still add it (the generator will report if it fails), or <a href="https://www.google.com/search?q=' + encodeURIComponent(host(u) + ' rss feed') + '" target="_blank" rel="noopener">search for its RSS feed</a>.</div>');
+        }
+        $('#aResult').addEventListener('click', function (e) { var b = e.target.closest('[data-feed]'); if (b) testCandidate(b.dataset.feed); });
+        $('#aCheck').addEventListener('click', checkAdd);
+        $('#aUrl').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); checkAdd(); } });
+        $('#aAdd').addEventListener('click', function () {
+            var url = $('#aUrl').value.trim();
+            if (!url) { $('#aUrl').focus(); return; }
+            if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+            if (/youtube\.com/i.test(url)) url = normalizeYouTube(url) || url;
+            var f = FOLDER[$('#aFolder').value], isVid = /youtube\.com/i.test(url);
+            var d = { url: url, cat: f.cat || 'tech', type: f.type || (isVid ? 'video' : 'web'), source_name: $('#aName').value.trim() || host(url) || 'New source', lang: $('#aLang').value };
+            if (f.tag) d.filter_tag = f.tag;
+            if (items.some(function (it) { return it.data.url === url; })) { toast('That URL is already a source.', true); return; }
+            var it = { uid: ++uidSeq, folder: f.id, data: d };
+            items.push(it);
+            view = f.id; query = ''; $('#search').value = '';
+            $('#addDlg').close(); renderAll();
+            toast('Added ' + d.source_name + ' — remember to Save');
+        });
+        $('#addBtn').addEventListener('click', openAdd);
+
+        /* ---------- feed test ---------- */
+        function openTest(it) {
+            var d = it.data, url = d.url;
+            $('#testTitle').textContent = 'Feed test · ' + (d.source_name || '');
+            $('#testBody').innerHTML = '<div class="log">Fetching ' + esc(url) + '…</div>';
+            $('#testDlg').showModal();
+            if (d.type === 'video') {
+                var key = url.split('/videos')[0].replace(/\/$/, '').toLowerCase(), cid = d.channel_id || channelIds[key];
+                if (!cid) { $('#testBody').innerHTML = '<div class="check"><div>The channel ID is resolved by the generator on its next run. After a run, this test can show the channel’s latest videos.</div></div>'; return; }
+                url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + cid;
+            }
+            proxyFetch(url).then(function (text) {
+                var feed = parseFeed(text);
+                if (!feed) { $('#testBody').innerHTML = '<div class="check err"><div><b>Not an RSS/Atom feed.</b> The URL returned a normal web page. Edit the URL or delete the source and re-add it with <b>Add source</b> to find the feed.</div></div>'; return; }
+                $('#testBody').innerHTML = '<div class="check ok"><div><b>' + esc(feed.title || 'Feed') + '</b> — ' + feed.items.length + ' items</div></div>' +
+                    '<div style="margin-top:12px">' + feed.items.map(function (x) { return '<div class="result" style="grid-template-columns:1fr auto"><div><b>' + esc(x.title) + '</b><code>' + esc(x.link) + '</code></div><span class="hint">' + (x.date ? ago(x.date) : '') + '</span></div>'; }).join('') + '</div>';
+            }).catch(function (err) { $('#testBody').innerHTML = '<div class="check err"><div><b>Could not fetch it from the browser.</b><br><span class="hint">' + esc(err.message) + '</span></div></div>'; });
+        }
+
+        /* ---------- image probe ---------- */
+        var probeItem = null;
+        function openProbe(it) {
+            probeItem = it;
+            $('#probeTitle').textContent = 'Image finder · ' + (it.data.source_name || '');
+            $('#probeResults').innerHTML = ''; $('#probeLog').textContent = '1. Reading feed…';
+            $('#probeDlg').showModal();
+            var url = it.data.url;
+            proxyFetch(url).then(function (text) {
+                var feed = parseFeed(text), article = feed && feed.items[0] && feed.items[0].link;
+                if (!article) article = url;
+                $('#probeLog').textContent = '2. Scanning article: ' + article;
+                return proxyFetch(article).then(function (html) { return { html: html, url: article }; });
+            }).then(function (r) {
+                var doc = new DOMParser().parseFromString(r.html, 'text/html');
+                function abs(u) { try { return u ? new URL(u, r.url).href : null; } catch (e) { return null; } }
+                function attr(sel, a) { var el = doc.querySelector(sel); return el ? abs(el.getAttribute(a)) : null; }
+                function jsonld() { var out = null; $$('script[type="application/ld+json"]', doc).some(function (s) { try { var d = JSON.parse(s.textContent); var nodes = [].concat(d, d['@graph'] || []); return nodes.some(function (n) { var img = n && n.image; if (Array.isArray(img)) img = img[0]; if (img && img.url) img = img.url; if (typeof img === 'string') { out = abs(img); return true; } }); } catch (e) { return false; } }); return out; }
+                function srcset() { var imgs = $$('img[srcset]', doc); if (!imgs.length) return null; var best = imgs.sort(function (a, b) { return b.getAttribute('srcset').length - a.getAttribute('srcset').length; })[0]; return abs(best.getAttribute('srcset').split(',').pop().trim().split(' ')[0]); }
+                function hero() { var m = null; ['hero', 'featured', 'main-image', 'article-image', 'post-thumbnail', 'lead'].some(function (c) { var el = doc.querySelector('[class*="' + c + '"] img'); if (el) { m = abs(el.getAttribute('src') || el.getAttribute('data-src')); return !!m; } }); return m; }
+                var found = [
+                    ['og', 'OpenGraph', attr('meta[property="og:image"]', 'content')],
+                    ['twitter', 'Twitter card', attr('meta[name="twitter:image"]', 'content') || attr('meta[property="twitter:image"]', 'content')],
+                    ['jsonld', 'JSON-LD', jsonld()],
+                    ['wordpress', 'WordPress', attr('img.wp-post-image', 'src')],
+                    ['hero', 'Hero / featured', hero()],
+                    ['lazy', 'Lazy data-src', attr('img[data-src]', 'data-src')],
+                    ['srcset', 'Largest srcset', srcset()],
+                    ['largest', 'First article image', attr('article img[src]', 'src') || attr('img[src]', 'src')]
+                ];
+                var cur = probeItem.data.image_strategy || '';
+                $('#probeLog').textContent = '✓ Done. “Auto” tries OpenGraph → Twitter → JSON-LD → WordPress → Hero → Lazy. Pick one only if Auto picks the wrong image.';
+                $('#probeResults').innerHTML =
+                    '<div class="result' + (!cur ? ' ok' : '') + '"><div class="noimg">AUTO</div><div><b>Auto (recommended)</b><code>Feed image first, then page fallbacks</code></div><button class="btn btn-sm" data-strat="">' + (!cur ? 'In use' : 'Use') + '</button></div>' +
+                    found.map(function (f) {
+                        return '<div class="result' + (f[0] === cur ? ' ok' : '') + '">' + (f[2] ? '<img src="' + esc(f[2]) + '" alt="" referrerpolicy="no-referrer">' : '<div class="noimg">none</div>') +
+                            '<div><b>' + esc(f[1]) + '</b><code>' + esc(f[2] || 'Nothing found') + '</code></div>' +
+                            '<button class="btn btn-sm" data-strat="' + f[0] + '"' + (f[2] ? '' : ' disabled') + '>' + (f[0] === cur ? 'In use' : 'Use') + '</button></div>';
+                    }).join('');
+            }).catch(function (err) { $('#probeLog').textContent = 'Error: ' + err.message; });
+        }
+        $('#probeResults').addEventListener('click', function (e) {
+            var b = e.target.closest('[data-strat]'); if (!b || !probeItem) return;
+            if (b.dataset.strat) probeItem.data.image_strategy = b.dataset.strat; else delete probeItem.data.image_strategy;
+            $('#probeDlg').close(); renderGrid(); toast('Image method set — Save, then Run update');
+        });
+
+        /* ---------- file editor & upload ---------- */
+        // site/* files are the website on Netlify: saving one of them triggers ONE Netlify deploy.
+        // Everything else lives only on GitHub and never triggers a deploy.
+        var EDITABLE = ['site/index.html', 'site/admin.html', 'sources.py', 'generator.py', 'README.md', 'netlify.toml', 'site/manifest.json', 'site/robots.txt', 'site/service-worker.js', 'requirements.txt', '.github/workflows/main.yml'];
+        var edit = { path: '', sha: '' };
+        function openEditor(path) {
+            $('#fileSel').innerHTML = EDITABLE.map(function (f) { return '<option' + (f === path ? ' selected' : '') + '>' + f + '</option>'; }).join('');
+            $('#editorDlg').showModal(); loadFile(path);
+        }
+        function loadFile(path) {
+            $('#code').value = 'Loading ' + path + '…'; $('#fileInfo').textContent = ''; edit = { path: path, sha: '' };
+            getFile(path).then(function (f) { edit.sha = f.sha; $('#code').value = f.text; $('#fileInfo').textContent = (f.size / 1024).toFixed(1) + ' KB'; })
+                .catch(function (err) { $('#code').value = ''; $('#fileInfo').textContent = err.status === 404 ? 'New file' : err.message; });
+        }
+        function saveFile() {
+            if (!edit.path) return;
+            if (!confirm('Commit your changes to ' + edit.path + '?')) return;
+            putFile(edit.path, b64encode($('#code').value), edit.sha, 'Admin: edit ' + edit.path).then(function (d) {
+                edit.sha = d.content.sha; toast('Saved ' + edit.path + (/^site\//.test(edit.path) ? ' — Netlify will deploy it in a minute' : ''));
+                if (edit.path === 'sources.py') { $('#editorDlg').close(); loadAll(); }
+            }).catch(function (err) { toast('Save failed: ' + err.message, true); });
+        }
+        $('#fileSel').addEventListener('change', function (e) { loadFile(e.target.value); });
+        $('#fileSave').addEventListener('click', saveFile);
+        $('#code').addEventListener('keydown', function (e) { if (e.key === 'Tab') { e.preventDefault(); var t = e.target, s = t.selectionStart; t.setRangeText('    ', s, t.selectionEnd, 'end'); } });
+
+        var upFile = null;
+        function openUpload() { upFile = null; $('#upRow').hidden = true; $('#uploadDlg').showModal(); }
+        function pickFile(f) { if (!f) return; upFile = f; $('#upPath').value = (/\.(py|ya?ml|txt|md|toml)$/i.test(f.name) ? '' : 'site/') + f.name; $('#upRow').hidden = false; $('#upPath').focus(); }
+        var drop = $('#drop');
+        drop.addEventListener('click', function () { $('#fileInput').click(); });
+        $('#fileInput').addEventListener('change', function (e) { pickFile(e.target.files[0]); });
+        ['dragenter', 'dragover'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+        ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+        drop.addEventListener('drop', function (e) { pickFile(e.dataTransfer.files[0]); });
+        $('#upGo').addEventListener('click', function () {
+            var path = $('#upPath').value.trim().replace(/^\/+/, ''); if (!upFile || !path) return;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var b64 = String(reader.result).split(',')[1] || '';
+                api('/contents/' + path + '?ref=' + encodeURIComponent(cfg.branch)).then(function (d) { return d.sha; }).catch(function () { return null; })
+                    .then(function (sha) { if (sha && !confirm(path + ' already exists. Replace it?')) throw new Error('cancelled'); return putFile(path, b64, sha, 'Admin: upload ' + path); })
+                    .then(function () { $('#uploadDlg').close(); toast('Uploaded ' + path); })
+                    .catch(function (err) { if (err.message !== 'cancelled') toast('Upload failed: ' + err.message, true); });
+            };
+            reader.readAsDataURL(upFile);
+        });
+
+        function menuAction(a) {
+            if (a === 'edit') openEditor('site/index.html');
+            if (a === 'upload') openUpload();
+            if (a === 'reload') { if ($('#saveBtn').disabled || confirm('Discard your unsaved changes and reload from GitHub?')) loadAll(); }
+            if (a === 'logout') { if (!$('#saveBtn').disabled && !confirm('You have unsaved changes. Log out anyway?')) return; storeCfg(null); location.reload(); }
+        }
+
+        /* ---------- toasts ---------- */
+        function toast(msg, isErr, label, fn, ms) {
+            var t = document.createElement('div'); t.className = 'toast' + (isErr ? ' err' : '');
+            var s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
+            if (label) { var b = document.createElement('button'); b.textContent = label; b.onclick = function () { fn(); t.remove(); }; t.appendChild(b); }
+            $('#toasts').appendChild(t); setTimeout(function () { t.remove(); }, ms || (isErr ? 7000 : 3500));
+        }
+
+        /* ---------- loading ---------- */
+        function loadFeedData() {
+            var news = getData('news.json').then(function (t) { return JSON.parse(t); }).catch(function () { return []; });
+            var st = getData('status.json').then(function (t) { return JSON.parse(t); }).catch(function () { return null; });
+            return Promise.all([news, st]).then(function (r) {
+                newsBySource = {};
+                (r[0] || []).forEach(function (a) {
+                    var img = a.images && a.images[0] && !/unsplash\.com/.test(a.images[0]) ? a.images[0] : '';
+                    if (a.video_id) img = 'https://i.ytimg.com/vi/' + a.video_id + '/mqdefault.jpg';
+                    var rec = { title: a.title, img: img, ts: a.timestamp };
+                    [a.feed_url, a.source].forEach(function (k) { if (k && (!newsBySource[k] || newsBySource[k].ts < rec.ts || (!newsBySource[k].img && img))) newsBySource[k] = rec; });
+                });
+                status = r[1]; statusByUrl = {}; channelIds = (status && status.channel_ids) || {};
+                ((status && status.sources) || []).forEach(function (s) { statusByUrl[s.url] = s; });
+            });
+        }
+        function loadAll() {
+            $('#grid').innerHTML = '<div class="empty">Loading sources from GitHub…</div>';
+            $('#repoLink').href = 'https://github.com/' + cfg.user + '/' + cfg.repo;
+            return getFile('sources.py').then(function (f) {
+                sourcesSha = f.sha; parsePython(f.text); savedText = f.text;
+                return loadFeedData();
+            }).then(function () {
+                renderAll();
+                latestRun().then(showLastRun).catch(function () {});
+            });
+        }
+        function login(c) {
+            cfg = c;
+            return loadAll().then(function () { $('#login').hidden = true; storeCfg(c); });
+        }
+        $('#loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var c = { user: $('#lUser').value.trim(), repo: $('#lRepo').value.trim(), branch: $('#lBranch').value.trim() || 'main', token: $('#lToken').value.trim(), remember: $('#lRemember').checked };
+            $('#loginBtn').disabled = true; $('#loginBtn').textContent = 'Connecting…'; $('#loginErr').hidden = true;
+            login(c).catch(function (err) {
+                cfg = null; $('#loginErr').hidden = false;
+                $('#loginErr').textContent = err.status === 401 ? 'GitHub rejected the token.' : err.status === 404 ? 'Repository or sources.py not found (or the token has no access to it).' : err.message;
+            }).then(function () { $('#loginBtn').disabled = false; $('#loginBtn').textContent = 'Unlock'; });
+        });
+
+        var saved = loadCfg();
+        if (saved) {
+            $('#lUser').value = saved.user || ''; $('#lRepo').value = saved.repo || ''; $('#lBranch').value = saved.branch || 'main';
+            login(saved).catch(function (err) { cfg = null; $('#loginErr').hidden = false; $('#loginErr').textContent = 'Saved login failed: ' + err.message; });
+        }
+        setInterval(function () { if (status) renderHealth(); }, 60000);
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+    "name": "SPECULA — News Aggregator",
+    "short_name": "SPECULA",
+    "description": "Geopolitics, tech, EVs, energy, science and gaming — articles and video from 70+ sources in one calm feed.",
+    "id": "./",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#120e0b",
+    "theme_color": "#120e0b",
+    "categories": ["news"],
+    "lang": "en",
+    "icons": [
+        { "src": "favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+        { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    ],
+    "shortcuts": [
+        { "name": "Read later", "url": "./?c=saved", "icons": [{ "src": "favicon.png", "sizes": "192x192" }] },
+        { "name": "Geopolitics", "url": "./?c=geopolitics", "icons": [{ "src": "favicon.png", "sizes": "192x192" }] },
+        { "name": "Tech", "url": "./?c=tech", "icons": [{ "src": "favicon.png", "sizes": "192x192" }] },
+        { "name": "Video", "url": "./?c=media", "icons": [{ "src": "favicon.png", "sizes": "192x192" }] }
+    ]
+}
