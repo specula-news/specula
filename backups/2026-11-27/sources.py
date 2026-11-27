@@ -1,4 +1,10 @@
 # Sources for aggregation site
+#
+# Edited by hand or from admin.html (which rewrites the SOURCES list below — keep one source per line).
+# Fields:  url, source_name, cat, type ("web" | "video"), lang ("en" | "sv"), filter_tag (optional),
+#          image_strategy (optional: og, twitter, jsonld, wordpress, hero, lazy, srcset, largest, swec, afton),
+#          channel_id (optional, YouTube), disabled (optional: true = paused, skipped by generator.py)
+true, false, null = True, False, None  # lets admin.html write JSON-style values safely
 
 SOURCES = [
     # --- NEWS: GLOBAL ---
